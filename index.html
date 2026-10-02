@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Elements - On-Demand Remote Support</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0b0c10;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 60px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-wrapper {
+            display: inline-block;
+            position: relative;
+            width: 32px;
+            height: 32px;
+            margin-right: 12px;
+            vertical-align: middle;
+        }
+
+        .logo-ring {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #ff1a1a;
+            border: 2px solid transparent;
+            border-top-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(-45deg);
+        }
+
+        .logo-inner-text {
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 900;
+            font-style: italic;
+            font-family: 'Georgia', serif;
+            transform: rotate(45deg);
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 900;
+        }
+
+            .logo-text span {
+                color: #ff1a1a;
+            }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+            nav a:hover {
+                color: #ff1a1a;
+            }
+
+        .hero-section {
+            text-align: center;
+            max-width: 800px;
+            margin-bottom: 50px;
+        }
+
+            .hero-section h1 {
+                font-size: 3rem;
+                font-weight: 900;
+                margin-bottom: 20px;
+                line-height: 1.2;
+            }
+
+            .hero-section p {
+                color: #aaaaaa;
+                font-size: 1.1rem;
+                line-height: 1.6;
+            }
+
+        .compact-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 50px;
+        }
+
+        .compact-box {
+            background-color: #121318;
+            border: 1px solid #22252a;
+            border-radius: 8px;
+            padding: 22px 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #ffffff;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+            .compact-box:hover {
+                border-color: #ff1a1a;
+                transform: translateY(-2px);
+            }
+
+            .compact-box h3 {
+                font-size: 1.1rem;
+                font-weight: 800;
+                color: #ff1a1a;
+                margin-bottom: 8px;
+            }
+
+            .compact-box p {
+                color: #aaaaaa;
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+
+        .hourly-section {
+            width: 100%;
+            max-width: 1000px;
+            background-color: #121318;
+            border: 2px solid #ff1a1a;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .hourly-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .hourly-header h2 {
+                font-size: 1.6rem;
+                font-weight: 900;
+                margin-bottom: 5px;
+            }
+
+            .hourly-header p {
+                color: #888888;
+                font-size: 0.9rem;
+            }
+
+        .calculator-interface {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #0b0c10;
+            border: 1px solid #22252a;
+            padding: 25px;
+            border-radius: 8px;
+        }
+
+        .selector-side {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 45%;
+        }
+
+            .selector-side label {
+                font-size: 0.9rem;
+                font-weight: bold;
+                color: #cccccc;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+        .custom-select {
+            width: 100%;
+            padding: 14px;
+            background-color: #121318;
+            border: 1px solid #333;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            outline: none;
+        }
+
+            .custom-select:focus {
+                border-color: #ff1a1a;
+            }
+
+        .pricing-side {
+            text-align: right;
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .price-display {
+            font-size: 1.7rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+            .price-display span {
+                color: #ff1a1a;
+            }
+
+        .hourly-pay-btn {
+            padding: 12px 24px;
+            background-color: #ff1a1a;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background-color 0.2s;
+        }
+
+            .hourly-pay-btn:hover {
+                background-color: #cc0000;
+            }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <div class="logo-wrapper"><div class="logo-ring"><span class="logo-inner-text">it</span></div></div>
+            <h2 class="logo-text">IT Elements<span>.support</span></h2>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/pricing">Plans</a>
+            <a href="/support">Request Help</a>
+            <a href="/client/login">Client Portal</a>
+        </nav>
+    </header>
+
+    <div class="hero-section">
+        <h1>On-Demand Subscription IT Support</h1>
+        <p>Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
+    </div>
+
+    <div class="compact-nav-grid">
+        <a href="/pricing" class="compact-box">
+            <h3>Subscription Plans</h3>
+            <p>Choose a predictable flat monthly rate package built for your device network needs.</p>
+        </a>
+        <a href="/support" class="compact-box">
+            <h3>Submit Support Ticket</h3>
+            <p>Experiencing hardware slow downs or virus logs? Open a ticket and drop your remote connection key code.</p>
+        </a>
+        <a href="/client/login" class="compact-box">
+            <h3>Customer Access Hub</h3>
+            <p>Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</p>
+        </a>
+    </div>
+
+    <div class="hourly-section">
+        <div class="hourly-header">
+            <h2>Need a Quick Incident Fix?</h2>
+            <p>Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
+        </div>
+        <div class="calculator-interface">
+            <div class="selector-side">
+                <label for="hoursSelector">Select Duration Allocation:</label>
+                <!-- FIXED: Changed cost multiplier parameter from 150 back to 350 -->
+                <select id="hoursSelector" class="custom-select" onchange="document.getElementById('calculatedPrice').innerText = String(parseInt(this.value) * 350);">
+                    <option value="1">1 Hour Dedicated Emergency Support</option>
+                    <option value="2">2 Hours Dedicated Support Package</option>
+                    <option value="3">3 Hours Comprehensive Network Overhaul</option>
+                    <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
+                    <option value="5">5 Hours Complete Enterprise SLA Care</option>
+                </select>
+            </div>
+            <div class="pricing-side">
+                <div class="price-display">R<span id="calculatedPrice">350</span></div>
+                <button class="hourly-pay-btn" onclick="checkoutHourlyJob()">Pay via Capitec</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+// FIXED: Reverted ad-hoc pricing multiplier structure back to R350
+var ratePerHour = 350;
+
+function checkoutHourlyJob() {
+    var hoursField = document.getElementById("hoursSelector");
+    var chosenHours = "1";
+
+    if (hoursField) {
+        chosenHours = String(hoursField.value || "1");
+    }
+
+    var directCost = parseInt(chosenHours) * ratePerHour;
+
+    // FIXED: Fully enclosed parameters ensure the alert window displays details on click
+    alert(
+        "IT ELEMENTS AD-HOC HOURLY CHECKOUT\n" +
+        "==================================\n" +
+        "Please make an Immediate EFT or PayShap payment from your bank app:\n\n" +
+        "Bank Name: Capitec Business Bank\n" +
+        "Account Holder: IT Elements Support\n" +
