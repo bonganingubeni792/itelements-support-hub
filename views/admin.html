@@ -2,232 +2,177 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements Admin Control Core</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            background-color: #0b0b0b;
-            color: #ffffff;
-            padding: 40px;
-        }
-
-        .logo-text {
-            font-size: 1.4rem;
-            font-weight: 900;
-            margin-bottom: 5px;
-            letter-spacing: -0.5px;
-        }
-
-            .logo-text span {
-                color: #ff3333;
-            }
-
-        .nav-links {
-            margin-bottom: 40px;
-        }
-
-            .nav-links a {
-                color: #ff3333;
-                text-decoration: none;
-                font-size: 0.95rem;
-                font-weight: bold;
-                transition: color 0.2s;
-            }
-
-                .nav-links a:hover {
-                    color: #ffffff;
-                }
-
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 900;
-            margin-top: 60px;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .subtitle {
-            color: #666666;
-            font-size: 0.95rem;
-            margin-bottom: 30px;
-        }
-
-        .telemetry-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            margin-bottom: 40px;
-        }
-
-            .telemetry-table th {
-                text-align: left;
-                font-size: 0.9rem;
-                font-weight: 800;
-                color: #ffffff;
-                padding: 12px 8px;
-                border-bottom: 1px solid #222;
-            }
-
-            .telemetry-table td {
-                padding: 16px 8px;
-                border-bottom: 1px solid #141414;
-                font-size: 0.9rem;
-                color: #cccccc;
-                vertical-align: middle;
-            }
-
-        .section-divider {
-            border-top: 2px dashed #222;
-            margin-top: 50px;
-            padding-top: 20px;
-        }
-
-        .btn-action {
-            border: none;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: opacity 0.2s;
-        }
-
-            .btn-action:hover {
-                opacity: 0.85;
-            }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0b0c10; color: #ffffff; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
+        .ops-container { width: 100%; max-width: 1100px; }
+        .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .branding { font-size: 1.5rem; font-weight: 900; color: #ff1a1a; text-transform: uppercase; letter-spacing: 0.5px; }
+        .logout-btn { color: #ff1a1a; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 1px solid #ff1a1a; padding: 8px 16px; border-radius: 4px; }
+        .logout-btn:hover { background-color: rgba(255, 26, 26, 0.05); }
+        
+        .section-title { font-size: 1.6rem; font-weight: 800; margin-top: 40px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
+        .section-desc { color: #888888; font-size: 0.9rem; margin-bottom: 20px; }
+        
+        .data-table-wrapper { width: 100%; background-color: #121318; border: 1px solid #22252a; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #1a1c23; color: #aaaaaa; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 16px 20px; border-bottom: 1px solid #22252a; }
+        td { padding: 16px 20px; font-size: 0.9rem; border-bottom: 1px solid #1c1e24; color: #dddddd; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        
+        .loading-text { text-align: center; color: #666; font-family: monospace; font-size: 0.85rem; padding: 30px; }
+        .badge { padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; display: inline-block; }
+        .badge.active { background-color: rgba(0, 255, 102, 0.1); color: #00ff66; border: 1px solid rgba(0, 255, 102, 0.2); }
+        .badge.inactive { background-color: rgba(255, 26, 26, 0.1); color: #ff1a1a; border: 1px solid rgba(255, 26, 26, 0.2); }
+        
+        .action-form button { padding: 6px 12px; background-color: #ff1a1a; color: white; border: none; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .action-form button:hover { background-color: #cc0000; }
+        .empty-signal { padding: 30px; text-align: center; color: #666; font-size: 0.9rem; }
     </style>
 </head>
 <body>
-    <h2 class="logo-text">IT Elements<span style="color:#ff3333;">.ops-deck</span></h2>
-    <div class="nav-links"><a href="/admin/logout">Secure Log Out ◼</a></div>
 
-    <div style="width: 100%; max-width: 1200px; margin: 0 auto;">
-        <h1 class="section-title">🎟️ Priority Engineering Escalation Queue</h1>
-        <p class="subtitle">Real-time telemetry streams mapping active client credential matrices.</p>
-        <table class="telemetry-table">
-            <thead>
-                <tr><th>Client</th><th>Remote ID</th><th>Passkey</th><th>Incident Logs</th><th>Directive</th></tr>
-            </thead>
-            <tbody id="active-tickets-body">
-                <tr><td colspan="5" style="color:#666;text-align:center;padding:20px;font-style:italic;">Loading live ticket stream channels...</td></tr>
-            </tbody>
-        </table>
+    <div class="ops-container">
+        <div class="header-nav">
+            <div class="branding">IT Elements<span>.ops-deck</span></div>
+            <a href="/admin/logout" class="logout-btn">Secure Log Out ◼</a>
+        </div>
 
-        <h1 class="section-title section-divider">⏳ Job Resolution History Ledger</h1>
-        <p class="subtitle">Historical log archive of previously resolved client support records.</p>
-        <table class="telemetry-table">
-            <thead>
-                <tr><th>Client</th><th>Remote ID</th><th>Passkey</th><th>Closed Logs Summary</th><th>Operational Correction</th></tr>
-            </thead>
-            <tbody id="resolved-tickets-body">
-                <tr><td colspan="5" style="color:#666;text-align:center;padding:20px;font-style:italic;">Parsing log history arrays...</td></tr>
-            </tbody>
-        </table>
+        <!-- 🚨 SECTION 1: INCOMING ESCALATION QUEUE -->
+        <div class="section-title">🛑 Priority Engineering Escalation Queue</div>
+        <div class="section-desc">Real-time telemetry streams mapping active client credential matrices.</div>
+        <div class="data-table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Remote ID</th>
+                        <th>Passkey</th>
+                        <th>Incident Logs</th>
+                        <th>Directive</th>
+                    </tr>
+                </thead>
+                <tbody id="openTicketsQueueBody">
+                    <tr><td colspan="5" class="loading-text">Querying cloud datacenter channels...</td></tr>
+                </tbody>
+            </table>
+        </div>
 
-        <h1 class="section-title section-divider">👥 Commercial Enterprise Subscriber Ledger</h1>
-        <p class="subtitle">Monitors user database structural profiles and operational business billing account tiers.</p>
-        <table class="telemetry-table">
-            <thead>
-                <tr><th>Client Name</th><th>Hotline</th><th>Identity</th><th>Tier</th><th>Status</th></tr>
-            </thead>
-            <tbody id="users-ledger-body">
-                <tr><td colspan="5" style="color:#666;text-align:center;padding:20px;font-style:italic;">Querying subscriber registry profiles...</td></tr>
-            </tbody>
-        </table>
+        <!-- 🗄️ SECTION 2: RESOLUTION HISTORY ARCHIVE -->
+        <div class="section-title">⏳ Job Resolution History Ledger</div>
+        <div class="section-desc">Historical log archive of previously resolved client support records.</div>
+        <div class="data-table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Remote ID</th>
+                        <th>Passkey</th>
+                        <th>Closed Logs Summary</th>
+                    </tr>
+                </thead>
+                <tbody id="resolvedTicketsHistoryBody">
+                    <tr><td colspan="4" class="loading-text">Parsing historical database streams...</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 👥 SECTION 3: COMMERCIAL SUBSCRIBER REGISTRY -->
+        <div class="section-title">👥 Commercial Enterprise Subscriber Ledger</div>
+        <div class="section-desc">Monitors user database structural profiles and operational business billing account tiers.</div>
+        <div class="data-table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client Name</th>
+                        <th>Hotline</th>
+                        <th>Identity</th>
+                        <th>Tier</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="subscribersRegistryBody">
+                    <tr><td colspan="5" class="loading-text">Querying customer account profiles...</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <!-- LIVE DATABASE CHANNELS CONNECTOR SCRIPT -->
     <script>
-                document.addEventListener("DOMContentLoaded", function() {
-                    // 1. Fetch and render Active and On-Hold Tickets Queue
-                    fetch('/api/admin/tickets')
-                        .then(res => res.json())
-                        .then(tickets => {
-                            const activeBody = document.getElementById('active-tickets-body');
-                            const resolvedBody = document.getElementById('resolved-tickets-body');
-
-                            let activeHTML = '';
-                            let resolvedHTML = '';
-
-                            const activeList = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold');
-                            const resolvedList = tickets.filter(t => t.status === 'Resolved');
-
-                            if(activeList.length === 0) {
-                                activeHTML = '<tr><td colspan="5" style="color:#666;text-align:center;padding:30px;font-style:italic;">Queue configuration clear. No active support requests.</td></tr>';
-                            } else {
-                                activeList.forEach(t => {
-                                    let label = t.status === 'On Hold' ? ' <span style="background:#ff9900;color:#000;padding:2px 6px;font-size:0.75rem;font-weight:bold;border-radius:3px;margin-left:8px;">ON HOLD</span>' : '';
-                                    let holdAction = t.status === 'On Hold' ? 'Open' : 'On Hold';
-                                    let holdText = t.status === 'On Hold' ? 'UNHOLD' : 'ON HOLD';
-                                    let holdBtnColor = t.status === 'On Hold' ? '#555555; color:#ffffff;' : '#ff9900; color:#000000;';
-
-                                    activeHTML += `<tr>
-                                        <td><strong>${t.name}</strong>${label}</td>
-                                        <td>${t.remoteId}</td>
-                                        <td><code style="color:#ff9900; background-color:#050505; padding:4px 8px; border-radius:4px;">${t.remotePassword}</code></td>
-                                        <td>${t.issue}</td>
-                                        <td>
-                                            <div style="display:flex; gap:8px;">
-                                                <form action="/admin/requests/status/${t._id}/Resolved" method="POST"><button class="btn-action" style="background:#00ff66;color:#000;">RESOLVE</button></form>
-                                                <form action="/admin/requests/status/${t._id}/${holdAction}" method="POST"><button class="btn-action" style="background:${holdBtnColor}">${holdText}</button></form>
-                                            </div>
-                                        </td>
-                                    </tr>`;
-                                });
-                            }
-
-                            if(resolvedList.length === 0) {
-                                resolvedHTML = '<tr><td colspan="5" style="color:#444;text-align:center;padding:20px;font-style:italic;">No historical resolved logs recorded.</td></tr>';
-                            } else {
-                                resolvedList.forEach(t => {
-                                    resolvedHTML += `<tr>
-                                        <td style="color:#888888;">${t.name}</td>
-                                        <td style="color:#888888;">${t.remoteId}</td>
-                                        <td style="color:#666666;">${t.remotePassword}</td>
-                                        <td style="color:#888888; text-decoration:line-through;">${t.issue}</td>
-                                        <td><form action="/admin/requests/status/${t._id}/Open" method="POST"><button class="btn-action" style="background:#ff1a1a;color:#fff;">↩️ UNDO</button></form></td>
-                                    </tr>`;
-                                });
-                            }
-
-                            activeBody.innerHTML = activeHTML;
-                            resolvedBody.innerHTML = resolvedHTML;
+        // Automated script natively targets your live cloud API pipelines on load loop
+        document.addEventListener("DOMContentLoaded", function() {
+            // Fetch Incoming & Resolved Support Requests
+            fetch('/api/admin/tickets')
+                .then(res => res.json())
+                .then(tickets => {
+                    const openQueueNode = document.getElementById("openTicketsQueueBody");
+                    const resolvedHistoryNode = document.getElementById("resolvedTicketsHistoryBody");
+                    
+                    let openHTML = "";
+                    let resolvedHTML = "";
+                    
+                    const openItems = tickets.filter(t => t.status === 'Open');
+                    const resolvedItems = tickets.filter(t => t.status === 'Resolved');
+                    
+                    if(openItems.length === 0) {
+                        openHTML = "<tr><td colspan='5' class='empty-signal'>✨ No pending support tickets in queue. Data streams clear.</td></tr>";
+                    } else {
+                        openItems.forEach(t => {
+                            openHTML += `
+                                <tr>
+                                    <td><strong>${t.name}</strong></td>
+                                    <td style="font-family:monospace;color:#ff9900;">${t.remoteId}</td>
+                                    <td style="font-family:monospace;">${t.remotePassword}</td>
+                                    <td>${t.issue}</td>
+                                    <td>
+                                        <form action="/admin/requests/status/${t._id}/Resolved" method="POST" class="action-form">
+                                            <button type="submit">Close Ticket</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            `;
                         });
-
-                    // 2. Fetch and render Commercial Subscribers Ledger rows
-                    fetch('/api/admin/subscribers')
-                        .then(res => res.json())
-                        .then(users => {
-                            const ledgerBody = document.getElementById('users-ledger-body');
-                            let ledgerHTML = '';
-
-                            if(users.length === 0) {
-                                ledgerHTML = '<tr><td colspan="5" style="color:#666;text-align:center;padding:30px;font-style:italic;">No registered workspace customer profiles.</td></tr>';
-                            } else {
-                                users.forEach(u => {
-                                    ledgerHTML += `<tr>
-                                        <td><strong>${u.fullName || 'Not Provided'}</strong></td>
-                                        <td>${u.phone || 'No Phone Node'}</td>
-                                        <td style="color:#00ff66;">${u.email}</td>
-                                        <td>${u.subscriptionTier || 'None'}</td>
-                                        <td><span style="font-weight:bold;color:#ff9900;">${u.subscriptionStatus || 'Inactive'}</span></td>
-                                    </tr>`;
-                                });
-                            }
-                            ledgerBody.innerHTML = ledgerHTML;
+                    }
+                    
+                    if(resolvedItems.length === 0) {
+                        resolvedHTML = "<tr><td colspan='4' class='empty-signal'>No historical records found.</td></tr>";
+                    } else {
+                        resolvedItems.forEach(t => {
+                            resolvedHTML += `
+                                <tr>
+                                    <td>${t.name}</td>
+                                    <td style="font-family:monospace;">${t.remoteId}</td>
+                                    <td style="font-family:monospace;">${t.remotePassword}</td>
+                                    <td style="color:#888;">${t.issue} (Resolved)</td>
+                                </tr>
+                            `;
                         });
+                    }
+                    
+                    openQueueNode.innerHTML = openHTML;
+                    resolvedHistoryNode.innerHTML = resolvedHTML;
+                })
+                .catch(err => {
+                    document.getElementById("openTicketsQueueBody").innerHTML = "<tr><td colspan='5' class='loading-text' style='color:#ff1a1a;'>Pipeline stream failure.</td></tr>";
                 });
-    </script>
-</body>
-</html>
+
+            // Fetch Live Registered Subscribers
+            fetch('/api/admin/subscribers')
+                .then(res => res.json())
+                .then(users => {
+                    const registryNode = document.getElementById("subscribersRegistryBody");
+                    let registryHTML = "";
+                    
+                    if(users.length === 0) {
+                        registryHTML = "<tr><td colspan='5' class='empty-signal'>No customer profiles found inside MongoDB storage.</td></tr>";
+                    } else {
+                        users.forEach(u => {
+                            const isStatusActive = u.subscriptionStatus === 'Active';
+                            registryHTML += `
+                                <tr>
+                                    <td><strong>${u.fullName || 'New User'}</strong></td>
+                                    <td>${u.phone || 'Not Provided'}</td>
+                                    <td>${u.email}</td>
+                                    <td><span style="color:#ff9900;font-weight:bold;">${u.subscriptionTier}</span></td>
