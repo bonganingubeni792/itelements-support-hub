@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Login Portal | IT Elements Support</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+    <header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background-color: #121214; border-bottom: 2px solid #2e2e38;">
+        <div class="logo-container">
+            <svg class="logo-svg-emblem" viewBox="0 0 100 100" xmlns="http://w3.org" style="height:46px; width:46px;">
+                <circle cx="50" cy="50" r="32" fill="#3b82f6" />
+                <path d="M 50 10 A 40 40 0 1 1 24 82 A 35 35 0 1 0 50 20 Z" fill="#ffffff" />
+            </svg>
+            <div class="logo-text" style="font-size: 1.4rem; font-weight: 800; color: #ffffff;">IT Elements<span>.client-hub</span></div>
+        </div>
+        <nav>
+            <a href="/" style="color: #c5c6c7; text-decoration: none; font-weight: 600;">Home</a>
+            <a href="/pricing" style="color: #c5c6c7; text-decoration: none; font-weight: 600; margin-left: 20px;">Plans</a>
+            <a href="/register" style="color: #3b82f6; text-decoration: none; font-weight: 600; margin-left: 20px;">Register Account</a>
+        </nav>
+    </header>
+
+    <main class="container" style="max-width: 460px; padding-top: 40px; margin: 0 auto;">
+        <section class="hero-section" style="padding: 20px 0; text-align: center;">
+            <h1 style="color: #ffffff; font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">Client Sign In</h1>
+            <p class="subtitle" style="color: #c5c6c7;">Enter your registered account details to access your self-help cockpit center.</p>
+        </section>
+
+        <section class="form-wrapper" style="background-color: #16161a; border: 1px solid #3a3a46; padding: 45px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5);">
+            <form action="/client/login" method="POST">
+                
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="email" style="color: #ffffff; display: block; margin-bottom: 10px; font-weight: 700;">REGISTERED EMAIL ADDRESS:</label>
+                    <input type="email" id="email" name="email" placeholder="name@company.co.za" required autofocus
+                           style="width: 100% !important; padding: 14px !important; background-color: #22222a !important; border: 2px solid #3b82f6 !important; border-radius: 8px !important; color: #ffffff !important; font-size: 1rem !important; display: block !important;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label for="password" style="color: #ffffff; display: block; margin-bottom: 10px; font-weight: 700;">ACCOUNT PASSWORD:</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••••••" required
+                           style="width: 100% !important; padding: 14px !important; background-color: #22222a !important; border: 2px solid #3b82f6 !important; border-radius: 8px !important; color: #ffffff !important; font-size: 1rem !important; display: block !important;">
+                </div>
+
+                <button type="submit" class="submit-btn" style="width: 100%; padding: 16px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 1.05rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Unlock Technical Workspace</button>
+            </form>
+            
+            <p style="text-align: center; font-size: 0.9rem; color: #a0a0ab; margin-top: 20px;">
+                New subscriber? <a href="/register" style="color: #3b82f6; text-decoration: none; font-weight: 600;">Create an account here →</a>
+            </p>
+        </section>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Elements - Log Diagnostic Ticket</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0b0c10;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        /* 🔴 PREMIUM NAVIGATION BAR HEADER */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 40px;
+            background-color: #121318;
+            padding: 15px 25px;
+            border-radius: 8px;
+            border: 1px solid #22252a;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-wrapper {
+            display: inline-block;
+            position: relative;
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .logo-ring {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #ff1a1a;
+            border: 1px solid transparent;
+            border-top-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform: rotate(-45deg);
+        }
+
+        .logo-inner-text {
+            color: #ffffff;
+            font-size: 0.6rem;
+            font-weight: 900;
+            font-style: italic;
+            font-family: 'Georgia', serif;
+            transform: rotate(45deg);
+        }
+
+        .logo-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+            .logo-text span {
+                color: #ff1a1a;
+            }
+
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+
+            nav a {
+                color: #ff1a1a !important;
+                text-decoration: none;
+                font-size: 0.85rem;
+                font-weight: bold;
+                transition: color 0.2s;
+            }
+
+                nav a:hover {
+                    color: #ffffff !important;
+                }
+
+        /* FORM MODULE BLOCK INTERFACES */
+        .ticket-wrapper {
+            width: 100%;
+            max-width: 700px;
+            background-color: #121318;
+            border: 1px solid #22252a;
+            border-radius: 12px;
+            padding: 40px 35px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .input-group-node {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .input-group-row {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+        }
+
+            .input-group-row .input-group-node {
+                width: 50%;
+                margin-bottom: 0;
+            }
+
+        /* FIXED: Label text properties shifted to crisp, high-contrast PURE WHITE */
+        .input-group-node label {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #ffffff; /* Absolute bright white text color */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* EMBEDDED NATIVE EMOJI ICON SPACING AND FRAMES */
+        .input-emoji-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+            .input-emoji-container .input-glyph {
+                position: absolute;
+                left: 16px;
+                font-size: 1.1rem;
+                pointer-events: none;
+                user-select: none;
+            }
+
+        .form-input-field {
+            width: 100%;
+            padding: 15px 15px 15px 46px; /* Indentation leaves perfect space for native emojis */
+            background-color: #0b0c10;
+            border: 1px solid #22252a;
+            color: #ffffff;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+            .form-input-field:focus {
+                border-color: #ff1a1a;
+            }
+
+        .form-textarea-field {
+            width: 100%;
+            padding: 15px;
+            background-color: #0b0c10;
+            border: 1px solid #22252a;
+            color: #ffffff;
+            font-size: 0.95rem;
+            border-radius: 6px;
+            outline: none;
+            resize: vertical;
+            min-height: 130px;
+            transition: border-color 0.2s;
+            line-height: 1.5;
+        }
+
+            .form-textarea-field:focus {
+                border-color: #ff1a1a;
+            }
+
+        .security-directive {
+            background-color: rgba(255, 26, 26, 0.03);
+            border: 1px solid rgba(255, 26, 26, 0.12);
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 30px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+            .security-directive .shield-glyph {
+                font-size: 1.3rem;
+                margin-top: -2px;
+            }
+
+            .security-directive p {
+                font-size: 0.85rem;
+                color: #aaaaaa;
+                line-height: 1.5;
+            }
+
+        .submit-ticket-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #ff1a1a 0%, #b30000 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(255, 26, 26, 0.2);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+            .submit-ticket-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(255, 26, 26, 0.4);
+            }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVIGATION BAR BAR -->
+    <header>
+        <div class="logo-container">
+            <div class="logo-wrapper"><div class="logo-ring"><span class="logo-inner-text">it</span></div></div>
+            <h2 class="logo-text">IT Elements<span>.ops</span></h2>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/pricing">Plans</a>
+            <a href="/support">Request Help</a>
+            <a href="/dashboard">Dashboard</a>
+        </nav>
+    </header>
+
+    <!-- CORE TICKETING COMPONENT WORKSPACE DESIGN FORM -->
+    <div class="ticket-wrapper">
+        <form action="/support" method="POST">
+
+            <!-- FIELD 1: OPERATOR ACCOUNT NAME -->
+            <div class="input-group-node">
+                <label>👤 OPERATOR / CONTACT ACCOUNT NAME:</label>
+                <div class="input-emoji-container">
+                    <span class="input-glyph">👤</span>
+                    <input type="text" name="name" class="form-input-field" placeholder="e.g., John Doe" required>
+                </div>
+            </div>
+
+            <!-- FIELD 2: VERIFIED EMAIL ACCOUNT ADDRESS -->
+            <div class="input-group-node">
+                <label>✉️ VERIFIED ACCOUNT EMAIL ADDRESS:</label>
+                <div class="input-emoji-container">
+                    <span class="input-glyph">✉️</span>
+                    <input type="email" name="email" class="form-input-field" placeholder="client@company.co.za" required>
+                </div>
+            </div>
+
+            <!-- SPLIT BALANCED GRID TWO COLUMN ROW -->
+            <div class="input-group-row">
+                <!-- FIELD 3: ANYDESK CONNECTION TRACKING ID -->
+                <div class="input-group-node">
+                    <label>🖥️ ANYDESK / TEAMVIEWER ID:</label>
+                    <div class="input-emoji-container">
+                        <span class="input-glyph">🖥️</span>
+                        <input type="text" name="remoteId" class="form-input-field" placeholder="e.g., 123 456 789" required>
+                    </div>
+                </div>
+
+                <!-- FIELD 4: TEMPORARY SECURITY PASSWORD ACCESS CODE KEY -->
+                <div class="input-group-node">
+                    <label>🔑 TEMPORARY PASSWORD KEY:</label>
+                    <div class="input-emoji-container">
+                        <span class="input-glyph">🔑</span>
+                        <input type="text" name="remotePassword" class="form-input-field" placeholder="e.g., a7k9x2" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FIELD 5: COMPREHENSIVE TEXT CRASH DESCRIPTION PROFILE NODE -->
+            <div class="input-group-node" style="margin-top: 24px;">
+                <label>📄 DETAILED PROBLEM DIAGNOSTIC PROFILE:</label>
+                <textarea name="issue" class="form-textarea-field" placeholder="Detail any active system faults, network error messages, hardware lag, or printer timeouts..." required></textarea>
+            </div>
+
+            <!-- LEGAL FRAME DISCLAIMER FOOTER NODE -->
+            <div class="security-directive">
+                <span class="shield-glyph">🛡️</span>
+                <p>Security Access Agreement Directive: By deploying this ticket pipeline parameters, you explicitly authorize IT Elements Support engineers to initiate a secure encrypted remote desktop console terminal link to your device machine to perform systems troubleshooting remediation.</p>
+            </div>
+
+            <button type="submit" class="submit-ticket-btn">Dispatch Ticket Array Queue</button>
+        </form>
+    </div>
+
