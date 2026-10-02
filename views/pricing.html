@@ -1,0 +1,242 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictable Support Tier Subscriptions</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: #0b0c10;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #888888;
+            font-size: 1rem;
+            margin-bottom: 50px;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 1100px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background-color: #121318;
+            border: 1px solid #22252a;
+            border-radius: 8px;
+            padding: 35px 25px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+            .card.popular {
+                border: 2px solid #ff1a1a;
+            }
+
+        .badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ff1a1a;
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 900;
+            padding: 4px 16px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .plan-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .plan-desc {
+            color: #aaaaaa;
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+        }
+
+        .price {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 35px;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 40px;
+            flex: 1;
+        }
+
+            .features-list li {
+                font-size: 0.9rem;
+                color: #cccccc;
+                margin-bottom: 18px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+        .subscribe-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #ff1a1a;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background-color 0.2s;
+            margin-top: auto;
+        }
+
+            .subscribe-btn:hover {
+                background-color: #cc0000;
+            }
+
+        .bottom-row {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+            .bottom-row .card {
+                width: calc(33.33% - 17px);
+            }
+    </style>
+</head>
+<body>
+
+    <h1>Predictable Support Tier Subscriptions</h1>
+    <p class="subtitle">Local Command Interface Server Tracking Mode Active.</p>
+
+    <div class="pricing-grid">
+        <div class="card">
+            <h2 class="plan-name">Basic Support</h2>
+            <p class="plan-desc">Single home-office setups.</p>
+            <div class="price">R299/month</div>
+            <ul class="features-list">
+                <li>💾 2 Support Tickets / mo</li>
+                <li>⚙️ Malware & Virus Cleanups</li>
+                <li>🗓️ Next-Business-Day response</li>
+            </ul>
+            <button class="subscribe-btn" onclick="checkoutWithCapitec('299.00', 'Basic Support')">SUBSCRIBE BASIC</button>
+        </div>
+
+        <div class="card popular">
+            <div class="badge">Most Popular</div>
+            <h2 class="plan-name">Standard Tier</h2>
+            <p class="plan-desc">Peace of mind for professionals.</p>
+            <div class="price">R599/month</div>
+            <ul class="features-list">
+                <li>🚀 Unlimited Remote Access</li>
+                <li>🖨️ Printer & Network setup</li>
+                <li>⚡ 4-Hour Priority SLA Response</li>
+            </ul>
+            <button class="subscribe-btn" onclick="checkoutWithCapitec('599.00', 'Standard Tier')">SUBSCRIBE STANDARD</button>
+        </div>
+
+        <div class="card">
+            <h2 class="plan-name">Business Growth</h2>
+            <p class="plan-desc">Growing small office networks.</p>
+            <div class="price">R2499/month</div>
+            <ul class="features-list">
+                <li>🏢 Up to 10 Office Devices</li>
+                <li>⚙️ Router & Server Tuning</li>
+                <li>⚡ 2-Hour Express SLA Reply</li>
+            </ul>
+            <button class="subscribe-btn" onclick="checkoutWithCapitec('2499.00', 'Business Growth')">SUBSCRIBE BUSINESS</button>
+        </div>
+    </div>
+
+    <div class="bottom-row">
+        <div class="card">
+            <h2 class="plan-name">Corporate SLA</h2>
+            <p class="plan-desc">Complete enterprise coverage.</p>
+            <div class="price">R4999/month</div>
+            <ul class="features-list">
+                <li>🏢 Up to 25 Devices covered</li>
+                <li>☁️ Automatic Cloud Backups</li>
+            </ul>
+            <button class="subscribe-btn" onclick="checkoutWithCapitec('4999.00', 'Corporate SLA')">SUBSCRIBE CORPORATE</button>
+        </div>
+    </div>
+
+    <script>
+                function checkoutWithCapitec(priceAmount, planTitle) {
+                    var referenceCode = "SUB-" + planTitle.toUpperCase().replace(/\s+/g, '');
+
+                    alert(
+                        "IT ELEMENTS DIRECT BANK TRANSFER\n" +
+                        "==================================\n" +
+                        "Please use your bank app to make an Immediate EFT or PayShap transfer:\n\n" +
+                        "Bank Name: Capitec Business Bank\n" +
+                        "Account Holder: IT Elements Support\n" +
+                        "Account Number: 1234567890\n" +
+                        "Branch Code: 470010\n" +
+                        "Amount Due: R" + priceAmount + "\n" +
+                        "Payment Reference: " + referenceCode + "\n\n" +
+                        "**You must send your proof of payment on WhatsApp to continue assisting you with your problem, and send a ticket TeamViewer to log on your computer.**"
+                    );
+
+                    var whatsappText = "Hello Bongani, I have completed the Capitec payment for my monthly support plan.\n\n" +
+                                       "• Subscription Tier: " + planTitle + "\n" +
+                                       "• Rate Amount: R" + priceAmount + "/month\n" +
+                                       "• Reference Code: " + referenceCode + "\n\n" +
+                                       "I am sending my Proof of Payment here on WhatsApp so you can continue assisting me with my problem. I will also log on my client dashboard right now to dispatch a support ticket with my TeamViewer details so you can connect to my computer.";
+
+                    var targetURL = "https://wa.me" + encodeURIComponent(whatsappText);
+
+                    fetch('/api/create-subscription-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ plan: planTitle })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        window.open(targetURL, '_blank');
+                        window.location.href = '/dashboard';
+                    })
+                    .catch(err => {
+                        alert('Connection failure with the local application server.');
+                    });
+                }
+    </script>
+</body>
+</html>

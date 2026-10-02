@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Sign In - IT Elements</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0b0c10;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            width: 100%;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            border-radius: 50%;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+            .logo-text span {
+                color: #ff3333;
+            }
+
+        nav a {
+            color: #cccccc;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+            nav a:hover, nav a.active {
+                color: #ffffff;
+            }
+
+            nav a.register {
+                color: #4a90e2;
+            }
+
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: #aaaaaa;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .login-card {
+            background-color: #121318;
+            border: 1px solid #22252a;
+            border-radius: 8px;
+            padding: 40px 35px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            background-color: #1a1c23;
+            border: 1px solid #333742;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+            input[type="email"]:focus,
+            input[type="password"]:focus {
+                border-color: #4a90e2;
+            }
+
+        input[type="password"] {
+            background-color: #fdf3e7;
+            color: #000000;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #3b71ca;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            text-transform: uppercase;
+            margin-top: 10px;
+            margin-bottom: 25px;
+        }
+
+            .submit-btn:hover {
+                background-color: #2b59a2;
+            }
+
+        .footer-link {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888888;
+        }
+
+            .footer-link a {
+                color: #4a90e2;
+                text-decoration: none;
+            }
+
+                .footer-link a:hover {
+                    text-decoration: underline;
+                }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon"></div>
+            <div class="logo-text">IT Elements<span>.client-hub</span></div>
+        </div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Plans</a>
+            <a href="#" class="register">Register Account</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="title-section">
+            <h1>Client Sign In</h1>
+            <p class="subtitle">Enter your registered account details to access your self-help cockpit center.</p>
+        </div>
+
+        <div class="login-card">
+            <form action="/client/login" method="POST">
+
+                <div class="form-group">
+                    <label for="email">REGISTERED EMAIL ADDRESS:</label>
+                    <input type="email" id="email" name="email" value="bongani@itelements.co.za" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">ACCOUNT PASSWORD:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+
+                <button type="submit" class="submit-btn">Unlock Technical Workspace</button>
+
+                <div class="footer-link">
+                    New subscriber? <a href="#">Create an account here →</a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+</body>
+</html>
