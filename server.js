@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/itelementsDB';
 
 mongoose.connect(dbURI)
-    .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
+    .then(() => console.log('📁 IT Elements Deployed Database connected successfully'))
     .catch(err => console.error('❌ Database communication failure:', err));
 
 // 👤 USER ACCOUNT SCHEMA PROFILE MODEL Configuration
@@ -52,7 +52,7 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'itelements-secure-key-2026',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 3600000, secure: false } // Set to true if running behind explicit HTTPS proxies later
+    cookie: { maxAge: 3600000, secure: false }
 }));
 
 // SECURITY PROTECTION INTERFACES
@@ -74,6 +74,38 @@ app.get('/client/login', (req, res) => res.sendFile(path.join(__dirname, 'views'
 app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
+
+// =========================================================================
+// // 👤 NEW CLIENT REGISTRATION DATA PIPELINE ENDPOINT
+// =========================================================================
+app.post('/client/register', async (req, res) => {
+    try {
+        const { fullName, phone, email, password } = req.body;
+        
+        // Quick verification pass to prevent duplicate account registration logs
+        const missingMatch = await UserAccount.findOne({ email: email.toLowerCase().trim() });
+        if (missingMatch) {
+            return res.send('<script>alert("This email address is already registered. Please login.");window.history.back();</script>');
+        }
+
+        // Saves user profile inputs straight to MongoDB Cloud Storage
+        await new UserAccount({
+            fullName,
+            phone,
+            email: email.toLowerCase().trim(),
+            password
+        }).save();
+
+        // Sets up session cookies data mapping so the client logs in automatically after signing up
+        req.session.isUser = true;
+        req.session.userEmail = email.toLowerCase().trim();
+
+        res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
+    } catch (err) {
+        console.error("Account write error:", err);
+        res.status(500).send("Database registration failure.");
+    }
+});
 
 // 💳 AUTOMATED SUBSCRIBE AND ACTIVATION LINK ENDPOINT
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
@@ -97,7 +129,7 @@ app.post('/api/client/cancel-subscription', checkUserAuth, async (req, res) => {
     }
 });
 
-// AUTHENTICATION CORE AND DISPATCH ENDPOINTS
+// AUTHENTICATION LOGIN DISPATCH ENDPOINTS
 app.post('/client/login', async (req, res) => {
     const { email, password } = req.body;
     if (password === 'AdminElements2026') {
@@ -110,7 +142,7 @@ app.post('/client/login', async (req, res) => {
         req.session.userEmail = user.email;
         return res.send('<script>window.location.href="/dashboard";</script>');
     }
-    res.send('<script>alert("Invalid access credentials combo.");window.history.back();</script>');
+    res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
 });
 
 app.post('/support', async (req, res) => {
@@ -132,4 +164,4 @@ app.post('/admin/requests/status/:id/:targetStatus', checkAdminAuth, async (req,
 
 app.get('/admin/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
 
-app.listen(PORT, () => console.log(`🚀 PRODUCTION IT ELEMENTS HUB DEPLOYED ON PUBLIC NODE PORT ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 PRODUCTION IT ELEMENTS HUB RUNNING LIVE ON PORT ${PORT}`));
