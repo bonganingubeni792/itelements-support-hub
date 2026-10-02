@@ -1,5 +1,5 @@
-// =========================================================================
-// // IT ELEMENTS SUPPORT - PRODUCTION CLOUD CONTROL CORE ENGINE (server.js)
+﻿// =========================================================================
+// // IT ELEMENTS SUPPORT - COMPLETE SYNCHRONIZED RUNTIME ENGINE (server.js)
 // =========================================================================
 
 const express = require('express');
@@ -8,19 +8,19 @@ const path = require('path');
 const session = require('express-session');
 const app = express();
 
-// 📌 PORT INTERFACE FOR RAILWAY CLOUD AUTOMATION ASSIGNMENTS
+// 📌 VARIABLE PORT MAPPING FOR PRODUCTION CLOUD DEPLOYMENTS
 const PORT = process.env.PORT || 3000;
 
-// 📌 DEFINITIVE MONGODB URI CONNECTOR TARGETING DYNAMIC RAILWAY PIPELINES
+// 📌 DEFINITIVE MONGO OMNI STRING FOR RAILWAY INFRASTRUCTURE
 const dbURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/itelementsDB';
 
 mongoose.connect(dbURI)
-    .then(() => console.log('📁 IT Elements Cloud Database communication bridge established successfully!'))
-    .catch(err => console.error('❌ Cloud Database communication failure:', err));
+    .then(() => console.log('📁 Cloud Database connection established successfully!'))
+    .catch(err => console.error('❌ Database connection drop fault:', err));
 
-// 👤 USER ACCOUNT SCHEMA PROFILE MODEL Configuration
+// 👤 USER ACCOUNT PROFILE SCHEMA Configuration
 const userAccountSchema = new mongoose.Schema({
-    fullName: String,
+    fullName: { type: String, required: true },
     phone: String,
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -30,20 +30,20 @@ const userAccountSchema = new mongoose.Schema({
 
 const UserAccount = mongoose.model('UserAccount', userAccountSchema);
 
-// 🎫 SUPPORT REQUEST TICKET SCHEMA MODEL Configuration
+// 🎫 SUPPORT REQUEST TICKET SCHEMA Configuration
 const supportRequestSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    remoteId: String,
-    remotePassword: String,
-    issue: String,
+    name: { type: String, required: true },
+    email: { type: String, required: true },
+    remoteId: { type: String, required: true },
+    remotePassword: { type: String, required: true },
+    issue: { type: String, required: true },
     status: { type: String, default: 'Open' },
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' });
 
 const SupportRequest = mongoose.model('SupportRequest', supportRequestSchema);
 
-// ⚙️ EXPRESS MIDDLEWARE CONFIGURATIONS
+// ⚙️ MIDDLEWARE PARSING LOGIC ENGINE CONFIGURATIONS
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(__dirname));
@@ -55,7 +55,7 @@ app.use(session({
     cookie: { maxAge: 3600000, secure: false }
 }));
 
-// SECURITY PROTECTION INTERFACES
+// SECURITY INTERFACE FILTERS
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -65,7 +65,7 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-// 🌐 ROUTING PATH MAPPINGS FOR STATIC TEMPLATE INTERFACES
+// 🌐 ROUTING VIEW PATH INTERFACES
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -76,57 +76,52 @@ app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirn
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
 // =========================================================================
-// // 👤 NEW CLIENT REGISTRATION DATA PIPELINE ENDPOINT
+// // 🎫 SECURE SUPPORT TICKETS REGISTRATION DISPATCH PIPELINE
+// =========================================================================
+app.post('/support', async (req, res) => {
+    try {
+        const { name, email, remoteId, remotePassword, issue } = req.body;
+
+        // Validates input completeness before sending data strings to storage
+        if (!name || !email || !remoteId || !remotePassword || !issue) {
+            return res.send('<script>alert("All processing form inputs are mandatory!");window.history.back();</script>');
+        }
+
+        // Commits data bundle directly into your Cloud MongoDB supportrequests collection table
+        await new SupportRequest({
+            name: name.trim(),
+            email: email.toLowerCase().trim(),
+            remoteId: remoteId.trim(),
+            remotePassword: remotePassword.trim(),
+            issue: issue.trim()
+        }).save();
+
+        res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
+    } catch (err) {
+        console.error("❌ Data execution write error:", err);
+        res.status(500).send("Database sync error.");
+    }
+});
+
+// =========================================================================
+// // 👤 USER REGISTRATION DISPATCH PIPELINE
 // =========================================================================
 app.post('/client/register', async (req, res) => {
     try {
         const { fullName, phone, email, password } = req.body;
-        
         const missingMatch = await UserAccount.findOne({ email: email.toLowerCase().trim() });
         if (missingMatch) {
             return res.send('<script>alert("This email address is already registered. Please login.");window.history.back();</script>');
         }
-
-        await new UserAccount({
-            fullName,
-            phone,
-            email: email.toLowerCase().trim(),
-            password
-        }).save();
-
+        await new UserAccount({ fullName, phone, email: email.toLowerCase().trim(), password }).save();
         req.session.isUser = true;
         req.session.userEmail = email.toLowerCase().trim();
-
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
     } catch (err) {
-        console.error("Account write error:", err);
         res.status(500).send("Database registration failure.");
     }
 });
 
-// 💳 AUTOMATED SUBSCRIBE AND ACTIVATION LINK ENDPOINT
-app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
-    try {
-        const { plan } = req.body;
-        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: plan, subscriptionStatus: 'Active' });
-        res.json({ success: true, redirectUrl: '/dashboard' });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
-});
-
-// ❌ SECURE AUTOMATED CLIENT MEMBERSHIP CANCELLATION REDIRECT ENGINE
-app.post('/api/client/cancel-subscription', checkUserAuth, async (req, res) => {
-    try {
-        const clientEmail = req.session.userEmail;
-        await UserAccount.findOneAndUpdate({ email: clientEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Cancelled / Inactive' });
-        res.redirect('/dashboard'); 
-    } catch (err) {
-        res.status(500).send("Status update failed.");
-    }
-});
-
-// AUTHENTICATION LOGIN DISPATCH ENDPOINTS
 app.post('/client/login', async (req, res) => {
     const { email, password } = req.body;
     if (password === 'AdminElements2026') {
@@ -139,17 +134,22 @@ app.post('/client/login', async (req, res) => {
         req.session.userEmail = user.email;
         return res.send('<script>window.location.href="/dashboard";</script>');
     }
-    res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
+    res.send('<script>alert("Invalid credentials combo.");window.history.back();</script>');
 });
 
-app.post('/support', async (req, res) => {
+app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
     try {
-        const { name, email, remoteId, remotePassword, issue } = req.body;
-        await new SupportRequest({ name, email, remoteId, remotePassword, issue, status: 'Open' }).save();
-        res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
-    } catch (err) {
-        res.status(500).send("Database sync error.");
-    }
+        const { plan } = req.body;
+        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: plan, subscriptionStatus: 'Active' });
+        res.json({ success: true, redirectUrl: '/dashboard' });
+    } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.post('/api/client/cancel-subscription', checkUserAuth, async (req, res) => {
+    try {
+        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Cancelled / Inactive' });
+        res.redirect('/dashboard'); 
+    } catch (err) { res.status(500).send("Status update failed."); }
 });
 
 app.get('/api/admin/tickets', checkAdminAuth, async (req, res) => { res.json(await SupportRequest.find().sort({ date: -1 })); });
@@ -161,4 +161,4 @@ app.post('/admin/requests/status/:id/:targetStatus', checkAdminAuth, async (req,
 
 app.get('/admin/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
 
-app.listen(PORT, () => console.log(`🚀 PRODUCTION IT ELEMENTS HUB RUNNING LIVE ON PORT ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`));
