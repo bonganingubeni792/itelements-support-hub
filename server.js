@@ -1,4 +1,4 @@
-﻿// =========================================================================
+// =========================================================================
 // // IT ELEMENTS SUPPORT - PRODUCTION CLOUD CONTROL CORE ENGINE (server.js)
 // =========================================================================
 
@@ -8,15 +8,15 @@ const path = require('path');
 const session = require('express-session');
 const app = express();
 
-// 📌 FIXED: Dynamic Port mapping allows Cloud Data Centers to assign public nodes automatically
+// 📌 PORT INTERFACE FOR RAILWAY CLOUD AUTOMATION ASSIGNMENTS
 const PORT = process.env.PORT || 3000;
 
-// 📌 FIXED: Fallback database engine automatically selects Cloud Mongo or Localhost testing strings
+// 📌 DEFINITIVE MONGODB URI CONNECTOR TARGETING DYNAMIC RAILWAY PIPELINES
 const dbURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/itelementsDB';
 
 mongoose.connect(dbURI)
-    .then(() => console.log('📁 IT Elements Deployed Database connected successfully'))
-    .catch(err => console.error('❌ Database communication failure:', err));
+    .then(() => console.log('📁 IT Elements Cloud Database communication bridge established successfully!'))
+    .catch(err => console.error('❌ Cloud Database communication failure:', err));
 
 // 👤 USER ACCOUNT SCHEMA PROFILE MODEL Configuration
 const userAccountSchema = new mongoose.Schema({
@@ -82,13 +82,11 @@ app.post('/client/register', async (req, res) => {
     try {
         const { fullName, phone, email, password } = req.body;
         
-        // Quick verification pass to prevent duplicate account registration logs
         const missingMatch = await UserAccount.findOne({ email: email.toLowerCase().trim() });
         if (missingMatch) {
             return res.send('<script>alert("This email address is already registered. Please login.");window.history.back();</script>');
         }
 
-        // Saves user profile inputs straight to MongoDB Cloud Storage
         await new UserAccount({
             fullName,
             phone,
@@ -96,7 +94,6 @@ app.post('/client/register', async (req, res) => {
             password
         }).save();
 
-        // Sets up session cookies data mapping so the client logs in automatically after signing up
         req.session.isUser = true;
         req.session.userEmail = email.toLowerCase().trim();
 
