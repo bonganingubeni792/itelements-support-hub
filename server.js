@@ -54,7 +54,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: { 
         maxAge: 3600000, 
-        secure: false // Set to true if utilizing custom SSL termination properties directly in Render headers
+        secure: false 
     }
 }));
 
@@ -78,8 +78,21 @@ app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'r
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
+
 // 👤 SECURE CLIENT ACCOUNT REGISTRATION PIPELINE (WITH EXPLICIT ERROR WRAPPERS)
+
+// 🌐 ROUTE ALIGNMENT PATCH: Catch form layouts posting to /client/register and bridge them down
+app.post('/client/register', async (req, res) => {
+    await handleRegistration(req, res);
+});
+
+// Main registration route endpoint
 app.post('/register', async (req, res) => {
+    await handleRegistration(req, res);
+});
+
+// Unified Core Registration Processor Engine
+async function handleRegistration(req, res) {
     try {
         const { fullName, phone, email, password } = req.body;
 
@@ -117,7 +130,8 @@ app.post('/register', async (req, res) => {
         console.error("❌ CRITICAL ACCOUNT REGISTRATION CRASH IN PRODUCTION:", err);
         res.status(500).send(`<h3>HTTP ERROR 500: Database Sync Failure During Registration</h3><p>Details: ${err.message}</p>`);
     }
-});
+}
+
 
 // 🔑 SECURE CLIENT/ADMIN LOGIN PIPELINE INTERACTION ENGINE
 app.post('/client/login', async (req, res) => {
