@@ -3,176 +3,292 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Elements Admin Control Core</title>
+    <title>IT ELEMENTS // ADMINISTRATIVE OPS-DECK</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #0b0c10; color: #ffffff; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
-        .ops-container { width: 100%; max-width: 1100px; }
-        .header-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .branding { font-size: 1.5rem; font-weight: 900; color: #ff1a1a; text-transform: uppercase; letter-spacing: 0.5px; }
-        .logout-btn { color: #ff1a1a; text-decoration: none; font-weight: bold; font-size: 0.9rem; border: 1px solid #ff1a1a; padding: 8px 16px; border-radius: 4px; }
-        .logout-btn:hover { background-color: rgba(255, 26, 26, 0.05); }
-        
-        .section-title { font-size: 1.6rem; font-weight: 800; margin-top: 40px; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }
-        .section-desc { color: #888888; font-size: 0.9rem; margin-bottom: 20px; }
-        
-        .data-table-wrapper { width: 100%; background-color: #121318; border: 1px solid #22252a; border-radius: 8px; overflow: hidden; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        th { background-color: #1a1c23; color: #aaaaaa; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; padding: 16px 20px; border-bottom: 1px solid #22252a; }
-        td { padding: 16px 20px; font-size: 0.9rem; border-bottom: 1px solid #1c1e24; color: #dddddd; vertical-align: middle; }
-        tr:last-child td { border-bottom: none; }
-        
-        .loading-text { text-align: center; color: #666; font-family: monospace; font-size: 0.85rem; padding: 30px; }
-        .badge { padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; display: inline-block; }
-        .badge.active { background-color: rgba(0, 255, 102, 0.1); color: #00ff66; border: 1px solid rgba(0, 255, 102, 0.2); }
-        .badge.inactive { background-color: rgba(255, 26, 26, 0.1); color: #ff1a1a; border: 1px solid rgba(255, 26, 26, 0.2); }
-        
-        .action-form button { padding: 6px 12px; background-color: #ff1a1a; color: white; border: none; border-radius: 4px; font-size: 0.8rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
-        .action-form button:hover { background-color: #cc0000; }
-        .empty-signal { padding: 30px; text-align: center; color: #666; font-size: 0.9rem; }
+        :root {
+            --bg-primary: #0a0a0c;
+            --bg-secondary: #121216;
+            --accent-red: #ff3b30;
+            --accent-purple: #af52de;
+            --text-main: #f5f5f7;
+            --text-muted: #86868b;
+            --border-color: #2c2c35;
+            --success-green: #34c759;
+            --warning-amber: #ff9500;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 📡 TOP CONTROL HEADER ROW PANELS */
+        .header-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: var(--accent-red);
+            text-transform: uppercase;
+        }
+
+        .logout-btn {
+            background-color: transparent;
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red);
+            padding: 8px 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: var(--accent-red);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 59, 48, 0.4);
+        }
+
+        /* 📊 STRUCTURAL SECTION LEDGER TABLES */
+        .ledger-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 24px;
+            margin-bottom: 35px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: -12px;
+            margin-bottom: 20px;
+        }
+
+        .responsive-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(44, 44, 53, 0.5);
+            color: #e5e5ea;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-msg {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 30px;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        /* ⚙️ INTERACTIVE INTERACTION WORKFLOW ACTION BUTTONS */
+        .action-btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: #fff;
+        }
+
+        .btn-resolve { background-color: var(--success-green); }
+        .btn-resolve:hover { background-color: #2db04d; }
+
+        .btn-hold { background-color: var(--warning-amber); }
+        .btn-hold:hover { background-color: #e08400; }
+
+        .btn-open { background-color: var(--accent-purple); }
+        .btn-open:hover { background-color: #963ec2; }
+
+        /* BADGE TAG LAYOUT METRICS */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+        .badge-open { background-color: rgba(175, 82, 222, 0.2); color: var(--accent-purple); }
+        .badge-hold { background-color: rgba(255, 149, 0, 0.2); color: var(--warning-amber); }
+        .badge-resolved { background-color: rgba(52, 199, 89, 0.2); color: var(--success-green); }
+        .badge-tier { background-color: rgba(255, 255, 255, 0.1); color: var(--text-main); border: 1px solid var(--border-color); }
     </style>
 </head>
 <body>
 
-    <div class="ops-container">
-        <div class="header-nav">
-            <div class="branding">IT Elements<span>.ops-deck</span></div>
+    <div class="container">
+        
+        <!-- HEADER HEADER -->
+        <div class="header-panel">
+            <div class="brand-title">IT Elements.Ops-Deck</div>
             <a href="/admin/logout" class="logout-btn">Secure Log Out ◼</a>
         </div>
 
-        <!-- 🚨 SECTION 1: INCOMING ESCALATION QUEUE -->
-        <div class="section-title">🛑 Priority Engineering Escalation Queue</div>
-        <div class="section-desc">Real-time telemetry streams mapping active client credential matrices.</div>
-        <div class="data-table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Client</th>
-                        <th>Remote ID</th>
-                        <th>Passkey</th>
-                        <th>Incident Logs</th>
-                        <th>Directive</th>
-                    </tr>
-                </thead>
-                <tbody id="openTicketsQueueBody">
-                    <tr><td colspan="5" class="loading-text">Querying cloud datacenter channels...</td></tr>
-                </tbody>
-            </table>
+        <!-- 🟥 SECTION 1: PRIORITY TICKETS ESCALATION DISPATCH QUEUE -->
+        <div class="ledger-section">
+            <div class="section-title">🔴 Priority Engineering Escalation Queue</div>
+            <div class="section-desc">Real-time telemetry streams mapping active client credential matrices.</div>
+            <div class="responsive-table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Remote ID</th>
+                            <th>Passkey</th>
+                            <th>Incident Logs / Issues</th>
+                            <th>Status</th>
+                            <th>Directive Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tickets-tbody">
+                        <tr>
+                            <td colspan="6" class="status-msg">Querying cloud datacenter channels...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- 🗄️ SECTION 2: RESOLUTION HISTORY ARCHIVE -->
-        <div class="section-title">⏳ Job Resolution History Ledger</div>
-        <div class="section-desc">Historical log archive of previously resolved client support records.</div>
-        <div class="data-table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Client</th>
-                        <th>Remote ID</th>
-                        <th>Passkey</th>
-                        <th>Closed Logs Summary</th>
-                    </tr>
-                </thead>
-                <tbody id="resolvedTicketsHistoryBody">
-                    <tr><td colspan="4" class="loading-text">Parsing historical database streams...</td></tr>
-                </tbody>
-            </table>
+        <!-- 🟨 SECTION 2: HISTORICAL INCIDENT HISTORY RESOLUTION ARCHIVE -->
+        <div class="ledger-section">
+            <div class="section-title">⌛ Job Resolution History Ledger</div>
+            <div class="section-desc">Historical log archive of previously resolved client support records.</div>
+            <div class="responsive-table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Client</th>
+                            <th>Remote ID</th>
+                            <th>Passkey</th>
+                            <th>Closed Logs Summary</th>
+                            <th>Status</th>
+                            <th>Directive Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resolved-tbody">
+                        <tr>
+                            <td colspan="6" class="status-msg">Parsing historical database streams...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        <!-- 👥 SECTION 3: COMMERCIAL SUBSCRIBER REGISTRY -->
-        <div class="section-title">👥 Commercial Enterprise Subscriber Ledger</div>
-        <div class="section-desc">Monitors user database structural profiles and operational business billing account tiers.</div>
-        <div class="data-table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Client Name</th>
-                        <th>Hotline</th>
-                        <th>Identity</th>
-                        <th>Tier</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody id="subscribersRegistryBody">
-                    <tr><td colspan="5" class="loading-text">Querying customer account profiles...</td></tr>
-                </tbody>
-            </table>
+        <!-- 🟪 SECTION 3: COMMERCIAL ENTERPRISE BUSINESS SUBSCRIPTION LEDGER -->
+        <div class="ledger-section">
+            <div class="section-title">👥 Commercial Enterprise Subscriber Ledger</div>
+            <div class="section-desc">Monitors user database structural profiles and operational business billing account tiers.</div>
+            <div class="responsive-table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Client Name</th>
+                            <th>Hotline / Phone</th>
+                            <th>Identity / Email</th>
+                            <th>Subscription Tier</th>
+                            <th>Billing Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="subscribers-tbody">
+                        <tr>
+                            <td colspan="5" class="status-msg">Querying customer account profiles...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+
     </div>
 
+    <!-- 📡 CLOUD TELEMETRY API BINDING INTERFACE MODULES -->
     <script>
-        // Automated script natively targets your live cloud API pipelines on load loop
-        document.addEventListener("DOMContentLoaded", function() {
-            // Fetch Incoming & Resolved Support Requests
-            fetch('/api/admin/tickets')
-                .then(res => res.json())
-                .then(tickets => {
-                    const openQueueNode = document.getElementById("openTicketsQueueBody");
-                    const resolvedHistoryNode = document.getElementById("resolvedTicketsHistoryBody");
-                    
-                    let openHTML = "";
-                    let resolvedHTML = "";
-                    
-                    const openItems = tickets.filter(t => t.status === 'Open');
-                    const resolvedItems = tickets.filter(t => t.status === 'Resolved');
-                    
-                    if(openItems.length === 0) {
-                        openHTML = "<tr><td colspan='5' class='empty-signal'>✨ No pending support tickets in queue. Data streams clear.</td></tr>";
-                    } else {
-                        openItems.forEach(t => {
-                            openHTML += `
-                                <tr>
-                                    <td><strong>${t.name}</strong></td>
-                                    <td style="font-family:monospace;color:#ff9900;">${t.remoteId}</td>
-                                    <td style="font-family:monospace;">${t.remotePassword}</td>
-                                    <td>${t.issue}</td>
-                                    <td>
-                                        <form action="/admin/requests/status/${t._id}/Resolved" method="POST" class="action-form">
-                                            <button type="submit">Close Ticket</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                    }
-                    
-                    if(resolvedItems.length === 0) {
-                        resolvedHTML = "<tr><td colspan='4' class='empty-signal'>No historical records found.</td></tr>";
-                    } else {
-                        resolvedItems.forEach(t => {
-                            resolvedHTML += `
-                                <tr>
-                                    <td>${t.name}</td>
-                                    <td style="font-family:monospace;">${t.remoteId}</td>
-                                    <td style="font-family:monospace;">${t.remotePassword}</td>
-                                    <td style="color:#888;">${t.issue} (Resolved)</td>
-                                </tr>
-                            `;
-                        });
-                    }
-                    
-                    openQueueNode.innerHTML = openHTML;
-                    resolvedHistoryNode.innerHTML = resolvedHTML;
-                })
-                .catch(err => {
-                    document.getElementById("openTicketsQueueBody").innerHTML = "<tr><td colspan='5' class='loading-text' style='color:#ff1a1a;'>Pipeline stream failure.</td></tr>";
-                });
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+        });
 
-            // Fetch Live Registered Subscribers
-            fetch('/api/admin/subscribers')
-                .then(res => res.json())
-                .then(users => {
-                    const registryNode = document.getElementById("subscribersRegistryBody");
-                    let registryHTML = "";
-                    
-                    if(users.length === 0) {
-                        registryHTML = "<tr><td colspan='5' class='empty-signal'>No customer profiles found inside MongoDB storage.</td></tr>";
-                    } else {
-                        users.forEach(u => {
-                            const isStatusActive = u.subscriptionStatus === 'Active';
-                            registryHTML += `
-                                <tr>
-                                    <td><strong>${u.fullName || 'New User'}</strong></td>
-                                    <td>${u.phone || 'Not Provided'}</td>
-                                    <td>${u.email}</td>
-                                    <td><span style="color:#ff9900;font-weight:bold;">${u.subscriptionTier}</span></td>
+        async function loadDashboardData() {
+            try {
+                // 📌 UNIVERSAL LIVE-READY RELATIVE FETCH PATH ROUTING
+                const ticketsResponse = await fetch('/api/admin/tickets');
+                const subscribersResponse = await fetch('/api/admin/subscribers');
+
+                if (!ticketsResponse.ok || !subscribersResponse.ok) {
+                    throw new Error("Cloud network routing authentication rejected the dataset pipeline request.");
+                }
+
+                const tickets = await ticketsResponse.json();
+                const subscribers = await subscribersResponse.json();
+
+                renderTickets(tickets);
+                renderSubscribers(subscribers);
+
+            } catch (err) {
+                console.error("❌ TELEMETRY RETRIEVAL CRITICAL ERROR:", err);
