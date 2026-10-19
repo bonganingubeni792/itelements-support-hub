@@ -246,4 +246,3 @@ app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
             { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }
         );
         res.json({ success: true, message: 'Subscription successfully canceled.' });
-    } catch (err) {
