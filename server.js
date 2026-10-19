@@ -6,6 +6,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
+const cors = require('cors'); // 🛡️ SECURITY PATCH: Added to handle cross-origin requests
 const app = express();
 
 // 📌 PORT MAPPING: Dynamically assigns production cloud nodes or defaults to 3000
@@ -49,6 +50,7 @@ const supportRequestSchema = new mongoose.Schema({
 const SupportRequest = mongoose.model('SupportRequest', supportRequestSchema);
 
 // ⚙️ EXPRESS MIDDLEWARE CONFIGURATIONS
+app.use(cors()); // 🛡️ SECURITY ACTIVATION: Permits your live domain window to access database APIs safely
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(__dirname));
@@ -85,36 +87,29 @@ app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname
 
 
 // 👤 SECURE CLIENT ACCOUNT REGISTRATION PIPELINE (WITH EXPLICIT ERROR WRAPPERS)
-
-// 🌐 ROUTE ALIGNMENT PATCH: Catch form layouts posting to /client/register and bridge them down
 app.post('/client/register', async (req, res) => {
     await handleRegistration(req, res);
 });
 
-// Main registration route endpoint
 app.post('/register', async (req, res) => {
     await handleRegistration(req, res);
 });
 
-// Unified Core Registration Processor Engine
 async function handleRegistration(req, res) {
     try {
         const { fullName, phone, email, password } = req.body;
 
-        // Validation safety checkpoint
         if (!fullName || !phone || !email || !password) {
             return res.send('<script>alert("All registration fields are strictly required.");window.history.back();</script>');
         }
 
         const normalizedEmail = email.toLowerCase().trim();
 
-        // Check for existing duplicates in the cloud data arrays
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
         if (existingUser) {
             return res.send('<script>alert("This email address is already registered inside our cloud system.");window.history.back();</script>');
         }
 
-        // Instantiating a clean profile row mapped directly to our Mongoose model
         const newUser = new UserAccount({
             fullName: fullName.trim(),
             phone: phone.trim(),
@@ -122,10 +117,8 @@ async function handleRegistration(req, res) {
             password: password
         });
 
-        // Committing records to your active MongoDB Atlas data clusters
         await newUser.save();
 
-        // Establish an active authenticated server session instantly
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
 
@@ -188,6 +181,17 @@ app.post('/support', async (req, res) => {
     } catch (err) {
         console.error("❌ CLOUD DATA DISPATCH EXCEPTION ENCOUNTERED ON SUPPORT:", err);
         res.status(500).send("Database sync error.");
+    }
+});
+
+// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD
+app.get('/api/tickets', checkAdminAuth, async (req, res) => {
+    try {
+        const tickets = await SupportRequest.find().sort({ date: -1 });
+        res.json(tickets);
+    } catch (err) {
+        console.error("❌ ADMIN PANEL DATA FETCH CRASH:", err);
+        res.status(500).json({ error: true, message: err.message });
     }
 });
 
