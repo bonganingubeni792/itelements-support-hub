@@ -6,7 +6,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
-const cors = require('cors'); // 🛡️ SECURITY PATCH: Added to handle cross-origin requests
+const cors = require('cors'); // 🛡️ SECURITY PATCH: Handles cross-origin domain requests smoothly
 const app = express();
 
 // 📌 PORT MAPPING: Dynamically assigns production cloud nodes or defaults to 3000
@@ -43,7 +43,7 @@ const supportRequestSchema = new mongoose.Schema({
     remoteId: String,
     remotePassword: String,
     issue: String,
-    status: { type: String, default: 'Open' },
+    status: { type: String, default: 'Open' }, // Open, On Hold, or Resolved
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' });
 
@@ -195,6 +195,35 @@ app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     }
 });
 
+// 🔄 DYNAMIC TICKET STATUS MANAGEMENT ROUTE
+app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
+    try {
+        const { ticketId, newStatus } = req.body;
+        
+        // Status safety list check
+        const allowedStatuses = ['Open', 'On Hold', 'Resolved'];
+        if (!allowedStatuses.includes(newStatus)) {
+            return res.status(400).json({ error: true, message: 'Invalid status type assignment.' });
+        }
+
+        // Update the ticket status dynamically in MongoDB Atlas
+        const updatedTicket = await SupportRequest.findByIdAndUpdate(
+            ticketId,
+            { status: newStatus },
+            { new: true }
+        );
+
+        if (!updatedTicket) {
+            return res.status(404).json({ error: true, message: 'Support ticket record not found.' });
+        }
+
+        res.json({ success: true, message: `Ticket status successfully changed to ${newStatus}` });
+    } catch (err) {
+        console.error("❌ STATUS UPDATE ROUTE CRASH:", err);
+        res.status(500).json({ error: true, message: err.message });
+    }
+});
+
 // 💳 AUTOMATED SUBSCRIPTION ACTIVATION DATA INTERFACES
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
     try {
@@ -218,11 +247,3 @@ app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
         );
         res.json({ success: true, message: 'Subscription successfully canceled.' });
     } catch (err) {
-        res.status(500).json({ error: true, details: err.message });
-    }
-});
-
-// 🚀 INITIALIZE SERVER WEB LISTENERS
-app.listen(PORT, () => {
-    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
-});
