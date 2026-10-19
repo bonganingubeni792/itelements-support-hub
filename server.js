@@ -1,5 +1,5 @@
 // =========================================================================
-// // IT ELEMENTS SUPPORT - DEFINITIVE PRODUCTION CONTROL CORE ENGINE (server.js)
+// IT ELEMENTS SUPPORT - DEFINITIVE PRODUCTION CONTROL CORE ENGINE (server.js)
 // =========================================================================
 
 const express = require('express');
@@ -12,7 +12,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 📌 MONGODB ATLAS ROUTING LAYER: Grabs the live cloud variable from Render environment grids
-const dbURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/itelementsDB';
+const dbURI = process.env.MONGODB_URI;
+
+if (!dbURI) {
+    console.error("❌ CRITICAL CONFIGURATION ERROR: process.env.MONGODB_URI is undefined!");
+    console.error("Please add your MongoDB connection string to the Environment tab in your Render Dashboard.");
+}
 
 mongoose.connect(dbURI)
     .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
@@ -190,33 +195,30 @@ app.post('/support', async (req, res) => {
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
     try {
         const { plan } = req.body;
-        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: plan, subscriptionStatus: 'Active' });
+        await UserAccount.findOneAndUpdate(
+            { email: req.session.userEmail }, 
+            { subscriptionTier: plan, subscriptionStatus: 'Active' }
+        );
         res.json({ success: true, redirectUrl: '/dashboard' });
     } catch (err) {
         res.status(500).json({ error: true });
     }
 });
 
-// ❌ MEMBERSHIP CANCEL ENGINE ROUTING SYSTEM
-app.post('/api/client/cancel-subscription', checkUserAuth, async (req, res) => {
+// ❌ MEMBERSHIP CANCELLATION API INTERFACE ENDPOINT
+app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
     try {
-        const clientEmail = req.session.userEmail;
-        await UserAccount.findOneAndUpdate({ email: clientEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Cancelled / Inactive' });
-        res.redirect('/dashboard'); 
+        await UserAccount.findOneAndUpdate(
+            { email: req.session.userEmail },
+            { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }
+        );
+        res.json({ success: true, message: 'Subscription successfully canceled.' });
     } catch (err) {
-        res.status(500).send("Status update failed.");
+        res.status(500).json({ error: true, details: err.message });
     }
 });
 
-// 📊 PRIVATE API DISPATCH LAYER FOR THE MASTER ADMINISTRATIVE INTERFACE VIEWS
-app.get('/api/admin/tickets', checkAdminAuth, async (req, res) => { res.json(await SupportRequest.find().sort({ date: -1 })); });
-app.get('/api/admin/subscribers', checkAdminAuth, async (req, res) => { res.json(await UserAccount.find()); });
-app.post('/admin/requests/status/:id/:targetStatus', checkAdminAuth, async (req, res) => {
-    await SupportRequest.findByIdAndUpdate(req.params.id, { status: req.params.targetStatus });
-    res.redirect('/admin');
+// 🚀 INITIALIZE SERVER WEB LISTENERS
+app.listen(PORT, () => {
+    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
 });
-
-// 🚪 SERVER SESSION DESTRUCTION TERMINATION LAYER
-app.get('/admin/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
-
-app.listen(PORT, () => console.log(`🚀 PRODUCTION IT ELEMENTS HUB RUNNING SECURELY LIVE ON ENVIRONMENT NODE PORT ${PORT}`));
