@@ -72,9 +72,9 @@
             font-weight: 900;
         }
 
-            .logo-text span {
-                color: #ff1a1a;
-            }
+        .logo-text span {
+            color: #ff1a1a;
+        }
 
         nav a {
             color: #ffffff;
@@ -85,9 +85,9 @@
             transition: color 0.2s;
         }
 
-            nav a:hover {
-                color: #ff1a1a;
-            }
+        nav a:hover {
+            color: #ff1a1a;
+        }
 
         .hero-section {
             text-align: center;
@@ -95,18 +95,18 @@
             margin-bottom: 50px;
         }
 
-            .hero-section h1 {
-                font-size: 3rem;
-                font-weight: 900;
-                margin-bottom: 20px;
-                line-height: 1.2;
-            }
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
 
-            .hero-section p {
-                color: #aaaaaa;
-                font-size: 1.1rem;
-                line-height: 1.6;
-            }
+        .hero-section p {
+            color: #aaaaaa;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
 
         .compact-nav-grid {
             display: grid;
@@ -128,23 +128,23 @@
             transition: border-color 0.2s, transform 0.2s;
         }
 
-            .compact-box:hover {
-                border-color: #ff1a1a;
-                transform: translateY(-2px);
-            }
+        .compact-box:hover {
+            border-color: #ff1a1a;
+            transform: translateY(-2px);
+        }
 
-            .compact-box h3 {
-                font-size: 1.1rem;
-                font-weight: 800;
-                color: #ff1a1a;
-                margin-bottom: 8px;
-            }
+        .compact-box h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #ff1a1a;
+            margin-bottom: 8px;
+        }
 
-            .compact-box p {
-                color: #aaaaaa;
-                font-size: 0.85rem;
-                line-height: 1.4;
-            }
+        .compact-box p {
+            color: #aaaaaa;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
 
         .hourly-section {
             width: 100%;
@@ -161,16 +161,16 @@
             margin-bottom: 30px;
         }
 
-            .hourly-header h2 {
-                font-size: 1.6rem;
-                font-weight: 900;
-                margin-bottom: 5px;
-            }
+        .hourly-header h2 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
 
-            .hourly-header p {
-                color: #888888;
-                font-size: 0.9rem;
-            }
+        .hourly-header p {
+            color: #888888;
+            font-size: 0.9rem;
+        }
 
         .calculator-interface {
             display: flex;
@@ -189,13 +189,13 @@
             width: 45%;
         }
 
-            .selector-side label {
-                font-size: 0.9rem;
-                font-weight: bold;
-                color: #cccccc;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
+        .selector-side label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #cccccc;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
         .custom-select {
             width: 100%;
@@ -210,9 +210,9 @@
             outline: none;
         }
 
-            .custom-select:focus {
-                border-color: #ff1a1a;
-            }
+        .custom-select:focus {
+            border-color: #ff1a1a;
+        }
 
         .pricing-side {
             text-align: right;
@@ -229,9 +229,9 @@
             color: #ffffff;
         }
 
-            .price-display span {
-                color: #ff1a1a;
-            }
+        .price-display span {
+            color: #ff1a1a;
+        }
 
         .hourly-pay-btn {
             padding: 12px 24px;
@@ -247,15 +247,38 @@
             transition: background-color 0.2s;
         }
 
-            .hourly-pay-btn:hover {
-                background-color: #cc0000;
+        .hourly-pay-btn:hover {
+            background-color: #cc0000;
+        }
+
+        @media (max-width: 768px) {
+            .compact-nav-grid {
+                grid-template-columns: 1fr;
             }
+            .calculator-interface {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 25px;
+            }
+            .selector-side, .pricing-side {
+                width: 100%;
+            }
+            .pricing-side {
+                align-items: stretch;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
+
     <header>
         <div class="logo-container">
-            <div class="logo-wrapper"><div class="logo-ring"><span class="logo-inner-text">it</span></div></div>
+            <div class="logo-wrapper">
+                <div class="logo-ring">
+                    <span class="logo-inner-text">it</span>
+                </div>
+            </div>
             <h2 class="logo-text">IT Elements<span>.support</span></h2>
         </div>
         <nav>
@@ -294,7 +317,6 @@
         <div class="calculator-interface">
             <div class="selector-side">
                 <label for="hoursSelector">Select Duration Allocation:</label>
-                <!-- FIXED: Changed cost multiplier parameter from 150 back to 350 -->
                 <select id="hoursSelector" class="custom-select" onchange="document.getElementById('calculatedPrice').innerText = String(parseInt(this.value) * 350);">
                     <option value="1">1 Hour Dedicated Emergency Support</option>
                     <option value="2">2 Hours Dedicated Support Package</option>
@@ -311,23 +333,15 @@
     </div>
 
     <script>
-// FIXED: Reverted ad-hoc pricing multiplier structure back to R350
-var ratePerHour = 350;
+        var ratePerHour = 350;
 
-function checkoutHourlyJob() {
-    var hoursField = document.getElementById("hoursSelector");
-    var chosenHours = "1";
+        function checkoutHourlyJob() {
+            var hoursField = document.getElementById("hoursSelector");
+            var versionHours = "1";
+            
+            if (hoursField) {
+                versionHours = hoursField.value || "1";
+            }
 
-    if (hoursField) {
-        chosenHours = String(hoursField.value || "1");
-    }
-
-    var directCost = parseInt(chosenHours) * ratePerHour;
-
-    // FIXED: Fully enclosed parameters ensure the alert window displays details on click
-    alert(
-        "IT ELEMENTS AD-HOC HOURLY CHECKOUT\n" +
-        "==================================\n" +
-        "Please make an Immediate EFT or PayShap payment from your bank app:\n\n" +
-        "Bank Name: Capitec Business Bank\n" +
-        "Account Holder: IT Elements Support\n" +
+            var incidentMatrix = {
+                "1": { cleanAmount: "R350.00", refCode: "INC-1HOUREMG", labelTitle: "1 Hour Dedicated Emergency Support" },
