@@ -133,7 +133,6 @@
             <div class="col-actions">Change Work Status</div>
         </div>
         
-        <!-- Live insertion target zone with fixed matching ID -->
         <div id="priority-queue-body">
             <div class="loading-text">Querying cloud datacenter channels...</div>
         </div>
@@ -153,32 +152,33 @@
             <div class="col-actions">Change Work Status</div>
         </div>
         
-        <!-- Live insertion target zone with fixed matching ID -->
         <div id="history-ledger-body">
             <div class="loading-text">Parsing historical database streams...</div>
         </div>
     </div>
 
     <script>
+        // Dynamically extract the current exact deployment URL address layer
+        const serverOrigin = window.location.origin;
+
         async function fetchLiveTickets() {
             try {
-                const response = await fetch('/api/tickets');
+                // Fetch data utilizing the absolute application domain route mapping
+                const response = await fetch(`${serverOrigin}/api/tickets`);
                 const tickets = await response.json();
                 
                 const queueBody = document.getElementById('priority-queue-body');
                 const historyBody = document.getElementById('history-ledger-body');
                 
-                // Completely flush loading placeholders out of existence
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
-                // Partition database documents into active workflows vs closed archives
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
                 // 1. Draw Active Ticket Rows
                 if (activeTickets.length === 0) {
-                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending support requests in active filters.</div>';
+                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending support requests.</div>';
                 } else {
                     activeTickets.forEach(item => {
                         const currentStatus = item.status || 'Open';
@@ -206,7 +206,7 @@
 
                 // 2. Draw History Ticket Rows
                 if (resolvedTickets.length === 0) {
-                    historyBody.innerHTML = '<div class="empty-text">No archived records indexed inside ledger archives.</div>';
+                    historyBody.innerHTML = '<div class="empty-text">No archived records found.</div>';
                 } else {
                     resolvedTickets.forEach(item => {
                         historyBody.innerHTML += `
