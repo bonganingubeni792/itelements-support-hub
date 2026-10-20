@@ -91,17 +91,6 @@
         .badge-open { background-color: #2d1919; color: #ff4d4d; border: 1px solid #4a1a1a; }
         .badge-onhold { background-color: #2d2719; color: #ffcc00; border: 1px solid #4a3e1a; }
         .badge-resolved { background-color: #192d19; color: #4dff4d; border: 1px solid #1a4a1a; }
-
-        .status-select {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            border: 1px solid #333;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            width: 140px;
-        }
         
         .loading-text, .empty-text {
             text-align: center;
@@ -119,6 +108,7 @@
         <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
     </div>
 
+    <!-- 1. ACTIVE LIVE MONITORING ESCALATION QUEUE -->
     <div class="dashboard-card">
         <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices (Open & On Hold).</div>
@@ -137,6 +127,7 @@
         </div>
     </div>
 
+    <!-- 2. HISTORICAL ARCHIVE RESOLUTION LEDGER -->
     <div class="dashboard-card">
         <div class="card-title">⏳ Job Resolution History Ledger</div>
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
@@ -156,12 +147,9 @@
     </div>
 
     <script>
-        // 🚀 CRITICAL ABSOLUTE PATH OVERRIDE: Targets the live Render domain structure explicitly
-        const API_BASE = "https://onrender.com";
-
         async function fetchLiveTickets() {
             try {
-                const response = await fetch(`${API_BASE}/api/tickets`);
+                const response = await fetch('/api/tickets');
                 const tickets = await response.json();
                 
                 const queueBody = document.getElementById('priority-queue-body');
@@ -170,6 +158,7 @@
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
+                // Partition tickets by standard open/hold criteria vs closed ledger mappings
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
@@ -189,11 +178,7 @@
                                 <div class="col-issue">${item.issue || 'No explicit log description.'}</div>
                                 <div class="col-status"><span class="status-badge ${badgeClass}">${currentStatus}</span></div>
                                 <div class="col-actions">
-                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
-                                        <option value="Open" ${currentStatus === 'Open' ? 'selected' : ''}>🔴 Open</option>
-                                        <option value="On Hold" ${currentStatus === 'On Hold' ? 'selected' : ''}>🟡 On Hold</option>
-                                        <option value="Resolved">🟢 Resolve Case</option>
-                                    </select>
+                                    <button style="background:#ff3333; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="updateTicketStatus('${item._id}', 'Resolved')">Resolve Case</button>
                                 </div>
                             </div>
                         `;
@@ -211,13 +196,7 @@
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log summary.'}</div>
                                 <div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div>
-                                <div class="col-actions">
-                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
-                                        <option value="Resolved" selected>🟢 Resolved</option>
-                                        <option value="Open">🔴 Reopen Case</option>
-                                        <option value="On Hold">🟡 Move to Hold</option>
-                                    </select>
-                                </div>
+                                <div class="col-actions"><span style="color:#555;">Archived</span></div>
                             </div>
                         `;
                     });
@@ -232,3 +211,19 @@
 
         async function updateTicketStatus(ticketId, newStatus) {
             try {
+                // Post straight via standard URL layouts
+                const response = await fetch('/api/tickets/update-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ticketId, newStatus })
+                });
+                fetchLiveTickets();
+            } catch (err) {
+                alert("Network outage changing workflow tracking state.");
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchLiveTickets);
+    </script>
+</body>
+</html>
