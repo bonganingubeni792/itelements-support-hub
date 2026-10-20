@@ -12,6 +12,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
 
+// 🛡️ REVERSE PROXY LAYER TRUST CONFIGURATION
+// Explicitly forces Express to respect headers coming from the Render edge proxy architecture
+app.set('trust proxy', 1);
+
 mongoose.connect(dbURI)
     .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
     .catch(err => console.error('❌ Cloud Database communication failure:', err));
@@ -37,7 +41,7 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
-// 🛡️ HARDENED PRODUCTION SECURITY MATRIX
+// CORE LAYER MIDDLEWARES
 app.use(cors({
     origin: ['https://itelements.help', 'https://itelements.help'],
     credentials: true,
@@ -52,14 +56,15 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'itelements-secure-key-2026',
     resave: true,
     saveUninitialized: true,
+    proxy: true, // 👈 Instructs express-session to explicitly trust the proxy layers
     cookie: { 
         maxAge: 3600000, 
-        secure: false, // Set to false so standard domain routing stays functional
-        sameSite: 'lax'
+        secure: true, // 👈 Set to true for secure HTTPS traffic mapping over custom domains
+        sameSite: 'none' // Allows cross-site cookie handling over the proxy mapping
     }
 }));
 
-// SECURITY LOGIC MIDDLEWARES (Bypassed temporarily for testing if needed, keeping strict checking)
+// SECURITY LOGIC MIDDLEWARES
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -99,9 +104,7 @@ async function handleRegistration(req, res) {
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+    } catch (err) { res.status(500).send(err.message); }
 }
 
 // 🔑 CLIENT/ADMIN LOGIN ROUTE PIPELINE
@@ -122,9 +125,7 @@ app.post('/client/login', async (req, res) => {
             return res.send('<script>window.location.href="/dashboard";</script>');
         }
         res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+    } catch (err) { res.status(500).send(err.message); }
 });
 
 // 🎫 TICKETING DISPATCH SUBMISSION INTERFACE ROUTING
@@ -133,9 +134,7 @@ app.post('/support', async (req, res) => {
         const { name, email, remoteId, remotePassword, issue } = req.body;
         await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : '', remoteId, remotePassword, issue, status: 'Open' }).save();
         res.send('<script>alert("Ticket logged successfully!");window.location.href="/dashboard";</script>');
-    } catch (err) {
-        res.status(500).send("Database sync error.");
-    }
+    } catch (err) { res.status(500).send("Database sync error."); }
 });
 
 // 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD
@@ -143,9 +142,7 @@ app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     try {
         const tickets = await SupportRequest.find().sort({ date: -1 });
         res.json(tickets);
-    } catch (err) {
-        res.status(500).json({ error: true, message: err.message });
-    }
+    } catch (err) { res.status(500).json({ error: true, message: err.message }); }
 });
 
 // 🔄 DYNAMIC STATUS CONTROLLER ROUTE MANAGER
@@ -157,9 +154,7 @@ app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
         
         await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
         res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: true, message: err.message });
-    }
+    } catch (err) { res.status(500).json({ error: true, message: err.message }); }
 });
 
 // 💳 SUBSCRIPTION MANAGER ROUTING CHANNELS
@@ -167,18 +162,14 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
     try {
         await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' });
         res.json({ success: true, redirectUrl: '/dashboard' });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
+    } catch (err) { res.status(500).json({ error: true }); }
 });
 
 app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
     try {
         await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' });
         res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
+    } catch (err) { res.status(500).json({ error: true }); }
 });
 
 // 🚀 INITIALIZE SYSTEM SERVER LISTENERS
