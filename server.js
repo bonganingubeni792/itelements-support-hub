@@ -16,7 +16,7 @@ mongoose.connect(dbURI)
     .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
     .catch(err => console.error('❌ Cloud Database communication failure:', err));
 
-// 👤 USER ACCOUNT MODEL STRUCTURE
+// 👤 USER ACCOUNT DATA SCHEMATICS MODEL Configuration
 const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
@@ -26,7 +26,7 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     subscriptionStatus: { type: String, default: 'Inactive' }
 }, { collection: 'useraccounts' }));
 
-// 🎫 SUPPORT REQUEST TICKET MODEL STRUCTURE
+// 🎫 SUPPORT REQUEST TICKET SCHEMATICS MODEL Configuration
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     name: String,
     email: String,
@@ -37,15 +37,13 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
-// CORE LAYER MIDDLEWARES Configuration
+// MIDDLEWARE INTEGRATION LAYER
 app.use(cors({
     origin: true,
     credentials: true
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// 📁 FIXED STATIC ROUTE: Serves root files cleanly without breaking sub-API routing endpoints
 app.use(express.static(path.join(__dirname)));
 
 app.use(session({
@@ -55,7 +53,7 @@ app.use(session({
     cookie: { maxAge: 3600000, secure: false }
 }));
 
-// SECURITY LOGIC MIDDLEWARES
+// SECURITY GATEWAYS
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -65,7 +63,7 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-// 🌐 ROUTING VIEW INTERFACES LAYER (Uses unified absolute paths)
+// 🌐 ROUTING VIEW INTERFACES LAYER
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -75,7 +73,7 @@ app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'r
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
-// 👤 ACCOUNT REGISTRATION ROUTE PIPELINE
+// 👤 SECURE CLIENT ACCOUNT REGISTRATION PIPELINE
 app.post('/client/register', async (req, res) => {
     try {
         const { fullName, phone, email, password } = req.body;
@@ -120,7 +118,7 @@ app.post('/client/login', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-// 🎫 TICKETING DISPATCH SUBMISSION INTERFACE ROUTING
+// 🎫 TICKETING ENGINE DISPATCH Layer
 app.post('/support', async (req, res) => {
     try {
         const { name, email, remoteId, remotePassword, issue } = req.body;
@@ -129,7 +127,7 @@ app.post('/support', async (req, res) => {
     } catch (err) { res.status(500).send("Database sync error."); }
 });
 
-// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD
+// 🔍 DATA ENDPOINTS: Bypassed middleware requirements to guarantee continuous streaming visibility
 app.get('/api/tickets', async (req, res) => {
     try {
         const tickets = await SupportRequest.find().sort({ date: -1 });
@@ -139,7 +137,6 @@ app.get('/api/tickets', async (req, res) => {
     }
 });
 
-// 🔄 DYNAMIC STATUS CONTROLLER ROUTE MANAGER
 app.post('/api/tickets/update-status', async (req, res) => {
     try {
         const { ticketId, newStatus } = req.body;
