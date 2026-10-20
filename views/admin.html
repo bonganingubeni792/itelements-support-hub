@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Elements - Advanced Admin Core Deck</title>
+    <title>IT Elements - Admin Core Deck</title>
     <style>
         body {
             background-color: #0d0d0d;
@@ -100,16 +100,15 @@
             border-radius: 4px;
             font-size: 12px;
             cursor: pointer;
-            width: 145px;
+            width: 140px;
         }
         .status-select:focus { outline: none; border-color: #ff3333; }
 
-        .time-stamp {
+        .time-label {
             display: block;
             font-size: 11px;
-            color: #ffcc00;
-            margin-top: 4px;
-            font-weight: normal;
+            color: #888;
+            margin-top: 3px;
         }
 
         .loading-text, .empty-text {
@@ -167,35 +166,33 @@
     </div>
 
     <script>
-        // Formats timestamps helper into Today, Yesterday, or precise Calendar metrics
-        function formatTicketDate(dateString) {
+        // Formats timestamps helper into Today, Yesterday, or exact Date Month Year
+        function cleanTicketTime(dateInput) {
             if (!dateString) return "N/A";
-            const ticketDate = new Date(dateString);
+            const currentObj = new Date(dateString);
             const today = new Date();
             const yesterday = new Date();
             yesterday.setDate(today.getDate() - 1);
 
-            const isToday = ticketDate.getDate() === today.getDate() &&
-                            ticketDate.getMonth() === today.getMonth() &&
-                            ticketDate.getFullYear() === today.getFullYear();
+            const matchToday = currentObj.getDate() === today.getDate() &&
+                               currentObj.getMonth() === today.getMonth() &&
+                               currentObj.getFullYear() === today.getFullYear();
 
-            const isYesterday = ticketDate.getDate() === yesterday.getDate() &&
-                                ticketDate.getMonth() === yesterday.getMonth() &&
-                                ticketDate.getFullYear() === yesterday.getFullYear();
+            const matchYesterday = currentObj.getDate() === yesterday.getDate() &&
+                                   currentObj.getMonth() === yesterday.getMonth() &&
+                                   currentObj.getFullYear() === yesterday.getFullYear();
 
-            const timeOptions = { hour: '2-digit', minute: '2-digit' };
-            const timePart = ticketDate.toLocaleTimeString([], timeOptions);
+            const timeString = currentObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            if (isToday) {
-                return `Today at ${timePart}`;
-            } else if (isYesterday) {
-                return `Yesterday at ${timePart}`;
+            if (matchToday) {
+                return "Today at " + timeString;
+            } else if (matchYesterday) {
+                return "Yesterday at " + timeString;
             } else {
-                // Returns custom formatted calendar date mapping: DD Month YYYY at HH:MM
-                const day = ticketDate.getDate();
-                const month = ticketDate.toLocaleString('default', { month: 'short' });
-                const year = ticketDate.getFullYear();
-                return `${day} ${month} ${year} (${timePart})`;
+                const day = currentObj.getDate();
+                const month = currentObj.toLocaleString('default', { month: 'short' });
+                const year = currentObj.getFullYear();
+                return day + " " + month + " " + year + " (" + timeString + ")";
             }
         }
 
@@ -210,11 +207,10 @@
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
-                // Partition tickets into queue groups vs completed histories
+                // Partition tickets by standard open/hold criteria vs closed ledger mappings
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
-                // 1. Render Live Queue Group
                 if (activeTickets.length === 0) {
                     queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending support requests.</div>';
                 } else {
@@ -222,14 +218,14 @@
                         const currentStatus = item.status || 'Open';
                         let badgeClass = 'badge-open';
                         if (currentStatus === 'On Hold') badgeClass = 'badge-onhold';
-                        const timeDisplay = formatTicketDate(item.date);
+                        const timeDisplay = cleanTicketTime(item.date);
 
                         queueBody.innerHTML += `
                             <div class="data-row">
                                 <div class="col-client">
                                     ${item.name || 'Anonymous'}<br>
                                     <span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span>
-                                    <span class="time-stamp">⏰ ${timeDisplay}</span>
+                                    <span class="time-label">⏰ ${timeDisplay}</span>
                                 </div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
@@ -239,4 +235,8 @@
                                     <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
                                         <option value="Open" ${currentStatus === 'Open' ? 'selected' : ''}>🔴 Open</option>
                                         <option value="On Hold" ${currentStatus === 'On Hold' ? 'selected' : ''}>🟡 On Hold</option>
-                                        <option value="Resolved">🟢 Resolve Case</option>
+                                        <option value="Resolved">🟢 Solved</option>
+                                    </select>
+                                </div>
+                            </div>
+                        `;
