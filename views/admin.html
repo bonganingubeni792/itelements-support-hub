@@ -166,10 +166,10 @@
     </div>
 
     <script>
-        // Formats timestamps helper into Today, Yesterday, or exact Date Month Year
+        // Formats timestamps cleanly into Today, Yesterday, or precise Calendar days
         function cleanTicketTime(dateInput) {
-            if (!dateString) return "N/A";
-            const currentObj = new Date(dateString);
+            if (!dateInput) return "N/A";
+            const currentObj = new Date(dateInput);
             const today = new Date();
             const yesterday = new Date();
             yesterday.setDate(today.getDate() - 1);
@@ -204,6 +204,8 @@
                 const queueBody = document.getElementById('priority-queue-body');
                 const historyBody = document.getElementById('history-ledger-body');
                 
+                if (!queueBody || !historyBody) return;
+                
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
@@ -222,11 +224,7 @@
 
                         queueBody.innerHTML += `
                             <div class="data-row">
-                                <div class="col-client">
-                                    ${item.name || 'Anonymous'}<br>
-                                    <span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span>
-                                    <span class="time-label">⏰ ${timeDisplay}</span>
-                                </div>
+                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span><span class="time-label">⏰ ${timeDisplay}</span></div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log description.'}</div>
@@ -240,3 +238,6 @@
                                 </div>
                             </div>
                         `;
+                    });
+                }
+
