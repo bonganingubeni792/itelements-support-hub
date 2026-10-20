@@ -92,25 +92,6 @@
         .badge-onhold { background-color: #2d2719; color: #ffcc00; border: 1px solid #4a3e1a; }
         .badge-resolved { background-color: #192d19; color: #4dff4d; border: 1px solid #1a4a1a; }
         
-        .status-select {
-            background-color: #1a1a1a;
-            color: #e0e0e0;
-            border: 1px solid #333;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            width: 140px;
-        }
-        .status-select:focus { outline: none; border-color: #ff3333; }
-
-        .time-label {
-            display: block;
-            font-size: 11px;
-            color: #888;
-            margin-top: 3px;
-        }
-
         .loading-text, .empty-text {
             text-align: center;
             padding: 30px;
@@ -133,7 +114,7 @@
         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices (Open & On Hold).</div>
         
         <div class="table-header">
-            <div class="col-client">Client / Timestamp</div>
+            <div class="col-client">Client</div>
             <div class="col-remote-id">Remote ID</div>
             <div class="col-passkey">Passkey</div>
             <div class="col-issue">Incident Logs / Issues</div>
@@ -152,7 +133,7 @@
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
         
         <div class="table-header">
-            <div class="col-client">Client / Timestamp</div>
+            <div class="col-client">Client</div>
             <div class="col-remote-id">Remote ID</div>
             <div class="col-passkey">Passkey</div>
             <div class="col-issue">Closed Logs Summary</div>
@@ -166,36 +147,6 @@
     </div>
 
     <script>
-        // Formats timestamps cleanly into Today, Yesterday, or precise Calendar days
-        function cleanTicketTime(dateInput) {
-            if (!dateInput) return "N/A";
-            const currentObj = new Date(dateInput);
-            const today = new Date();
-            const yesterday = new Date();
-            yesterday.setDate(today.getDate() - 1);
-
-            const matchToday = currentObj.getDate() === today.getDate() &&
-                               currentObj.getMonth() === today.getMonth() &&
-                               currentObj.getFullYear() === today.getFullYear();
-
-            const matchYesterday = currentObj.getDate() === yesterday.getDate() &&
-                                   currentObj.getMonth() === yesterday.getMonth() &&
-                                   currentObj.getFullYear() === yesterday.getFullYear();
-
-            const timeString = currentObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-            if (matchToday) {
-                return "Today at " + timeString;
-            } else if (matchYesterday) {
-                return "Yesterday at " + timeString;
-            } else {
-                const day = currentObj.getDate();
-                const month = currentObj.toLocaleString('default', { month: 'short' });
-                const year = currentObj.getFullYear();
-                return day + " " + month + " " + year + " (" + timeString + ")";
-            }
-        }
-
         async function fetchLiveTickets() {
             try {
                 const response = await fetch('/api/tickets');
@@ -204,12 +155,9 @@
                 const queueBody = document.getElementById('priority-queue-body');
                 const historyBody = document.getElementById('history-ledger-body');
                 
-                if (!queueBody || !historyBody) return;
-                
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
-                // Partition tickets by standard open/hold criteria vs closed ledger mappings
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
@@ -220,24 +168,60 @@
                         const currentStatus = item.status || 'Open';
                         let badgeClass = 'badge-open';
                         if (currentStatus === 'On Hold') badgeClass = 'badge-onhold';
-                        const timeDisplay = cleanTicketTime(item.date);
 
                         queueBody.innerHTML += `
                             <div class="data-row">
-                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span><span class="time-label">⏰ ${timeDisplay}</span></div>
+                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span></div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log description.'}</div>
                                 <div class="col-status"><span class="status-badge ${badgeClass}">${currentStatus}</span></div>
                                 <div class="col-actions">
-                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
-                                        <option value="Open" ${currentStatus === 'Open' ? 'selected' : ''}>🔴 Open</option>
-                                        <option value="On Hold" ${currentStatus === 'On Hold' ? 'selected' : ''}>🟡 On Hold</option>
-                                        <option value="Resolved">🟢 Solved</option>
-                                    </select>
+                                    <button style="background:#ff3333; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="updateTicketStatus('${item._id}', 'Resolved')">Resolve Case</button>
                                 </div>
                             </div>
                         `;
                     });
                 }
 
+                if (resolvedTickets.length === 0) {
+                    historyBody.innerHTML = '<div class="empty-text">No completed cases found in history archives.</div>';
+                } else {
+                    resolvedTickets.forEach(item => {
+                        historyBody.innerHTML += `
+                            <div class="data-row" style="opacity: 0.65;">
+                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span></div>
+                                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
+                                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                                <div class="col-issue">${item.issue || 'No explicit log summary.'}</div>
+                                <div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div>
+                                <div class="col-actions"><span style="color:#555;">Archived</span></div>
+                            </div>
+                        `;
+                    });
+                }
+
+            } catch (error) {
+                console.error("Dashboard Sync Crash:", error);
+                document.getElementById('priority-queue-body').innerHTML = 
+                    '<div class="loading-text" style="color: #ff3333;">❌ Data acquisition error. Connection interrupted.</div>';
+            }
+        }
+
+        async function updateTicketStatus(ticketId, newStatus) {
+            try {
+                await fetch('/api/tickets/update-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ticketId, newStatus })
+                });
+                fetchLiveTickets();
+            } catch (err) {
+                alert("Network outage changing workflow tracking state.");
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchLiveTickets);
+    </script>
+</body>
+</html>
