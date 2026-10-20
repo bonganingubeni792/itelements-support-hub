@@ -12,10 +12,6 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
 
-if (!dbURI) {
-    console.error("❌ CRITICAL LAYOUT ERROR: process.env.MONGODB_URI is undefined!");
-}
-
 mongoose.connect(dbURI)
     .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
     .catch(err => console.error('❌ Cloud Database communication failure:', err));
@@ -41,20 +37,29 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
-// CORE LAYER MIDDLEWARES
-app.use(cors());
+// 🛡️ HARDENED PRODUCTION SECURITY MATRIX
+app.use(cors({
+    origin: ['https://itelements.help', 'https://itelements.help'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(__dirname));
 
 app.use(session({
     secret: process.env.SESSION_SECRET || 'itelements-secure-key-2026',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 3600000, secure: false }
+    resave: true,
+    saveUninitialized: true,
+    cookie: { 
+        maxAge: 3600000, 
+        secure: false, // Set to false so standard domain routing stays functional
+        sameSite: 'lax'
+    }
 }));
 
-// SECURITY LOGIC MIDDLEWARES
+// SECURITY LOGIC MIDDLEWARES (Bypassed temporarily for testing if needed, keeping strict checking)
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -82,12 +87,12 @@ async function handleRegistration(req, res) {
     try {
         const { fullName, phone, email, password } = req.body;
         if (!fullName || !phone || !email || !password) {
-            return res.send('<script>alert("All fields are strictly required.");window.history.back();</script>');
+            return res.send('<script>alert("All fields are required.");window.history.back();</script>');
         }
         const normalizedEmail = email.toLowerCase().trim();
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
         if (existingUser) {
-            return res.send('<script>alert("Email already registered inside cloud.");window.history.back();</script>');
+            return res.send('<script>alert("Email already registered.");window.history.back();</script>');
         }
         const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
         await newUser.save();
@@ -95,7 +100,7 @@ async function handleRegistration(req, res) {
         req.session.userEmail = newUser.email;
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
     } catch (err) {
-        res.status(500).send(`<h3>Registration Failure</h3><p>${err.message}</p>`);
+        res.status(500).send(err.message);
     }
 }
 
@@ -118,7 +123,7 @@ app.post('/client/login', async (req, res) => {
         }
         res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
     } catch (err) {
-        res.status(500).send(`<h3>Login Failure</h3><p>${err.message}</p>`);
+        res.status(500).send(err.message);
     }
 });
 
@@ -148,9 +153,8 @@ app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
     try {
         const { ticketId, newStatus } = req.body;
         const allowed = ['Open', 'On Hold', 'Resolved'];
-        if (!allowed.includes(newStatus)) {
-            return res.status(400).json({ error: true, message: 'Status layout not supported.' });
-        }
+        if (!allowed.includes(newStatus)) return res.status(400).json({ error: true });
+        
         await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
         res.json({ success: true });
     } catch (err) {
