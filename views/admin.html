@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Elements - Admin Core Deck</title>
+    <title>IT Elements - Advanced Admin Core Deck</title>
     <style>
         body {
             background-color: #0d0d0d;
@@ -92,6 +92,26 @@
         .badge-onhold { background-color: #2d2719; color: #ffcc00; border: 1px solid #4a3e1a; }
         .badge-resolved { background-color: #192d19; color: #4dff4d; border: 1px solid #1a4a1a; }
         
+        .status-select {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            width: 145px;
+        }
+        .status-select:focus { outline: none; border-color: #ff3333; }
+
+        .time-stamp {
+            display: block;
+            font-size: 11px;
+            color: #ffcc00;
+            margin-top: 4px;
+            font-weight: normal;
+        }
+
         .loading-text, .empty-text {
             text-align: center;
             padding: 30px;
@@ -114,7 +134,7 @@
         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices (Open & On Hold).</div>
         
         <div class="table-header">
-            <div class="col-client">Client</div>
+            <div class="col-client">Client / Timestamp</div>
             <div class="col-remote-id">Remote ID</div>
             <div class="col-passkey">Passkey</div>
             <div class="col-issue">Incident Logs / Issues</div>
@@ -133,7 +153,7 @@
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
         
         <div class="table-header">
-            <div class="col-client">Client</div>
+            <div class="col-client">Client / Timestamp</div>
             <div class="col-remote-id">Remote ID</div>
             <div class="col-passkey">Passkey</div>
             <div class="col-issue">Closed Logs Summary</div>
@@ -147,6 +167,38 @@
     </div>
 
     <script>
+        // Formats timestamps helper into Today, Yesterday, or precise Calendar metrics
+        function formatTicketDate(dateString) {
+            if (!dateString) return "N/A";
+            const ticketDate = new Date(dateString);
+            const today = new Date();
+            const yesterday = new Date();
+            yesterday.setDate(today.getDate() - 1);
+
+            const isToday = ticketDate.getDate() === today.getDate() &&
+                            ticketDate.getMonth() === today.getMonth() &&
+                            ticketDate.getFullYear() === today.getFullYear();
+
+            const isYesterday = ticketDate.getDate() === yesterday.getDate() &&
+                                ticketDate.getMonth() === yesterday.getMonth() &&
+                                ticketDate.getFullYear() === yesterday.getFullYear();
+
+            const timeOptions = { hour: '2-digit', minute: '2-digit' };
+            const timePart = ticketDate.toLocaleTimeString([], timeOptions);
+
+            if (isToday) {
+                return `Today at ${timePart}`;
+            } else if (isYesterday) {
+                return `Yesterday at ${timePart}`;
+            } else {
+                // Returns custom formatted calendar date mapping: DD Month YYYY at HH:MM
+                const day = ticketDate.getDate();
+                const month = ticketDate.toLocaleString('default', { month: 'short' });
+                const year = ticketDate.getFullYear();
+                return `${day} ${month} ${year} (${timePart})`;
+            }
+        }
+
         async function fetchLiveTickets() {
             try {
                 const response = await fetch('/api/tickets');
@@ -158,9 +210,11 @@
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
+                // Partition tickets into queue groups vs completed histories
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
+                // 1. Render Live Queue Group
                 if (activeTickets.length === 0) {
                     queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending support requests.</div>';
                 } else {
@@ -168,60 +222,21 @@
                         const currentStatus = item.status || 'Open';
                         let badgeClass = 'badge-open';
                         if (currentStatus === 'On Hold') badgeClass = 'badge-onhold';
+                        const timeDisplay = formatTicketDate(item.date);
 
                         queueBody.innerHTML += `
                             <div class="data-row">
-                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span></div>
+                                <div class="col-client">
+                                    ${item.name || 'Anonymous'}<br>
+                                    <span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span>
+                                    <span class="time-stamp">⏰ ${timeDisplay}</span>
+                                </div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log description.'}</div>
                                 <div class="col-status"><span class="status-badge ${badgeClass}">${currentStatus}</span></div>
                                 <div class="col-actions">
-                                    <button style="background:#ff3333; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="updateTicketStatus('${item._id}', 'Resolved')">Resolve Case</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-                }
-
-                if (resolvedTickets.length === 0) {
-                    historyBody.innerHTML = '<div class="empty-text">No completed cases found in history archives.</div>';
-                } else {
-                    resolvedTickets.forEach(item => {
-                        historyBody.innerHTML += `
-                            <div class="data-row" style="opacity: 0.65;">
-                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span></div>
-                                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
-                                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                <div class="col-issue">${item.issue || 'No explicit log summary.'}</div>
-                                <div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div>
-                                <div class="col-actions"><span style="color:#555;">Archived</span></div>
-                            </div>
-                        `;
-                    });
-                }
-
-            } catch (error) {
-                console.error("Dashboard Sync Crash:", error);
-                document.getElementById('priority-queue-body').innerHTML = 
-                    '<div class="loading-text" style="color: #ff3333;">❌ Data acquisition error. Connection interrupted.</div>';
-            }
-        }
-
-        async function updateTicketStatus(ticketId, newStatus) {
-            try {
-                await fetch('/api/tickets/update-status', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ticketId, newStatus })
-                });
-                fetchLiveTickets();
-            } catch (err) {
-                alert("Network outage changing workflow tracking state.");
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', fetchLiveTickets);
-    </script>
-</body>
-</html>
+                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
+                                        <option value="Open" ${currentStatus === 'Open' ? 'selected' : ''}>🔴 Open</option>
+                                        <option value="On Hold" ${currentStatus === 'On Hold' ? 'selected' : ''}>🟡 On Hold</option>
+                                        <option value="Resolved">🟢 Resolve Case</option>
