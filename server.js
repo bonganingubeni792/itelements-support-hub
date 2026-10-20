@@ -12,11 +12,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
 
+if (!dbURI) {
+    console.error("❌ CRITICAL LAYOUT ERROR: process.env.MONGODB_URI is undefined!");
+}
+
 mongoose.connect(dbURI)
     .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
     .catch(err => console.error('❌ Cloud Database communication failure:', err));
 
-// 👤 USER ACCOUNT MODEL
+// 👤 USER ACCOUNT MODEL STRUCTURE
 const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
@@ -26,7 +30,7 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     subscriptionStatus: { type: String, default: 'Inactive' }
 }, { collection: 'useraccounts' }));
 
-// 🎫 SUPPORT REQUEST TICKET MODEL
+// 🎫 SUPPORT REQUEST TICKET MODEL STRUCTURE
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     name: String,
     email: String,
@@ -37,7 +41,7 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
-// MIDDLEWARE
+// CORE LAYER MIDDLEWARES
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -50,7 +54,7 @@ app.use(session({
     cookie: { maxAge: 3600000, secure: false }
 }));
 
-// SECURITY AUTOMATION GATEWAYS
+// SECURITY LOGIC MIDDLEWARES
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -60,7 +64,7 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-// 🌐 ROUTING VIEW INTERFACES
+// 🌐 ROUTING VIEW INTERFACES LAYER
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -139,13 +143,14 @@ app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     }
 });
 
-// 🔄 DYNAMIC STATUS CONTROLLER ENGINE FOR TICKET ROUTING MANAGER
+// 🔄 DYNAMIC STATUS CONTROLLER ROUTE MANAGER
 app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
     try {
         const { ticketId, newStatus } = req.body;
         const allowed = ['Open', 'On Hold', 'Resolved'];
-        if (!allowed.includes(newStatus)) return res.status(400).json({ error: true });
-        
+        if (!allowed.includes(newStatus)) {
+            return res.status(400).json({ error: true, message: 'Status layout not supported.' });
+        }
         await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
         res.json({ success: true });
     } catch (err) {
