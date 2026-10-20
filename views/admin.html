@@ -176,7 +176,8 @@
     <script>
         async function fetchLiveTickets() {
             try {
-                const response = await fetch('/api/tickets');
+                // 🔐 CREDENTIAL PATCH: Added credentials inclusion to bypass security blockades
+                const response = await fetch('/api/tickets', { credentials: 'same-origin' });
                 if (!response.ok) throw new Error('Database fetch fault.');
 
                 const tickets = await response.json();
@@ -187,7 +188,6 @@
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
-                // Filter into open tracking sets vs resolved logs
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
@@ -244,4 +244,3 @@
                 }
 
             } catch (error) {
-                console.error("Dashboard Sync Crash:", error);
