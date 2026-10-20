@@ -38,7 +38,9 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(__dirname));
+
+// 📁 STRUCTURAL PATH ROUTING FIX: Allows views and API calls to separate cleanly
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
     secret: 'itelements-secure-key-2026',
@@ -46,6 +48,27 @@ app.use(session({
     saveUninitialized: false,
     cookie: { maxAge: 3600000, secure: false }
 }));
+
+// 🔍 LIVE TELEMETRY DATA PATH ENDPOINT BRIDGE (Moved high to prevent static files catching it)
+app.get('/api/tickets', async (req, res) => {
+    try {
+        const tickets = await SupportRequest.find().sort({ date: -1 });
+        res.json(tickets);
+    } catch (err) {
+        res.status(500).json([]);
+    }
+});
+
+// 🔄 DYNAMIC STATUS MANAGER PIPELINE ROUTE
+app.post('/api/tickets/update-status', async (req, res) => {
+    try {
+        const { ticketId, newStatus } = req.body;
+        await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: true });
+    }
+});
 
 // VIEW MAPPINGS
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
@@ -95,17 +118,7 @@ app.post('/support', async (req, res) => {
     } catch (err) { res.status(500).send("Database sync error."); }
 });
 
-// RAW TELEMETRY DATA PATH ENDPOINT BRIDGE
-app.get('/api/tickets', async (req, res) => {
-    try {
-        const tickets = await SupportRequest.find().sort({ date: -1 });
-        res.json(tickets);
-    } catch (err) {
-        res.status(500).json([]);
-    }
-});
-
 // ENGINE LISTENER STARTUP
 app.listen(PORT, () => {
-    console.log(`🚀 ENGINE RUNNING ON PORT ${PORT}`);
+    console.log(`🚀 PRODUCTION ENGINE RUNNING ON PORT ${PORT}`);
 });
