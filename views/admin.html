@@ -92,6 +92,18 @@
         .badge-onhold { background-color: #2d2719; color: #ffcc00; border: 1px solid #4a3e1a; }
         .badge-resolved { background-color: #192d19; color: #4dff4d; border: 1px solid #1a4a1a; }
         
+        .status-select {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            width: 140px;
+        }
+        .status-select:focus { outline: none; border-color: #ff3333; }
+
         .loading-text, .empty-text {
             text-align: center;
             padding: 30px;
@@ -172,13 +184,17 @@
 
                         queueBody.innerHTML += `
                             <div class="data-row">
-                                <div class="col-client">${item.name || 'Anonymous'} (${item.email || 'N/A'})</div>
+                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span></div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log description.'}</div>
                                 <div class="col-status"><span class="status-badge ${badgeClass}">${currentStatus}</span></div>
                                 <div class="col-actions">
-                                    <button style="background:#ff3333; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="updateTicketStatus('${item._id}', 'Resolved')">Resolve Case</button>
+                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
+                                        <option value="Open" ${currentStatus === 'Open' ? 'selected' : ''}>🔴 Open</option>
+                                        <option value="On Hold" ${currentStatus === 'On Hold' ? 'selected' : ''}>🟡 On Hold</option>
+                                        <option value="Resolved">🟢 Solved</option>
+                                    </select>
                                 </div>
                             </div>
                         `;
@@ -191,12 +207,18 @@
                     resolvedTickets.forEach(item => {
                         historyBody.innerHTML += `
                             <div class="data-row" style="opacity: 0.65;">
-                                <div class="col-client">${item.name || 'Anonymous'} (${item.email || 'N/A'})</div>
+                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span></div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log summary.'}</div>
                                 <div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div>
-                                <div class="col-actions"><span style="color:#555;">Archived</span></div>
+                                <div class="col-actions">
+                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
+                                        <option value="Resolved" selected>🟢 Solved</option>
+                                        <option value="Open">🔴 Open</option>
+                                        <option value="On Hold">🟡 On Hold</option>
+                                    </select>
+                                </div>
                             </div>
                         `;
                     });
@@ -205,25 +227,3 @@
             } catch (error) {
                 console.error("Dashboard Sync Crash:", error);
                 document.getElementById('priority-queue-body').innerHTML = 
-                    '<div class="loading-text" style="color: #ff3333;">❌ Data acquisition error. Connection interrupted.</div>';
-            }
-        }
-
-        async function updateTicketStatus(ticketId, newStatus) {
-            try {
-                // Post straight via standard URL layouts
-                const response = await fetch('/api/tickets/update-status', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ticketId, newStatus })
-                });
-                fetchLiveTickets();
-            } catch (err) {
-                alert("Network outage changing workflow tracking state.");
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', fetchLiveTickets);
-    </script>
-</body>
-</html>
