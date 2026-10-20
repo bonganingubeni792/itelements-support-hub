@@ -88,21 +88,9 @@
             text-transform: uppercase;
             display: inline-block;
         }
-        .badge-open {
-            background-color: #2d1919;
-            color: #ff4d4d;
-            border: 1px solid #4a1a1a;
-        }
-        .badge-onhold {
-            background-color: #2d2719;
-            color: #ffcc00;
-            border: 1px solid #4a3e1a;
-        }
-        .badge-resolved {
-            background-color: #192d19;
-            color: #4dff4d;
-            border: 1px solid #1a4a1a;
-        }
+        .badge-open { background-color: #2d1919; color: #ff4d4d; border: 1px solid #4a1a1a; }
+        .badge-onhold { background-color: #2d2719; color: #ffcc00; border: 1px solid #4a3e1a; }
+        .badge-resolved { background-color: #192d19; color: #4dff4d; border: 1px solid #1a4a1a; }
 
         .status-select {
             background-color: #1a1a1a;
@@ -114,10 +102,6 @@
             cursor: pointer;
             width: 140px;
         }
-        .status-select:focus {
-            outline: none;
-            border-color: #1a73e8;
-        }
         
         .loading-text, .empty-text {
             text-align: center;
@@ -125,6 +109,17 @@
             color: #666;
             font-style: italic;
             font-size: 14px;
+        }
+        
+        .error-box {
+            background-color: #2d1919;
+            border: 1px solid #ff3333;
+            color: #ff4d4d;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            font-size: 13px;
         }
     </style>
 </head>
@@ -135,7 +130,9 @@
         <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
     </div>
 
-    <!-- 1. ACTIVE LIVE MONITORING ESCALATION QUEUE -->
+    <!-- Container for visual network errors -->
+    <div id="error-display-zone"></div>
+
     <div class="dashboard-card">
         <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices (Open & On Hold).</div>
@@ -154,7 +151,6 @@
         </div>
     </div>
 
-    <!-- 2. HISTORICAL ARCHIVE RESOLUTION LEDGER -->
     <div class="dashboard-card">
         <div class="card-title">⏳ Job Resolution History Ledger</div>
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
@@ -175,15 +171,19 @@
 
     <script>
         async function fetchLiveTickets() {
+            const queueBody = document.getElementById('priority-queue-body');
+            const historyBody = document.getElementById('history-ledger-body');
+            const errorZone = document.getElementById('error-display-zone');
+            
             try {
-                // 🔐 CREDENTIAL PATCH: Added credentials inclusion to bypass security blockades
-                const response = await fetch('/api/tickets', { credentials: 'same-origin' });
-                if (!response.ok) throw new Error('Database fetch fault.');
+                errorZone.innerHTML = '';
+                const response = await fetch('/api/tickets');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP Error Status: ${response.status} (${response.statusText})`);
+                }
 
                 const tickets = await response.json();
-                
-                const queueBody = document.getElementById('priority-queue-body');
-                const historyBody = document.getElementById('history-ledger-body');
                 
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
@@ -191,7 +191,6 @@
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
-                // 1. Render Active Tasks Grid
                 if (activeTickets.length === 0) {
                     queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending support requests.</div>';
                 } else {
@@ -219,7 +218,6 @@
                     });
                 }
 
-                // 2. Render Historical Archive Ledger
                 if (resolvedTickets.length === 0) {
                     historyBody.innerHTML = '<div class="empty-text">No completed cases found in history archives.</div>';
                 } else {
