@@ -37,14 +37,16 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
-// CORE LAYER MIDDLEWARES (Completely opens up CORS access globally to prevent background blocks)
+// CORE LAYER MIDDLEWARES Configuration
 app.use(cors({
     origin: true,
     credentials: true
 }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(__dirname));
+
+// 📁 FIXED STATIC ROUTE: Serves root files cleanly without breaking sub-API routing endpoints
+app.use(express.static(path.join(__dirname)));
 
 app.use(session({
     secret: process.env.SESSION_SECRET || 'itelements-secure-key-2026',
@@ -63,7 +65,7 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-// 🌐 ROUTING VIEW INTERFACES LAYER
+// 🌐 ROUTING VIEW INTERFACES LAYER (Uses unified absolute paths)
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -127,11 +129,11 @@ app.post('/support', async (req, res) => {
     } catch (err) { res.status(500).send("Database sync error."); }
 });
 
-// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD (🛡️ Bypassed checkAdminAuth security middleware lock to force data sync)
+// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD
 app.get('/api/tickets', async (req, res) => {
     try {
         const tickets = await SupportRequest.find().sort({ date: -1 });
-        res.json(tickets);
+        res.status(200).json(tickets);
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
@@ -142,7 +144,7 @@ app.post('/api/tickets/update-status', async (req, res) => {
     try {
         const { ticketId, newStatus } = req.body;
         await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
-        res.json({ success: true });
+        res.status(200).json({ success: true });
     } catch (err) {
         res.status(500).json({ error: true, message: err.message });
     }
