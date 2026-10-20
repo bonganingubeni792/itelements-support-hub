@@ -38,9 +38,7 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// 📁 STRUCTURAL PATH ROUTING FIX: Allows views and API calls to separate cleanly
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname));
 
 app.use(session({
     secret: 'itelements-secure-key-2026',
@@ -49,7 +47,7 @@ app.use(session({
     cookie: { maxAge: 3600000, secure: false }
 }));
 
-// 🔍 LIVE TELEMETRY DATA PATH ENDPOINT BRIDGE (Moved high to prevent static files catching it)
+// 🔍 LIVE TELEMETRY DATA PATH ENDPOINT BRIDGE
 app.get('/api/tickets', async (req, res) => {
     try {
         const tickets = await SupportRequest.find().sort({ date: -1 });
