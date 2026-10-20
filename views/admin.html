@@ -88,21 +88,9 @@
             text-transform: uppercase;
             display: inline-block;
         }
-        .badge-open {
-            background-color: #2d1919;
-            color: #ff4d4d;
-            border: 1px solid #4a1a1a;
-        }
-        .badge-onhold {
-            background-color: #2d2719;
-            color: #ffcc00;
-            border: 1px solid #4a3e1a;
-        }
-        .badge-resolved {
-            background-color: #192d19;
-            color: #4dff4d;
-            border: 1px solid #1a4a1a;
-        }
+        .badge-open { background-color: #2d1919; color: #ff4d4d; border: 1px solid #4a1a1a; }
+        .badge-onhold { background-color: #2d2719; color: #ffcc00; border: 1px solid #4a3e1a; }
+        .badge-resolved { background-color: #192d19; color: #4dff4d; border: 1px solid #1a4a1a; }
 
         .status-select {
             background-color: #1a1a1a;
@@ -113,10 +101,6 @@
             font-size: 12px;
             cursor: pointer;
             width: 140px;
-        }
-        .status-select:focus {
-            outline: none;
-            border-color: #1a73e8;
         }
         
         .loading-text, .empty-text {
@@ -135,7 +119,7 @@
         <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
     </div>
 
-    <!-- 1. ACTIVE LIVE MONITORING ESCALATION QUEUE -->
+    <!-- 1. ESCALATION QUEUE CARD CONTAINER -->
     <div class="dashboard-card">
         <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices (Open & On Hold).</div>
@@ -149,12 +133,13 @@
             <div class="col-actions">Change Work Status</div>
         </div>
         
+        <!-- Live insertion target zone with fixed matching ID -->
         <div id="priority-queue-body">
             <div class="loading-text">Querying cloud datacenter channels...</div>
         </div>
     </div>
 
-    <!-- 2. HISTORICAL ARCHIVE RESOLUTION LEDGER -->
+    <!-- 2. HISTORICAL LEDGER CARD CONTAINER -->
     <div class="dashboard-card">
         <div class="card-title">⏳ Job Resolution History Ledger</div>
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
@@ -168,6 +153,7 @@
             <div class="col-actions">Change Work Status</div>
         </div>
         
+        <!-- Live insertion target zone with fixed matching ID -->
         <div id="history-ledger-body">
             <div class="loading-text">Parsing historical database streams...</div>
         </div>
@@ -182,16 +168,17 @@
                 const queueBody = document.getElementById('priority-queue-body');
                 const historyBody = document.getElementById('history-ledger-body');
                 
+                // Completely flush loading placeholders out of existence
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
-                // Separate active cases from archive ledger matches
+                // Partition database documents into active workflows vs closed archives
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
-                // 1. Render Active Tasks Inside Rows
+                // 1. Draw Active Ticket Rows
                 if (activeTickets.length === 0) {
-                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending support requests in queue indices.</div>';
+                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending support requests in active filters.</div>';
                 } else {
                     activeTickets.forEach(item => {
                         const currentStatus = item.status || 'Open';
@@ -203,7 +190,7 @@
                                 <div class="col-client">${item.name || 'Anonymous'} (${item.email || 'N/A'})</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                <div class="col-issue">${item.issue || 'No explicit log description details.'}</div>
+                                <div class="col-issue">${item.issue || 'No log details.'}</div>
                                 <div class="col-status"><span class="status-badge ${badgeClass}">${currentStatus}</span></div>
                                 <div class="col-actions">
                                     <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
@@ -217,17 +204,17 @@
                     });
                 }
 
-                // 2. Render Historical Archive Columns
+                // 2. Draw History Ticket Rows
                 if (resolvedTickets.length === 0) {
-                    historyBody.innerHTML = '<div class="empty-text">No completed cases found inside archive nodes.</div>';
+                    historyBody.innerHTML = '<div class="empty-text">No archived records indexed inside ledger archives.</div>';
                 } else {
                     resolvedTickets.forEach(item => {
                         historyBody.innerHTML += `
-                            <div class="data-row" style="opacity: 0.65;">
+                            <div class="data-row" style="opacity: 0.6;">
                                 <div class="col-client">${item.name || 'Anonymous'} (${item.email || 'N/A'})</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                <div class="col-issue">${item.issue || 'No explicit closed summary logs.'}</div>
+                                <div class="col-issue">${item.issue || 'No log summary.'}</div>
                                 <div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div>
                                 <div class="col-actions">
                                     <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
@@ -242,4 +229,5 @@
                 }
 
             } catch (error) {
-                console.error("Layout Binding Data Sync Failure:", error);
+                console.error("Critical rendering failure:", error);
+                document.getElementById('priority-queue-body').innerHTML = 
