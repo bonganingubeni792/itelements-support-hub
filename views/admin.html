@@ -119,7 +119,6 @@
         <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
     </div>
 
-    <!-- 1. ESCALATION QUEUE CARD CONTAINER -->
     <div class="dashboard-card">
         <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices (Open & On Hold).</div>
@@ -138,7 +137,6 @@
         </div>
     </div>
 
-    <!-- 2. HISTORICAL LEDGER CARD CONTAINER -->
     <div class="dashboard-card">
         <div class="card-title">⏳ Job Resolution History Ledger</div>
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
@@ -158,13 +156,12 @@
     </div>
 
     <script>
-        // Dynamically extract the current exact deployment URL address layer
-        const serverOrigin = window.location.origin;
+        // 🚀 CRITICAL ABSOLUTE PATH OVERRIDE: Targets the live Render domain structure explicitly
+        const API_BASE = "https://onrender.com";
 
         async function fetchLiveTickets() {
             try {
-                // Fetch data utilizing the absolute application domain route mapping
-                const response = await fetch(`${serverOrigin}/api/tickets`);
+                const response = await fetch(`${API_BASE}/api/tickets`);
                 const tickets = await response.json();
                 
                 const queueBody = document.getElementById('priority-queue-body');
@@ -176,7 +173,6 @@
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
-                // 1. Draw Active Ticket Rows
                 if (activeTickets.length === 0) {
                     queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending support requests.</div>';
                 } else {
@@ -190,7 +186,7 @@
                                 <div class="col-client">${item.name || 'Anonymous'} (${item.email || 'N/A'})</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                <div class="col-issue">${item.issue || 'No log details.'}</div>
+                                <div class="col-issue">${item.issue || 'No explicit log description.'}</div>
                                 <div class="col-status"><span class="status-badge ${badgeClass}">${currentStatus}</span></div>
                                 <div class="col-actions">
                                     <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
@@ -204,17 +200,16 @@
                     });
                 }
 
-                // 2. Draw History Ticket Rows
                 if (resolvedTickets.length === 0) {
-                    historyBody.innerHTML = '<div class="empty-text">No archived records found.</div>';
+                    historyBody.innerHTML = '<div class="empty-text">No completed cases found in history archives.</div>';
                 } else {
                     resolvedTickets.forEach(item => {
                         historyBody.innerHTML += `
-                            <div class="data-row" style="opacity: 0.6;">
+                            <div class="data-row" style="opacity: 0.65;">
                                 <div class="col-client">${item.name || 'Anonymous'} (${item.email || 'N/A'})</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                <div class="col-issue">${item.issue || 'No log summary.'}</div>
+                                <div class="col-issue">${item.issue || 'No explicit log summary.'}</div>
                                 <div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div>
                                 <div class="col-actions">
                                     <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
@@ -229,5 +224,11 @@
                 }
 
             } catch (error) {
-                console.error("Critical rendering failure:", error);
+                console.error("Dashboard Sync Crash:", error);
                 document.getElementById('priority-queue-body').innerHTML = 
+                    '<div class="loading-text" style="color: #ff3333;">❌ Data acquisition error. Connection interrupted.</div>';
+            }
+        }
+
+        async function updateTicketStatus(ticketId, newStatus) {
+            try {
