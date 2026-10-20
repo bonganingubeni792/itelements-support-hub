@@ -105,6 +105,17 @@ app.get('/api/tickets', async (req, res) => {
     }
 });
 
+// 🔄 DYNAMIC STATUS MANAGER PIPELINE ROUTE
+app.post('/api/tickets/update-status', async (req, res) => {
+    try {
+        const { ticketId, newStatus } = req.body;
+        await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: true });
+    }
+});
+
 // ENGINE LISTENER STARTUP
 app.listen(PORT, () => {
     console.log(`🚀 ENGINE RUNNING ON PORT ${PORT}`);
