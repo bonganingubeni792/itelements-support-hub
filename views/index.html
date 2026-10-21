@@ -11,7 +11,6 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-
         body {
             background-color: #0b0c10;
             color: #ffffff;
@@ -21,7 +20,6 @@
             min-height: 100vh;
             padding: 40px 20px;
         }
-
         header {
             display: flex;
             justify-content: space-between;
@@ -30,12 +28,10 @@
             max-width: 1000px;
             margin-bottom: 40px;
         }
-
         .logo-container {
             display: flex;
             align-items: center;
         }
-
         .logo-wrapper {
             display: inline-block;
             position: relative;
@@ -44,7 +40,6 @@
             margin-right: 12px;
             vertical-align: middle;
         }
-
         .logo-ring {
             width: 100%;
             height: 100%;
@@ -57,7 +52,6 @@
             align-items: center;
             transform: rotate(-45deg);
         }
-
         .logo-inner-text {
             color: #ffffff;
             font-size: 0.75rem;
@@ -66,21 +60,17 @@
             font-family: 'Georgia', serif;
             transform: rotate(45deg);
         }
-
         .logo-text {
             font-size: 1.4rem;
             font-weight: 900;
         }
-
         .logo-text span {
             color: #ff1a1a;
         }
-
         nav {
             display: flex;
             align-items: center;
         }
-
         nav a {
             color: #ffffff;
             text-decoration: none;
@@ -89,11 +79,9 @@
             font-weight: 500;
             transition: color 0.2s;
         }
-
         nav a:hover {
             color: #ff1a1a;
         }
-
         .nav-whatsapp-link {
             background-color: #25d366;
             color: #ffffff !important;
@@ -108,31 +96,26 @@
             text-decoration: none;
             transition: background-color 0.2s, transform 0.2s;
         }
-
         .nav-whatsapp-link:hover {
             background-color: #20ba5a !important;
             transform: translateY(-1px);
         }
-
         .hero-section {
             text-align: center;
             max-width: 800px;
             margin-bottom: 50px;
         }
-
         .hero-section h1 {
             font-size: 3rem;
             font-weight: 900;
             margin-bottom: 20px;
             line-height: 1.2;
         }
-
         .hero-section p {
             color: #aaaaaa;
             font-size: 1.1rem;
             line-height: 1.6;
         }
-
         .compact-nav-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -141,7 +124,6 @@
             max-width: 1000px;
             margin-bottom: 50px;
         }
-
         .compact-box {
             background-color: #121318;
             border: 1px solid #22252a;
@@ -152,25 +134,21 @@
             color: #ffffff;
             transition: border-color 0.2s, transform 0.2s;
         }
-
         .compact-box:hover {
             border-color: #ff1a1a;
             transform: translateY(-2px);
         }
-
         .compact-box h3 {
             font-size: 1.1rem;
             font-weight: 800;
             color: #ff1a1a;
             margin-bottom: 8px;
         }
-
         .compact-box p {
             color: #aaaaaa;
             font-size: 0.85rem;
             line-height: 1.4;
         }
-
         .hourly-section {
             width: 100%;
             max-width: 1000px;
@@ -181,24 +159,20 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             margin-bottom: 40px;
         }
-
         .hourly-header {
             text-align: center;
             margin-bottom: 30px;
         }
-
         .hourly-header h2 {
             font-size: 1.6rem;
             font-weight: 900;
             margin-bottom: 5px;
             color: #ffffff;
         }
-
         .hourly-header p {
             color: #888888;
             font-size: 0.9rem;
         }
-
         .calculator-interface {
             display: flex;
             align-items: center;
@@ -208,7 +182,6 @@
             padding: 25px;
             border-radius: 8px;
         }
-
         .selector-side {
             display: flex;
             flex-direction: column;
@@ -216,7 +189,6 @@
             width: 50%;
             text-align: left;
         }
-
         .selector-side label {
             font-size: 0.9rem;
             font-weight: bold;
@@ -225,7 +197,6 @@
             letter-spacing: 0.5px;
             margin-bottom: 5px;
         }
-
         .custom-select {
             width: 100%;
             padding: 14px;
@@ -238,11 +209,9 @@
             cursor: pointer;
             outline: none;
         }
-
         .custom-select:focus {
             border-color: #ff1a1a;
         }
-
         .pricing-side {
             text-align: right;
             width: 45%;
@@ -251,17 +220,14 @@
             align-items: flex-end;
             gap: 15px;
         }
-
         .price-display {
             font-size: 1.8rem;
             font-weight: 800;
             color: #ffffff;
         }
-
         .price-display span {
             color: #ff1a1a;
         }
-
         .hourly-pay-btn {
             padding: 14px 28px;
             background-color: #ff1a1a;
@@ -275,17 +241,17 @@
             letter-spacing: 0.5px;
             transition: background-color 0.2s;
         }
-
         .hourly-pay-btn:hover {
             background-color: #cc0000;
         }
-
         .whatsapp-icon-svg {
             width: 16px;
             height: 16px;
             fill: #ffffff;
         }
     </style>
+    <!-- 💳 Paystack Secure Script Integrations -->
+    <script src="https://paystack.co"></script>
 </head>
 <body>
     <header>
@@ -348,7 +314,7 @@
             </div>
             <div class="pricing-side">
                 <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <button class="hourly-pay-btn" onclick="checkoutHourlyJob()">Pay via Capitec</button>
+                <button class="hourly-pay-btn" onclick="initializePaystackCheckout()">Pay via Paystack 💳</button>
             </div>
         </div>
     </div>
@@ -356,38 +322,44 @@
     <script>
         var ratePerHour = 350;
 
-        async function checkoutHourlyJob() {
+        function initializePaystackCheckout() {
             var hoursField = document.getElementById("hoursSelector");
             var chosenHours = parseInt(hoursField ? hoursField.value : "1");
-            var directCost = chosenHours * ratePerHour;
-            var randomRef = "ITE-" + Math.floor(1000 + Math.random() * 9000);
+            var totalCost = chosenHours * ratePerHour;
+            var paymentRef = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
 
-            try {
-                await fetch('/api/bookings/hourly', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        hours: chosenHours,
-                        amount: directCost,
-                        reference: randomRef,
-                        email: 'Ad-Hoc Guest Client'
-                    })
-                });
-            } catch(e) { console.error("Data tracking capture offline bypass."); }
-
-            alert(
-                "IT ELEMENTS AD-HOC HOURLY CHECKOUT\n" +
-                "==================================\n" +
-                "Allocated Duration: " + chosenHours + " Hour(s) Dedicated Support\n" +
-                "Total Settlement Due: R" + directCost + ".00\n\n" +
-                "Please make an Immediate EFT or PayShap payment from your bank app:\n\n" +
-                "Bank Name: Capitec Business Bank\n" +
-                "Account Holder: IT Elements Support\n" +
-                "Account Number: 1051829374\n" +
-                "Branch Code: 470010\n" +
-                "Payment Reference: " + randomRef + "\n\n" +
-                "Once paid, open a ticket or drop your proof on WhatsApp to activate your pipeline!"
-            );
+            // Open the interactive Paystack secure pop-up engine
+            var handler = PaystackPop.setup({
+                key: 'pk_test_131c4a5b9ffb6f4e8ea6fa6f4bcbb59015c6ed43b', // Your Test Public Key
+                email: 'customer@itelements.help', // Default fallback guest contact
+                amount: totalCost * 100, // Multiplied by 100 because Paystack handles values in cents
+                currency: 'ZAR',
+                ref: paymentRef,
+                callback: async function(response) {
+                    // This section runs automatically ONLY if the bank transaction is successful!
+                    alert("✅ Payment Successful! Reference: " + response.reference);
+                    
+                    // Log the successful payment instantly down to your MongoDB Atlas collections
+                    try {
+                        await fetch('/api/bookings/hourly', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                hours: chosenHours,
+                                amount: totalCost,
+                                reference: response.reference,
+                                email: 'Verified Paystack Client'
+                            })
+                        });
+                        alert("🚀 Allocation activated in queue channels! Redirecting...");
+                        window.location.reload();
+                    } catch(e) { console.error(e); }
+                },
+                onClose: function() {
+                    alert("❌ Transaction canceled. Secure portal closed.");
+                }
+            });
+            handler.openIframe();
         }
     </script>
 </body>
