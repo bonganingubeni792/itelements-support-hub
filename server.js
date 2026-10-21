@@ -42,7 +42,7 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// 🚨 STATIC ASSET PATH PATCH: Explicitly structures exposure layers for the views asset cluster
+// ASSET MANAGER LAYER
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(__dirname));
 
@@ -119,6 +119,26 @@ app.post('/client/login', async (req, res) => {
     } catch (err) {
         res.status(500).send(`<h3>Login Failure</h3><p>${err.message}</p>`);
     }
+});
+
+// 🔒 NEW: SECURE LOGOUT ROUTE MANAGER (Fixes the Cannot GET /admin/logout error)
+app.get('/admin/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("❌ Session clearance error:", err);
+            return res.redirect('/admin');
+        }
+        res.clearCookie('connect.sid'); // Flushes out the active login tracking cookie keys
+        res.send('<script>alert("Logged out of secure system core layers cleanly.");window.location.href="/client/login";</script>');
+    });
+});
+
+app.get('/client/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) return res.redirect('/dashboard');
+        res.clearCookie('connect.sid');
+        res.redirect('/client/login');
+    });
 });
 
 // 🎫 TICKETING DISPATCH SUBMISSION INTERFACE ROUTING
