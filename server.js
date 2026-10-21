@@ -37,12 +37,21 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
+// ⏳ NEW: AD-HOC HOURLY BOOKING MODEL
+const HourlyBooking = mongoose.model('HourlyBooking', new mongoose.Schema({
+    email: { type: String, default: 'Guest / Anonymous' },
+    hoursAllocated: { type: Number, required: true },
+    amountPaid: { type: Number, required: true },
+    paymentReference: { type: String, required: true },
+    status: { type: String, default: 'Pending Verification' }, // Pending Verification, Active, or Exhausted
+    date: { type: Date, default: Date.now }
+}, { collection: 'hourlybookings' }));
+
 // MIDDLEWARE
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ASSET MANAGER LAYER
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(__dirname));
 
@@ -126,19 +135,11 @@ app.get('/admin/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) return res.redirect('/admin');
         res.clearCookie('connect.sid');
-        res.send('<script>alert("Logged out cleanest.");window.location.href="/client/login";</script>');
+        res.send('<script>alert("Logged out cleanly.");window.location.href="/client/login";</script>');
     });
 });
 
-app.get('/client/logout', (req, res) => {
-    req.session.destroy((err) => {
-        if (err) return res.redirect('/dashboard');
-        res.clearCookie('connect.sid');
-        res.redirect('/client/login');
-    });
-});
-
-// 🎫 TICKETING DISPATCH SUBMISSION INTERFACE ROUTING
+// 🎫 TICKETING ROUTING PIPELINES
 app.post('/support', async (req, res) => {
     try {
         const { name, email, remoteId, remotePassword, issue } = req.body;
@@ -149,7 +150,6 @@ app.post('/support', async (req, res) => {
     }
 });
 
-// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD
 app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     try {
         const tickets = await SupportRequest.find().sort({ date: -1 });
@@ -159,17 +159,52 @@ app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     }
 });
 
-// 🔄 DYNAMIC STATUS CONTROLLER ENGINE FOR TICKET ROUTING MANAGER
 app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
     try {
         const { ticketId, newStatus } = req.body;
-        const allowed = ['Open', 'On Hold', 'Resolved'];
-        if (!allowed.includes(newStatus)) return res.status(400).json({ error: true });
-        
         await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
         res.json({ success: true });
     } catch (err) {
-        res.status(500).json({ error: true, message: err.message });
+        res.status(500).json({ error: true });
+    }
+});
+
+// ⏳ NEW: AD-HOC HOURLY BOOKING DISPATCH ROUTE (Saves from index.html calculator click)
+app.post('/api/bookings/hourly', async (req, res) => {
+    try {
+        const { hours, amount, reference, email } = req.body;
+        const newBooking = new HourlyBooking({
+            email: email || 'Guest / Unauthenticated',
+            hoursAllocated: parseInt(hours),
+            amountPaid: parseFloat(amount),
+            paymentReference: reference
+        });
+        await newBooking.save();
+        res.json({ success: true, booking: newBooking });
+    } catch (err) {
+        res.status(500).json({ error: true, details: err.message });
+    }
+});
+
+// 🔍 NEW: FETCH USERS & HOURLY BOOKINGS FOR ADMIN LEDGER DECK
+app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
+    try {
+        const users = await UserAccount.find({}, { password: 0 }); // Fetch all users, hide passwords
+        const hourlyBookings = await HourlyBooking.find().sort({ date: -1 });
+        res.json({ users, hourlyBookings });
+    } catch (err) {
+        res.status(500).json({ error: true, details: err.message });
+    }
+});
+
+// 🔄 NEW: UPDATE HOURLY BOOKING TRACKING STATUS FROM ADMIN PANEL
+app.post('/api/bookings/update-status', checkAdminAuth, async (req, res) => {
+    try {
+        const { bookingId, status } = req.body;
+        await HourlyBooking.findByIdAndUpdate(bookingId, { status: status });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: true });
     }
 });
 
@@ -183,27 +218,13 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
     }
 });
 
-// ❌ CANCEL SUBSCRIPTION ROUTE CHANNELS (Handles both possible form paths)
 async function handleSubscriptionCancellation(req, res) {
     try {
-        if (!req.session.userEmail) {
-            return res.send('<script>alert("Session expired. Please log in again.");window.location.href="/client/login";</script>');
-        }
-        await UserAccount.findOneAndUpdate(
-            { email: req.session.userEmail }, 
-            { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }
-        );
-        res.send('<script>alert("Your subscription plan has been successfully canceled.");window.location.href="/dashboard";</script>');
-    } catch (err) {
-        res.status(500).send(`<h3>Cancellation Error</h3><p>${err.message}</p>`);
-    }
+        if (!req.session.userEmail) return res.send('<script>alert("Expired.");window.location.href="/client/login";</script>');
+        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' });
+        res.send('<script>alert("Subscription canceled successfully.");window.location.href="/dashboard";</script>');
+    } catch (err) { res.status(500).send(err.message); }
 }
-
-// Binds both endpoints to the same handler engine so neither links can fail
 app.post('/api/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
 app.post('/api/client/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
 
-// 🚀 INITIALIZE SYSTEM SERVER LISTENERS
-app.listen(PORT, () => {
-    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
-});
