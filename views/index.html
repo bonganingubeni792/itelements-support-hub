@@ -250,7 +250,7 @@
             fill: #ffffff;
         }
     </style>
-    <!-- 💳 Paystack Secure Script Integrations -->
+    <!-- 💳 Paystack Secure Inline Deployment Script -->
     <script src="https://paystack.co"></script>
 </head>
 <body>
@@ -314,7 +314,8 @@
             </div>
             <div class="pricing-side">
                 <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <button class="hourly-pay-btn" onclick="initializePaystackCheckout()">Pay via Paystack 💳</button>
+                <!-- 🚀 FIXED BINDING: Swapped function name back to match script structure perfectly -->
+                <button class="hourly-pay-btn" onclick="checkoutHourlyJob()">Pay via Paystack 💳</button>
             </div>
         </div>
     </div>
@@ -322,7 +323,7 @@
     <script>
         var ratePerHour = 350;
 
-        function initializePaystackCheckout() {
+        async function checkoutHourlyJob() {
             var hoursField = document.getElementById("hoursSelector");
             var chosenHours = parseInt(hoursField ? hoursField.value : "1");
             var totalCost = chosenHours * ratePerHour;
@@ -330,16 +331,14 @@
 
             // Open the interactive Paystack secure pop-up engine
             var handler = PaystackPop.setup({
-                key: 'pk_test_131c4a5b9ffb6f4e8ea6fa6f4bcbb59015c6ed43b', // Your Test Public Key
-                email: 'customer@itelements.help', // Default fallback guest contact
-                amount: totalCost * 100, // Multiplied by 100 because Paystack handles values in cents
+                key: 'pk_test_131c4a5b9ffb6f4e8ea6fa6f4bcbb59015c6ed43b', 
+                email: 'customer@itelements.help', 
+                amount: totalCost * 100, 
                 currency: 'ZAR',
                 ref: paymentRef,
                 callback: async function(response) {
-                    // This section runs automatically ONLY if the bank transaction is successful!
                     alert("✅ Payment Successful! Reference: " + response.reference);
                     
-                    // Log the successful payment instantly down to your MongoDB Atlas collections
                     try {
                         await fetch('/api/bookings/hourly', {
                             method: 'POST',
