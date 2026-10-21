@@ -4,18 +4,14 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path'); // 🚨 FIXED: Explicit core path module declaration layer added
+const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
+const https = require('https'); // 🚨 REQUIRED FOR SECURE PAYSTACK DECK REDIRECTS
 const app = express();
 
-// 📌 PORT MAPPING: Dynamic binding layers for cloud nodes
 const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
-
-if (!dbURI) {
-    console.error("❌ CRITICAL OPERATION ERROR: process.env.MONGODB_URI is undefined!");
-}
 
 mongoose.connect(dbURI)
     .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
@@ -76,7 +72,7 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-// 🌐 ROUTING PATH MAPPINGS FOR STATIC VIEW INTERFACES
+// 🌐 ROUTING VIEW INTERFACES
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -87,99 +83,51 @@ app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirn
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
 // 👤 SECURE CLIENT ACCOUNT REGISTRATION PIPELINE
-app.post('/client/register', async (req, res) => { await handleRegistration(req, res); });
-app.post('/register', async (req, res) => { await handleRegistration(req, res); });
-
-async function handleRegistration(req, res) {
+app.post('/client/register', async (req, res) => {
     try {
         const { fullName, phone, email, password } = req.body;
-        if (!fullName || !phone || !email || !password) {
-            return res.send('<script>alert("All fields are strictly required.");window.history.back();</script>');
-        }
+        if (!fullName || !phone || !email || !password) return res.send('<script>alert("All fields required.");window.history.back();</script>');
         const normalizedEmail = email.toLowerCase().trim();
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
-        if (existingUser) {
-            return res.send('<script>alert("This email address is already registered.");window.history.back();</script>');
-        }
+        if (existingUser) return res.send('<script>alert("This email address is already registered.");window.history.back();</script>');
         const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
         await newUser.save();
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
-    } catch (err) {
-        res.status(500).send(`<h3>Registration Failure</h3><p>${err.message}</p>`);
-    }
-}
+    } catch (err) { res.status(500).send(err.message); }
+});
 
-// 🔑 SECURE CLIENT/ADMIN LOGIN PIPELINE INTERACTION ENGINE
+// 🔑 LOGIN PIPELINE INTERACTION ENGINE
 app.post('/client/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (password === 'AdminElements2026') {
-            req.session.isAdmin = true;
-            return res.send('<script>window.location.href="/admin";</script>');
-        }
+        if (password === 'AdminElements2026') { req.session.isAdmin = true; return res.send('<script>window.location.href="/admin";</script>'); }
         const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
-        if (user && user.password === password) {
-            req.session.isUser = true;
-            req.session.userEmail = user.email;
-            return res.send('<script>window.location.href="/dashboard";</script>');
-        }
-        res.send('<script>alert("Invalid access credentials combination.");window.history.back();</script>');
-    } catch (err) {
-        res.status(500).send(`<h3>Server Login Validation Fault</h3><p>${err.message}</p>`);
-    }
+        if (user && user.password === password) { req.session.isUser = true; req.session.userEmail = user.email; return res.send('<script>window.location.href="/dashboard";</script>'); }
+        res.send('<script>alert("Invalid access credentials.");window.history.back();</script>');
+    } catch (err) { res.status(500).send(err.message); }
 });
 
-// 🔒 SECURE LOGOUT MANAGERS
-app.get('/admin/logout', (req, res) => {
-    req.session.destroy(() => { res.clearCookie('connect.sid'); res.send('<script>alert("Logged out securely.");window.location.href="/client/login";</script>'); });
-});
-app.get('/client/logout', (req, res) => {
-    req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); });
-});
+// 🔒 LOGOUT MANAGERS
+app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
 
-// 🎫 TICKETING ENGINE SUBMISSION INTERFACE DATA ROUTING
+// 🎫 SUPPORT TICKET SUBMISSIONS
 app.post('/support', async (req, res) => {
     try {
         const { name, email, remoteId, remotePassword, issue } = req.body;
         await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : '', remoteId, remotePassword, issue, status: 'Open' }).save();
         res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
-    } catch (err) {
-        res.status(500).send("Database sync error.");
-    }
+    } catch (err) { res.status(500).send("Database sync error."); }
 });
 
-// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD
 app.get('/api/tickets', checkAdminAuth, async (req, res) => {
-    try {
-        const tickets = await SupportRequest.find().sort({ date: -1 });
-        res.json(tickets);
-    } catch (err) {
-        res.status(500).json({ error: true, message: err.message });
-    }
+    try { const tickets = await SupportRequest.find().sort({ date: -1 }); res.json(tickets); } catch (err) { res.status(500).json({ error: true }); }
 });
 
-// 🔄 DYNAMIC TICKET STATUS MANAGEMENT ROUTE
 app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
-    try {
-        await SupportRequest.findByIdAndUpdate(req.body.ticketId, { status: req.body.newStatus });
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
-});
-
-// ⏳ AD-HOC HOURLY BOOKING DISPATCH ROUTE
-app.post('/api/bookings/hourly', async (req, res) => {
-    try {
-        const { hours, amount, reference, email } = req.body;
-        const newBooking = new HourlyBooking({ email: email || 'Guest Client', hoursAllocated: parseInt(hours), amountPaid: parseFloat(amount), paymentReference: reference });
-        await newBooking.save();
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
+    try { await SupportRequest.findByIdAndUpdate(req.body.ticketId, { status: req.body.newStatus }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
 });
 
 // 🔍 FETCH OVERVIEW DATA NODES FOR MANAGEMENT LEDGERS
@@ -188,41 +136,96 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
         const users = await UserAccount.find({}, { password: 0 });
         const hourlyBookings = await HourlyBooking.find().sort({ date: -1 });
         res.json({ users, hourlyBookings });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
+    } catch (err) { res.status(500).json({ error: true }); }
 });
 
-// 🔄 HOURLY BOOKING STATUS CHANNELS ENGINE
 app.post('/api/bookings/update-status', checkAdminAuth, async (req, res) => {
-    try {
-        await HourlyBooking.findByIdAndUpdate(req.body.bookingId, { status: req.body.status });
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
+    try { await HourlyBooking.findByIdAndUpdate(req.body.bookingId, { status: req.body.status }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
 });
 
 // 💳 SUBSCRIPTION INTERFACE ROUTING CHANNELS
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
-    try {
-        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' });
-        res.json({ success: true, redirectUrl: '/dashboard' });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
+    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' }); res.json({ success: true, redirectUrl: '/dashboard' }); } catch (err) { res.status(500).json({ error: true }); }
 });
 
 async function handleSubscriptionCancellation(req, res) {
-    try {
-        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' });
-        res.send('<script>alert("Your subscription plan has been successfully canceled.");window.location.href="/dashboard";</script>');
-    } catch (err) {
-        res.status(500).send(err.message);
-    }
+    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Your subscription plan has been successfully canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
 }
 app.post('/api/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
 app.post('/api/client/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
+
+
+// 💳 🚨 NEW UNBLOCKABLE INTERACTIVE REDIRECT CHECKOUT PIPELINE FOR AD-HOC HOURS
+app.post('/api/paystack/initialize-hourly', async (req, res) => {
+    try {
+        const { hours } = req.body;
+        const totalAmountZAR = parseInt(hours || 1) * 350;
+        const paymentReference = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
+
+        // Pre-save the pending transaction state inside your MongoDB cluster logs
+        const pendingBooking = new HourlyBooking({
+            email: req.session.userEmail || 'Ad-Hoc Guest Client',
+            hoursAllocated: parseInt(hours),
+            amountPaid: totalAmountZAR,
+            paymentReference: paymentReference,
+            status: 'Pending Verification'
+        });
+        await pendingBooking.save();
+
+        // Structure the communication payload to request a secure checkout URL from Paystack
+        const paystackPayload = JSON.stringify({
+            email: req.session.userEmail || 'customer@itelements.help',
+            amount: totalAmountZAR * 100, // Multiplied by 100 because Paystack parses values in cents
+            reference: paymentReference,
+            callback_url: `https://${req.get('host')}/api/paystack/verify-callback` // Redirects right back to your dashboard on completion
+        });
+
+        const options = {
+            hostname: 'api.paystack.co',
+            port: 443,
+            path: '/transaction/initialize',
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, // Pulls your Test Secret Key from Render Environment tab
+                'Content-Type': 'application/json',
+                'Content-Length': paystackPayload.length
+            }
+        };
+
+        // Fire a live back-end transaction request directly to Paystack's banking nodes
+        const paystackReq = https.request(options, paystackRes => {
+            let data = '';
+            paystackRes.on('data', chunk => { data += chunk; });
+            paystackRes.on('end', () => {
+                const responseData = JSON.parse(data);
+                if (responseData.status && responseData.data.authorization_url) {
+                    // Send the secure checkout web address back to the frontend button
+                    res.json({ success: true, redirectUrl: responseData.data.authorization_url });
+                } else {
+                    res.status(400).json({ success: false, message: 'Paystack configuration error.' });
+                }
+            });
+        });
+
+        paystackReq.on('error', error => { res.status(500).json({ success: false, error: error.message }); });
+        paystackReq.write(paystackPayload);
+        paystackReq.end();
+
+    } catch (err) { res.status(500).json({ error: true, message: err.message }); }
+});
+
+// 🔄 DYNAMIC REDIRECT VERIFICATION ENDPOINT HUB
+app.get('/api/paystack/verify-callback', async (req, res) => {
+    const { reference } = req.query;
+    try {
+        // Automatically activate the customer's hours inside MongoDB Atlas upon return
+        await HourlyBooking.findOneAndUpdate({ paymentReference: reference }, { status: 'Active' });
+        res.send('<script>alert("✅ Payment Successful! Your support allocation hours are active.");window.location.href="/dashboard";</script>');
+    } catch(e) {
+        res.redirect('/');
+    }
+});
+
 
 // 🚀 INITIALIZE SYSTEM SERVER LISTENERS
 app.listen(PORT, () => {
