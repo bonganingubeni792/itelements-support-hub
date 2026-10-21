@@ -250,9 +250,9 @@
             fill: #ffffff;
         }
     </style>
-    <script src="https://paystack.co"></script>
 </head>
-<body>
+
+    <body>
     <header>
         <div class="logo-container">
             <div class="logo-wrapper"><div class="logo-ring"><span class="logo-inner-text">it</span></div></div>
@@ -313,19 +313,28 @@
             </div>
             <div class="pricing-side">
                 <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <button class="hourly-pay-btn" onclick="checkoutHourlyJob()">Pay via Paystack 💳</button>
+                <button class="hourly-pay-btn" id="paystack-trigger-btn">Pay via Paystack 💳</button>
             </div>
         </div>
     </div>
 
+    <!-- 💳 Load the Paystack library dynamically at runtime right before the engine boots -->
+    <script src="https://paystack.co"></script>
+
     <script>
         var ratePerHour = 350;
 
-        async function checkoutHourlyJob() {
+        function loadPaystackCheckoutWindow() {
             var hoursField = document.getElementById("hoursSelector");
             var chosenHours = parseInt(hoursField ? hoursField.value : "1");
             var totalCost = chosenHours * ratePerHour;
             var paymentRef = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
+
+            // Double check that the external library loaded cleanly in memory
+            if (typeof PaystackPop === 'undefined') {
+                alert("⏳ Secure payment layers initializing. Please click again in 3 seconds.");
+                return;
+            }
 
             var handler = PaystackPop.setup({
                 key: 'pk_test_131c4a5b9ffb6f4e8ea6fa6f4bcbb59015c6ed43b', 
@@ -356,6 +365,12 @@
             });
             handler.openIframe();
         }
+
+        // Native script listener safely bypasses browser layout event caching loops
+        document.getElementById('paystack-trigger-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            loadPaystackCheckoutWindow();
+        });
     </script>
 </body>
 </html>
