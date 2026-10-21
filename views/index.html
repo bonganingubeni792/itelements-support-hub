@@ -333,15 +333,11 @@
     </div>
 
     <script>
-        var ratePerHour = 350;
-
         function checkoutHourlyJob() {
-            var hoursField = document.getElementById("hoursSelector");
-            var versionHours = "1";
+            var hoursSelector = document.getElementById("hoursSelector");
+            var selectedHours = hoursSelector ? hoursSelector.value : "1";
             
-            if (hoursField) {
-                versionHours = hoursField.value || "1";
-            }
-
-            var incidentMatrix = {
-                "1": { cleanAmount: "R350.00", refCode: "INC-1HOUREMG", labelTitle: "1 Hour Dedicated Emergency Support" },
+            // Dynamic text calculations mapping exactly to your selected dropdown options
+            var pricingMatrix = {
+                "1": { amount: "R350.00", reference: "INC-1HOURFIX" },
+                "2": { amount: "R700.00", reference: "INC-2HOURFIX" },
