@@ -250,7 +250,6 @@
             fill: #ffffff;
         }
     </style>
-    <!-- 💳 Paystack Secure Inline Deployment Script -->
     <script src="https://paystack.co"></script>
 </head>
 <body>
@@ -314,7 +313,6 @@
             </div>
             <div class="pricing-side">
                 <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <!-- 🚀 FIXED BINDING: Swapped function name back to match script structure perfectly -->
                 <button class="hourly-pay-btn" onclick="checkoutHourlyJob()">Pay via Paystack 💳</button>
             </div>
         </div>
@@ -329,7 +327,6 @@
             var totalCost = chosenHours * ratePerHour;
             var paymentRef = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
 
-            // Open the interactive Paystack secure pop-up engine
             var handler = PaystackPop.setup({
                 key: 'pk_test_131c4a5b9ffb6f4e8ea6fa6f4bcbb59015c6ed43b', 
                 email: 'customer@itelements.help', 
@@ -338,7 +335,6 @@
                 ref: paymentRef,
                 callback: async function(response) {
                     alert("✅ Payment Successful! Reference: " + response.reference);
-                    
                     try {
                         await fetch('/api/bookings/hourly', {
                             method: 'POST',
@@ -350,7 +346,7 @@
                                 email: 'Verified Paystack Client'
                             })
                         });
-                        alert("🚀 Allocation activated in queue channels! Redirecting...");
+                        alert("🚀 Allocation activated in queue channels! Refreshing...");
                         window.location.reload();
                     } catch(e) { console.error(e); }
                 },
