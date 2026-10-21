@@ -121,15 +121,12 @@ app.post('/client/login', async (req, res) => {
     }
 });
 
-// 🔒 NEW: SECURE LOGOUT ROUTE MANAGER (Fixes the Cannot GET /admin/logout error)
+// 🔒 LOGOUT ROUTE MANAGERS
 app.get('/admin/logout', (req, res) => {
     req.session.destroy((err) => {
-        if (err) {
-            console.error("❌ Session clearance error:", err);
-            return res.redirect('/admin');
-        }
-        res.clearCookie('connect.sid'); // Flushes out the active login tracking cookie keys
-        res.send('<script>alert("Logged out of secure system core layers cleanly.");window.location.href="/client/login";</script>');
+        if (err) return res.redirect('/admin');
+        res.clearCookie('connect.sid');
+        res.send('<script>alert("Logged out cleanest.");window.location.href="/client/login";</script>');
     });
 });
 
@@ -186,14 +183,25 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
     }
 });
 
-app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
+// ❌ CANCEL SUBSCRIPTION ROUTE CHANNELS (Handles both possible form paths)
+async function handleSubscriptionCancellation(req, res) {
     try {
-        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' });
-        res.json({ success: true });
+        if (!req.session.userEmail) {
+            return res.send('<script>alert("Session expired. Please log in again.");window.location.href="/client/login";</script>');
+        }
+        await UserAccount.findOneAndUpdate(
+            { email: req.session.userEmail }, 
+            { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }
+        );
+        res.send('<script>alert("Your subscription plan has been successfully canceled.");window.location.href="/dashboard";</script>');
     } catch (err) {
-        res.status(500).json({ error: true });
+        res.status(500).send(`<h3>Cancellation Error</h3><p>${err.message}</p>`);
     }
-});
+}
+
+// Binds both endpoints to the same handler engine so neither links can fail
+app.post('/api/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
+app.post('/api/client/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
 
 // 🚀 INITIALIZE SYSTEM SERVER LISTENERS
 app.listen(PORT, () => {
