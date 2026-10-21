@@ -251,6 +251,26 @@
             background-color: #cc0000;
         }
 
+        /* WhatsApp Floating Button */
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25D366;
+            color: #fff;
+            padding: 14px 18px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-family: Arial, sans-serif;
+            transition: background-color 0.2s;
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #1ebe5d;
+        }
+
         @media (max-width: 768px) {
             .compact-nav-grid {
                 grid-template-columns: 1fr;
@@ -302,42 +322,3 @@
         <a href="/support" class="compact-box">
             <h3>Submit Support Ticket</h3>
             <p>Experiencing hardware slow downs or virus logs? Open a ticket and drop your remote connection key code.</p>
-        </a>
-        <a href="/client/login" class="compact-box">
-            <h3>Customer Access Hub</h3>
-            <p>Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</p>
-        </a>
-    </div>
-
-    <div class="hourly-section">
-        <div class="hourly-header">
-            <h2>Need a Quick Incident Fix?</h2>
-            <p>Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
-        </div>
-        <div class="calculator-interface">
-            <div class="selector-side">
-                <label for="hoursSelector">Select Duration Allocation:</label>
-                <select id="hoursSelector" class="custom-select" onchange="document.getElementById('calculatedPrice').innerText = String(parseInt(this.value) * 350);">
-                    <option value="1">1 Hour Dedicated Emergency Support</option>
-                    <option value="2">2 Hours Dedicated Support Package</option>
-                    <option value="3">3 Hours Comprehensive Network Overhaul</option>
-                    <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
-                    <option value="5">5 Hours Complete Enterprise SLA Care</option>
-                </select>
-            </div>
-            <div class="pricing-side">
-                <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <button class="hourly-pay-btn" onclick="checkoutHourlyJob()">Pay via Capitec</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function checkoutHourlyJob() {
-            var hoursSelector = document.getElementById("hoursSelector");
-            var selectedHours = hoursSelector ? hoursSelector.value : "1";
-            
-            // Dynamic text calculations mapping exactly to your selected dropdown options
-            var pricingMatrix = {
-                "1": { amount: "R350.00", reference: "INC-1HOURFIX" },
-                "2": { amount: "R700.00", reference: "INC-2HOURFIX" },
