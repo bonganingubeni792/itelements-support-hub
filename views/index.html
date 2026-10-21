@@ -294,49 +294,56 @@
         </a>
     </div>
 
-           <div class="hourly-section">
-            <div class="hourly-header">
-                <h2>Need a Quick Incident Fix?</h2>
-                <p>Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
+    <div class="hourly-section">
+        <div class="hourly-header">
+            <h2>Need a Quick Incident Fix?</h2>
+            <p>Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
+        </div>
+        <div class="calculator-interface">
+            <div class="selector-side">
+                <label for="hoursSelector">Select Duration Allocation:</label>
+                <select id="hoursSelector" class="custom-select" onchange="document.getElementById('calculatedPrice').innerText = String(parseInt(this.value) * 350);">
+                    <option value="1">1 Hour Dedicated Emergency Support</option>
+                    <option value="2">2 Hours Dedicated Support Package</option>
+                    <option value="3">3 Hours Comprehensive Network Overhaul</option>
+                    <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
+                    <option value="5">5 Hours Complete Enterprise SLA Care</option>
+                </select>
             </div>
-            <div class="calculator-interface">
-                <div class="selector-side">
-                    <label for="hoursSelector">Select Duration Allocation:</label>
-                    <!-- FIXED: Changed cost multiplier parameter from 150 back to 350 -->
-                    <select id="hoursSelector" class="custom-select" onchange="    document.getElementById('calculatedPrice').innerText = String(parseInt(this.value) * 350);">
-                        <option value="1">1 Hour Dedicated Emergency Support</option>
-                        <option value="2">2 Hours Dedicated Support Package</option>
-                        <option value="3">3 Hours Comprehensive Network Overhaul</option>
-                        <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
-                        <option value="5">5 Hours Complete Enterprise SLA Care</option>
-                    </select>
-                </div>
-                <div class="pricing-side">
-                    <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                    <button class="hourly-pay-btn" onclick="    checkoutHourlyJob()">Pay via Capitec</button>
-                </div>
+            <div class="pricing-side">
+                <div class="price-display">R<span id="calculatedPrice">350</span></div>
+                <button class="hourly-pay-btn" onclick="checkoutHourlyJob()">Pay via Capitec</button>
             </div>
         </div>
+    </div>
 
-        <script>
-// FIXED: Reverted ad-hoc pricing multiplier structure back to R350
-var ratePerHour = 350;
+    <script>
+        var ratePerHour = 350;
 
-function checkoutHourlyJob() {
-    var hoursField = document.getElementById("hoursSelector");
-    var chosenHours = "1";
+        function checkoutHourlyJob() {
+            var hoursField = document.getElementById("hoursSelector");
+            var chosenHours = "1";
 
-    if (hoursField) {
-        chosenHours = String(hoursField.value || "1");
-    }
+            if (hoursField) {
+                chosenHours = String(hoursField.value || "1");
+            }
 
-    var directCost = parseInt(chosenHours) * ratePerHour;
+            var directCost = parseInt(chosenHours) * ratePerHour;
 
-    // FIXED: Fully enclosed parameters ensure the alert window displays details on click
-    alert(
-        "IT ELEMENTS AD-HOC HOURLY CHECKOUT\n" +
-        "==================================\n" +
-        "Please make an Immediate EFT or PayShap payment from your bank app:\n\n" +
-        "Bank Name: Capitec Business Bank\n" +
-        "Account Holder: IT Elements Support\n" +
- 
+            alert(
+                "IT ELEMENTS AD-HOC HOURLY CHECKOUT\n" +
+                "==================================\n" +
+                "Allocated Duration: " + chosenHours + " Hour(s) Dedicated Support\n" +
+                "Total Settlement Due: R" + directCost + "\n\n" +
+                "Please make an Immediate EFT or PayShap payment from your bank app:\n\n" +
+                "Bank Name: Capitec Business Bank\n" +
+                "Account Holder: IT Elements Support\n" +
+                "Account Number: 1051829374\n" +
+                "Branch Code: 470010\n" +
+                "Payment Reference: ITE-" + Math.floor(1000 + Math.random() * 9000) + "\n\n" +
+                "Once paid, open a ticket or drop your proof on WhatsApp to activate your pipeline!"
+            );
+        }
+    </script>
+</body>
+</html>
