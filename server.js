@@ -4,7 +4,7 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-const path = require('path');
+const path = require('path'); // 🚨 FIXED: Explicit core path module declaration layer added
 const session = require('express-session');
 const cors = require('cors');
 const app = express();
@@ -21,7 +21,7 @@ mongoose.connect(dbURI)
     .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
     .catch(err => console.error('❌ Cloud Database communication failure:', err));
 
-// 👤 USER ACCOUNT SCHEMATICS MODEL (Declaring exactly once)
+// 👤 USER ACCOUNT SCHEMATICS MODEL Configuration
 const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
@@ -31,7 +31,7 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     subscriptionStatus: { type: String, default: 'Inactive' }
 }, { collection: 'useraccounts' }));
 
-// 🎫 SUPPORT REQUEST TICKET SCHEMATICS MODEL (Declaring exactly once)
+// 🎫 SUPPORT REQUEST TICKET SCHEMATICS MODEL Configuration
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     name: String,
     email: String,
@@ -51,7 +51,6 @@ const HourlyBooking = mongoose.model('HourlyBooking', new mongoose.Schema({
     status: { type: String, default: 'Pending Verification' },
     date: { type: Date, default: Date.now }
 }, { collection: 'hourlybookings' }));
-
 // ⚙️ EXPRESS MIDDLEWARE CONFIGURATIONS
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -95,12 +94,12 @@ async function handleRegistration(req, res) {
     try {
         const { fullName, phone, email, password } = req.body;
         if (!fullName || !phone || !email || !password) {
-            return res.send('<script>alert("All registration fields are strictly required.");window.history.back();</script>');
+            return res.send('<script>alert("All fields are strictly required.");window.history.back();</script>');
         }
         const normalizedEmail = email.toLowerCase().trim();
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
         if (existingUser) {
-            return res.send('<script>alert("This email address is already registered inside our cloud system.");window.history.back();</script>');
+            return res.send('<script>alert("This email address is already registered.");window.history.back();</script>');
         }
         const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
         await newUser.save();
@@ -108,7 +107,7 @@ async function handleRegistration(req, res) {
         req.session.userEmail = newUser.email;
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
     } catch (err) {
-        res.status(500).send(`<h3>HTTP ERROR 500: Database Sync Failure During Registration</h3><p>Details: ${err.message}</p>`);
+        res.status(500).send(`<h3>Registration Failure</h3><p>${err.message}</p>`);
     }
 }
 
@@ -128,7 +127,7 @@ app.post('/client/login', async (req, res) => {
         }
         res.send('<script>alert("Invalid access credentials combination.");window.history.back();</script>');
     } catch (err) {
-        res.status(500).send(`<h3>HTTP ERROR 500: Server Login Validation Fault</h3><p>Details: ${err.message}</p>`);
+        res.status(500).send(`<h3>Server Login Validation Fault</h3><p>${err.message}</p>`);
     }
 });
 
@@ -147,7 +146,6 @@ app.post('/support', async (req, res) => {
         await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : '', remoteId, remotePassword, issue, status: 'Open' }).save();
         res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
     } catch (err) {
-        console.error("❌ CLOUD DATA DISPATCH EXCEPTION ENCOUNTERED ON SUPPORT:", err);
         res.status(500).send("Database sync error.");
     }
 });
@@ -172,7 +170,7 @@ app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
     }
 });
 
-// ⏳ AD-HOC HOURLY BOOKING DISPATCH ROUTE (Calculator clicks)
+// ⏳ AD-HOC HOURLY BOOKING DISPATCH ROUTE
 app.post('/api/bookings/hourly', async (req, res) => {
     try {
         const { hours, amount, reference, email } = req.body;
@@ -223,3 +221,10 @@ async function handleSubscriptionCancellation(req, res) {
         res.status(500).send(err.message);
     }
 }
+app.post('/api/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
+app.post('/api/client/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
+
+// 🚀 INITIALIZE SYSTEM SERVER LISTENERS
+app.listen(PORT, () => {
+    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
+});
