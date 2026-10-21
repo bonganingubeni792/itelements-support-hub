@@ -319,17 +319,13 @@
 
     <script>
         var ratePerHour = 350;
-
         function checkoutHourlyJob() {
             var hoursField = document.getElementById("hoursSelector");
             var chosenHours = "1";
-
             if (hoursField) {
                 chosenHours = String(hoursField.value || "1");
             }
-
             var directCost = parseInt(chosenHours) * ratePerHour;
-
             alert(
                 "IT ELEMENTS AD-HOC HOURLY CHECKOUT\n" +
                 "==================================\n" +
