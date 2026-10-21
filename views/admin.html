@@ -88,10 +88,35 @@
             text-transform: uppercase;
             display: inline-block;
         }
-        .badge-open { background-color: #2d1919; color: #ff4d4d; border: 1px solid #4a1a1a; }
-        .badge-onhold { background-color: #2d2719; color: #ffcc00; border: 1px solid #4a3e1a; }
-        .badge-resolved { background-color: #192d19; color: #4dff4d; border: 1px solid #1a4a1a; }
-        
+        .badge-open {
+            background-color: #2d1919;
+            color: #ff4d4d;
+            border: 1px solid #4a1a1a;
+        }
+        .badge-onhold {
+            background-color: #2d2719;
+            color: #ffcc00;
+            border: 1px solid #4a3e1a;
+        }
+        .badge-resolved {
+            background-color: #192d19;
+            color: #4dff4d;
+            border: 1px solid #1a4a1a;
+        }
+        .status-select {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            width: 130px;
+        }
+        .status-select:focus {
+            outline: none;
+            border-color: #1a73e8;
+        }
         .loading-text, .empty-text {
             text-align: center;
             padding: 30px;
@@ -105,10 +130,9 @@
 
     <div class="header-bar">
         <h1>🔴 IT Elements Administration Console</h1>
-        <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
+        <a href="/admin/logout" class="logout-btn">Log Out Layer 🔐</a>
     </div>
 
-    <!-- 1. ACTIVE LIVE MONITORING ESCALATION QUEUE -->
     <div class="dashboard-card">
         <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices (Open & On Hold).</div>
@@ -127,7 +151,6 @@
         </div>
     </div>
 
-    <!-- 2. HISTORICAL ARCHIVE RESOLUTION LEDGER -->
     <div class="dashboard-card">
         <div class="card-title">⏳ Job Resolution History Ledger</div>
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
@@ -150,6 +173,8 @@
         async function fetchLiveTickets() {
             try {
                 const response = await fetch('/api/tickets');
+                if (!response.ok) throw new Error('Database collection fetch fault.');
+
                 const tickets = await response.json();
                 
                 const queueBody = document.getElementById('priority-queue-body');
@@ -162,7 +187,7 @@
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
                 if (activeTickets.length === 0) {
-                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending support requests.</div>';
+                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending IT tickets in queue database indexes.</div>';
                 } else {
                     activeTickets.forEach(item => {
                         const currentStatus = item.status || 'Open';
@@ -171,13 +196,17 @@
 
                         queueBody.innerHTML += `
                             <div class="data-row">
-                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span></div>
+                                <div class="col-client">${item.name || 'Anonymous'}</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log description.'}</div>
                                 <div class="col-status"><span class="status-badge ${badgeClass}">${currentStatus}</span></div>
                                 <div class="col-actions">
-                                    <button style="background:#ff3333; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;" onclick="updateTicketStatus('${item._id}', 'Resolved')">Resolve Case</button>
+                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
+                                        <option value="Open" ${currentStatus === 'Open' ? 'selected' : ''}>🔴 Open</option>
+                                        <option value="On Hold" ${currentStatus === 'On Hold' ? 'selected' : ''}>🟡 On Hold</option>
+                                        <option value="Resolved">🟢 Resolve Case</option>
+                                    </select>
                                 </div>
                             </div>
                         `;
@@ -190,12 +219,18 @@
                     resolvedTickets.forEach(item => {
                         historyBody.innerHTML += `
                             <div class="data-row" style="opacity: 0.65;">
-                                <div class="col-client">${item.name || 'Anonymous'}<br><span style="font-size:11px; color:#666;">(${item.email || 'N/A'})</span></div>
+                                <div class="col-client">${item.name || 'Anonymous'}</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log summary.'}</div>
                                 <div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div>
-                                <div class="col-actions"><span style="color:#555;">Archived</span></div>
+                                <div class="col-actions">
+                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
+                                        <option value="Resolved" selected>🟢 Resolved</option>
+                                        <option value="Open">🔴 Reopen Case</option>
+                                        <option value="On Hold">🟡 Move to Hold</option>
+                                    </select>
+                                </div>
                             </div>
                         `;
                     });
@@ -204,20 +239,27 @@
             } catch (error) {
                 console.error("Dashboard Sync Crash:", error);
                 document.getElementById('priority-queue-body').innerHTML = 
-                    '<div class="loading-text" style="color: #ff3333;">❌ Data acquisition error. Connection interrupted.</div>';
+                    '<div class="loading-text" style="color: #ff3333;">❌ Data acquisition error. System pipeline connection interrupted.</div>';
             }
         }
 
         async function updateTicketStatus(ticketId, newStatus) {
             try {
-                await fetch('/api/tickets/update-status', {
+                const response = await fetch('/api/tickets/update-status', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ ticketId, newStatus })
                 });
-                fetchLiveTickets();
+
+                const result = await response.json();
+                if (result.success) {
+                    fetchLiveTickets();
+                } else {
+                    alert('Status alteration dispatch blocked: ' + result.message);
+                }
             } catch (err) {
-                alert("Network outage changing workflow tracking state.");
+                console.error("Status Change Communication Exception:", err);
+                alert("Network communication outage encountered while updating status.");
             }
         }
 
