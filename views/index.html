@@ -251,22 +251,109 @@
             background-color: #cc0000;
         }
 
+        /* 🏦 PROPRIETARY CUSTOM DARK THEME MODAL DESIGN WINDOW */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-window {
+            background-color: #121318;
+            border: 2px solid #ff1a1a;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(255, 26, 26, 0.15);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s ease;
+        }
+        @keyframes modalFadeIn {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-header {
+            background-color: #1a1b23;
+            padding: 20px;
+            border-bottom: 1px solid #22252a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h2 {
+            font-size: 1.25rem;
+            color: #ffffff;
+            font-weight: 800;
+        }
+        .close-modal-x {
+            color: #888888;
+            font-size: 1.5rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .close-modal-x:hover { color: #ff1a1a; }
+        .modal-body {
+            padding: 25px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .bank-details-grid {
+            background-color: #0b0c10;
+            border: 1px solid #22252a;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .bank-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #14161d;
+        }
+        .bank-row:last-child { border-bottom: none; }
+        .bank-label { color: #888888; font-weight: 500; }
+        .bank-value { color: #ffffff; font-weight: bold; font-family: monospace; }
+        .warning-footer-notice {
+            background-color: rgba(255, 26, 26, 0.08);
+            border-left: 4px solid #ff1a1a;
+            padding: 12px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.85rem;
+            color: #cccccc;
+            margin-top: 15px;
+        }
+        .modal-action-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: #25d366;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-action-btn:hover { background-color: #1ebe57; }
+
         @media (max-width: 768px) {
-            .compact-nav-grid {
-                grid-template-columns: 1fr;
-            }
-            .calculator-interface {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 25px;
-            }
-            .selector-side, .pricing-side {
-                width: 100%;
-            }
-            .pricing-side {
-                align-items: stretch;
-                text-align: center;
-            }
+            .compact-nav-grid { grid-template-columns: 1fr; }
+            .calculator-interface { flex-direction: column; align-items: stretch; gap: 25px; }
+            .selector-side, .pricing-side { width: 100%; }
+            .pricing-side { align-items: stretch; text-align: center; }
         }
     </style>
 </head>
@@ -283,65 +370,3 @@
         </div>
         <nav>
             <a href="/">Home</a>
-            <a href="/pricing">Plans</a>
-            <a href="/support">Request Help</a>
-            <a href="/client/login">Client Portal</a>
-        </nav>
-    </header>
-
-    <div class="hero-section">
-        <h1>On-Demand Subscription IT Support</h1>
-        <p>Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
-    </div>
-
-    <div class="compact-nav-grid">
-        <a href="/pricing" class="compact-box">
-            <h3>Subscription Plans</h3>
-            <p>Choose a predictable flat monthly rate package built for your device network needs.</p>
-        </a>
-        <a href="/support" class="compact-box">
-            <h3>Submit Support Ticket</h3>
-            <p>Experiencing hardware slow downs or virus logs? Open a ticket and drop your remote connection key code.</p>
-        </a>
-        <a href="/client/login" class="compact-box">
-            <h3>Customer Access Hub</h3>
-            <p>Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</p>
-        </a>
-    </div>
-
-    <div class="hourly-section">
-        <div class="hourly-header">
-            <h2>Need a Quick Incident Fix?</h2>
-            <p>Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
-        </div>
-        <div class="calculator-interface">
-            <div class="selector-side">
-                <label for="hoursSelector">Select Duration Allocation:</label>
-                <select id="hoursSelector" class="custom-select" onchange="document.getElementById('calculatedPrice').innerText = String(parseInt(this.value) * 350);">
-                    <option value="1">1 Hour Dedicated Emergency Support</option>
-                    <option value="2">2 Hours Dedicated Support Package</option>
-                    <option value="3">3 Hours Comprehensive Network Overhaul</option>
-                    <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
-                    <option value="5">5 Hours Complete Enterprise SLA Care</option>
-                </select>
-            </div>
-            <div class="pricing-side">
-                <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <button class="hourly-pay-btn" onclick="checkoutHourlyJob()">Pay via Capitec</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        var ratePerHour = 350;
-
-        function checkoutHourlyJob() {
-            var hoursField = document.getElementById("hoursSelector");
-            var versionHours = "1";
-            
-            if (hoursField) {
-                versionHours = hoursField.value || "1";
-            }
-
-            var incidentMatrix = {
-                "1": { cleanAmount: "R350.00", refCode: "INC-1HOUREMG", labelTitle: "1 Hour Dedicated Emergency Support" },
