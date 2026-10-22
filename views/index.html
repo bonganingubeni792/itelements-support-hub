@@ -42,6 +42,8 @@
         .hourly-pay-btn { padding: 14px 28px; background-color: #ff1a1a; color: #ffffff; border: none; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: background-color 0.2s; }
         .hourly-pay-btn:hover { background-color: #cc0000; }
     </style>
+    <!-- 💳 Load Paystack official overlay logic framework directly inside head elements -->
+    <script src="https://paystack.co"></script>
 </head>
 <body>
     <header>
@@ -87,32 +89,41 @@
             </div>
             <div class="pricing-side">
                 <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <button class="hourly-pay-btn" id="paystack-redirect-btn">Pay via Paystack 💳</button>
+                <button class="hourly-pay-btn" onclick="executeInlinePaystackCalculation()">Pay via Paystack 💳</button>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('paystack-redirect-btn').addEventListener('click', async function(e) {
-            e.preventDefault();
+        function executeInlinePaystackCalculation() {
             var hours = document.getElementById("hoursSelector").value;
-            // 🚀 Bypasses scripts completely by calling the secure server backend redirect channel route setup
-            try {
-                const res = await fetch('/api/paystack/initialize-hourly', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ hours: hours })
-                });
-                const data = await res.json();
-                if (data.success && data.redirectUrl) {
-                    window.location.href = data.redirectUrl;
-                } else {
-                    alert("Initialization fault. Ensure Render Env key variables are saved.");
+            var amountZAR = parseInt(hours) * 350;
+            var randomRef = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
+
+            // 🚀 PURE FRONT-END HANDSHAKE: Bypasses backend route requirements entirely
+            var handler = PaystackPop.setup({
+                key: 'pk_test_131c4a5b9ffb6f4e8ea6fa6f4bcbb59015c6ed43b', // Your Paystack Test Public Key
+                email: 'customer@itelements.help',
+                amount: amountZAR * 100, // Paystack parses values in cents
+                currency: 'ZAR',
+                ref: randomRef,
+                callback: async function(response) {
+                    alert("✅ Payment Successful! Reference: " + response.reference);
+                    
+                    // Securely stream the payment success record straight to your MongoDB database ledger
+                    await fetch('/api/bookings/hourly', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ hours: hours, amount: amountZAR, reference: response.reference })
+                    });
+                    window.location.reload();
+                },
+                onClose: function() {
+                    alert("❌ Transaction dismissed.");
                 }
-            } catch(err) {
-                alert("Network communication timeout exception.");
-            }
-        });
+            });
+            handler.openIframe();
+        }
     </script>
 </body>
 </html>
