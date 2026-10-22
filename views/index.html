@@ -5,251 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - On-Demand Remote Support</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        body {
-            background-color: #0b0c10;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 1000px;
-            margin-bottom: 40px;
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-        }
-        .logo-wrapper {
-            display: inline-block;
-            position: relative;
-            width: 32px;
-            height: 32px;
-            margin-right: 12px;
-            vertical-align: middle;
-        }
-        .logo-ring {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #ff1a1a;
-            border: 2px solid transparent;
-            border-top-color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transform: rotate(-45deg);
-        }
-        .logo-inner-text {
-            color: #ffffff;
-            font-size: 0.75rem;
-            font-weight: 900;
-            font-style: italic;
-            font-family: 'Georgia', serif;
-            transform: rotate(45deg);
-        }
-        .logo-text {
-            font-size: 1.4rem;
-            font-weight: 900;
-        }
-        .logo-text span {
-            color: #ff1a1a;
-        }
-        nav {
-            display: flex;
-            align-items: center;
-        }
-        nav a {
-            color: #ffffff;
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        nav a:hover {
-            color: #ff1a1a;
-        }
-        .nav-whatsapp-link {
-            background-color: #25d366;
-            color: #ffffff !important;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: bold !important;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid #1ebd58;
-            margin-left: 20px;
-            text-decoration: none;
-            transition: background-color 0.2s, transform 0.2s;
-        }
-        .nav-whatsapp-link:hover {
-            background-color: #20ba5a !important;
-            transform: translateY(-1px);
-        }
-        .hero-section {
-            text-align: center;
-            max-width: 800px;
-            margin-bottom: 50px;
-        }
-        .hero-section h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-        .hero-section p {
-            color: #aaaaaa;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        .compact-nav-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            width: 100%;
-            max-width: 1000px;
-            margin-bottom: 50px;
-        }
-        .compact-box {
-            background-color: #121318;
-            border: 1px solid #22252a;
-            border-radius: 8px;
-            padding: 22px 20px;
-            text-align: center;
-            text-decoration: none;
-            color: #ffffff;
-            transition: border-color 0.2s, transform 0.2s;
-        }
-        .compact-box:hover {
-            border-color: #ff1a1a;
-            transform: translateY(-2px);
-        }
-        .compact-box h3 {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #ff1a1a;
-            margin-bottom: 8px;
-        }
-        .compact-box p {
-            color: #aaaaaa;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-        .hourly-section {
-            width: 100%;
-            max-width: 1000px;
-            background-color: #121318;
-            border: 2px solid #ff1a1a;
-            border-radius: 12px;
-            padding: 35px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-bottom: 40px;
-        }
-        .hourly-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .hourly-header h2 {
-            font-size: 1.6rem;
-            font-weight: 900;
-            margin-bottom: 5px;
-            color: #ffffff;
-        }
-        .hourly-header p {
-            color: #888888;
-            font-size: 0.9rem;
-        }
-        .calculator-interface {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #0b0c10;
-            border: 1px solid #22252a;
-            padding: 25px;
-            border-radius: 8px;
-        }
-        .selector-side {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 50%;
-            text-align: left;
-        }
-        .selector-side label {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #cccccc;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-        }
-        .custom-select {
-            width: 100%;
-            padding: 14px;
-            background-color: #121318;
-            border: 1px solid #333;
-            color: #ffffff;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            outline: none;
-        }
-        .custom-select:focus {
-            border-color: #ff1a1a;
-        }
-        .pricing-side {
-            text-align: right;
-            width: 45%;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 15px;
-        }
-        .price-display {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #ffffff;
-        }
-        .price-display span {
-            color: #ff1a1a;
-        }
-        .hourly-pay-btn {
-            padding: 14px 28px;
-            background-color: #ff1a1a;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: background-color 0.2s;
-        }
-        .hourly-pay-btn:hover {
-            background-color: #cc0000;
-        }
-        .whatsapp-icon-svg {
-            width: 16px;
-            height: 16px;
-            fill: #ffffff;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0b0c10; color: #ffffff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1000px; margin-bottom: 40px; }
+        .logo-container { display: flex; align-items: center; }
+        .logo-wrapper { display: inline-block; position: relative; width: 32px; height: 32px; margin-right: 12px; vertical-align: middle; }
+        .logo-ring { width: 100%; height: 100%; border-radius: 50%; background: #ff1a1a; border: 2px solid transparent; border-top-color: #ffffff; display: flex; justify-content: center; align-items: center; transform: rotate(-45deg); }
+        .logo-inner-text { color: #ffffff; font-size: 0.75rem; font-weight: 900; font-style: italic; font-family: 'Georgia', serif; transform: rotate(45deg); }
+        .logo-text { font-size: 1.4rem; font-weight: 900; }
+        .logo-text span { color: #ff1a1a; }
+        nav { display: flex; align-items: center; }
+        nav a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 0.95rem; font-weight: 500; }
+        .hourly-section { width: 100%; max-width: 1000px; background-color: #121318; border: 2px solid #ff1a1a; border-radius: 12px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 40px; }
+        .calculator-interface { display: flex; align-items: center; justify-content: space-between; background-color: #0b0c10; border: 1px solid #22252a; padding: 25px; border-radius: 8px; }
+        .selector-side { display: flex; flex-direction: column; gap: 10px; width: 50%; text-align: left; }
+        .selector-side label { font-size: 0.9rem; font-weight: bold; color: #cccccc; text-transform: uppercase; margin-bottom: 5px; }
+        .custom-select { width: 100%; padding: 14px; background-color: #121318; border: 1px solid #333; color: #ffffff; font-size: 1rem; font-weight: bold; border-radius: 6px; }
+        .pricing-side { text-align: right; width: 45%; display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
+        .price-display { font-size: 1.8rem; font-weight: 800; color: #ffffff; }
+        .price-display span { color: #ff1a1a; }
+        .hourly-pay-btn { padding: 14px 28px; background-color: #ff1a1a; color: white; border: none; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-transform: uppercase; }
     </style>
+    <!-- 💳 Load the secure inline popup script module library -->
     <script src="https://paystack.co"></script>
 </head>
 <body>
@@ -258,44 +35,19 @@
             <div class="logo-wrapper"><div class="logo-ring"><span class="logo-inner-text">it</span></div></div>
             <h2 class="logo-text">IT Elements<span>.support</span></h2>
         </div>
-        <nav>
-            <a href="/">Home</a>
-            <a href="/pricing">Plans</a>
-            <a href="/support">Request Help</a>
-            <a href="/client/login">Client Portal</a>
-            <a href="https://wa.me" class="nav-whatsapp-link" target="_blank" rel="noopener noreferrer">
-                <svg class="whatsapp-icon-svg" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7 .9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
-                WhatsApp Live Chat
-            </a>
-        </nav>
+        <nav><a href="/">Home</a><a href="/pricing">Plans</a><a href="/support">Request Help</a><a href="/client/login">Portal</a></nav>
     </header>
 
-    <div class="hero-section">
-        <h1>On-Demand Subscription IT Support</h1>
-        <p>Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
-    </div>
-
-    <div class="compact-nav-grid">
-        <a href="/pricing" class="compact-box"><h3>Subscription Plans</h3><p>Choose a predictable flat monthly rate package built for your device network needs.</p></a>
-        <a href="/support" class="compact-box"><h3>Submit Support Ticket</h3><p>Experiencing hardware slow downs or virus logs? Open a ticket and drop your remote connection key code.</p></a>
-        <a href="/client/login" class="compact-box"><h3>Customer Access Hub</h3><p>Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</p></a>
-    </div>
-
     <div class="hourly-section">
-        <div class="hourly-header">
-            <h2>Need a Quick Incident Fix?</h2>
-            <p>Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
-        </div>
         <div class="calculator-interface">
             <div class="selector-side">
-                <label for="hoursSelector">Select Duration Allocation:</label>
-                <!-- FIXED ID: Linked element correctly to match front-end logic definitions -->
+                <label>Select Duration Allocation:</label>
                 <select id="hoursSelector" class="custom-select" onchange="document.getElementById('calculatedPrice').innerText = String(parseInt(this.value) * 350);">
-                    <option value="1">1 Hour Dedicated Emergency Support</option>
-                    <option value="2">2 Hours Dedicated Support Package</option>
-                    <option value="3">3 Hours Comprehensive Network Overhaul</option>
-                    <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
-                    <option value="5">5 Hours Complete Enterprise SLA Care</option>
+                    <option value="1">1 Hour Dedicated Support</option>
+                    <option value="2">2 Hours Support Package</option>
+                    <option value="3">3 Hours Network Overhaul</option>
+                    <option value="4">4 Hours Corporate Deep-Clean</option>
+                    <option value="5">5 Hours Complete Enterprise Care</option>
                 </select>
             </div>
             <div class="pricing-side">
@@ -306,10 +58,8 @@
     </div>
 
     <script>
-        // FIXED FUNCTION: Matches button call perfectly to unblock clicks
         function payWithPaystackInline() {
-            var hoursField = document.getElementById("hoursSelector");
-            var hours = hoursField ? hoursField.value : "1";
+            var hours = document.getElementById("hoursSelector").value;
             var amountZAR = parseInt(hours) * 350;
             var referenceCode = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
 
@@ -327,9 +77,6 @@
                         body: JSON.stringify({ hours: hours, amount: amountZAR, reference: response.reference })
                     });
                     window.location.reload();
-                },
-                onClose: function() {
-                    alert("❌ Transaction dismissed.");
                 }
             });
             handler.openIframe();
