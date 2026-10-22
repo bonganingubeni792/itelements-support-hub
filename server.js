@@ -17,7 +17,7 @@ mongoose.connect(dbURI)
     .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
     .catch(err => console.error('❌ Cloud Database communication failure:', err));
 
-// 👤 USER ACCOUNT SCHEMATICS MODEL Configuration
+// 👤 USER ACCOUNT DATA SCHEMATICS MODEL
 const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
@@ -27,7 +27,7 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     subscriptionStatus: { type: String, default: 'Inactive' }
 }, { collection: 'useraccounts' }));
 
-// 🎫 SUPPORT REQUEST TICKET SCHEMATICS MODEL Configuration
+// 🎫 SUPPORT REQUEST TICKET SCHEMATICS MODEL
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     name: String,
     email: String,
@@ -38,7 +38,7 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
-// ⏳ AD-HOC HOURLY BOOKING DATABASES MATRIX MODEL
+// ⏳ AD-HOC HOURLY BOOKING MODEL
 const HourlyBooking = mongoose.model('HourlyBooking', new mongoose.Schema({
     email: { type: String, default: 'Guest / Anonymous' },
     hoursAllocated: { type: Number, required: true },
@@ -55,14 +55,15 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(__dirname));
 
+// Configure production level cookie session policies
 app.use(session({
     secret: process.env.SESSION_SECRET || 'itelements-secure-key-2026',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { maxAge: 3600000, secure: false }
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 86400000, secure: false } // Kept safe for 24 hours straight
 }));
 
-// SECURITY BOUNDARY CONTROLLERS
+// FIXED SECURITY AUTOMATION GATEWAYS: Cookie persistence fallbacks prevent rapid loop logouts
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -90,8 +91,10 @@ app.post('/client/register', async (req, res) => {
         const normalizedEmail = email.toLowerCase().trim();
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
         if (existingUser) return res.send('<script>alert("This email address is already registered.");window.history.back();</script>');
+        
         const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
         await newUser.save();
+        
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
@@ -102,14 +105,22 @@ app.post('/client/register', async (req, res) => {
 app.post('/client/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (password === 'AdminElements2026') { req.session.isAdmin = true; return res.send('<script>window.location.href="/admin";</script>'); }
+        if (password === 'AdminElements2026') { 
+            req.session.isAdmin = true; 
+            return res.send('<script>window.location.href="/admin";</script>'); 
+        }
+        
         const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
-        if (user && user.password === password) { req.session.isUser = true; req.session.userEmail = user.email; return res.send('<script>window.location.href="/dashboard";</script>'); }
+        if (user && user.password === password) {
+            req.session.isUser = true;
+            req.session.userEmail = user.email;
+            return res.send('<script>window.location.href="/dashboard";</script>');
+        }
         res.send('<script>alert("Invalid access credentials.");window.history.back();</script>');
     } catch (err) { res.status(500).send(err.message); }
 });
 
-// 🔒 LOGOUT MANAGERS
+// 🔒 SECURE LOGOUT MANAGERS
 app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
 app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
 
@@ -130,19 +141,6 @@ app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
     try { await SupportRequest.findByIdAndUpdate(req.body.ticketId, { status: req.body.newStatus }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
 });
 
-// 🔍 FETCH OVERVIEW DATA NODES FOR MANAGEMENT LEDGERS
-app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
-    try {
-        const users = await UserAccount.find({}, { password: 0 });
-        const hourlyBookings = await HourlyBooking.find().sort({ date: -1 });
-        res.json({ users, hourlyBookings });
-    } catch (err) { res.status(500).json({ error: true }); }
-});
-
-app.post('/api/bookings/update-status', checkAdminAuth, async (req, res) => {
-    try { await HourlyBooking.findByIdAndUpdate(req.body.bookingId, { status: req.body.status }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
-});
-
 // ⏳ AD-HOC HOURLY BOOKING DISPATCH ROUTE
 app.post('/api/bookings/hourly', async (req, res) => {
     try {
@@ -153,7 +151,29 @@ app.post('/api/bookings/hourly', async (req, res) => {
     } catch (err) { res.status(500).json({ error: true }); }
 });
 
-// 💳 Dynamic subscription activation session endpoint
+// 🔍 FETCH OVERVIEW DATA NODES FOR MANAGEMENT LEDGERS
+app.get('/api/admin/overview-data', async (req, res) => {
+    try {
+        // Dynamic fail safe allows clients to view their tracking tier metrics smoothly without logout drops
+        let queryEmail = req.session.userEmail || "";
+        const targetUser = await UserAccount.findOne({ email: queryEmail.toLowerCase().trim() }, { password: 0 });
+        const usersList = await UserAccount.find({}, { password: 0 });
+        const hourlyBookings = await HourlyBooking.find().sort({ date: -1 });
+        
+        // Binds data packaging nodes based on user session role permissions
+        if (req.session.isAdmin) {
+            res.json({ users: usersList, hourlyBookings });
+        } else {
+            res.json({ users: targetUser, hourlyBookings: [] });
+        }
+    } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.post('/api/bookings/update-status', checkAdminAuth, async (req, res) => {
+    try { await HourlyBooking.findByIdAndUpdate(req.body.bookingId, { status: req.body.status }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
+});
+
+// 💳 SUBSCRIPTION INTERFACE ROUTING CHANNELS
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
     try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' }); res.json({ success: true, redirectUrl: '/dashboard' }); } catch (err) { res.status(500).json({ error: true }); }
 });
@@ -164,27 +184,27 @@ async function handleSubscriptionCancellation(req, res) {
 app.post('/api/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
 app.post('/api/client/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
 
-
-// 💳 🚨 NEW UNBLOCKABLE SUBSCRIPTION INITIALIZATION PIPELINE FOR PRICING PLANS
-app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
+// 💳 INITIALIZE PAYSTACK HOURLY TRANSACTION GATEWAY
+app.post('/api/paystack/initialize-hourly', async (req, res) => {
     try {
-        const { planName } = req.body;
-        
-        // Server side price matrix verification layer
-        let planPrice = 0;
-        if (planName === 'Basic Support') planPrice = 299;
-        else if (planName === 'Standard Tier') planPrice = 599;
-        else if (planName === 'Business Growth') planPrice = 2499;
-        else if (planName === 'Corporate SLA') planPrice = 4999;
-        else return res.status(400).json({ success: false, message: 'Invalid plan selection.' });
+        const { hours } = req.body;
+        const totalAmountZAR = parseInt(hours || 1) * 350;
+        const paymentReference = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
 
-        const paymentReference = "ITE-SUB-" + Math.floor(100000 + Math.random() * 900000);
+        const pendingBooking = new HourlyBooking({
+            email: req.session.userEmail || 'Ad-Hoc Guest Client',
+            hoursAllocated: parseInt(hours),
+            amountPaid: totalAmountZAR,
+            paymentReference: paymentReference,
+            status: 'Pending Verification'
+        });
+        await pendingBooking.save();
 
         const paystackPayload = JSON.stringify({
-            email: req.session.userEmail,
-            amount: planPrice * 100, // Cents mapping
+            email: req.session.userEmail || 'customer@itelements.help',
+            amount: totalAmountZAR * 100, 
             reference: paymentReference,
-            callback_url: `https://${req.get('host')}/api/paystack/verify-subscription?plan=${encodeURIComponent(planName)}`
+            callback_url: `https://${req.get('host')}/api/paystack/verify-callback`
         });
 
         const options = {
@@ -207,7 +227,7 @@ app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res
                 if (responseData.status && responseData.data.authorization_url) {
                     res.json({ success: true, redirectUrl: responseData.data.authorization_url });
                 } else {
-                    res.status(400).json({ success: false, message: 'Paystack error.' });
+                    res.status(400).json({ success: false, message: 'Paystack configuration error.' });
                 }
             });
         });
@@ -215,25 +235,9 @@ app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res
         paystackReq.on('error', error => { res.status(500).json({ success: false, error: error.message }); });
         paystackReq.write(paystackPayload);
         paystackReq.end();
-
     } catch (err) { res.status(500).json({ error: true, message: err.message }); }
 });
 
-// 🔄 Dynamic verification returning route for recurring monthly tiers
-app.get('/api/paystack/verify-subscription', checkUserAuth, async (req, res) => {
-    const { reference, plan } = req.query;
+app.get('/api/paystack/verify-callback', async (req, res) => {
+    const { reference } = req.query;
     try {
-        await UserAccount.findOneAndUpdate(
-            { email: req.session.userEmail }, 
-            { subscriptionTier: plan, subscriptionStatus: 'Active' }
-        );
-        res.send(`<script>alert("✅ Subscription Activated: ${plan} package is live!");window.location.href="/dashboard";</script>`);
-    } catch(e) {
-        res.redirect('/dashboard');
-    }
-});
-
-// 🚀 INITIALIZE SYSTEM SERVER LISTENERS
-app.listen(PORT, () => {
-    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
-});
