@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
-const app = express();
+const https = require('https');
+const app = report = express();
 
 const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
@@ -39,8 +40,9 @@ app.use(express.static(__dirname));
 
 app.use(session({
     secret: 'itelements-secure-key-2026',
-    resave: false,
-    saveUninitialized: false
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 86400000, secure: false }
 }));
 
 function checkAdminAuth(req, res, next) {
@@ -116,10 +118,6 @@ app.post('/api/bookings/hourly', async (req, res) => {
     } catch (err) { res.status(500).json({ error: true }); }
 });
 
-app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
-    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
-});
-
 app.get('/api/admin/overview-data', async (req, res) => {
     try {
         let queryEmail = req.session.userEmail || "";
@@ -135,11 +133,40 @@ app.post('/api/bookings/update-status', checkAdminAuth, async (req, res) => {
     try { await HourlyBooking.findByIdAndUpdate(req.body.bookingId, { status: req.body.status }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
 });
 
+app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
+    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
+});
+
 app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
     try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
 });
-app.post('/api/client/cancel-subscription', checkUserAuth, async (req, res) => {
-    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
+
+// ⚡ 1. BLOCK-PROOF DIRECT HOURLY INITIALIZE GATEWAY
+app.post('/api/paystack/initialize-hourly', async (req, res) => {
+    try {
+        const { hours } = req.body;
+        const totalAmountZAR = parseInt(hours || 1) * 350;
+        const paymentReference = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
+        await new HourlyBooking({ email: req.session.userEmail || 'Ad-Hoc Guest Client', hoursAllocated: parseInt(hours), amountPaid: totalAmountZAR, paymentReference: paymentReference, status: 'Pending Verification' }).save();
+        
+        const paystackPayload = JSON.stringify({ email: req.session.userEmail || 'customer@itelements.help', amount: totalAmountZAR * 100, reference: paymentReference, callback_url: `https://${req.get('host')}/api/paystack/verify-callback` });
+        const options = { hostname: 'api.paystack.co', port: 443, path: '/transaction/initialize', method: 'POST', headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json', 'Content-Length': paystackPayload.length } };
+        
+        const paystackReq = https.request(options, paystackRes => {
+            let data = '';
+            paystackRes.on('data', chunk => { data += chunk; });
+            paystackRes.on('end', () => {
+                const responseData = JSON.parse(data);
+                if (responseData.status && responseData.data.authorization_url) { res.json({ success: true, redirectUrl: responseData.data.authorization_url }); }
+                else { res.status(400).json({ success: false }); }
+            });
+        });
+        paystackReq.write(paystackPayload); paystackReq.end();
+    } catch (err) { res.status(500).json({ error: true }); }
 });
 
-app.listen(PORT, () => console.log(`🚀 Server active on port ${PORT}`));
+app.get('/api/paystack/verify-callback', async (req, res) => {
+    try { await HourlyBooking.findOneAndUpdate({ paymentReference: req.query.reference }, { status: 'Active' }); res.send('<script>alert("✅ Payment Successful!");window.location.href="/dashboard";</script>'); } catch(e) { res.redirect('/'); }
+});
+
+// ⚡ 2. BLOCK-PROOF DIRECT SUBSCRIPTION INITIALIZE GATEWAY
