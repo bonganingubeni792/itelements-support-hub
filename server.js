@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
+const https = require('https');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -95,8 +96,10 @@ app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearC
 app.post('/support', async (req, res) => {
     try {
         const { name, email, remoteId, remotePassword, issue } = req.body;
-        await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : '', remoteId, remotePassword, issue, status: 'Open' }).save();
-        res.send('<script>alert("Ticket logged successfully!");window.location.href="/dashboard";</script>');
+        // Automatically inject fallback session context email tracking variables if form submission is initiated inside dashboard spaces
+        let targetEmail = email || req.session.userEmail || "";
+        await new SupportRequest({ name, email: targetEmail.toLowerCase().trim(), remoteId, remotePassword, issue, status: 'Open' }).save();
+        res.send('<script>alert("Ticket logged successfully into tracking channels!");window.location.href="/dashboard";</script>');
     } catch (err) { res.status(500).send("Database sync error."); }
 });
 
@@ -122,8 +125,16 @@ app.get('/api/admin/overview-data', async (req, res) => {
         const targetUser = await UserAccount.findOne({ email: queryEmail.toLowerCase().trim() }, { password: 0 });
         const usersList = await UserAccount.find({}, { password: 0 });
         const hourlyBookings = await HourlyBooking.find().sort({ date: -1 });
-        if (req.session.isAdmin) { res.json({ users: usersList, hourlyBookings }); }
-        else { res.json({ users: targetUser, hourlyBookings: [] }); }
+        
+        // Dynamic structural tracking filters personal support ticket arrays linked to user email accounts
+        const clientTickets = await SupportRequest.find({ email: queryEmail.toLowerCase().trim() }).sort({ date: -1 });
+        const allTickets = await SupportRequest.find().sort({ date: -1 });
+        
+        if (req.session.isAdmin) {
+            res.json({ users: usersList, hourlyBookings, tickets: allTickets });
+        } else {
+            res.json({ users: targetUser, hourlyBookings: [], tickets: clientTickets });
+        }
     } catch (err) { res.status(500).json({ error: true }); }
 });
 
