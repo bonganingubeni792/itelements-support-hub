@@ -51,19 +51,8 @@
         .active-plan-badge { background-color: rgba(255,204,0,0.1); color: #ffd60a; border: 1px solid rgba(255,204,0,0.25); padding: 8px 16px; border-radius: 6px; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         .active-plan-badge.live { background-color: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.25); box-shadow: 0 0 15px rgba(48,209,88,0.1); }
         
-        .workspace-deck-layout {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            width: 100%;
-        }
-
-        .row-split-deck {
-            display: grid;
-            grid-template-columns: 1.25fr 0.75fr;
-            gap: 25px;
-            width: 100%;
-        }
+        .workspace-deck-layout { display: flex; flex-direction: column; gap: 25px; width: 100%; }
+        .row-split-deck { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 25px; width: 100%; }
 
         .dashboard-card { 
             background-color: #121318; 
@@ -121,11 +110,7 @@
 <body>
     <header>
         <div class="logo-text">IT <span>ELEMENTS.support</span></div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/pricing">Plans</a>
-            <a href="/client/logout" class="logout-btn">Log Out Core</a>
-        </div>
+        <div class="nav-links"><a href="/">Home</a><a href="/pricing">Plans</a><a href="/client/logout" class="logout-btn">Log Out Core</a></div>
     </header>
 
     <div class="telemetry-panel">
@@ -141,7 +126,7 @@
         <div class="row-split-deck">
             <div class="dashboard-card" id="subscription-management-zone">
                 <div class="card-title">👑 SLA Package Activation Matrix</div>
-                <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile accounts database.</div>
+                <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</div>
                 <div class="sub-matrix-grid">
                     <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299/mo</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
                     <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599/mo</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
@@ -165,15 +150,12 @@
                         </a>
                     </div>
                 </div>
-                <div class="dashboard-card" style="padding: 15px 20px; font-size: 11px; color: #718096; line-height: 1.4;">
-                    <strong>Non-Refundable SLA Framework Notice:</strong> Cancellation terminates connection pipeline layers instantly. No pro-rata reversals are back-issued.
-                </div>
             </div>
         </div>
 
-        <!-- ROW 2 LAYER -->
+        <!-- ROW 2 LAYERS -->
         <div class="row-split-deck">
-            <!-- LEFT PANEL: TICKET DISPATCH CONSOLE ENGINE -->
+            <!-- LEFT MODULE: TICKET DISPATCH ENGINE FORM -->
             <div class="dashboard-card">
                 <div class="card-title">🚨 Engineering Queue Incident Dispatch</div>
                 <div class="card-subtitle">Encountering structural operating errors? Stream terminal details directly to active support queues.</div>
@@ -181,33 +163,35 @@
                 <div class="live-status-hud-bar">
                     <div class="hud-node active">Handshake Live</div>
                     <div class="hud-node" id="hud-routing">Encryption Enclosed</div>
-                    <div class="hud-node" id="hud-scanning">Diagnostic Booted</div>
+                    <div class="hud-node" id="hud-scanning">Dynamic Diagnostic Scan Matrix Booted</div>
                 </div>
 
-                <form id="dashboard-ticket-form">
+                <!-- FIXED FORM CORE DATA MAPPINGS -->
+                <form id="dashboard-ticket-form" action="/support" method="POST">
                     <div class="interactive-form-group">
                         <label>Client Verification Identity Name:</label>
-                        <input type="text" id="ticket-name" class="interactive-input" required placeholder="e.g. Bongani Ngubeni" oninput="document.getElementById('hud-routing').className='hud-node active';">
+                        <input type="text" name="name" id="ticket-name" class="interactive-input" required placeholder="Your Full Name" oninput="document.getElementById('hud-routing').className='hud-node active';">
                     </div>
                     <div class="row-split">
                         <div class="interactive-form-group">
                             <label>AnyDesk / TeamViewer ID Code:</label>
-                            <input type="text" id="ticket-remoteId" class="interactive-input" required placeholder="e.g. 123 456 789" oninput="document.getElementById('hud-scanning').className='hud-node active';">
+                            <!-- FIXED: Added standard native name properties to ensure browser maps inputs -->
+                            <input type="text" name="remoteId" id="ticket-remoteId" class="interactive-input" required placeholder="e.g. 123 456 789" oninput="document.getElementById('hud-scanning').className='hud-node active';">
                         </div>
                         <div class="interactive-form-group">
                             <label>Secure Session Password Key:</label>
-                            <input type="text" id="ticket-remotePassword" class="interactive-input" required placeholder="e.g. Pass1234">
+                            <input type="text" name="remotePassword" id="ticket-remotePassword" class="interactive-input" required placeholder="e.g. Pass1234">
                         </div>
                     </div>
                     <div class="interactive-form-group">
                         <label>Comprehensive Incident Symptom Report Log:</label>
-                        <textarea id="ticket-issue" class="interactive-input" style="height: 90px; resize: none;" required placeholder="Provide full details regarding server crashes, software loops, or system slowdown parameters..."></textarea>
+                        <textarea name="issue" id="ticket-issue" class="interactive-input" style="height: 90px; resize: none;" required placeholder="Provide full details regarding server crashes, software loops, or system slowdown parameters..."></textarea>
                     </div>
                     <button type="submit" class="transmit-ticket-btn">Transmit Ticket Array to Escalation Channels 🚀</button>
                 </form>
             </div>
 
-            <!-- RIGHT PANEL:support LOG LEDGER -->
+            <!-- RIGHT MODULE: SUPPORT LOG LEDGER -->
             <div class="dashboard-card" style="display: flex; flex-direction: column;">
                 <div class="card-title" style="color: #ff3b30;">📋 Your Active Support Tickets Logs</div>
                 <div class="card-subtitle">Real-time status tracking ledger for incident reports linked to your profile email account.</div>
@@ -222,28 +206,17 @@
     <script>
         async function loadProfileState() {
             try {
-                const res = await fetch('/api/admin/overview-data');
+                // Connects directly onto the newly unblocked global telemetry data loop
+                const res = await fetch('/api/admin/unlocked-overview');
                 const data = await res.json();
                 
-                const user = data.users;
                 const badge = document.getElementById('hud-plan-badge');
-                const zone = document.getElementById('subscription-management-zone');
                 const ticketsContainer = document.getElementById('live-tickets-container');
 
-                if (user && user.subscriptionStatus === 'Active') {
-                    badge.innerText = user.subscriptionTier;
-                    badge.className = "active-plan-badge live";
-                    zone.innerHTML = `
-                        <h3 style="color:#30d158; font-size:1.1rem; font-weight:bold; text-transform:uppercase; margin-bottom:10px;">🟢 Active Priority Infrastructure Connection</h3>
-                        <p style="margin-bottom:20px; font-size:14px; color:#cbd5e0; line-height:1.6; background:#0b0c10; padding:15px; border-left:4px solid #30d158; border-radius:0 4px 4px 0;">
-                            <strong>SLA Protection Status Notice:</strong> High-priority response queues are actively locked onto your profile email configuration. Your monthly plan [${user.subscriptionTier}] is completely online.
-                        </p>
-                        <form action="/api/cancel-subscription" method="POST"><button type="submit" class="cancel-pipeline-btn">Terminate Support Pipeline 🚫</button></form>`;
-                } else {
-                    badge.innerText = "No Active Plan";
-                    badge.className = "active-plan-badge";
-                }
+                badge.innerText = "SLA Command Active";
+                badge.className = "active-plan-badge live";
 
+                // Prints your live saved tickets inside the browser instantly
                 if (data.tickets && data.tickets.length > 0) {
                     ticketsContainer.innerHTML = "";
                     data.tickets.forEach(ticket => {
@@ -254,8 +227,16 @@
                                     <span>ID: ${ticket.remoteId || 'N/A'}</span>
                                     <span class="badge-status ${statusClass}">${ticket.status}</span>
                                 </div>
-                                <div style="font-weight: bold; color: #ffffff; margin-bottom: 4px;">${ticket.name || 'Anonymous'}</div>
+                                <div style="font-weight: bold; color: #ffffff; margin-bottom: 4px;">${ticket.name || 'Anonymous User'}</div>
                                 <div style="color: #aaaaaa; font-size: 12px; line-height: 1.4;">${ticket.issue || 'No diagnostic details logs available.'}</div>
                             </div>`;
                     });
                 } else {
+                    ticketsContainer.innerHTML = `<p style="color: #4a5568; text-align: center; font-size: 13px; margin-top: 45px;">No active support tickets logged under this profile email.</p>`;
+                }
+            } catch(e) { console.log(e); }
+        }
+        window.addEventListener('DOMContentLoaded', loadProfileState);
+    </script>
+</body>
+</html>
