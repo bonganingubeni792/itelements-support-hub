@@ -36,7 +36,8 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// 🚨 FORCED EMBED: Reads files directly from the main root path to stop folder mismatch crashes
+// 📁 FIXED PATHWAY: Explicitly tells Render to serve assets from inside your active views directory folder
+app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(__dirname));
 
 app.use(session({
@@ -48,21 +49,21 @@ app.use(session({
 
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
-    res.redirect('/client-login.html');
+    res.redirect('/client/login');
 }
 function checkUserAuth(req, res, next) {
     if (req.session && (req.session.isUser || req.session.isAdmin)) return next();
-    res.redirect('/client-login.html');
+    res.redirect('/client/login');
 }
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'pricing.html')));
-app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'support.html')));
-app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'client-login.html')));
-app.get('/client/login', (req, res) => res.sendFile(path.join(__dirname, 'client-login.html')));
-app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'register.html')));
-app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
-app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
+app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
+app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
+app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
+app.get('/client/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
+app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
+app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
 app.post('/client/register', async (req, res) => {
     try {
@@ -92,8 +93,8 @@ app.post('/client/login', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client-login.html'); }); });
-app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client-login.html'); }); });
+app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
 
 app.post('/support', async (req, res) => {
     try {
@@ -167,6 +168,3 @@ app.get('/api/paystack/verify-callback', async (req, res) => {
     try { await HourlyBooking.findOneAndUpdate({ paymentReference: req.query.reference }, { status: 'Active' }); res.send('<script>alert("✅ Payment Successful!");window.location.href="/dashboard";</script>'); } catch(e) { res.redirect('/'); }
 });
 
-app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
-    try {
-        const { planName } = req.body;
