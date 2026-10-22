@@ -1,14 +1,10 @@
-// =========================================================================
-// IT ELEMENTS SUPPORT - DEFINITIVE PRODUCTION CONTROL CORE ENGINE (server.js)
-// =========================================================================
-
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
 const https = require('https');
-const app = express(); // 🚨 FIXED: Typo initialization variable cleaned up safely
+const app = express();
 
 const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
@@ -35,7 +31,6 @@ const HourlyBooking = mongoose.model('HourlyBooking', new mongoose.Schema({
     email: { type: String, default: 'Guest / Anonymous' }, hoursAllocated: Number, amountPaid: Number,
     paymentReference: String, status: { type: String, default: 'Pending Verification' }, date: { type: Date, default: Date.now }
 }, { collection: 'hourlybookings' }));
-// ⚙️ EXPRESS MIDDLEWARE CONFIGURATIONS
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -58,7 +53,6 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-// 🌐 ROUTING VIEW INTERFACES
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -101,7 +95,7 @@ app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearC
 
 app.post('/support', async (req, res) => {
     try {
-        const { name, email, remoteId, remotePassword, issue } = req.body;
+        const { name, email, remoteId, remotePassword, issue = "" } = req.body;
         await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : '', remoteId, remotePassword, issue, status: 'Open' }).save();
         res.send('<script>alert("Ticket logged successfully!");window.location.href="/dashboard";</script>');
     } catch (err) { res.status(500).send("Database sync error."); }
@@ -149,17 +143,14 @@ app.post('/api/client/cancel-subscription', checkUserAuth, async (req, res) => {
     try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
 });
 
-// 💳 AUTOMATED BACKEND HANDSHAKE CHANNELS FOR HOURLY ALLOCATIONS
 app.post('/api/paystack/initialize-hourly', async (req, res) => {
     try {
         const { hours } = req.body;
         const totalAmountZAR = parseInt(hours || 1) * 350;
         const paymentReference = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
         await new HourlyBooking({ email: req.session.userEmail || 'Ad-Hoc Guest Client', hoursAllocated: parseInt(hours), amountPaid: totalAmountZAR, paymentReference: paymentReference, status: 'Pending Verification' }).save();
-        
         const paystackPayload = JSON.stringify({ email: req.session.userEmail || 'customer@itelements.help', amount: totalAmountZAR * 100, reference: paymentReference, callback_url: `https://${req.get('host')}/api/paystack/verify-callback` });
         const options = { hostname: 'api.paystack.co', port: 443, path: '/transaction/initialize', method: 'POST', headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json', 'Content-Length': paystackPayload.length } };
-        
         const paystackReq = https.request(options, paystackRes => {
             let data = '';
             paystackRes.on('data', chunk => { data += chunk; });
@@ -177,15 +168,15 @@ app.get('/api/paystack/verify-callback', async (req, res) => {
     try { await HourlyBooking.findOneAndUpdate({ paymentReference: req.query.reference }, { status: 'Active' }); res.send('<script>alert("✅ Payment Successful!");window.location.href="/dashboard";</script>'); } catch(e) { res.redirect('/'); }
 });
 
-// 💳 AUTOMATED BACKEND HANDSHAKE CHANNELS FOR MONTHLY SLA SUBSCRIPTIONS
 app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
     try {
         const { planName } = req.body;
         let planPrice = planName === 'Basic Support' ? 299 : planName === 'Standard Tier' ? 599 : planName === 'Business Growth' ? 2499 : planName === 'Corporate SLA' ? 4999 : 0;
         const paymentReference = "ITE-SUB-" + Math.floor(100000 + Math.random() * 900000);
-        
         const paystackPayload = JSON.stringify({ email: req.session.userEmail, amount: planPrice * 100, reference: paymentReference, callback_url: `https://${req.get('host')}/api/paystack/verify-subscription?plan=${encodeURIComponent(planName)}` });
         const options = { hostname: 'api.paystack.co', port: 443, path: '/transaction/initialize', method: 'POST', headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json', 'Content-Length': paystackPayload.length } };
-        
         const paystackReq = https.request(options, paystackRes => {
             let data = '';
+            paystackRes.on('data', chunk => { data += chunk; });
+            paystackRes.on('end', () => {
+                const responseData = JSON.parse(data);
