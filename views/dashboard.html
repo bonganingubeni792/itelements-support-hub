@@ -17,19 +17,28 @@
         .active-plan-badge.live { background-color: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.25); }
         .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
         .dashboard-card { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
+        .card-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; color: #ffffff; text-transform: uppercase; }
+        .card-subtitle { font-size: 12px; color: #4a5568; margin-bottom: 20px; }
         .sub-matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .matrix-box { background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
         .matrix-name { font-size: 14px; font-weight: 800; color: #ffffff; }
         .matrix-price { font-size: 18px; font-weight: 900; color: #ff3b30; margin: 4px 0 10px 0; }
-        .native-redirect-form { width: 100%; margin-top: 5px; }
-        .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; text-align: center; text-decoration: none; display: block; font-size: 12px; }
+        .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px; text-align: center; }
         .cancel-pipeline-btn { background-color: transparent; color: #e53e3e; border: 1px solid #e53e3e; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
+        /* 📋 DOWNLOAD CARD MODULAR GRID SYSTEM inside the dashboard */
+        .dashboard-download-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 15px; }
+        .download-card { background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; padding: 15px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: #ffffff; transition: border-color 0.2s; }
+        .download-card:hover { border-color: #ff3b30; }
+        .dl-title { font-weight: bold; font-size: 0.95rem; }
+        .dl-subtitle { font-size: 0.75rem; color: #718096; margin-top: 2px; }
+        .dl-btn { background-color: #0f1115; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 11px; border: 1px solid #2d3748; text-transform: uppercase; color: #e2e8f0; }
     </style>
 </head>
 <body>
     <header>
         <div class="logo-text">IT <span>ELEMENTS</span></div>
-        <div class="nav-links"><a href="/">Home Page</a><a href="/support">Open Ticket</a><a href="/client/logout" class="logout-btn">Log Out Core</a></div>
+        <div class="nav-links"><a href="/">Home</a><a href="/support">Tickets</a><a href="/client/logout" class="logout-btn">Log Out Core</a></div>
     </header>
 
     <div class="telemetry-panel">
@@ -38,42 +47,46 @@
     </div>
 
     <div class="dashboard-grid">
+        <!-- LEFT CONTROL DECK PANEL -->
         <div class="dashboard-card" id="subscription-management-zone">
-            <div class="card-title" style="margin-bottom: 15px;">💳 Secure Package Activation Deck</div>
+            <div class="card-title">💳 Secure Package Activation Deck</div>
+            <div class="card-subtitle">Deploy a permanent monthly flat-rate SLA priority pipeline directly to your profile.</div>
             <div class="sub-matrix-grid">
-                <!-- Basic Support Plan -->
-                <div class="matrix-box">
-                    <div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299</div></div>
-                    <form class="native-redirect-form" action="https://paystack.com" method="GET">
-                        <button type="submit" class="action-sub-btn">Activate</button>
-                    </form>
-                </div>
-                <!-- Standard Tier Plan -->
-                <div class="matrix-box">
-                    <div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599</div></div>
-                    <form class="native-redirect-form" action="https://paystack.com" method="GET">
-                        <button type="submit" class="action-sub-btn">Activate</button>
-                    </form>
-                </div>
-                <!-- Business Growth Plan -->
-                <div class="matrix-box">
-                    <div><div class="matrix-name">Business Growth</div><div class="matrix-price">R2499</div></div>
-                    <form class="native-redirect-form" action="https://paystack.com" method="GET">
-                        <button type="submit" class="action-sub-btn">Activate</button>
-                    </form>
-                </div>
-                <!-- Corporate SLA Plan -->
-                <div class="matrix-box">
-                    <div><div class="matrix-name">Corporate SLA</div><div class="matrix-price">R4999</div></div>
-                    <form class="native-redirect-form" action="https://paystack.com" method="GET">
-                        <button type="submit" class="action-sub-btn">Activate</button>
-                    </form>
-                </div>
+                <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
+                <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
+                <div class="matrix-box"><div><div class="matrix-name">Business Growth</div><div class="matrix-price">R2499</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
+                <div class="matrix-box"><div><div class="matrix-name">Corporate SLA</div><div class="matrix-price">R4999</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
             </div>
         </div>
-        <div class="dashboard-card">
-            <h3>⚠️ Non-Refundable SLA Policy</h3>
-            <p style="font-size:13px; color:#718096; margin-top:10px;">Canceling active protection profiles terminates coverage lines immediately. No refunds back-issued.</p>
+
+        <!-- RIGHT UTILITY SIDEBAR -->
+        <div>
+            <!-- INJECTED: SECURE INTEGRATED MODULE DOWNLOAD CARDS -->
+            <div class="dashboard-card">
+                <div class="card-title">📥 Software Downloads</div>
+                <div class="card-subtitle">Required secure connectivity engineering assets.</div>
+                <div class="dashboard-download-grid">
+                    <a href="https://anydesk.com" class="download-card" target="_blank">
+                        <div>
+                            <div class="dl-title" style="color: #ff4d4d;">AnyDesk Core</div>
+                            <div class="dl-subtitle">Remote terminal controller asset</div>
+                        </div>
+                        <div class="dl-btn">Get Exe</div>
+                    </a>
+                    <a href="https://teamviewer.com" class="download-card" target="_blank">
+                        <div>
+                            <div class="dl-title" style="color: #3b82f6;">TeamViewer Core</div>
+                            <div class="dl-subtitle">Enterprise communications layout module</div>
+                        </div>
+                        <div class="dl-btn">Get Exe</div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3>⚠️ Non-Refundable SLA Policy</h3>
+                <p style="font-size:12px; color:#718096; margin-top:10px; line-height: 1.4;">Notice: Terminating a live SLA package drops technical workflow support arrays instantly. No pro-rata refunds are back-issued.</p>
+            </div>
         </div>
     </div>
 
@@ -99,7 +112,6 @@
                 }
             } catch(e) { window.location.href = "/client/login"; }
         }
-
         window.addEventListener('DOMContentLoaded', loadProfileState);
     </script>
 </body>
