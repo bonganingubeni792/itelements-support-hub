@@ -43,7 +43,6 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -162,3 +161,24 @@ app.post('/api/paystack/initialize-hourly', async (req, res) => {
         });
         paystackReq.on('error', error => { res.status(500).json({ success: false, error: error.message }); });
         paystackReq.write(paystackPayload); paystackReq.end();
+    } catch (err) { res.status(500).json({ error: true, message: err.message }); }
+});
+
+app.get('/api/paystack/verify-callback', async (req, res) => {
+    try { await HourlyBooking.findOneAndUpdate({ paymentReference: req.query.reference }, { status: 'Active' }); res.send('<script>alert("✅ Payment Successful!");window.location.href="/dashboard";</script>'); } catch(e) { res.redirect('/'); }
+});
+
+app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
+    try {
+        const { planName } = req.body;
+        let planPrice = planName === 'Basic Support' ? 299 : planName === 'Standard Tier' ? 599 : planName === 'Business Growth' ? 2499 : planName === 'Corporate SLA' ? 4999 : 0;
+        if (!planPrice) return res.status(400).json({ success: false, message: 'Invalid plan.' });
+        const paymentReference = "ITE-SUB-" + Math.floor(100000 + Math.random() * 900000);
+        const paystackPayload = JSON.stringify({ email: req.session.userEmail, amount: planPrice * 100, reference: paymentReference, callback_url: `https://${req.get('host')}/api/paystack/verify-subscription?plan=${encodeURIComponent(planName)}` });
+        const options = { hostname: 'api.paystack.co', port: 443, path: '/transaction/initialize', method: 'POST', headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json', 'Content-Length': paystackPayload.length } };
+        const paystackReq = https.request(options, paystackRes => {
+            let data = '';
+            paystackRes.on('data', chunk => { data += chunk; });
+            paystackRes.on('end', () => {
+                const responseData = JSON.parse(data);
+                if (responseData.status && responseData.data.authorization_url) { res.json({ success: true, redirectUrl: responseData.data.authorization_url }); }
