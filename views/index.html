@@ -6,8 +6,8 @@
     <title>IT Elements - On-Demand Remote Support</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #0b0c10; color: #ffffff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px; }
-        header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1000px; margin-bottom: 40px; }
+        body { background-color: #0b0c10; color: #ffffff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 30px 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1000px; margin-bottom: 35px; }
         .logo-container { display: flex; align-items: center; }
         .logo-wrapper { display: inline-block; position: relative; width: 32px; height: 32px; margin-right: 12px; vertical-align: middle; }
         .logo-ring { width: 100%; height: 100%; border-radius: 50%; background: #ff1a1a; border: 2px solid transparent; border-top-color: #ffffff; display: flex; justify-content: center; align-items: center; transform: rotate(-45deg); }
@@ -16,35 +16,28 @@
         .logo-text span { color: #ff1a1a; }
         nav a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 0.95rem; font-weight: 500; }
         .nav-whatsapp-link { background-color: #25d366; color: #ffffff !important; padding: 8px 16px; border-radius: 4px; font-weight: bold !important; display: flex; align-items: center; gap: 8px; border: 1px solid #1ebd58; margin-left: 20px; text-decoration: none; }
-        .hero-section { text-align: center; max-width: 800px; margin-bottom: 50px; }
-        .hero-section h1 { font-size: 3rem; font-weight: 900; margin-bottom: 20px; line-height: 1.2; }
-        .hero-section p { color: #aaaaaa; font-size: 1.1rem; line-height: 1.6; }
-        
-        .compact-nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 1000px; margin-bottom: 40px; }
-        .compact-box { background-color: #121318; border: 1px solid #22252a; border-radius: 8px; padding: 22px 20px; text-align: center; text-decoration: none; color: #ffffff; transition: border-color 0.2s; }
+        .hero-section { text-align: center; max-width: 800px; margin-bottom: 40px; }
+        .hero-section h1 { font-size: 2.6rem; font-weight: 900; margin-bottom: 15px; line-height: 1.2; }
+        .hero-section p { color: #aaaaaa; font-size: 1.05rem; line-height: 1.5; }
+        .compact-nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 1000px; margin-bottom: 35px; }
+        .compact-box { background-color: #121318; border: 1px solid #22252a; border-radius: 8px; padding: 20px; text-align: center; text-decoration: none; color: #ffffff; transition: border-color 0.2s; }
         .compact-box:hover { border-color: #ff1a1a; }
-        .compact-box h3 { font-size: 1.1rem; font-weight: 800; color: #ff1a1a; margin-bottom: 8px; }
+        .compact-box h3 { font-size: 1.05rem; font-weight: 800; color: #ff1a1a; margin-bottom: 6px; }
         .compact-box p { color: #aaaaaa; font-size: 0.85rem; line-height: 1.4; }
-        
-        /* 📥 RESTORED SECURE DOWNLOAD TOOL SOFTWARE UTILITIES LAYER */
-        .download-tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 1000px; margin-bottom: 50px; }
-        .download-card { background-color: #121318; border: 1px solid #22252a; border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: #ffffff; }
-        .download-card:hover { border-color: #3b82f6; }
-        .dl-title { font-weight: bold; font-size: 1.05rem; }
-        .dl-subtitle { font-size: 0.8rem; color: #888888; margin-top: 3px; }
-        .dl-btn { background-color: #1f242d; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 12px; border: 1px solid #2d3748; text-transform: uppercase; }
 
-        .hourly-section { width: 100%; max-width: 1000px; background-color: #121318; border: 2px solid #ff1a1a; border-radius: 12px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 40px; }
-        .hourly-header { text-align: center; margin-bottom: 30px; }
-        .hourly-header h2 { font-size: 1.6rem; font-weight: 900; margin-bottom: 5px; color: #ffffff; }
-        .calculator-interface { display: flex; align-items: center; justify-content: space-between; background-color: #0b0c10; border: 1px solid #22252a; padding: 25px; border-radius: 8px; }
-        .selector-side { display: flex; flex-direction: column; gap: 10px; width: 50%; text-align: left; }
-        .selector-side label { font-size: 0.9rem; font-weight: bold; color: #cccccc; text-transform: uppercase; margin-bottom: 5px; }
-        .custom-select { width: 100%; padding: 14px; background-color: #121318; border: 1px solid #333; color: #ffffff; font-size: 1rem; font-weight: bold; border-radius: 6px; outline: none; }
-        .pricing-side { text-align: right; width: 45%; display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
-        .price-display { font-size: 1.8rem; font-weight: 800; color: #ffffff; }
+        /* 📉 COMPACT HOURLY CALCULATOR CONTAINER SYSTEM */
+        .hourly-section { width: 100%; max-width: 1000px; background-color: #121318; border: 2px solid #ff1a1a; border-radius: 12px; padding: 22px 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 30px; }
+        .hourly-header { text-align: center; margin-bottom: 15px; }
+        .hourly-header h2 { font-size: 1.35rem; font-weight: 900; margin-bottom: 4px; color: #ffffff; }
+        .hourly-header p { color: #888888; font-size: 0.85rem; }
+        .calculator-interface { display: flex; align-items: center; justify-content: space-between; background-color: #0b0c10; border: 1px solid #22252a; padding: 15px 20px; border-radius: 8px; gap: 20px; }
+        .selector-side { display: flex; flex-direction: column; gap: 5px; flex: 1.2; text-align: left; }
+        .selector-side label { font-size: 0.8rem; font-weight: bold; color: #cccccc; text-transform: uppercase; letter-spacing: 0.5px; }
+        .custom-select { width: 100%; padding: 11px 14px; background-color: #121318; border: 1px solid #333; color: #ffffff; font-size: 0.95rem; font-weight: bold; border-radius: 6px; cursor: pointer; outline: none; }
+        .pricing-side { text-align: right; flex: 1; display: flex; align-items: center; justify-content: flex-end; gap: 20px; }
+        .price-display { font-size: 1.6rem; font-weight: 800; color: #ffffff; white-space: nowrap; }
         .price-display span { color: #ff1a1a; }
-        .hourly-pay-btn { padding: 14px 28px; background-color: #ff1a1a; color: #ffffff; border: none; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+        .hourly-pay-btn { padding: 12px 24px; background-color: #ff1a1a; color: #ffffff; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; width: 100%; max-width: 220px; }
     </style>
 </head>
 <body>
@@ -73,24 +66,7 @@
         <a href="/client/login" class="compact-box"><h3>Customer Access Hub</h3><p>Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</p></a>
     </div>
 
-    <!-- 📥 RESTORED SECURE TOOLS PIPELINE DOWNLOAD PORTAL MODULES -->
-    <div class="download-tools-grid">
-        <a href="https://anydesk.com" class="download-card" target="_blank">
-            <div>
-                <div class="dl-title" style="color: #ff4d4d;">🔴 Download AnyDesk Terminal</div>
-                <div class="dl-subtitle">Official lightweight remote desktop controller framework executable</div>
-            </div>
-            <div class="dl-btn">Get Exe</div>
-        </a>
-        <a href="https://teamviewer.com" class="download-card" target="_blank">
-            <div>
-                <div class="dl-title" style="color: #3b82f6;">🔵 Download TeamViewer Core</div>
-                <div class="dl-subtitle">Official enterprise-grade communication remote engine layer module</div>
-            </div>
-            <div class="dl-btn">Get Exe</div>
-        </a>
-    </div>
-
+    <!-- COMPACT AD-HOC SUPPORT CALCULATOR -->
     <div class="hourly-section">
         <div class="hourly-header">
             <h2>Need a Quick Incident Fix?</h2>
@@ -109,21 +85,17 @@
             </div>
             <div class="pricing-side">
                 <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <!-- 🚀 NATIVE FALLBACK FORM: Uses browser standard redirects to completely clear Brave blocks -->
-                <form id="paystack-html-form" action="https://paystack.com" method="GET" style="width: 100%;">
-                    <button type="submit" class="hourly-pay-btn" style="width: 100%;">Pay via Paystack 💳</button>
+                <form id="paystack-html-form" action="https://paystack.com" method="GET" style="display: inline-block; width: 100%; max-width: 220px;">
+                    <button type="submit" class="hourly-pay-btn">Pay via Paystack 💳</button>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        // Native script updates the checkout link parameters directly on menu change
         document.getElementById('hoursSelector').addEventListener('change', function() {
             var selectedHours = this.value;
             var formElement = document.getElementById('paystack-html-form');
-            
-            // Bridges your pricing values dynamically straight to your verified Paystack payment pages
             if (selectedHours === "1") formElement.action = "https://paystack.com";
             else if (selectedHours === "2") formElement.action = "https://paystack.com";
             else if (selectedHours === "3") formElement.action = "https://paystack.com";
