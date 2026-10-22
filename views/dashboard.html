@@ -153,11 +153,11 @@
     <!-- HUB LAYER 1: SYSTEM MANAGEMENT TELEMETRY MONITOR -->
     <div class="telemetry-panel">
         <div class="telemetry-details">
-            <h2 id="welcome-username">Synchronizing Session Matrix...</h2>
-            <p id="account-email-telemetry">Secure network terminal verification pending...</p>
+            <h2 id="welcome-username">IT Elements Client Command Center</h2>
+            <p id="account-email-telemetry">Autonomous secure infrastructure pipeline links active.</p>
         </div>
         <div id="telemetry-badge-container">
-            <div class="active-plan-badge">None (Unpaid)</div>
+            <div class="active-plan-badge" id="hud-plan-badge">Loading...</div>
         </div>
     </div>
 
@@ -165,9 +165,8 @@
     <div class="dashboard-grid">
         <!-- LEFT CONTROL DECK -->
         <div>
-            <!-- INTERACTIVE UTILITY CARD A: SELECTION INTERFACES -->
             <div class="dashboard-card" id="subscription-management-zone">
-                <div class="card-title">💳 Secure Package Activation Deck</div>
+                <div class="card-title">静态 Package Activation Deck</div>
                 <div class="card-subtitle">Deploy a permanent monthly flat-rate SLA priority pipeline directly to your profile matrix.</div>
                 
                 <div class="sub-matrix-grid">
@@ -217,33 +216,44 @@
     </div>
 
     <script>
+        // FIXED: Complete rewrite removes the infinite loop route conflict entirely
         async function runDashboardTelemetrySync() {
             try {
-                // Call overview endpoint directly to read current logged in profiles data state
-                const res = await fetch('/api/admin/overview-data');
-                
-                // If backend gateway returns authentication intercept, force back to login structures
+                // Fetch user data via tickets validation channel which responds with active data arrays
+                const res = await fetch('/api/tickets');
                 if (res.redirected) { window.location.href = "/client/login"; return; }
                 
-                // We fetch admin data and verify this specific profile based on backend sessions
-                const profileRes = await fetch('/api/tickets'); 
-                // A quick dynamic check allows us to safely request session user state profiles
-                const checkRes = await fetch('/api/paystack/initialize-subscription', { method: 'POST', body: JSON.stringify({planName:'Verify'}), headers:{'Content-Type':'application/json'} });
+                // Fetch data mappings from our secure internal overview path
+                const overviewData = await (await fetch('/api/admin/overview-data')).json();
                 
-                // For simplicity on the frontend, let's inject a beautiful profile listener layer
-                // We poll database data lines to render state structures accurately
-                document.getElementById('welcome-username').innerText = "Welcome back to elements command center";
-                document.getElementById('account-email-telemetry').innerText = "Autonomous secure infrastructure pipeline links active.";
+                // Production telemetry safety fallback catch layers
+                if (!overviewData || !overviewData.users) return;
                 
-                // Let's check status state from database registries dynamically to flip dashboard controls
-                // We handle this by requesting state mapping data arrays
-                const coreData = await (await fetch('/api/admin/overview-data')).json();
-                
-                // Render beautiful state adjustments based on subscription configuration profiles
-                // For our interface presentation loops, let's ensure the user views their own plan tier mapping:
-                // We add an explicit client cancel form element handler container if tier state goes live
-                
-            } catch(e) { console.error(e); }
+                const user = overviewData.users; // Server automatically extracts your account details
+                const zone = document.getElementById('subscription-management-zone');
+                const badge = document.getElementById('hud-plan-badge');
+
+                // Update the layout status dynamically based on database properties
+                if (user.subscriptionStatus === 'Active') {
+                    badge.innerText = user.subscriptionTier;
+                    badge.className = "active-plan-badge live";
+                    
+                    zone.innerHTML = `
+                        <div class="card-title" style="color: #30d158;">🟢 Active Priority Infrastructure Connection</div>
+                        <div class="card-subtitle" style="margin-bottom: 25px;">Your monthly flat-rate engineering coverage matrix is completely operational.</div>
+                        <p style="font-size: 14px; color: #cbd5e0; line-height: 1.6; margin-bottom: 30px; background: #161a22; padding: 15px; border-left: 4px solid #30d158; border-radius: 0 4px 4px 0;">
+                            <strong>SLA Status Notice:</strong> High-priority queue response times are actively locked onto your profile email [${user.email}]. If system crashes occur, deploy a ticket terminal entry instantly.
+                        </p>
+                        <div style="border-top: 1px solid #1a202c; padding-top: 20px; text-align: left;">
+                            <button class="cancel-pipeline-btn" onclick="terminateMonthlySLA()">Terminate Support Pipeline 🚫</button>
+                        </div>
+                    `;
+                } else {
+                    badge.innerText = "No Active SLA";
+                    badge.className = "active-plan-badge";
+                }
+
+            } catch(e) { console.error("Telemetry channel connection exception handled."); }
         }
 
         async function triggerDashboardCheckout(planName) {
@@ -262,7 +272,6 @@
             } catch(err) { alert("Network timeout."); }
         }
 
-        // 🔒 DISCLOSURE-GUARDED CANCELLATION ENGINE CONTROL FUNCTION
         function terminateMonthlySLA() {
             const strictWarningDisclosure = 
                 "⚠️ CRITICAL INFRASTRUCTURE WARNING:\n" +
@@ -274,7 +283,6 @@
                 "Are you absolutely certain you want to destroy this connection channel?";
             
             if (confirm(strictWarningDisclosure)) {
-                // Construct a hidden form element programmatically to execute the secure state change post sequence
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = '/api/cancel-subscription';
@@ -283,33 +291,16 @@
             }
         }
 
-        // Dynamic Badge Loader Injector Engine Logic
-        async function renderDynamicStateBadges() {
-            // Quick mock validation layer checks for demonstration consistency across profile nodes
-            const zone = document.getElementById('subscription-management-zone');
-            const badgeContainer = document.getElementById('telemetry-badge-container');
-            
-            // Checks if the document registry has active custom subscription tags present inside cache variables
-            // In a production execution loop, the presence of an active profile flips the cards out into a cancel panel:
-            if (document.cookie.includes("activePlan") || window.location.search.includes("Success") || true) {
-                // Let's render both options so the interface is fully operational right away!
-                zone.innerHTML = `
-                    <div class="card-title" style="color: #30d158;">🟢 Active Priority Infrastructure Connection</div>
-                    <div class="card-subtitle" style="margin-bottom: 25px;">Your monthly flat-rate engineering coverage matrix is completely operational.</div>
-                    <p style="font-size: 14px; color: #cbd5e0; line-height: 1.6; margin-bottom: 30px; background: #161a22; padding: 15px; border-left: 4px solid #30d158; border-radius: 0 4px 4px 0;">
-                        <strong>SLA Status Notice:</strong> High-priority 4-hour queue response times are actively locked onto your profile email. If system crashes occur, deploy a ticket terminal entry instantly.
-                    </p>
-                    <div style="border-top: 1px solid #1a202c; padding-top: 20px; text-align: left;">
-                        <button class="cancel-pipeline-btn" onclick="terminateMonthlySLA()">Terminate Support Pipeline 🚫</button>
-                    </div>
-                `;
-                badgeContainer.innerHTML = `<div class="active-plan-badge live">SLA Active Pipeline</div>`;
-            }
-        }
+        window.addEventListener('DOMContentLoaded', async () => {
+            await runDashboardTelemetrySync();
 
-        window.addEventListener('DOMContentLoaded', () => {
-            runDashboardTelemetrySync();
-            renderDynamicStateBadges();
+            // FAST TRACK CHECKOUT LOGIC FROM PRICING REDIRECT MEMORY
+            const pendingCheckoutPlan = sessionStorage.getItem('pendingPlanCheckout');
+            if (pendingCheckoutPlan) {
+                sessionStorage.removeItem('pendingPlanCheckout');
+                alert("⚡ Initializing saved session checkout for: " + pendingCheckoutPlan);
+                triggerDashboardCheckout(pendingCheckoutPlan);
+            }
         });
     </script>
 </body>
