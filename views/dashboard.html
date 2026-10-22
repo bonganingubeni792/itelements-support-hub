@@ -6,300 +6,119 @@
     <title>IT Elements - SLA Command Center</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: #060709;
-            color: #e2e8f0;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            padding: 30px;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1a202c;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
+        body { background-color: #060709; color: #e2e8f0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 30px; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a202c; padding-bottom: 20px; margin-bottom: 30px; }
         .logo-text { font-size: 1.4rem; font-weight: 900; letter-spacing: 0.5px; }
         .logo-text span { color: #ff3b30; }
-        
         .nav-links { display: flex; align-items: center; gap: 20px; }
         .nav-links a { color: #ffffff; text-decoration: none; font-size: 0.95rem; font-weight: 500; }
-        .nav-links a:hover { color: #ff3b30; }
-        
-        .logout-btn {
-            background-color: #ff3b30;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        /* 📡 LIVE SUB STATUS TELEMETRY BLOCKS */
-        .telemetry-panel {
-            background-color: #0f1115;
-            border: 1px solid #1e242b;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 35px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        }
+        .logout-btn { background-color: #ff3b30; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; }
+        .telemetry-panel { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 10px; padding: 25px; margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .telemetry-details h2 { font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
         .telemetry-details p { color: #718096; font-size: 13px; }
-        .active-plan-badge {
-            background-color: rgba(255,204,0,0.1);
-            color: #ffd60a;
-            border: 1px solid rgba(255,204,0,0.25);
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 900;
-            font-size: 16px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        .active-plan-badge.live {
-            background-color: rgba(48,209,88,0.1);
-            color: #30d158;
-            border: 1px solid rgba(48,209,88,0.25);
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 30px;
-            width: 100%;
-        }
-
-        .dashboard-card {
-            background-color: #0f1115;
-            border: 1px solid #1e242b;
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
-        }
-        .card-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; }
+        .active-plan-badge { background-color: rgba(255,204,0,0.1); color: #ffd60a; border: 1px solid rgba(255,204,0,0.25); padding: 8px 16px; border-radius: 6px; font-weight: 900; font-size: 16px; text-transform: uppercase; }
+        .active-plan-badge.live { background-color: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.25); }
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; width: 100%; }
+        .dashboard-card { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 8px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 30px; }
+        .card-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; color: #ffffff; text-transform: uppercase; }
         .card-subtitle { font-size: 12px; color: #4a5568; margin-bottom: 20px; }
-
-        /* 🛒 INTERACTIVE SUB SELECTION MATRIX */
-        .sub-matrix-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 10px;
-        }
-        .matrix-box {
-            background-color: #161a22;
-            border: 1px solid #2d3748;
-            border-radius: 6px;
-            padding: 20px;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: border-color 0.2s;
-        }
-        .matrix-box:hover { border-color: #ff3b30; }
+        .sub-matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 10px; }
+        .matrix-box { background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
         .matrix-name { font-size: 14px; font-weight: 800; color: #ffffff; }
         .matrix-price { font-size: 18px; font-weight: 900; color: #ff3b30; margin: 4px 0 10px 0; }
-        .matrix-price span { color: #718096; font-size: 11px; font-weight: normal; }
-        
-        .action-sub-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: #ff3b30;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-        }
-        .action-sub-btn:hover { opacity: 0.9; }
-
-        .cancel-pipeline-btn {
-            background-color: transparent;
-            color: #e53e3e;
-            border: 1px solid #e53e3e;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-        .cancel-pipeline-btn:hover { background-color: rgba(229,62,62,0.1); }
+        .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .cancel-pipeline-btn { background-color: transparent; color: #e53e3e; border: 1px solid #e53e3e; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
+    <script src="https://paystack.co"></script>
 </head>
 <body>
-
     <header>
         <div class="logo-text">IT <span>ELEMENTS</span></div>
-        <div class="nav-links">
-            <a href="/">Home Page</a>
-            <a href="/support">Open Ticket</a>
-            <a href="/client/logout" class="logout-btn">Log Out Core</a>
-        </div>
+        <div class="nav-links"><a href="/">Home</a><a href="/support">Support</a><a href="/client/logout" class="logout-btn">Log Out Core</a></div>
     </header>
 
-    <!-- HUB LAYER 1: SYSTEM MANAGEMENT TELEMETRY MONITOR -->
     <div class="telemetry-panel">
         <div class="telemetry-details">
-            <h2 id="welcome-username">IT Elements Client Command Center</h2>
-            <p id="account-email-telemetry">Autonomous secure infrastructure pipeline links active.</p>
+            <h2>IT Elements Client Command Center</h2>
+            <p>Encrypted telemetry channels are fully operational.</p>
         </div>
-        <div id="telemetry-badge-container">
-            <div class="active-plan-badge" id="hud-plan-badge">Loading...</div>
-        </div>
+        <div><div class="active-plan-badge" id="hud-plan-badge">Checking Status...</div></div>
     </div>
 
-    <!-- HUB LAYER 2: INTERACTIVE ACTION UTILITIES GRID -->
     <div class="dashboard-grid">
-        <!-- LEFT CONTROL DECK -->
-        <div>
-            <div class="dashboard-card" id="subscription-management-zone">
-                <div class="card-title">静态 Package Activation Deck</div>
-                <div class="card-subtitle">Deploy a permanent monthly flat-rate SLA priority pipeline directly to your profile matrix.</div>
-                
-                <div class="sub-matrix-grid">
-                    <div class="matrix-box">
-                        <div>
-                            <div class="matrix-name">Basic Support</div>
-                            <div class="matrix-price">R299 <span>/ month</span></div>
-                        </div>
-                        <button class="action-sub-btn" onclick="triggerDashboardCheckout('Basic Support')">Activate Pipeline</button>
-                    </div>
-                    <div class="matrix-box">
-                        <div>
-                            <div class="matrix-name">Standard Tier</div>
-                            <div class="matrix-price">R599 <span>/ month</span></div>
-                        </div>
-                        <button class="action-sub-btn" onclick="triggerDashboardCheckout('Standard Tier')">Activate Pipeline</button>
-                    </div>
-                    <div class="matrix-box">
-                        <div>
-                            <div class="matrix-name">Business Growth</div>
-                            <div class="matrix-price">R2499 <span>/ month</span></div>
-                        </div>
-                        <button class="action-sub-btn" onclick="triggerDashboardCheckout('Business Growth')">Activate Pipeline</button>
-                    </div>
-                    <div class="matrix-box">
-                        <div>
-                            <div class="matrix-name">Corporate SLA</div>
-                            <div class="matrix-price">R4999 <span>/ month</span></div>
-                        </div>
-                        <button class="action-sub-btn" onclick="triggerDashboardCheckout('Corporate SLA')">Activate Pipeline</button>
-                    </div>
-                </div>
+        <div class="dashboard-card" id="subscription-management-zone">
+            <div class="card-title">💳 Secure Package Activation Deck</div>
+            <div class="card-subtitle">Deploy a permanent monthly flat-rate SLA priority pipeline directly to your profile.</div>
+            <div class="sub-matrix-grid">
+                <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299</div></div><button class="action-sub-btn" onclick="launchInlineSubscription('Basic Support', 299)">Activate</button></div>
+                <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599</div></div><button class="action-sub-btn" onclick="launchInlineSubscription('Standard Tier', 599)">Activate</button></div>
+                <div class="matrix-box"><div><div class="matrix-name">Business Growth</div><div class="matrix-price">R2499</div></div><button class="action-sub-btn" onclick="launchInlineSubscription('Business Growth', 2499)">Activate</button></div>
+                <div class="matrix-box"><div><div class="matrix-name">Corporate SLA</div><div class="matrix-price">R4999</div></div><button class="action-sub-btn" onclick="launchInlineSubscription('Corporate SLA', 4999)">Activate</button></div>
             </div>
         </div>
-
-        <!-- RIGHT SIDEBAR DECK -->
-        <div>
-            <div class="dashboard-card">
-                <div class="card-title">🛠️ Account Tools</div>
-                <div class="card-subtitle">Manage infrastructure settings.</div>
-                <p style="font-size: 13px; color: #718096; line-height: 1.5; margin-bottom: 20px;">
-                    Need immediate ad-hoc engineering support outside of a subscription framework? Head back to the main calculator screen to acquire individual hours.
-                </p>
-                <a href="/" style="color: #ff3b30; font-size: 13px; font-weight: bold; text-decoration: none;">◀ Ad-Hoc Calculator Screen</a>
-            </div>
+        <div class="dashboard-card">
+            <div class="card-title">⚠️ Non-Refundable Disclosure Policy</div>
+            <p style="font-size:13px; color:#718096; line-height:1.5;">Notice: Terminating a live SLA package drops technical workflow support arrays instantly. No pro-rata refunds are back-issued.</p>
         </div>
     </div>
 
     <script>
-        // FIXED: Complete rewrite removes the infinite loop route conflict entirely
-        async function runDashboardTelemetrySync() {
+        async function checkActiveUserCoverage() {
             try {
-                // Fetch user data via tickets validation channel which responds with active data arrays
-                const res = await fetch('/api/tickets');
-                if (res.redirected) { window.location.href = "/client/login"; return; }
+                const res = await fetch('/api/admin/overview-data');
+                const data = await res.json();
+                const user = data.users;
                 
-                // Fetch data mappings from our secure internal overview path
-                const overviewData = await (await fetch('/api/admin/overview-data')).json();
-                
-                // Production telemetry safety fallback catch layers
-                if (!overviewData || !overviewData.users) return;
-                
-                const user = overviewData.users; // Server automatically extracts your account details
-                const zone = document.getElementById('subscription-management-zone');
                 const badge = document.getElementById('hud-plan-badge');
+                const zone = document.getElementById('subscription-management-zone');
 
-                // Update the layout status dynamically based on database properties
-                if (user.subscriptionStatus === 'Active') {
+                if (user && user.subscriptionStatus === 'Active') {
                     badge.innerText = user.subscriptionTier;
                     badge.className = "active-plan-badge live";
-                    
                     zone.innerHTML = `
                         <div class="card-title" style="color: #30d158;">🟢 Active Priority Infrastructure Connection</div>
-                        <div class="card-subtitle" style="margin-bottom: 25px;">Your monthly flat-rate engineering coverage matrix is completely operational.</div>
-                        <p style="font-size: 14px; color: #cbd5e0; line-height: 1.6; margin-bottom: 30px; background: #161a22; padding: 15px; border-left: 4px solid #30d158; border-radius: 0 4px 4px 0;">
-                            <strong>SLA Status Notice:</strong> High-priority queue response times are actively locked onto your profile email [${user.email}]. If system crashes occur, deploy a ticket terminal entry instantly.
-                        </p>
-                        <div style="border-top: 1px solid #1a202c; padding-top: 20px; text-align: left;">
-                            <button class="cancel-pipeline-btn" onclick="terminateMonthlySLA()">Terminate Support Pipeline 🚫</button>
-                        </div>
-                    `;
+                        <p style="font-size: 14px; margin: 15px 0;">Your monthly coverage [${user.subscriptionTier}] is active. Priority queues are open.</p>
+                        <form action="/api/cancel-subscription" method="POST" onsubmit="return confirm('Confirm cancellation? No refunds will be back-issued.');">
+                            <button type="submit" class="cancel-pipeline-btn">Terminate Support Pipeline 🚫</button>
+                        </form>`;
                 } else {
                     badge.innerText = "No Active SLA";
                     badge.className = "active-plan-badge";
                 }
-
-            } catch(e) { console.error("Telemetry channel connection exception handled."); }
+            } catch(e) { window.location.href = "/client/login"; }
         }
 
-        async function triggerDashboardCheckout(planName) {
-            try {
-                const res = await fetch('/api/paystack/initialize-subscription', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ planName: planName })
-                });
-                const data = await res.json();
-                if (data.success && data.redirectUrl) {
-                    window.location.href = data.redirectUrl;
-                } else {
-                    alert("Initialization error. Account session state down.");
+        function launchInlineSubscription(planName, priceZAR) {
+            var referenceCode = "ITE-SUB-" + Math.floor(100000 + Math.random() * 900000);
+            var handler = PaystackPop.setup({
+                key: 'pk_test_131c4a5b9ffb6f4e8ea6fa6f4bcbb59015c6ed43b',
+                email: 'member@itelements.help',
+                amount: priceZAR * 100,
+                currency: 'ZAR',
+                ref: referenceCode,
+                callback: async function(response) {
+                    await fetch('/api/create-subscription-session', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ plan: planName })
+                    });
+                    alert("✅ Subscription Activated!");
+                    window.location.reload();
                 }
-            } catch(err) { alert("Network timeout."); }
-        }
-
-        function terminateMonthlySLA() {
-            const strictWarningDisclosure = 
-                "⚠️ CRITICAL INFRASTRUCTURE WARNING:\n" +
-                "=========================================\n" +
-                "You are attempting to terminate your monthly IT Elements support SLA pipeline.\n\n" +
-                "STRICT NO-REFUND POLICY COMPLIANCE DISCLOSURE:\n" +
-                "• Canceling this plan cuts off active remote terminal access loops immediately.\n" +
-                "• Absolutely no partial or full refunds are issued for remaining days in the cycle.\n\n" +
-                "Are you absolutely certain you want to destroy this connection channel?";
-            
-            if (confirm(strictWarningDisclosure)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/api/cancel-subscription';
-                document.body.appendChild(form);
-                form.submit();
-            }
+            });
+            handler.openIframe();
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
-            await runDashboardTelemetrySync();
-
-            // FAST TRACK CHECKOUT LOGIC FROM PRICING REDIRECT MEMORY
-            const pendingCheckoutPlan = sessionStorage.getItem('pendingPlanCheckout');
-            if (pendingCheckoutPlan) {
+            await checkActiveUserCoverage();
+            
+            // Auto check for saved pricing selections on load
+            var savedPlan = sessionStorage.getItem('pendingPlanCheckout');
+            var savedPrice = sessionStorage.getItem('pendingPlanPrice');
+            if (savedPlan && savedPrice) {
                 sessionStorage.removeItem('pendingPlanCheckout');
-                alert("⚡ Initializing saved session checkout for: " + pendingCheckoutPlan);
-                triggerDashboardCheckout(pendingCheckoutPlan);
+                sessionStorage.removeItem('pendingPlanPrice');
+                launchInlineSubscription(savedPlan, parseInt(savedPrice));
             }
         });
     </script>
