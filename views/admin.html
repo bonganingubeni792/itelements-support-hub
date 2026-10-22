@@ -3,326 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Elements - Admin Core Deck</title>
+    <title>IT Elements - Infrastructure Deck Core</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            background-color: #060709;
-            color: #e2e8f0;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            padding: 30px;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        
+        body { 
+            background-color: #0b0c10; 
+            color: #ffffff; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 30px 4%;
         }
-        .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1a202c;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
-        }
-        .header-bar h1 {
-            font-size: 26px;
-            font-weight: 900;
-            color: #ff3b30;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-        .logout-btn {
-            background-color: #ff3b30;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            text-decoration: none;
-            font-size: 13px;
-            transition: opacity 0.2s;
-        }
-        .logout-btn:hover { opacity: 0.9; }
 
-        /* 📊 ADVANCED ANALYTICS STATS COUNTER BLOCKS */
-        .stats-grid {
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            width: 100%; 
+            margin-bottom: 30px; 
+            border-bottom: 1px solid #1f242d;
+            padding-bottom: 15px;
+        }
+
+        .logo-text { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
+        .logo-text span { color: #ff1a1a; }
+        .logout-btn { background-color: #ff1a1a; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* 📊 METRIC TILES GRID CORE CSS */
+        .metrics-summary-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
+            width: 100%;
             margin-bottom: 35px;
         }
-        .stat-card {
-            background-color: #0f1115;
-            border: 1px solid #1e242b;
-            border-radius: 10px;
-            padding: 22px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        }
-        .stat-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-        }
-        .stat-card.tickets::before { background-color: #ff3b30; }
-        .stat-card.subs::before { background-color: #ffcc00; }
-        .stat-card.cash::before { background-color: #25d366; }
-        .stat-card.rev::before { background-color: #007aff; }
-
-        .stat-label { font-size: 11px; text-transform: uppercase; color: #718096; letter-spacing: 1px; font-weight: bold; margin-bottom: 5px; }
-        .stat-value { font-size: 28px; font-weight: 900; color: #ffffff; font-family: monospace; }
-        .stat-subtitle { font-size: 11px; color: #4a5568; margin-top: 5px; }
-
-        .dashboard-card {
-            background-color: #0f1115;
-            border: 1px solid #1e242b;
+        .metric-tile {
+            background-color: #121318;
+            border: 1px solid #22252a;
             border-radius: 8px;
-            padding: 25px;
+            padding: 20px;
+            border-left: 4px solid #718096;
+        }
+        .tile-title { font-size: 11px; font-weight: bold; color: #718096; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .tile-value { font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
+        .tile-desc { font-size: 11px; color: #4a5568; }
+
+        /* 🌐 CENTRALIZED MANAGEMENT MONITOR CARDS */
+        .admin-card {
+            background-color: #121318;
+            border: 1px solid #22252a;
+            border-radius: 12px;
+            padding: 25px 30px;
+            width: 100%;
             margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .card-title {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 4px;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .card-subtitle { font-size: 12px; color: #4a5568; margin-bottom: 22px; }
+        .card-title { font-size: 1.2rem; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
+        .card-subtitle { font-size: 0.85rem; color: #718096; margin-bottom: 20px; }
 
-        /* 📋 ADVANCED TELEMETRY GRID TABLES */
-        .table-header {
-            display: flex;
-            background-color: #161a22;
-            padding: 12px 15px;
-            border-radius: 6px;
-            font-weight: bold;
-            font-size: 11px;
-            color: #a0aec0;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            border: 1px solid #222933;
-        }
-        .data-row {
-            display: flex;
-            align-items: center;
-            padding: 14px 15px;
-            border-bottom: 1px solid #1a202c;
-            font-size: 14px;
-            transition: background-color 0.15s;
-        }
-        .data-row:hover { background-color: #14171f; }
+        /* 📋 METICULOUS DATA DISPLAY TABLES GRID RULES */
+        .data-table-container { width: 100%; overflow-x: auto; background-color: #0b0c10; border-radius: 8px; border: 1px solid #22252a; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th { background-color: #161a22; color: #718096; font-weight: bold; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; padding: 14px 18px; border-bottom: 1px solid #22252a; }
+        td { padding: 14px 18px; border-bottom: 1px solid #161a22; color: #cbd5e0; line-height: 1.4; }
+        tr:last-child td { border-bottom: none; }
+        
+        .table-status-select { background-color: #121318; border: 1px solid #2d3748; color: #ffffff; padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; outline: none; }
+        .table-status-select:focus { border-color: #ff1a1a; }
 
-        /* Strict column spacing distributions */
-        .col-client { flex: 1.5; color: #4da6ff; font-weight: 600; }
-        .col-remote-id { flex: 1; color: #ff4d4d; font-family: monospace; font-weight: bold; }
-        .col-passkey { flex: 1; color: #ffcc00; font-family: monospace; }
-        .col-issue { flex: 3; color: #cbd5e0; padding-right: 15px; line-height: 1.4; }
-        .col-status { flex: 1.2; }
-        .col-actions { flex: 1.5; text-align: right; }
-
-        .col-email { flex: 2; color: #a0aec0; }
-        .col-phone { flex: 1.2; color: #a0aec0; }
-        .col-plan { flex: 1.5; color: #ffcc00; font-weight: bold; }
-        .col-ref { flex: 1.2; color: #38bdf8; font-family: monospace; }
-
-        /* Beautiful Color Badges */
-        .status-badge {
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            display: inline-block;
-            letter-spacing: 0.5px;
-        }
-        .badge-open { background-color: rgba(255,59,48,0.12); color: #ff453a; border: 1px solid rgba(255,59,48,0.3); }
-        .badge-onhold { background-color: rgba(255,204,0,0.12); color: #ffd60a; border: 1px solid rgba(255,204,0,0.3); }
-        .badge-resolved { background-color: rgba(48,209,88,0.12); color: #30d158; border: 1px solid rgba(48,209,88,0.3); }
-
-        .status-select {
-            background-color: #161a22;
-            color: #e2e8f0;
-            border: 1px solid #2d3748;
-            padding: 6px 12px;
-            border-radius: 5px;
-            font-size: 12px;
-            cursor: pointer;
-            outline: none;
-            width: 135px;
-            transition: border-color 0.2s;
-        }
-        .status-select:focus { border-color: #007aff; }
-        .loading-text, .empty-text { text-align: center; padding: 25px; color: #4a5568; font-style: italic; font-size: 13px; }
+        @media (max-width: 992px) { .metrics-summary-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .metrics-summary-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
+    <header>
+        <div class="logo-text">IT <span>Elements Infrastructure Deck</span></div>
+        <a href="/admin/logout" class="logout-btn">Terminate Session 👤</a>
+    </header>
 
-    <div class="header-bar">
-        <h1>🔴 IT Elements Infrastructure Deck</h1>
-        <a href="/admin/logout" class="logout-btn">Terminate Session 🔐</a>
+    <!-- TOP SECTION: DYNAMIC MONITOR METRICS TILES -->
+    <div class="metrics-summary-grid">
+        <div class="metric-tile" style="border-left-color: #ff4d4d;"><div class="tile-title">Active Support Load</div><div class="tile-value" id="count-tickets">0</div><div class="tile-desc">Unresolved terminal entries</div></div>
+        <div class="metric-tile" style="border-left-color: #ffd60a;"><div class="tile-title">SLA Memberships</div><div class="tile-value" id="count-users">0</div><div class="tile-desc">Total active subscription clients</div></div>
+        <div class="metric-tile" style="border-left-color: #30d158;"><div class="tile-title">Ad-Hoc Bookings</div><div class="tile-value" id="count-bookings">0</div><div class="tile-desc">Single incident hour allocations</div></div>
+        <div class="metric-tile" style="border-left-color: #007aff;"><div class="tile-title">Gross Revenue Metrics</div><div class="tile-value" id="sum-revenue">R0.00</div><div class="tile-desc">Combined pipeline capital generation</div></div>
     </div>
 
-    <!-- 📊 LIVE ADVANCED METRICS LAYER -->
-    <div class="stats-grid">
-        <div class="stat-card tickets">
-            <div class="stat-label">Active Support Load</div>
-            <div class="stat-value" id="stat-active-tickets">0</div>
-            <div class="stat-subtitle">Unresolved customer terminal jobs</div>
-        </div>
-        <div class="stat-card subs">
-            <div class="stat-label">SLA Memberships</div>
-            <div class="stat-value" id="stat-active-subs">0</div>
-            <div class="stat-subtitle">Total active monthly flat-rate clients</div>
-        </div>
-        <div class="stat-card cash">
-            <div class="stat-label">Ad-Hoc Bookings</div>
-            <div class="stat-value" id="stat-hourly-count">0</div>
-            <div class="stat-subtitle">Total single incident allocations</div>
-        </div>
-        <div class="stat-card rev">
-            <div class="stat-label">Gross Revenue Metrics</div>
-            <div class="stat-value" id="stat-total-revenue">R0.00</div>
-            <div class="stat-subtitle">Combined pipeline capital generation</div>
+    <!-- MONITOR CARD 1: TICKETS ESCALATION ENGINE QUEUE -->
+    <div class="admin-card">
+        <div class="card-title">🚨 Priority Engineering Escalation Queue</div>
+        <div class="card-subtitle">Live incoming customer ticketing arrays mapped down from secure internal user diagnostic form consoles.</div>
+        <div class="data-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client Identity Name</th>
+                        <th>AnyDesk / TV ID</th>
+                        <th>Secure Password</th>
+                        <th>Reported Incident Symptoms Log</th>
+                        <th>Current Queue Status</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-tickets-tbody">
+                    <tr><td colspan="5" style="text-align: center; color: #718096; padding: 30px;">Synchronizing queue arrays...</td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- TABLE CARD 1: TICKETS PIPELINE -->
-    <div class="dashboard-card">
-        <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
-        <div class="card-subtitle">Live incoming customer ticketing arrays mapped down from global diagnostic tunnels.</div>
-        <div class="table-header">
-            <div class="col-client">Client Name</div>
-            <div class="col-remote-id">AnyDesk ID</div>
-            <div class="col-passkey">Passkey</div>
-            <div class="col-issue">Reported Incident Symptoms</div>
-            <div class="col-status">Current Status</div>
-            <div class="col-actions">Manage Routine</div>
+    <!-- MONITOR CARD 2: MONTHLY CLIENT PACKAGE ACCOUNTS MATRIX -->
+    <div class="admin-card">
+        <div class="card-title">👑 Monthly Subscription SLA Accounts Ledger</div>
+        <div class="card-subtitle">Real-time telemetry registry detailing client flat-rate support tiers and cloud active status settings.</div>
+        <div class="data-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subscriber Name</th>
+                        <th>Account Email Address</th>
+                        <th>Contact Number</th>
+                        <th>Subscription Tier</th>
+                        <th>Billing System Status</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-users-tbody">
+                    <tr><td colspan="5" style="text-align: center; color: #718096; padding: 30px;">Syncing subscription nodes...</td></tr>
+                </tbody>
+            </table>
         </div>
-        <div id="priority-queue-body"><div class="loading-text">Synchronizing queue arrays...</div></div>
     </div>
 
-    <!-- TABLE CARD 2: SUBSCRIPTION TELEMETRY -->
-    <div class="dashboard-card">
-        <div class="card-title" style="color: #ffcc00;">👑 Monthly Subscription SLA Accounts</div>
-        <div class="card-subtitle">Real-time telemetry registry for client flat-rate packages and billing states.</div>
-        <div class="table-header">
-            <div class="col-client">Client Name</div>
-            <div class="col-email">Email Address</div>
-            <div class="col-phone">Contact Number</div>
-            <div class="col-plan">Subscription Tier</div>
-            <div class="col-status">Billing Status</div>
+    <!-- MONITOR CARD 3: HOURLY BOOKINGS TRANSACTION LOGS -->
+    <div class="admin-card">
+        <div class="card-title">⏳ Ad-Hoc Hourly Allocation Ledger</div>
+        <div class="card-subtitle">Tracks incoming capital payment references acquired from non-subscription emergency incidents.</div>
+        <div class="data-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Payment Reference Code</th>
+                        <th>Assigned Client Profile</th>
+                        <th>Allocated Support Hours</th>
+                        <th>Capital Amount Paid</th>
+                        <th>Gateway Allocation State</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-bookings-tbody">
+                    <tr><td colspan="5" style="text-align: center; color: #718096; padding: 30px;">Querying ledger allocations...</td></tr>
+                </tbody>
+            </table>
         </div>
-        <div id="subscription-ledger-body"><div class="loading-text">Syncing subscription nodes...</div></div>
-    </div>
-
-    <!-- TABLE CARD 3: PAYSTACK AD-HOC HOURS LEDGER -->
-    <div class="dashboard-card">
-        <div class="card-title" style="color: #25d366;">⏳ Ad-Hoc Hourly Allocation Ledger</div>
-        <div class="card-subtitle">Tracks incoming capital reference logs from users who paid flat-rate emergency fees.</div>
-        <div class="table-header">
-            <div class="col-client">Client Identifier</div>
-            <div class="col-ref">Gateway Ref</div>
-            <div class="col-remote-id">Time Allocation</div>
-            <div class="col-passkey">Amount Paid</div>
-            <div class="col-status">Work Status</div>
-            <div class="col-actions">Action Command</div>
-        </div>
-        <div id="hourly-ledger-body"><div class="loading-text">Reading financial data lines...</div></div>
-    </div>
-
-    <!-- TABLE CARD 4: RESOLVED HISTORY ARCHIVES -->
-    <div class="dashboard-card">
-        <div class="card-title" style="color: #718096;">⏳ Job Resolution History Ledger</div>
-        <div class="table-header">
-            <div class="col-client">Client Name</div><div class="col-remote-id">AnyDesk ID</div><div class="col-passkey">Passkey</div><div class="col-issue">Closed Log Archival Records</div><div class="col-status">Status</div><div class="col-actions">Action Command</div>
-        </div>
-        <div id="history-ledger-body"><div class="loading-text">Parsing archival arrays...</div></div>
     </div>
 
     <script>
-        async function runAdvancedTelemetrySync() {
+        async function refreshInfrastructureLedger() {
             try {
-                // Fetch live feeds parallel matching both api endpoints
-                const ticketRes = await fetch('/api/tickets');
-                const tickets = await ticketRes.json();
+                // FIXED ENDPOINT CALL: Pulls directly from the single unified administration core data source
+                const res = await fetch('/api/admin/overview-data');
+                const data = await res.json();
+
+                // Fallback catch handles authentication timeouts gracefully
+                if (!data || data.error) { window.location.href = "/client/login"; return; }
+
+                // Map target reference indicators safely
+                const ticketsList = data.tickets || [];
+                const usersList = Array.isArray(data.users) ? data.users : [];
+                const bookingsList = data.hourlyBookings || [];
+
+                // Calculate gross revenue configurations based on active account entries
+                let subRevenue = usersList.reduce((acc, user) => acc + (user.subscriptionStatus === 'Active' ? (user.subscriptionTier === 'Basic Support' ? 299 : user.subscriptionTier === 'Standard Tier' ? 599 : user.subscriptionTier === 'Business Growth' ? 2499 : user.subscriptionTier === 'Corporate SLA' ? 4999 : 0) : 0), 0);
+                let adhocRevenue = bookingsList.reduce((acc, book) => acc + (book.amountPaid || 0), 0);
                 
-                const overviewRes = await fetch('/api/admin/overview-data');
-                const overviewData = await overviewRes.json();
+                // Update live counters dashboard HUD text layers
+                document.getElementById('count-tickets').innerText = ticketsList.filter(t => t.status !== 'Resolved').length;
+                document.getElementById('count-users').innerText = usersList.filter(u => u.subscriptionStatus === 'Active').length;
+                document.getElementById('count-bookings').innerText = bookingsList.length;
+                document.getElementById('sum-revenue').innerText = "R" + parseFloat(subRevenue + adhocRevenue).toFixed(2);
 
-                const queueBody = document.getElementById('priority-queue-body');
-                const subBody = document.getElementById('subscription-ledger-body');
-                const hourlyBody = document.getElementById('hourly-ledger-body');
-                const historyBody = document.getElementById('history-ledger-body');
-
-                queueBody.innerHTML = ''; subBody.innerHTML = ''; hourlyBody.innerHTML = ''; historyBody.innerHTML = '';
-
-                let activeTicketsCount = 0;
-                let activeSubsCount = 0;
-                let adhocCount = 0;
-                let calculatedRevenue = 0;
-
-                // A. Filter & Populate Tickets Tunnels
-                const activeTickets = tickets.filter(t => t.status !== 'Resolved');
-                const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
-                activeTicketsCount = activeTickets.length;
-
-                if(activeTickets.length === 0) queueBody.innerHTML = '<div class="empty-text">🎉 No active support tickets pending.</div>';
-                else {
-                    activeTickets.forEach(item => {
-                        const status = item.status || 'Open';
-                        const badge = status === 'On Hold' ? 'badge-onhold' : 'badge-open';
-                        queueBody.innerHTML += `
-                            <div class="data-row">
-                                <div class="col-client">${item.name || 'N/A'}</div>
-                                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
-                                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                <div class="col-issue">${item.issue || 'No log details.'}</div>
-                                <div class="col-status"><span class="status-badge ${badge}">${status}</span></div>
-                                <div class="col-actions">
-                                    <select class="status-select" onchange="patchTicketRoutineStatus('${item._id}', this.value)">
-                                        <option value="Open" ${status === 'Open' ? 'selected' : ''}>🔴 Open</option>
-                                        <option value="On Hold" ${status === 'On Hold' ? 'selected' : ''}>🟡 On Hold</option>
-                                        <option value="Resolved">🟢 Resolve</option>
+                // 🔄 RENDER ESCALATION ENGINE TICKETS GRID DATA ROW BLOCKS
+                const ticketsTbody = document.getElementById('admin-tickets-tbody');
+                if (ticketsList.length > 0) {
+                    ticketsTbody.innerHTML = "";
+                    ticketsList.forEach(ticket => {
+                        ticketsTbody.innerHTML += `
+                            <tr>
+                                <td style="font-weight: bold; color: #ffffff;">${ticket.name || 'Anonymous User'}</td>
+                                <td style="font-family: monospace; color: #ff4d4d;">${ticket.remoteId || 'N/A'}</td>
+                                <td style="font-family: monospace; color: #aaaaaa;">${ticket.remotePassword || 'N/A'}</td>
+                                <td style="color: #cbd5e0; max-width: 400px;">${ticket.issue || 'No diagnostic symptom log left.'}</td>
+                                <td>
+                                    <select class="table-status-select" onchange="updateTicketStatusInline('${ticket._0id || ticket._id}', this.value)">
+                                        <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>🔴 Open Queue</option>
+                                        <option value="In Progress" ${ticket.status === 'In Progress' ? 'selected' : ''}>🟡 In Progress</option>
+                                        <option value="Resolved" ${ticket.status === 'Resolved' ? 'selected' : ''}>🟢 Resolved</option>
                                     </select>
-                                </div>
-                            </div>`;
+                                </td>
+                            </tr>`;
                     });
+                } else {
+                    ticketsTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #4a5568; padding: 25px;">No customer tickets currently logged in database queue.</td></tr>`;
                 }
 
-                if(resolvedTickets.length === 0) historyBody.innerHTML = '<div class="empty-text">No archived cases found.</div>';
-                else {
-                    resolvedTickets.forEach(item => {
-                        historyBody.innerHTML += `
-                            <div class="data-row" style="opacity:0.4;">
-                                <div class="col-client">${item.name}</div><div class="col-remote-id">${item.remoteId}</div><div class="col-passkey">${item.remotePassword}</div><div class="col-issue">${item.issue}</div>
-                                <div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div>
-                                <div class="col-actions"><select class="status-select" onchange="patchTicketRoutineStatus('${item._id}', this.value)"><option value="Resolved" selected>🟢 Closed</option><option value="Open">🔴 Reopen</option></select></div>
-                            </div>`;
+                // 🔄 RENDER FLAT-RATE SUBSCRIPTION MEMBERSHIP ACCOUNTS ROWS
+                const usersTbody = document.getElementById('admin-users-tbody');
+                if (usersList.length > 0) {
+                    usersTbody.innerHTML = "";
+                    usersList.forEach(user => {
+                        let statusColor = user.subscriptionStatus === 'Active' ? '#30d158' : '#718096';
+                        usersTbody.innerHTML += `
+                            <tr>
+                                <td style="font-weight: bold; color: #ffffff;">${user.fullName || 'N/A'}</td>
+                                <td style="font-family: monospace;">${user.email || 'N/A'}</td>
+                                <td>${user.phone || 'N/A'}</td>
+                                <td style="color: #ffd60a; font-weight: bold;">${user.subscriptionTier || 'None (Unpaid)'}</td>
+                                <td style="color: ${statusColor}; font-weight: bold; text-transform: uppercase; font-size: 11px;">${user.subscriptionStatus || 'Inactive'}</td>
+                            </tr>`;
                     });
+                } else {
+                    usersTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #4a5568; padding: 25px;">No registered subscriber records channels online.</td></tr>`;
                 }
 
-                // B. Populate Monthly SLA Subscriptions Grid & Calculate Finances
-                if(!overviewData.users || overviewData.users.length === 0) subBody.innerHTML = '<div class="empty-text">No client accounts compiled.</div>';
-                else {
-                    overviewData.users.forEach(user => {
-                        const status = user.subscriptionStatus || 'Inactive';
-                        const tier = user.subscriptionTier || 'None (Unpaid)';
-                        if (status === 'Active') {
-                            activeSubsCount++;
-                            if (tier === 'Basic Support') calculatedRevenue += 299;
-                            else if (tier === 'Standard Tier') calculatedRevenue += 599;
-                            else if (tier === 'Business Growth') calculatedRevenue += 2499;
-                            else if (tier === 'Corporate SLA') calculatedRevenue += 4999;
-                        }
-                        const badge = status === 'Active' ? 'badge-resolved' : 'badge-open';
-                        subBody.innerHTML += `
-                            <div class="data-row">
-                                <div class="col-client">${user.fullName}</div>
-                                <div class="col-email">${user.email}</div>
-                                <div class="col-phone">${user.phone}</div>
-                                <div class="col-plan">${tier}</div>
-                                <div class="col-status"><span class="status-badge ${badge}">${status}</span></div>
-                            </div>`;
-                    });
-                }
-
-                // C. Populate Ad-Hoc Financial Logs
+                // 🔄 RENDER HOURLY ALLOCATION ACCOUNT LEDGERS
+                const bookingsTbody = document.getElementById('admin-bookings-tbody');
+                if (bookingsList.length > 0) {
+                    bookingsTbody.innerHTML = "";
+                    bookingsList.forEach(book => {
+                        let bookingStatusColor = book.status === 'Active' ? '#30d158' : '#ffd60a';
+                        bookingsTbody.innerHTML += `
+                            <tr>
+                                <td style="font-family: monospace; font-weight: bold; color: #007aff;">${book.paymentReference || 'N/A'}</td>
