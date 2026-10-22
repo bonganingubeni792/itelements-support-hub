@@ -44,6 +44,7 @@ app.use(session({
     saveUninitialized: true,
     cookie: { maxAge: 86400000, secure: false }
 }));
+
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -71,8 +72,7 @@ app.post('/client/register', async (req, res) => {
         if (existingUser) return res.send('<script>alert("Email already registered.");window.history.back();</script>');
         const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
         await newUser.save();
-        req.session.isUser = true;
-        req.session.userEmail = newUser.email;
+        req.session.isUser = true; req.session.userEmail = newUser.email;
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
     } catch (err) { res.status(500).send(err.message); }
 });
@@ -149,10 +149,8 @@ app.post('/api/paystack/initialize-hourly', async (req, res) => {
         const totalAmountZAR = parseInt(hours || 1) * 350;
         const paymentReference = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
         await new HourlyBooking({ email: req.session.userEmail || 'Ad-Hoc Guest Client', hoursAllocated: parseInt(hours), amountPaid: totalAmountZAR, paymentReference: paymentReference, status: 'Pending Verification' }).save();
-        
         const paystackPayload = JSON.stringify({ email: req.session.userEmail || 'customer@itelements.help', amount: totalAmountZAR * 100, reference: paymentReference, callback_url: `https://${req.get('host')}/api/paystack/verify-callback` });
         const options = { hostname: 'api.paystack.co', port: 443, path: '/transaction/initialize', method: 'POST', headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json', 'Content-Length': paystackPayload.length } };
-        
         const paystackReq = https.request(options, paystackRes => {
             let data = '';
             paystackRes.on('data', chunk => { data += chunk; });
@@ -167,28 +165,3 @@ app.post('/api/paystack/initialize-hourly', async (req, res) => {
 });
 
 app.get('/api/paystack/verify-callback', async (req, res) => {
-    try { await HourlyBooking.findOneAndUpdate({ paymentReference: req.query.reference }, { status: 'Active' }); res.send('<script>alert("✅ Payment Successful!");window.location.href="/dashboard";</script>'); } catch(e) { res.redirect('/'); }
-});
-
-app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
-    try {
-        const { planName } = req.body;
-        let planPrice = planName === 'Basic Support' ? 299 : planName === 'Standard Tier' ? 599 : planName === 'Business Growth' ? 2499 : planName === 'Corporate SLA' ? 4999 : 0;
-        const paymentReference = "ITE-SUB-" + Math.floor(100000 + Math.random() * 900000);
-        
-        const paystackPayload = JSON.stringify({ email: req.session.userEmail, amount: planPrice * 100, reference: paymentReference, callback_url: `https://${req.get('host')}/api/paystack/verify-subscription?plan=${encodeURIComponent(planName)}` });
-        const options = { hostname: 'api.paystack.co', port: 443, path: '/transaction/initialize', method: 'POST', headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json', 'Content-Length': paystackPayload.length } };
-        
-        const paystackReq = https.request(options, paystackRes => {
-            let data = '';
-            paystackRes.on('data', chunk => { data += chunk; });
-            paystackRes.on('end', () => {
-                const responseData = JSON.parse(data);
-                if (responseData.status && responseData.data.authorization_url) { res.json({ success: true, redirectUrl: responseData.data.authorization_url }); }
-                else { res.status(400).json({ success: false }); }
-            });
-        });
-        paystackReq.write(paystackPayload); paystackReq.end();
-    } catch (err) { res.status(500).json({ error: true }); }
-
-         
