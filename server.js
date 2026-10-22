@@ -55,15 +55,14 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(__dirname));
 
-// Configure production level cookie session policies
 app.use(session({
     secret: process.env.SESSION_SECRET || 'itelements-secure-key-2026',
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 86400000, secure: false } // Kept safe for 24 hours straight
+    cookie: { maxAge: 86400000, secure: false }
 }));
 
-// FIXED SECURITY AUTOMATION GATEWAYS: Cookie persistence fallbacks prevent rapid loop logouts
+// SECURITY BOUNDARY CONTROLLERS
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -154,13 +153,11 @@ app.post('/api/bookings/hourly', async (req, res) => {
 // 🔍 FETCH OVERVIEW DATA NODES FOR MANAGEMENT LEDGERS
 app.get('/api/admin/overview-data', async (req, res) => {
     try {
-        // Dynamic fail safe allows clients to view their tracking tier metrics smoothly without logout drops
         let queryEmail = req.session.userEmail || "";
         const targetUser = await UserAccount.findOne({ email: queryEmail.toLowerCase().trim() }, { password: 0 });
         const usersList = await UserAccount.find({}, { password: 0 });
         const hourlyBookings = await HourlyBooking.find().sort({ date: -1 });
         
-        // Binds data packaging nodes based on user session role permissions
         if (req.session.isAdmin) {
             res.json({ users: usersList, hourlyBookings });
         } else {
@@ -240,4 +237,12 @@ app.post('/api/paystack/initialize-hourly', async (req, res) => {
 
 app.get('/api/paystack/verify-callback', async (req, res) => {
     const { reference } = req.query;
+    try {
+        await HourlyBooking.findOneAndUpdate({ paymentReference: reference }, { status: 'Active' });
+        res.send('<script>alert("✅ Payment Successful! Your support allocation hours are active.");window.location.href="/dashboard";</script>');
+    } catch(e) { res.redirect('/'); }
+});
+
+// 💳 INITIALIZE PAYSTACK SUBSCRIPTION TRANSACTION GATEWAY
+app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
     try {
