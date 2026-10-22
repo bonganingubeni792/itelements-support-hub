@@ -31,10 +31,12 @@ const HourlyBooking = mongoose.model('HourlyBooking', new mongoose.Schema({
     email: { type: String, default: 'Guest / Anonymous' }, hoursAllocated: Number, amountPaid: Number,
     paymentReference: String, status: { type: String, default: 'Pending Verification' }, date: { type: Date, default: Date.now }
 }, { collection: 'hourlybookings' }));
+
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'views')));
+
+// 🚨 FORCED EMBED: Reads files directly from the main root path to stop folder mismatch crashes
 app.use(express.static(__dirname));
 
 app.use(session({
@@ -46,21 +48,21 @@ app.use(session({
 
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
-    res.redirect('/client/login');
+    res.redirect('/client-login.html');
 }
 function checkUserAuth(req, res, next) {
     if (req.session && (req.session.isUser || req.session.isAdmin)) return next();
-    res.redirect('/client/login');
+    res.redirect('/client-login.html');
 }
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
-app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
-app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
-app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
-app.get('/client/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
-app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
-app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
-app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'pricing.html')));
+app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'support.html')));
+app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'client-login.html')));
+app.get('/client/login', (req, res) => res.sendFile(path.join(__dirname, 'client-login.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'register.html')));
+app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'dashboard.html')));
+app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 
 app.post('/client/register', async (req, res) => {
     try {
@@ -90,8 +92,8 @@ app.post('/client/login', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
-app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client-login.html'); }); });
+app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client-login.html'); }); });
 
 app.post('/support', async (req, res) => {
     try {
@@ -139,9 +141,6 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
 app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
     try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
 });
-app.post('/api/client/cancel-subscription', checkUserAuth, async (req, res) => {
-    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
-});
 
 app.post('/api/paystack/initialize-hourly', async (req, res) => {
     try {
@@ -171,12 +170,3 @@ app.get('/api/paystack/verify-callback', async (req, res) => {
 app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
     try {
         const { planName } = req.body;
-        let planPrice = planName === 'Basic Support' ? 299 : planName === 'Standard Tier' ? 599 : planName === 'Business Growth' ? 2499 : planName === 'Corporate SLA' ? 4999 : 0;
-        const paymentReference = "ITE-SUB-" + Math.floor(100000 + Math.random() * 900000);
-        const paystackPayload = JSON.stringify({ email: req.session.userEmail, amount: planPrice * 100, reference: paymentReference, callback_url: `https://${req.get('host')}/api/paystack/verify-subscription?plan=${encodeURIComponent(planName)}` });
-        const options = { hostname: 'api.paystack.co', port: 443, path: '/transaction/initialize', method: 'POST', headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json', 'Content-Length': paystackPayload.length } };
-        const paystackReq = https.request(options, paystackRes => {
-            let data = '';
-            paystackRes.on('data', chunk => { data += chunk; });
-            paystackRes.on('end', () => {
-                const responseData = JSON.parse(data);
