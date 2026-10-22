@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
-const https = require('https'); // 🚨 REQUIRED FOR SECURE PAYSTACK DECK REDIRECTS
+const https = require('https');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -143,7 +143,17 @@ app.post('/api/bookings/update-status', checkAdminAuth, async (req, res) => {
     try { await HourlyBooking.findByIdAndUpdate(req.body.bookingId, { status: req.body.status }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
 });
 
-// 💳 SUBSCRIPTION INTERFACE ROUTING CHANNELS
+// ⏳ AD-HOC HOURLY BOOKING DISPATCH ROUTE
+app.post('/api/bookings/hourly', async (req, res) => {
+    try {
+        const { hours, amount, reference, email } = req.body;
+        const newBooking = new HourlyBooking({ email: email || 'Guest Client', hoursAllocated: parseInt(hours), amountPaid: parseFloat(amount), paymentReference: reference });
+        await newBooking.save();
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: true }); }
+});
+
+// 💳 Dynamic subscription activation session endpoint
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
     try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' }); res.json({ success: true, redirectUrl: '/dashboard' }); } catch (err) { res.status(500).json({ error: true }); }
 });
@@ -155,29 +165,26 @@ app.post('/api/cancel-subscription', checkUserAuth, handleSubscriptionCancellati
 app.post('/api/client/cancel-subscription', checkUserAuth, handleSubscriptionCancellation);
 
 
-// 💳 🚨 NEW UNBLOCKABLE INTERACTIVE REDIRECT CHECKOUT PIPELINE FOR AD-HOC HOURS
-app.post('/api/paystack/initialize-hourly', async (req, res) => {
+// 💳 🚨 NEW UNBLOCKABLE SUBSCRIPTION INITIALIZATION PIPELINE FOR PRICING PLANS
+app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
     try {
-        const { hours } = req.body;
-        const totalAmountZAR = parseInt(hours || 1) * 350;
-        const paymentReference = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
+        const { planName } = req.body;
+        
+        // Server side price matrix verification layer
+        let planPrice = 0;
+        if (planName === 'Basic Support') planPrice = 299;
+        else if (planName === 'Standard Tier') planPrice = 599;
+        else if (planName === 'Business Growth') planPrice = 2499;
+        else if (planName === 'Corporate SLA') planPrice = 4999;
+        else return res.status(400).json({ success: false, message: 'Invalid plan selection.' });
 
-        // Pre-save the pending transaction state inside your MongoDB cluster logs
-        const pendingBooking = new HourlyBooking({
-            email: req.session.userEmail || 'Ad-Hoc Guest Client',
-            hoursAllocated: parseInt(hours),
-            amountPaid: totalAmountZAR,
-            paymentReference: paymentReference,
-            status: 'Pending Verification'
-        });
-        await pendingBooking.save();
+        const paymentReference = "ITE-SUB-" + Math.floor(100000 + Math.random() * 900000);
 
-        // Structure the communication payload to request a secure checkout URL from Paystack
         const paystackPayload = JSON.stringify({
-            email: req.session.userEmail || 'customer@itelements.help',
-            amount: totalAmountZAR * 100, // Multiplied by 100 because Paystack parses values in cents
+            email: req.session.userEmail,
+            amount: planPrice * 100, // Cents mapping
             reference: paymentReference,
-            callback_url: `https://${req.get('host')}/api/paystack/verify-callback` // Redirects right back to your dashboard on completion
+            callback_url: `https://${req.get('host')}/api/paystack/verify-subscription?plan=${encodeURIComponent(planName)}`
         });
 
         const options = {
@@ -186,23 +193,21 @@ app.post('/api/paystack/initialize-hourly', async (req, res) => {
             path: '/transaction/initialize',
             method: 'POST',
             headers: {
-                Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, // Pulls your Test Secret Key from Render Environment tab
+                Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
                 'Content-Type': 'application/json',
                 'Content-Length': paystackPayload.length
             }
         };
 
-        // Fire a live back-end transaction request directly to Paystack's banking nodes
         const paystackReq = https.request(options, paystackRes => {
             let data = '';
             paystackRes.on('data', chunk => { data += chunk; });
             paystackRes.on('end', () => {
                 const responseData = JSON.parse(data);
                 if (responseData.status && responseData.data.authorization_url) {
-                    // Send the secure checkout web address back to the frontend button
                     res.json({ success: true, redirectUrl: responseData.data.authorization_url });
                 } else {
-                    res.status(400).json({ success: false, message: 'Paystack configuration error.' });
+                    res.status(400).json({ success: false, message: 'Paystack error.' });
                 }
             });
         });
@@ -214,18 +219,19 @@ app.post('/api/paystack/initialize-hourly', async (req, res) => {
     } catch (err) { res.status(500).json({ error: true, message: err.message }); }
 });
 
-// 🔄 DYNAMIC REDIRECT VERIFICATION ENDPOINT HUB
-app.get('/api/paystack/verify-callback', async (req, res) => {
-    const { reference } = req.query;
+// 🔄 Dynamic verification returning route for recurring monthly tiers
+app.get('/api/paystack/verify-subscription', checkUserAuth, async (req, res) => {
+    const { reference, plan } = req.query;
     try {
-        // Automatically activate the customer's hours inside MongoDB Atlas upon return
-        await HourlyBooking.findOneAndUpdate({ paymentReference: reference }, { status: 'Active' });
-        res.send('<script>alert("✅ Payment Successful! Your support allocation hours are active.");window.location.href="/dashboard";</script>');
+        await UserAccount.findOneAndUpdate(
+            { email: req.session.userEmail }, 
+            { subscriptionTier: plan, subscriptionStatus: 'Active' }
+        );
+        res.send(`<script>alert("✅ Subscription Activated: ${plan} package is live!");window.location.href="/dashboard";</script>`);
     } catch(e) {
-        res.redirect('/');
+        res.redirect('/dashboard');
     }
 });
-
 
 // 🚀 INITIALIZE SYSTEM SERVER LISTENERS
 app.listen(PORT, () => {
