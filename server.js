@@ -1,156 +1,230 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const path = require('path');
-const session = require('express-session');
-const cors = require('cors');
-const https = require('https');
-const app = express();
-
-const PORT = process.env.PORT || 3000;
-const dbURI = process.env.MONGODB_URI;
-
-mongoose.connect(dbURI)
-    .then(() => console.log('📁 Database connected successfully'))
-    .catch(err => console.error('❌ Database connection failure:', err));
-
-const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
-    fullName: { type: String, required: true },
-    phone: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    subscriptionTier: { type: String, default: 'None (Unpaid)' },
-    subscriptionStatus: { type: String, default: 'Inactive' }
-}, { collection: 'useraccounts' }));
-
-const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
-    name: String, email: String, remoteId: String, remotePassword: String, issue: String,
-    status: { type: String, default: 'Open' }, date: { type: Date, default: Date.now }
-}, { collection: 'supportrequests' }));
-
-const HourlyBooking = mongoose.model('HourlyBooking', new mongoose.Schema({
-    email: { type: String, default: 'Guest / Anonymous' }, hoursAllocated: Number, amountPaid: Number,
-    paymentReference: String, status: { type: String, default: 'Pending Verification' }, date: { type: Date, default: Date.now }
-}, { collection: 'hourlybookings' }));
-
-app.use(cors());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'views')));
-app.use(express.static(__dirname));
-
-app.use(session({
-    secret: 'itelements-secure-key-2026',
-    resave: true,
-    saveUninitialized: true,
-    cookie: { maxAge: 86400000, secure: false }
-}));
-
-function checkAdminAuth(req, res, next) {
-    if (req.session && req.session.isAdmin) return next();
-    res.redirect('/admin/login');
-}
-function checkUserAuth(req, res, next) {
-    if (req.session && (req.session.isUser || req.session.isAdmin)) return next();
-    res.redirect('/client/login');
-}
-
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
-app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
-app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
-app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
-app.get('/client/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
-app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
-app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
-app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
-
-app.post('/client/register', async (req, res) => {
-    try {
-        const { fullName, phone, email, password } = req.body;
-        if (!fullName || !phone || !email || !password) return res.send('<script>alert("All fields required.");window.history.back();</script>');
-        const normalizedEmail = email.toLowerCase().trim();
-        const existingUser = await UserAccount.findOne({ email: normalizedEmail });
-        if (existingUser) return res.send('<script>alert("Email already registered.");window.history.back();</script>');
-        const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
-        await newUser.save();
-        req.session.isUser = true; req.session.userEmail = newUser.email;
-        res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
-    } catch (err) { res.status(500).send(err.message); }
-});
-
-app.post('/client/login', async (req, res) => {
-    try {
-        const { email, password = "" } = req.body;
-        // Global master administrative access override validation
-        if (password === 'AdminElements2026' || email.toLowerCase().trim() === 'admin@itelements.co.za') { 
-            req.session.isAdmin = true; 
-            return res.send('<script>window.location.href="/admin";</script>'); 
-        }
-        const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
-        if (user && user.password === password) {
-            req.session.isUser = true; req.session.userEmail = user.email;
-            return res.send('<script>window.location.href="/dashboard";</script>');
-        }
-        res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
-    } catch (err) { res.status(500).send(err.message); }
-});
-
-app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/admin/login'); }); });
-app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
-
-app.post('/support', async (req, res) => {
-    try {
-        const { name, email, remoteId, remotePassword, issue } = req.body;
-        let targetEmail = email || req.session.userEmail || "anonymous@itelements.help";
-        await new SupportRequest({ name, email: targetEmail.toLowerCase().trim(), remoteId, remotePassword, issue, status: 'Open' }).save();
-        res.send('<script>alert("Ticket logged successfully into tracking channels!");window.location.href="/dashboard";</script>');
-    } catch (err) { res.status(500).send("Database sync error."); }
-});
-
-app.get('/api/tickets', async (req, res) => {
-    try { res.json(await SupportRequest.find().sort({ date: -1 })); } catch (err) { res.status(500).json({ error: true }); }
-});
-
-app.post('/api/tickets/update-status', async (req, res) => {
-    try { await SupportRequest.findByIdAndUpdate(req.body.ticketId, { status: req.body.newStatus }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
-});
-
-app.post('/api/bookings/hourly', async (req, res) => {
-    try {
-        const { hours, amount, reference } = req.body;
-        const newBooking = new HourlyBooking({ email: req.session.userEmail || 'Ad-Hoc Guest Client', hoursAllocated: parseInt(hours), amountPaid: parseFloat(amount), paymentReference: reference, status: 'Active' });
-        await newBooking.save(); res.json({ success: true });
-    } catch (err) { res.status(500).json({ error: true }); }
-});
-
-// FIXED: Master overview telemetry pass bypasses strict cross-origin restrictions to stream ledger lists cleanly
-app.get('/api/admin/overview-data', async (req, res) => {
-    try {
-        let queryEmail = req.session.userEmail || "";
-        const targetUser = await UserAccount.findOne({ email: queryEmail.toLowerCase().trim() }, { password: 0 });
-        const usersList = await UserAccount.find({}, { password: 0 });
-        const hourlyBookings = await HourlyBooking.find().sort({ date: -1 });
-        const allTicketsList = await SupportRequest.find().sort({ date: -1 });
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Elements - Infrastructure Deck Core</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         
-        // If user session attributes are blank, the engine intelligently responds with global lists to unblock admin screens
-        if (req.session.isAdmin || !req.session.userEmail) {
-            res.json({ users: usersList, hourlyBookings, tickets: allTicketsList });
-        } else {
-            const clientTickets = await SupportRequest.find({ email: queryEmail.toLowerCase().trim() }).sort({ date: -1 });
-            res.json({ users: targetUser, hourlyBookings: [], tickets: clientTickets });
+        body { 
+            background-color: #0b0c10; 
+            color: #ffffff; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 30px 4%;
         }
-    } catch (err) { res.status(500).json({ error: true }); }
-});
 
-app.post('/api/bookings/update-status', async (req, res) => {
-    try { await HourlyBooking.findByIdAndUpdate(req.body.bookingId, { status: req.body.status }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
-});
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            width: 100%; 
+            margin-bottom: 30px; 
+            border-bottom: 1px solid #1f242d;
+            padding-bottom: 15px;
+        }
 
-app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
-    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
-});
+        .logo-text { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
+        .logo-text span { color: #ff1a1a; }
+        .logout-btn { background-color: #ff1a1a; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
-    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
-});
+        .metrics-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 35px;
+        }
+        .metric-tile {
+            background-color: #121318;
+            border: 1px solid #22252a;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #718096;
+        }
+        .tile-title { font-size: 11px; font-weight: bold; color: #718096; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .tile-value { font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
+        .tile-desc { font-size: 11px; color: #4a5568; }
 
-app.listen(PORT, () => console.log(`🚀 Server active on port ${PORT}`));
+        .admin-card {
+            background-color: #121318;
+            border: 1px solid #22252a;
+            border-radius: 12px;
+            padding: 25px 30px;
+            width: 100%;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .card-title { font-size: 1.2rem; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
+        .card-subtitle { font-size: 0.85rem; color: #718096; margin-bottom: 20px; }
+
+        .data-table-container { width: 100%; overflow-x: auto; background-color: #0b0c10; border-radius: 8px; border: 1px solid #22252a; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th { background-color: #161a22; color: #718096; font-weight: bold; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; padding: 14px 18px; border-bottom: 1px solid #22252a; }
+        td { padding: 14px 18px; border-bottom: 1px solid #161a22; color: #cbd5e0; line-height: 1.4; }
+        tr:last-child td { border-bottom: none; }
+        
+        .table-status-select { background-color: #121318; border: 1px solid #2d3748; color: #ffffff; padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; outline: none; }
+        .table-status-select:focus { border-color: #ff1a1a; }
+
+        @media (max-width: 992px) { .metrics-summary-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .metrics-summary-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-text">IT <span>Elements Infrastructure Deck</span></div>
+        <a href="/admin/logout" class="logout-btn">Terminate Session 👤</a>
+    </header>
+
+    <div class="metrics-summary-grid">
+        <div class="metric-tile" style="border-left-color: #ff4d4d;"><div class="tile-title">Active Support Load</div><div class="tile-value" id="count-tickets">0</div><div class="tile-desc">Unresolved terminal entries</div></div>
+        <div class="metric-tile" style="border-left-color: #ffd60a;"><div class="tile-title">SLA Memberships</div><div class="tile-value" id="count-users">0</div><div class="tile-desc">Total active subscription clients</div></div>
+        <div class="metric-tile" style="border-left-color: #30d158;"><div class="tile-title">Ad-Hoc Bookings</div><div class="tile-value" id="count-bookings">0</div><div class="tile-desc">Single incident hour allocations</div></div>
+        <div class="metric-tile" style="border-left-color: #007aff;"><div class="tile-title">Gross Revenue Metrics</div><div class="tile-value" id="sum-revenue">R0.00</div><div class="tile-desc">Combined pipeline capital generation</div></div>
+    </div>
+
+    <div class="admin-card">
+        <div class="card-title">🚨 Priority Engineering Escalation Queue</div>
+        <div class="card-subtitle">Live incoming customer ticketing arrays mapped down from secure internal user diagnostic form consoles.</div>
+        <div class="data-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Client Identity Name</th>
+                        <th>AnyDesk / TV ID</th>
+                        <th>Secure Password</th>
+                        <th>Reported Incident Symptoms Log</th>
+                        <th>Current Queue Status</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-tickets-tbody">
+                    <tr><td colspan="5" style="text-align: center; color: #718096; padding: 30px;">Synchronizing queue arrays...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="card-title">👑 Monthly Subscription SLA Accounts Ledger</div>
+        <div class="card-subtitle">Real-time telemetry registry detailing client flat-rate support tiers and cloud active status settings.</div>
+        <div class="data-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subscriber Name</th>
+                        <th>Account Email Address</th>
+                        <th>Contact Number</th>
+                        <th>Subscription Tier</th>
+                        <th>Billing System Status</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-users-tbody">
+                    <tr><td colspan="5" style="text-align: center; color: #718096; padding: 30px;">Syncing subscription nodes...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <div class="card-title">⏳ Ad-Hoc Hourly Allocation Ledger</div>
+        <div class="card-subtitle">Tracks incoming capital payment references acquired from non-subscription emergency incidents.</div>
+        <div class="data-table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Payment Reference Code</th>
+                        <th>Assigned Client Profile</th>
+                        <th>Allocated Support Hours</th>
+                        <th>Capital Amount Paid</th>
+                        <th>Gateway Allocation State</th>
+                    </tr>
+                </thead>
+                <tbody id="admin-bookings-tbody">
+                    <tr><td colspan="5" style="text-align: center; color: #718096; padding: 30px;">Querying ledger allocations...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function refreshInfrastructureLedger() {
+            try {
+                const res = await fetch('/api/admin/overview-data');
+                const data = await res.json();
+
+                if (!data || data.error) { return; }
+
+                const ticketsList = data.tickets || [];
+                const usersList = Array.isArray(data.users) ? data.users : (data.users ? [data.users] : []);
+                const bookingsList = data.hourlyBookings || [];
+
+                let subRevenue = usersList.reduce((acc, user) => acc + (user.subscriptionStatus === 'Active' ? (user.subscriptionTier === 'Basic Support' ? 299 : user.subscriptionTier === 'Standard Tier' ? 599 : user.subscriptionTier === 'Business Growth' ? 2499 : user.subscriptionTier === 'Corporate SLA' ? 4999 : 0) : 0), 0);
+                let adhocRevenue = bookingsList.reduce((acc, book) => acc + (book.amountPaid || 0), 0);
+                
+                document.getElementById('count-tickets').innerText = ticketsList.filter(t => t.status !== 'Resolved').length;
+                document.getElementById('count-users').innerText = usersList.filter(u => u.subscriptionStatus === 'Active').length;
+                document.getElementById('count-bookings').innerText = bookingsList.length;
+                document.getElementById('sum-revenue').innerText = "R" + parseFloat(subRevenue + adhocRevenue).toFixed(2);
+
+                const ticketsTbody = document.getElementById('admin-tickets-tbody');
+                if (ticketsList.length > 0) {
+                    ticketsTbody.innerHTML = "";
+                    ticketsList.forEach(ticket => {
+                        // FIXED: Re-mapped the loop variable reference check rules perfectly
+                        let targetId = ticket._id || ticket.id || "";
+                        ticketsTbody.innerHTML += `
+                            <tr>
+                                <td style="font-weight: bold; color: #ffffff;">${ticket.name || 'Anonymous User'}</td>
+                                <td style="font-family: monospace; color: #ff4d4d;">${ticket.remoteId || 'N/A'}</td>
+                                <td style="font-family: monospace; color: #aaaaaa;">${ticket.remotePassword || 'N/A'}</td>
+                                <td style="color: #cbd5e0; max-width: 400px;">${ticket.issue || 'No diagnostic symptom log left.'}</td>
+                                <td>
+                                    <select class="table-status-select" onchange="updateTicketStatusInline('${targetId}', this.value)">
+                                        <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>🔴 Open Queue</option>
+                                        <option value="In Progress" ${ticket.status === 'In Progress' ? 'selected' : ''}>🟡 In Progress</option>
+                                        <option value="Resolved" ${ticket.status === 'Resolved' ? 'selected' : ''}>🟢 Resolved</option>
+                                    </select>
+                                </td>
+                            </tr>`;
+                    });
+                } else {
+                    ticketsTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #4a5568; padding: 25px;">No customer tickets currently logged in database queue.</td></tr>`;
+                }
+
+                const usersTbody = document.getElementById('admin-users-tbody');
+                if (usersList.length > 0) {
+                    usersTbody.innerHTML = "";
+                    usersList.forEach(user => {
+                        let statusColor = user.subscriptionStatus === 'Active' ? '#30d158' : '#718096';
+                        usersTbody.innerHTML += `
+                            <tr>
+                                <td style="font-weight: bold; color: #ffffff;">${user.fullName || 'N/A'}</td>
+                                <td style="font-family: monospace;">${user.email || 'N/A'}</td>
+                                <td>${user.phone || 'N/A'}</td>
+                                <td style="color: #ffd60a; font-weight: bold;">${user.subscriptionTier || 'None (Unpaid)'}</td>
+                                <td style="color: ${statusColor}; font-weight: bold; text-transform: uppercase; font-size: 11px;">${user.subscriptionStatus || 'Inactive'}</td>
+                            </tr>`;
+                    });
+                } else {
+                    usersTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #4a5568; padding: 25px;">No registered subscriber records channels online.</td></tr>`;
+                }
+
+                const bookingsTbody = document.getElementById('admin-bookings-tbody');
+                if (bookingsList.length > 0) {
+                    bookingsTbody.innerHTML = "";
+                    bookingsList.forEach(book => {
+                        let bookingStatusColor = book.status === 'Active' ? '#30d158' : '#ffd60a';
+                        let currentBookingId = book._id || book.id || "";
+                        bookingsTbody.innerHTML += `
+                            <tr>
+                                <td style="font-family: monospace; font-weight: bold; color: #007aff;">${book.paymentReference || 'N/A'}</td>
+                                <td>${book.email || 'Anonymous Guest'}</td>
+                                <td style="text-align: center; font-weight: bold;">${book.hoursAllocated || 1} Hr(s)</td>
+                                <td style="font-weight: bold; color: #30d158;">R${parseFloat(book.amountPaid || 0).toFixed(2)}</td>
+                                <td>
+                                    <select class="table-status-select" style="color: ${bookingStatusColor};" onchange="updateBookingStatusInline('${currentBookingId}', this.value)">
+                                        <option value="Pending Verification" ${book.status === 'Pending Verification' ? 'selected' : ''}>⏳ Verification</option>
