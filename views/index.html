@@ -5,251 +5,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - On-Demand Remote Support</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        body {
-            background-color: #0b0c10;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 1000px;
-            margin-bottom: 40px;
-        }
-        .logo-container {
-            display: flex;
-            align-items: center;
-        }
-        .logo-wrapper {
-            display: inline-block;
-            position: relative;
-            width: 32px;
-            height: 32px;
-            margin-right: 12px;
-            vertical-align: middle;
-        }
-        .logo-ring {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: #ff1a1a;
-            border: 2px solid transparent;
-            border-top-color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transform: rotate(-45deg);
-        }
-        .logo-inner-text {
-            color: #ffffff;
-            font-size: 0.75rem;
-            font-weight: 900;
-            font-style: italic;
-            font-family: 'Georgia', serif;
-            transform: rotate(45deg);
-        }
-        .logo-text {
-            font-size: 1.4rem;
-            font-weight: 900;
-        }
-        .logo-text span {
-            color: #ff1a1a;
-        }
-        nav {
-            display: flex;
-            align-items: center;
-        }
-        nav a {
-            color: #ffffff;
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        nav a:hover {
-            color: #ff1a1a;
-        }
-        .nav-whatsapp-link {
-            background-color: #25d366;
-            color: #ffffff !important;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-weight: bold !important;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid #1ebd58;
-            margin-left: 20px;
-            text-decoration: none;
-            transition: background-color 0.2s, transform 0.2s;
-        }
-        .nav-whatsapp-link:hover {
-            background-color: #20ba5a !important;
-            transform: translateY(-1px);
-        }
-        .hero-section {
-            text-align: center;
-            max-width: 800px;
-            margin-bottom: 50px;
-        }
-        .hero-section h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            margin-bottom: 20px;
-            line-height: 1.2;
-        }
-        .hero-section p {
-            color: #aaaaaa;
-            font-size: 1.1rem;
-            line-height: 1.6;
-        }
-        .compact-nav-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            width: 100%;
-            max-width: 1000px;
-            margin-bottom: 50px;
-        }
-        .compact-box {
-            background-color: #121318;
-            border: 1px solid #22252a;
-            border-radius: 8px;
-            padding: 22px 20px;
-            text-align: center;
-            text-decoration: none;
-            color: #ffffff;
-            transition: border-color 0.2s, transform 0.2s;
-        }
-        .compact-box:hover {
-            border-color: #ff1a1a;
-            transform: translateY(-2px);
-        }
-        .compact-box h3 {
-            font-size: 1.1rem;
-            font-weight: 800;
-            color: #ff1a1a;
-            margin-bottom: 8px;
-        }
-        .compact-box p {
-            color: #aaaaaa;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-        .hourly-section {
-            width: 100%;
-            max-width: 1000px;
-            background-color: #121318;
-            border: 2px solid #ff1a1a;
-            border-radius: 12px;
-            padding: 35px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-bottom: 40px;
-        }
-        .hourly-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .hourly-header h2 {
-            font-size: 1.6rem;
-            font-weight: 900;
-            margin-bottom: 5px;
-            color: #ffffff;
-        }
-        .hourly-header p {
-            color: #888888;
-            font-size: 0.9rem;
-        }
-        .calculator-interface {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #0b0c10;
-            border: 1px solid #22252a;
-            padding: 25px;
-            border-radius: 8px;
-        }
-        .selector-side {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 50%;
-            text-align: left;
-        }
-        .selector-side label {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #cccccc;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 5px;
-        }
-        .custom-select {
-            width: 100%;
-            padding: 14px;
-            background-color: #121318;
-            border: 1px solid #333;
-            color: #ffffff;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-            outline: none;
-        }
-        .custom-select:focus {
-            border-color: #ff1a1a;
-        }
-        .pricing-side {
-            text-align: right;
-            width: 45%;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 15px;
-        }
-        .price-display {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #ffffff;
-        }
-        .price-display span {
-            color: #ff1a1a;
-        }
-        .hourly-pay-btn {
-            padding: 14px 28px;
-            background-color: #ff1a1a;
-            color: #ffffff;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: background-color 0.2s;
-        }
-        .hourly-pay-btn:hover {
-            background-color: #cc0000;
-        }
-        .whatsapp-icon-svg {
-            width: 16px;
-            height: 16px;
-            fill: #ffffff;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #0b0c10; color: #ffffff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 1000px; margin-bottom: 40px; }
+        .logo-container { display: flex; align-items: center; }
+        .logo-wrapper { display: inline-block; position: relative; width: 32px; height: 32px; margin-right: 12px; vertical-align: middle; }
+        .logo-ring { width: 100%; height: 100%; border-radius: 50%; background: #ff1a1a; border: 2px solid transparent; border-top-color: #ffffff; display: flex; justify-content: center; align-items: center; transform: rotate(-45deg); }
+        .logo-inner-text { color: #ffffff; font-size: 0.75rem; font-weight: 900; font-style: italic; font-family: 'Georgia', serif; transform: rotate(45deg); }
+        .logo-text { font-size: 1.4rem; font-weight: 900; }
+        .logo-text span { color: #ff1a1a; }
+        nav { display: flex; align-items: center; }
+        nav a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 0.95rem; font-weight: 500; transition: color 0.2s; }
+        nav a:hover { color: #ff1a1a; }
+        .nav-whatsapp-link { background-color: #25d366; color: #ffffff !important; padding: 8px 16px; border-radius: 4px; font-weight: bold !important; display: flex; align-items: center; gap: 8px; border: 1px solid #1ebd58; margin-left: 20px; text-decoration: none; transition: background-color 0.2s, transform 0.2s; }
+        .nav-whatsapp-link:hover { background-color: #20ba5a !important; transform: translateY(-1px); }
+        .hero-section { text-align: center; max-width: 800px; margin-bottom: 50px; }
+        .hero-section h1 { font-size: 3rem; font-weight: 900; margin-bottom: 20px; line-height: 1.2; }
+        .hero-section p { color: #aaaaaa; font-size: 1.1rem; line-height: 1.6; }
+        .compact-nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; width: 100%; max-width: 1000px; margin-bottom: 50px; }
+        .compact-box { background-color: #121318; border: 1px solid #22252a; border-radius: 8px; padding: 22px 20px; text-align: center; text-decoration: none; color: #ffffff; transition: border-color 0.2s, transform 0.2s; }
+        .compact-box:hover { border-color: #ff1a1a; transform: translateY(-2px); }
+        .compact-box h3 { font-size: 1.1rem; font-weight: 800; color: #ff1a1a; margin-bottom: 8px; }
+        .compact-box p { color: #aaaaaa; font-size: 0.85rem; line-height: 1.4; }
+        .hourly-section { width: 100%; max-width: 1000px; background-color: #121318; border: 2px solid #ff1a1a; border-radius: 12px; padding: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 40px; }
+        .hourly-header { text-align: center; margin-bottom: 30px; }
+        .hourly-header h2 { font-size: 1.6rem; font-weight: 900; margin-bottom: 5px; color: #ffffff; }
+        .hourly-header p { color: #888888; font-size: 0.9rem; }
+        .calculator-interface { display: flex; align-items: center; justify-content: space-between; background-color: #0b0c10; border: 1px solid #22252a; padding: 25px; border-radius: 8px; }
+        .selector-side { display: flex; flex-direction: column; gap: 10px; width: 50%; text-align: left; }
+        .selector-side label { font-size: 0.9rem; font-weight: bold; color: #cccccc; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+        .custom-select { width: 100%; padding: 14px; background-color: #121318; border: 1px solid #333; color: #ffffff; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; outline: none; }
+        .custom-select:focus { border-color: #ff1a1a; }
+        .pricing-side { text-align: right; width: 45%; display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
+        .price-display { font-size: 1.8rem; font-weight: 800; color: #ffffff; }
+        .price-display span { color: #ff1a1a; }
+        .hourly-pay-btn { padding: 14px 28px; background-color: #ff1a1a; color: #ffffff; border: none; border-radius: 6px; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: background-color 0.2s; }
+        .hourly-pay-btn:hover { background-color: #cc0000; }
+        .whatsapp-icon-svg { width: 16px; height: 16px; fill: #ffffff; }
     </style>
+    <!-- 💳 Load the official block-proof Paystack inline overlay library -->
+    <script src="https://paystack.co"></script>
 </head>
 <body>
     <header>
@@ -298,35 +93,39 @@
             </div>
             <div class="pricing-side">
                 <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <!-- 🚀 UNIFIED GATEWAY: Securely bridges directly into Paystack’s automated network nodes -->
-                <button class="hourly-pay-btn" id="paystack-redirect-btn">Pay via Paystack 💳</button>
+                <button class="hourly-pay-btn" onclick="payWithPaystackInline()">Pay via Paystack 💳</button>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('paystack-redirect-btn').addEventListener('click', async function(e) {
-            e.preventDefault();
-            var hoursField = document.getElementById("hoursSelector");
-            var chosenHours = hoursField ? hoursField.value : "1";
+        function payWithPaystackInline() {
+            var hours = document.getElementById("hoursSelector").value;
+            var amountZAR = parseInt(hours) * 350;
+            var referenceCode = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
 
-            try {
-                const res = await fetch('/api/paystack/initialize-hourly', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ hours: chosenHours })
-                });
-                const data = await res.json();
-                
-                if (data.success && data.redirectUrl) {
-                    window.location.href = data.redirectUrl;
-                } else {
-                    alert("Initialization error. Verify your Render Environment secret variable settings.");
+            var handler = PaystackPop.setup({
+                key: 'pk_test_131c4a5b9ffb6f4e8ea6fa6f4bcbb59015c6ed43b', // Your Paystack Test Public Key
+                email: 'customer@itelements.help',
+                amount: amountZAR * 100, // Cents mapping
+                currency: 'ZAR',
+                ref: referenceCode,
+                callback: async function(response) {
+                    alert("✅ Payment Successful! Reference: " + response.reference);
+                    // Securely push the success state to your backend MongoDB ledger entries
+                    await fetch('/api/bookings/hourly', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ hours: hours, amount: amountZAR, reference: response.reference })
+                    });
+                    window.location.reload();
+                },
+                onClose: function() {
+                    alert("❌ Transaction dismissed.");
                 }
-            } catch(err) {
-                alert("Network communication error.");
-            }
-        });
+            });
+            handler.openIframe();
+        }
     </script>
 </body>
 </html>
