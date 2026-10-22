@@ -23,7 +23,7 @@
         .plan-price { font-size: 2.2rem; font-weight: 900; margin-bottom: 25px; color: #ffffff; }
         .plan-price span { color: #ff1a1a; font-size: 1.2rem; }
         
-        .features-list { text-align: left; list-style: none; margin-bottom: 30px; font-size: 0.9rem; color: #b3b3b3; }
+        .features-list { text-align: list; list-style: none; margin-bottom: 30px; font-size: 0.9rem; color: #b3b3b3; }
         .features-list li { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
         .features-list li::before { content: "✓"; color: #ff1a1a; font-weight: bold; }
         
@@ -31,7 +31,6 @@
         .subscribe-btn:hover { background-color: #cc0000; }
     </style>
 </head>
-
 <body>
     <header>
         <div class="logo-text">IT <span>ELEMENTS</span></div>
@@ -77,7 +76,6 @@
         </div>
     </div>
 
-    <!-- PLAN 4 -->
     <div class="pricing-container" style="grid-template-columns: 1fr; max-width: 400px; margin-top: 30px;">
         <div class="pricing-card">
             <div>
@@ -93,29 +91,31 @@
     <script>
         async function initializeSubscription(planName) {
             try {
-                // Request a secure monthly subscription checkout URL from the backend server
                 const res = await fetch('/api/paystack/initialize-subscription', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ planName: planName })
                 });
 
-                // Safety Gateway Redirect: If the user is logged out, the route redirects them back to auth channels safely
-                if (res.redirected) {
-                    alert("🔑 Account Verification Needed:\nPlease log in or create an account first to link a monthly plan.");
+                // 🔄 SMART REDIRECT ROUTING INTERCEPTOR
+                if (res.redirected || res.status === 401 || res.status === 302) {
+                    // Save the intended subscription plan to browser memory before moving away
+                    sessionStorage.setItem('pendingPlanCheckout', planName);
+                    alert("🔑 Account Connection Required:\nWe are shifting you to the portal gateway to log in or register. Once completed, your checkout session will initialize instantly!");
                     window.location.href = "/client/login";
                     return;
                 }
 
                 const data = await res.json();
                 if (data.success && data.redirectUrl) {
-                    // Redirect straight to Paystack checkout screen
                     window.location.href = data.redirectUrl;
                 } else {
-                    alert("Gateway initialization fault. Ensure you are fully logged into your user profile.");
+                    // Secondary fallback memory capture
+                    sessionStorage.setItem('pendingPlanCheckout', planName);
+                    window.location.href = "/client/login";
                 }
             } catch(err) {
-                alert("Network communication timeout encountered.");
+                alert("Network communication error.");
             }
         }
     </script>
