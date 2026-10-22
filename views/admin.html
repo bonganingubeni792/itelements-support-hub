@@ -31,7 +31,6 @@
         .logo-text span { color: #ff1a1a; }
         .logout-btn { background-color: #ff1a1a; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* 📊 METRIC TILES GRID CORE CSS */
         .metrics-summary-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -50,7 +49,6 @@
         .tile-value { font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
         .tile-desc { font-size: 11px; color: #4a5568; }
 
-        /* 🌐 CENTRALIZED MANAGEMENT MONITOR CARDS */
         .admin-card {
             background-color: #121318;
             border: 1px solid #22252a;
@@ -63,7 +61,6 @@
         .card-title { font-size: 1.2rem; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
         .card-subtitle { font-size: 0.85rem; color: #718096; margin-bottom: 20px; }
 
-        /* 📋 METICULOUS DATA DISPLAY TABLES GRID RULES */
         .data-table-container { width: 100%; overflow-x: auto; background-color: #0b0c10; border-radius: 8px; border: 1px solid #22252a; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
         th { background-color: #161a22; color: #718096; font-weight: bold; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; padding: 14px 18px; border-bottom: 1px solid #22252a; }
@@ -83,7 +80,6 @@
         <a href="/admin/logout" class="logout-btn">Terminate Session 👤</a>
     </header>
 
-    <!-- TOP SECTION: DYNAMIC MONITOR METRICS TILES -->
     <div class="metrics-summary-grid">
         <div class="metric-tile" style="border-left-color: #ff4d4d;"><div class="tile-title">Active Support Load</div><div class="tile-value" id="count-tickets">0</div><div class="tile-desc">Unresolved terminal entries</div></div>
         <div class="metric-tile" style="border-left-color: #ffd60a;"><div class="tile-title">SLA Memberships</div><div class="tile-value" id="count-users">0</div><div class="tile-desc">Total active subscription clients</div></div>
@@ -91,7 +87,6 @@
         <div class="metric-tile" style="border-left-color: #007aff;"><div class="tile-title">Gross Revenue Metrics</div><div class="tile-value" id="sum-revenue">R0.00</div><div class="tile-desc">Combined pipeline capital generation</div></div>
     </div>
 
-    <!-- MONITOR CARD 1: TICKETS ESCALATION ENGINE QUEUE -->
     <div class="admin-card">
         <div class="card-title">🚨 Priority Engineering Escalation Queue</div>
         <div class="card-subtitle">Live incoming customer ticketing arrays mapped down from secure internal user diagnostic form consoles.</div>
@@ -113,7 +108,6 @@
         </div>
     </div>
 
-    <!-- MONITOR CARD 2: MONTHLY CLIENT PACKAGE ACCOUNTS MATRIX -->
     <div class="admin-card">
         <div class="card-title">👑 Monthly Subscription SLA Accounts Ledger</div>
         <div class="card-subtitle">Real-time telemetry registry detailing client flat-rate support tiers and cloud active status settings.</div>
@@ -135,7 +129,6 @@
         </div>
     </div>
 
-    <!-- MONITOR CARD 3: HOURLY BOOKINGS TRANSACTION LOGS -->
     <div class="admin-card">
         <div class="card-title">⏳ Ad-Hoc Hourly Allocation Ledger</div>
         <div class="card-subtitle">Tracks incoming capital payment references acquired from non-subscription emergency incidents.</div>
@@ -160,33 +153,28 @@
     <script>
         async function refreshInfrastructureLedger() {
             try {
-                // FIXED ENDPOINT CALL: Pulls directly from the single unified administration core data source
                 const res = await fetch('/api/admin/overview-data');
                 const data = await res.json();
 
-                // Fallback catch handles authentication timeouts gracefully
-                if (!data || data.error) { window.location.href = "/client/login"; return; }
+                if (!data || data.error) { return; }
 
-                // Map target reference indicators safely
                 const ticketsList = data.tickets || [];
-                const usersList = Array.isArray(data.users) ? data.users : [];
+                const usersList = Array.isArray(data.users) ? data.users : (data.users ? [data.users] : []);
                 const bookingsList = data.hourlyBookings || [];
 
-                // Calculate gross revenue configurations based on active account entries
                 let subRevenue = usersList.reduce((acc, user) => acc + (user.subscriptionStatus === 'Active' ? (user.subscriptionTier === 'Basic Support' ? 299 : user.subscriptionTier === 'Standard Tier' ? 599 : user.subscriptionTier === 'Business Growth' ? 2499 : user.subscriptionTier === 'Corporate SLA' ? 4999 : 0) : 0), 0);
                 let adhocRevenue = bookingsList.reduce((acc, book) => acc + (book.amountPaid || 0), 0);
                 
-                // Update live counters dashboard HUD text layers
                 document.getElementById('count-tickets').innerText = ticketsList.filter(t => t.status !== 'Resolved').length;
                 document.getElementById('count-users').innerText = usersList.filter(u => u.subscriptionStatus === 'Active').length;
                 document.getElementById('count-bookings').innerText = bookingsList.length;
                 document.getElementById('sum-revenue').innerText = "R" + parseFloat(subRevenue + adhocRevenue).toFixed(2);
 
-                // 🔄 RENDER ESCALATION ENGINE TICKETS GRID DATA ROW BLOCKS
                 const ticketsTbody = document.getElementById('admin-tickets-tbody');
                 if (ticketsList.length > 0) {
                     ticketsTbody.innerHTML = "";
                     ticketsList.forEach(ticket => {
+                        let currentId = ticket._id;
                         ticketsTbody.innerHTML += `
                             <tr>
                                 <td style="font-weight: bold; color: #ffffff;">${ticket.name || 'Anonymous User'}</td>
@@ -194,7 +182,7 @@
                                 <td style="font-family: monospace; color: #aaaaaa;">${ticket.remotePassword || 'N/A'}</td>
                                 <td style="color: #cbd5e0; max-width: 400px;">${ticket.issue || 'No diagnostic symptom log left.'}</td>
                                 <td>
-                                    <select class="table-status-select" onchange="updateTicketStatusInline('${ticket._0id || ticket._id}', this.value)">
+                                    <select class="table-status-select" onchange="updateTicketStatusInline('${currentId}', this.value)">
                                         <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>🔴 Open Queue</option>
                                         <option value="In Progress" ${ticket.status === 'In Progress' ? 'selected' : ''}>🟡 In Progress</option>
                                         <option value="Resolved" ${ticket.status === 'Resolved' ? 'selected' : ''}>🟢 Resolved</option>
@@ -206,7 +194,6 @@
                     ticketsTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #4a5568; padding: 25px;">No customer tickets currently logged in database queue.</td></tr>`;
                 }
 
-                // 🔄 RENDER FLAT-RATE SUBSCRIPTION MEMBERSHIP ACCOUNTS ROWS
                 const usersTbody = document.getElementById('admin-users-tbody');
                 if (usersList.length > 0) {
                     usersTbody.innerHTML = "";
@@ -225,7 +212,6 @@
                     usersTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #4a5568; padding: 25px;">No registered subscriber records channels online.</td></tr>`;
                 }
 
-                // 🔄 RENDER HOURLY ALLOCATION ACCOUNT LEDGERS
                 const bookingsTbody = document.getElementById('admin-bookings-tbody');
                 if (bookingsList.length > 0) {
                     bookingsTbody.innerHTML = "";
@@ -234,3 +220,10 @@
                         bookingsTbody.innerHTML += `
                             <tr>
                                 <td style="font-family: monospace; font-weight: bold; color: #007aff;">${book.paymentReference || 'N/A'}</td>
+                                <td>${book.email || 'Anonymous Guest'}</td>
+                                <td style="text-align: center; font-weight: bold;">${book.hoursAllocated || 1} Hr(s)</td>
+                                <td style="font-weight: bold; color: #30d158;">R${parseFloat(book.amountPaid || 0).toFixed(2)}</td>
+                                <td>
+                                    <select class="table-status-select" style="color: ${bookingStatusColor};" onchange="updateBookingStatusInline('${book._id}', this.value)">
+                                        <option value="Pending Verification" ${book.status === 'Pending Verification' ? 'selected' : ''}>⏳ Verification</option>
+                                        <option value="Active" ${book.status === 'Active' ? 'selected' : ''}>🟢 Active SLA</option>
