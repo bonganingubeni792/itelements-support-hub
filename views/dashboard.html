@@ -97,18 +97,26 @@
         .row-split { display: flex; gap: 20px; width: 100%; }
         .transmit-ticket-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #ff1a1a 0%, #cc0000 100%); color: #ffffff; border: none; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .live-status-hud-bar { display: flex; gap: 40px; background-color: #0b0c10; padding: 12px 25px; border-radius: 6px; border: 1px solid #22252a; margin-bottom: 20px; font-family: monospace; font-size: 11px; }
+        .live-status-hud-bar { display: flex; gap: 20px; background-color: #0b0c10; padding: 12px 20px; border-radius: 6px; border: 1px solid #22252a; margin-bottom: 20px; font-family: monospace; font-size: 11px; }
         .hud-node { color: #4a5568; display: flex; align-items: center; gap: 6px; }
         .hud-node.active { color: #30d158; font-weight: bold; }
         .hud-node.active::before { content: ''; display: inline-block; width: 6px; height: 6px; background-color: #30d158; border-radius: 50%; box-shadow: 0 0 8px #30d158; }
 
-        /* 📱 🚨 HIGHLY ADVANCED SMARTPHONE RESPONSIVE BREAKPOINTS FOR CONSOLE DECK */
+        /* 📊 NEW ANALYTICS PANEL DESIGN ROWS */
+        .analytics-hud-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #22252a; font-size: 13px; }
+        .analytics-hud-row:last-child { border-bottom: none; }
+        .hud-label { color: #aaaaaa; font-weight: 500; }
+        .hud-value { font-weight: bold; font-family: monospace; color: #ffffff; }
+        .hud-status-dot { display: inline-block; width: 8px; height: 8px; background-color: #30d158; border-radius: 50%; margin-right: 6px; box-shadow: 0 0 8px #30d158; }
+
+        @media (max-width: 992px) {
+            .row-split-deck { grid-template-columns: 1fr; gap: 25px; }
+        }
         @media (max-width: 768px) {
             body { padding: 20px 15px; }
             header { flex-direction: column; text-align: center; gap: 15px; }
             nav a { margin: 0 10px; font-size: 0.85rem; }
             .telemetry-panel { flex-direction: column; text-align: center; gap: 15px; padding: 15px; }
-            .row-split-deck { grid-template-columns: 1fr; gap: 25px; }
             .sub-matrix-grid { grid-template-columns: 1fr; gap: 15px; }
             .row-split { flex-direction: column; gap: 15px; }
             .live-status-hud-bar { flex-direction: column; gap: 10px; padding: 15px; }
@@ -139,7 +147,7 @@
         <div class="row-split-deck">
             <div class="dashboard-card" id="subscription-management-zone">
                 <div class="card-title">👑 SLA Package Activation Matrix</div>
-                <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</div>
+                <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile accounts database.</div>
                 <div class="sub-matrix-grid">
                     <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299/mo</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
                     <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599/mo</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
@@ -169,38 +177,70 @@
             </div>
         </div>
 
-        <!-- ROW 2 LAYER: MASSIVE WIDE-BODY DISPATCH CONSOLE -->
-        <div class="dashboard-card">
-            <div class="card-title">🚨 Instant Engineering Queue Incident Dispatch</div>
-            <div class="card-subtitle">Encountering structural operating glitches or malware loops? Stream details directly to active on-duty terminal support queues.</div>
-            
-            <div class="live-status-hud-bar">
-                <div class="hud-node active">System Handshake Logs Connected</div>
-                <div class="hud-node" id="hud-routing">Secure Pipeline Encryption Enclosure Mapped</div>
-                <div class="hud-node" id="hud-scanning">Dynamic Terminal Diagnostic Scan Matrix Booted</div>
+        <!-- 🌐 ROW 2 LAYER: BALANCED 2-COLUMN INCIDENT CONSOLE & TELEMETRY HUD -->
+        <div class="row-split-deck">
+            <!-- LEFT PANEL: PERFECTLY PROPORTIONED TICKET DISPATCH FORM -->
+            <div class="dashboard-card">
+                <div class="card-title">🚨 Engineering Queue Incident Dispatch</div>
+                <div class="card-subtitle">Encountering structural operating errors? Stream terminal details directly to active support queues.</div>
+                
+                <div class="live-status-hud-bar">
+                    <div class="hud-node active">Handshake Live</div>
+                    <div class="hud-node" id="hud-routing">Encryption Enclosed</div>
+                    <div class="hud-node" id="hud-scanning">Diagnostic Booted</div>
+                </div>
+
+                <form action="/support" method="POST" id="dashboard-ticket-form">
+                    <div class="interactive-form-group">
+                        <label>Client Verification Identity Name:</label>
+                        <input type="text" name="name" class="interactive-input" required placeholder="e.g. Bongani Ngubeni" oninput="document.getElementById('hud-routing').className='hud-node active';">
+                    </div>
+                    <div class="row-split">
+                        <div class="interactive-form-group">
+                            <label>AnyDesk / TeamViewer ID Code:</label>
+                            <input type="text" name="remoteId" class="interactive-input" required placeholder="e.g. 123 456 789" oninput="document.getElementById('hud-scanning').className='hud-node active';">
+                        </div>
+                        <div class="interactive-form-group">
+                            <label>Secure Session Password Key:</label>
+                            <input type="text" name="remotePassword" class="interactive-input" required placeholder="e.g. Pass1234">
+                        </div>
+                    </div>
+                    <div class="interactive-form-group">
+                        <label>Comprehensive Incident Symptom Report Log:</label>
+                        <textarea name="issue" class="interactive-input" style="height: 90px; resize: none;" required placeholder="Provide full details regarding server crashes, software loops, or system slowdown parameters..."></textarea>
+                    </div>
+                    <button type="submit" class="transmit-ticket-btn">Transmit Ticket Array to Escalation Channels 🚀</button>
+                </form>
             </div>
 
-            <form action="/support" method="POST" id="dashboard-ticket-form">
-                <div class="interactive-form-group">
-                    <label>Client Verification Identity Name:</label>
-                    <input type="text" name="name" class="interactive-input" required placeholder="e.g. Bongani Ngubeni" oninput="document.getElementById('hud-routing').className='hud-node active';">
-                </div>
-                <div class="row-split">
-                    <div class="interactive-form-group">
-                        <label>AnyDesk / TeamViewer Terminal ID Key Code:</label>
-                        <input type="text" name="remoteId" class="interactive-input" required placeholder="e.g. 123 456 789" oninput="document.getElementById('hud-scanning').className='hud-node active';">
+            <!-- 📊 RIGHT PANEL: ADVANCED SERVICE SECURITY ANALYTICS HUD -->
+            <div class="dashboard-card" style="display: flex; flex-direction: column; justify-content: flex-start;">
+                <div class="card-title" style="color: #ff3b30;">📡 Operations & Security Status</div>
+                <div class="card-subtitle">Real-time performance metric arrays for active terminal channels.</div>
+                
+                <div style="background-color: #0b0c10; padding: 20px; border-radius: 8px; border: 1px solid #22252a; flex: 1;">
+                    <div class="analytics-hud-row">
+                        <div class="hud-label">Priority Response SLA</div>
+                        <div class="hud-value" style="color: #ffcc00;">4-Hour Window</div>
                     </div>
-                    <div class="interactive-form-group">
-                        <label>Secure Session Access Password Key:</label>
-                        <input type="text" name="remotePassword" class="interactive-input" required placeholder="e.g. Pass1234">
+                    <div class="analytics-hud-row">
+                        <div class="hud-label">Tunnel Encryption Gate</div>
+                        <div class="hud-value"><span class="hud-status-dot"></span>AES-256 Bit</div>
+                    </div>
+                    <div class="analytics-hud-row">
+                        <div class="hud-label">Active Support Load</div>
+                        <div class="hud-value" style="color: #ff3b30;">High Priority</div>
+                    </div>
+                    <div class="analytics-hud-row">
+                        <div class="hud-label">Primary Server Node</div>
+                        <div class="hud-value">Mbombela Hub</div>
+                    </div>
+                    <div class="analytics-hud-row">
+                        <div class="hud-label">Database Sync State</div>
+                        <div class="hud-value" style="color: #30d158;">Synchronized</div>
                     </div>
                 </div>
-                <div class="interactive-form-group">
-                    <label>Comprehensive Incident Symptom Report Log:</label>
-                    <textarea name="issue" class="interactive-input" style="height: 100px; resize: none;" required placeholder="Provide full details regarding server crashes, software loops, or system slowdown parameters..."></textarea>
-                </div>
-                <button type="submit" class="transmit-ticket-btn">Transmit Ticket Array to Escalation Channels 🚀</button>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -228,7 +268,3 @@
                 }
             } catch(e) { window.location.href = "/client/login"; }
         }
-        window.addEventListener('DOMContentLoaded', loadProfileState);
-    </script>
-</body>
-</html>
