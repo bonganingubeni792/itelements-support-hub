@@ -12,23 +12,39 @@
         .logo-text span { color: #ff3b30; }
         .nav-links a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 0.95rem; }
         .logout-btn { background-color: #ff3b30; color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; }
+        
         .telemetry-panel { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 10px; padding: 25px; margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; }
         .active-plan-badge { background-color: rgba(255,204,0,0.1); color: #ffd60a; border: 1px solid rgba(255,204,0,0.25); padding: 8px 16px; border-radius: 6px; font-weight: 900; text-transform: uppercase; }
         .active-plan-badge.live { background-color: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.25); }
+        
         .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
-        .dashboard-card { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
-        .card-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; color: #ffffff; text-transform: uppercase; }
+        .dashboard-card { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 8px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .card-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; }
         .card-subtitle { font-size: 12px; color: #4a5568; margin-bottom: 20px; }
+        
         .sub-matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .matrix-box { background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
         .matrix-name { font-size: 14px; font-weight: 800; color: #ffffff; }
         .matrix-price { font-size: 18px; font-weight: 900; color: #ff3b30; margin: 4px 0 10px 0; }
-        .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px; text-align: center; }
+        .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px; }
         .cancel-pipeline-btn { background-color: transparent; color: #e53e3e; border: 1px solid #e53e3e; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
-        /* 📋 DOWNLOAD CARD MODULAR GRID SYSTEM inside the dashboard */
+        /* 🎫 ADVANCED INTEGRATED WORKSPACE DISPATCH COCKPIT */
+        .interactive-form-group { margin-bottom: 18px; }
+        .interactive-form-group label { display: block; font-size: 11px; font-weight: bold; color: #718096; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .interactive-input { width: 100%; padding: 12px; background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; color: #ffffff; font-size: 14px; outline: none; }
+        .interactive-input:focus { border-color: #ff3b30; }
+        .row-split { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .transmit-ticket-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #ff3b30 0%, #b30000 100%); color: #ffffff; border: none; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.2); margin-top: 5px; }
+
+        /* 📡 CORE TELEMETRY STATUS HUD FEEDBAR */
+        .live-status-hud-bar { display: flex; justify-content: space-between; background-color: #060709; padding: 10px 15px; border-radius: 6px; border: 1px dashed #2d3748; margin-bottom: 18px; font-family: monospace; font-size: 11px; }
+        .hud-node { color: #4a5568; display: flex; align-items: center; gap: 6px; }
+        .hud-node.active { color: #30d158; }
+        .hud-node.active::before { content: ''; display: inline-block; width: 6px; height: 6px; background-color: #30d158; border-radius: 50%; box-shadow: 0 0 8px #30d158; }
+
         .dashboard-download-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 15px; }
-        .download-card { background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; padding: 15px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: #ffffff; transition: border-color 0.2s; }
+        .download-card { background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; padding: 15px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: #ffffff; }
         .download-card:hover { border-color: #ff3b30; }
         .dl-title { font-weight: bold; font-size: 0.95rem; }
         .dl-subtitle { font-size: 0.75rem; color: #718096; margin-top: 2px; }
@@ -38,7 +54,7 @@
 <body>
     <header>
         <div class="logo-text">IT <span>ELEMENTS</span></div>
-        <div class="nav-links"><a href="/">Home</a><a href="/support">Tickets</a><a href="/client/logout" class="logout-btn">Log Out Core</a></div>
+        <div class="nav-links"><a href="/">Home</a><a href="/pricing">View Plans</a><a href="/client/logout" class="logout-btn">Log Out Core</a></div>
     </header>
 
     <div class="telemetry-panel">
@@ -48,20 +64,60 @@
 
     <div class="dashboard-grid">
         <!-- LEFT CONTROL DECK PANEL -->
-        <div class="dashboard-card" id="subscription-management-zone">
-            <div class="card-title">💳 Secure Package Activation Deck</div>
-            <div class="card-subtitle">Deploy a permanent monthly flat-rate SLA priority pipeline directly to your profile.</div>
-            <div class="sub-matrix-grid">
-                <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
-                <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
-                <div class="matrix-box"><div><div class="matrix-name">Business Growth</div><div class="matrix-price">R2499</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
-                <div class="matrix-box"><div><div class="matrix-name">Corporate SLA</div><div class="matrix-price">R4999</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
+        <div>
+            <!-- MODULE 1: COVERAGE MANAGER -->
+            <div class="dashboard-card" id="subscription-management-zone">
+                <div class="card-title">💳 Secure Package Activation Deck</div>
+                <div class="card-subtitle">Deploy a permanent monthly flat-rate SLA priority pipeline directly to your profile.</div>
+                <div class="sub-matrix-grid">
+                    <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
+                    <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
+                    <div class="matrix-box"><div><div class="matrix-name">Business Growth</div><div class="matrix-price">R2499</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
+                    <div class="matrix-box"><div><div class="matrix-name">Corporate SLA</div><div class="matrix-price">R4999</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
+                </div>
+            </div>
+
+            <!-- 🎫 MODULE 2: NEW ADVANCED IN-DASHBOARD TICKET DISPATCH CONSOLE -->
+            <div class="dashboard-card">
+                <div class="card-title">🚨 Instant Incident Dispatch Engine</div>
+                <div class="card-subtitle">Encountering structural errors? Submit your device credentials right onto our hot escalation queues.</div>
+                
+                <!-- Telemetry Status Lights HUD Feedbar -->
+                <div class="live-status-hud-bar">
+                    <div class="hud-node active">System Handshake</div>
+                    <div class="hud-node" id="hud-routing">Routing Enclosure</div>
+                    <div class="hud-node" id="hud-scanning">Diagnostic Scanning</div>
+                </div>
+
+                <form action="/support" method="POST" id="dashboard-ticket-form">
+                    <div class="interactive-form-group">
+                        <label>Your Contact Name</label>
+                        <input type="text" name="name" class="interactive-input" required placeholder="e.g. Bongani Ngubeni" oninput="document.getElementById('hud-routing').className='hud-node active';">
+                    </div>
+                    
+                    <div class="row-split">
+                        <div class="interactive-form-group">
+                            <label>AnyDesk / TV ID Connection Key</label>
+                            <input type="text" name="remoteId" class="interactive-input" required placeholder="e.g. 123 456 789" oninput="document.getElementById('hud-scanning').className='hud-node active';">
+                        </div>
+                        <div class="interactive-form-group">
+                            <label>Secure Session Password</label>
+                            <input type="text" name="remotePassword" class="interactive-input" required placeholder="e.g. abc1234">
+                        </div>
+                    </div>
+
+                    <div class="interactive-form-group">
+                        <label>Elaborate Error Symptoms Log</label>
+                        <textarea name="issue" class="interactive-input" style="height: 90px; resize: none;" required placeholder="Describe what's wrong with your computer network layout..."></textarea>
+                    </div>
+
+                    <button type="submit" class="transmit-ticket-btn">Transmit Ticket To Queue 🚀</button>
+                </form>
             </div>
         </div>
 
         <!-- RIGHT UTILITY SIDEBAR -->
         <div>
-            <!-- INJECTED: SECURE INTEGRATED MODULE DOWNLOAD CARDS -->
             <div class="dashboard-card">
                 <div class="card-title">📥 Software Downloads</div>
                 <div class="card-subtitle">Required secure connectivity engineering assets.</div>
