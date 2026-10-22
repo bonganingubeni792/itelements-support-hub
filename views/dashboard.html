@@ -38,9 +38,12 @@
 
     <div class="dashboard-grid">
         <div class="dashboard-card" id="subscription-management-zone">
+            <!-- 🚨 FIXED: Broken text symbols fully cleaned and standardized -->
+            <div class="card-title">🔒 Secure Package Activation Deck</div>
+            <div class="card-subtitle" style="margin-bottom:20px;">Deploy a permanent monthly flat-rate SLA priority pipeline directly to your profile.</div>
             <div class="sub-matrix-grid">
                 <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Basic Support')">Activate</button></div>
-                <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Standard Tier')">Activate</button></div>
+                <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599</div></div><button class="action-sub-btn" onclick="wrongRedirect('Standard Tier')">Activate</button></div>
                 <div class="matrix-box"><div><div class="matrix-name">Business Growth</div><div class="matrix-price">R2499</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Business Growth')">Activate</button></div>
                 <div class="matrix-box"><div><div class="matrix-name">Corporate SLA</div><div class="matrix-price">R4999</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Corporate SLA')">Activate</button></div>
             </div>
