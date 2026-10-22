@@ -174,7 +174,8 @@
                 if (ticketsList.length > 0) {
                     ticketsTbody.innerHTML = "";
                     ticketsList.forEach(ticket => {
-                        let currentId = ticket._id;
+                        // FIXED: Re-mapped the loop variable reference check rules perfectly
+                        let targetId = ticket._id || ticket.id || "";
                         ticketsTbody.innerHTML += `
                             <tr>
                                 <td style="font-weight: bold; color: #ffffff;">${ticket.name || 'Anonymous User'}</td>
@@ -182,7 +183,7 @@
                                 <td style="font-family: monospace; color: #aaaaaa;">${ticket.remotePassword || 'N/A'}</td>
                                 <td style="color: #cbd5e0; max-width: 400px;">${ticket.issue || 'No diagnostic symptom log left.'}</td>
                                 <td>
-                                    <select class="table-status-select" onchange="updateTicketStatusInline('${currentId}', this.value)">
+                                    <select class="table-status-select" onchange="updateTicketStatusInline('${targetId}', this.value)">
                                         <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>🔴 Open Queue</option>
                                         <option value="In Progress" ${ticket.status === 'In Progress' ? 'selected' : ''}>🟡 In Progress</option>
                                         <option value="Resolved" ${ticket.status === 'Resolved' ? 'selected' : ''}>🟢 Resolved</option>
@@ -217,6 +218,7 @@
                     bookingsTbody.innerHTML = "";
                     bookingsList.forEach(book => {
                         let bookingStatusColor = book.status === 'Active' ? '#30d158' : '#ffd60a';
+                        let currentBookingId = book._id || book.id || "";
                         bookingsTbody.innerHTML += `
                             <tr>
                                 <td style="font-family: monospace; font-weight: bold; color: #007aff;">${book.paymentReference || 'N/A'}</td>
@@ -224,6 +226,5 @@
                                 <td style="text-align: center; font-weight: bold;">${book.hoursAllocated || 1} Hr(s)</td>
                                 <td style="font-weight: bold; color: #30d158;">R${parseFloat(book.amountPaid || 0).toFixed(2)}</td>
                                 <td>
-                                    <select class="table-status-select" style="color: ${bookingStatusColor};" onchange="updateBookingStatusInline('${book._id}', this.value)">
+                                    <select class="table-status-select" style="color: ${bookingStatusColor};" onchange="updateBookingStatusInline('${currentBookingId}', this.value)">
                                         <option value="Pending Verification" ${book.status === 'Pending Verification' ? 'selected' : ''}>⏳ Verification</option>
-                                        <option value="Active" ${book.status === 'Active' ? 'selected' : ''}>🟢 Active SLA</option>
