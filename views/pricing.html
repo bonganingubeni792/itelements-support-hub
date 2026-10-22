@@ -12,24 +12,21 @@
         .logo-text span { color: #ff1a1a; }
         nav a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 0.95rem; font-weight: 500; }
         nav a:hover { color: #ff1a1a; }
-        
         .pricing-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; width: 100%; max-width: 1000px; margin-top: 20px; }
         .pricing-card { background-color: #121318; border: 1px solid #22252a; border-radius: 12px; padding: 30px; text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between; height: 420px; }
         .pricing-card.featured { border-color: #ff1a1a; box-shadow: 0 10px 30px rgba(255,26,26,0.15); }
         .badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background-color: #ff1a1a; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
-        
         .plan-name { font-size: 1.3rem; font-weight: 800; margin-bottom: 5px; }
         .plan-desc { color: #777; font-size: 0.85rem; margin-bottom: 20px; }
         .plan-price { font-size: 2.2rem; font-weight: 900; margin-bottom: 25px; color: #ffffff; }
         .plan-price span { color: #ff1a1a; font-size: 1.2rem; }
-        
-        .features-list { text-align: list; list-style: none; margin-bottom: 30px; font-size: 0.9rem; color: #b3b3b3; }
+        .features-list { text-align: left; list-style: none; margin-bottom: 30px; font-size: 0.9rem; color: #b3b3b3; }
         .features-list li { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
         .features-list li::before { content: "✓"; color: #ff1a1a; font-weight: bold; }
-        
         .subscribe-btn { width: 100%; padding: 14px; background-color: #ff1a1a; color: white; border: none; border-radius: 6px; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
         .subscribe-btn:hover { background-color: #cc0000; }
     </style>
+    <script src="https://paystack.co"></script>
 </head>
 <body>
     <header>
@@ -38,85 +35,40 @@
     </header>
 
     <h1 style="font-size: 2.5rem; font-weight: 900; text-align: center; margin-bottom: 10px;">Predictable Flat-Rate Coverage</h1>
-    <p style="color: #666; margin-bottom: 40px; text-align: center;">Choose an automated SLA response tier tailored to your active network matrix infrastructure.</p>
-
     <div class="pricing-container">
-        <!-- PLAN 1 -->
         <div class="pricing-card">
             <div>
                 <div class="plan-name">Basic Support</div>
-                <div class="plan-desc">Single home-office setups.</div>
                 <div class="plan-price">R299<span>/mo</span></div>
-                <ul class="features-list"><li>2 Support Tickets / mo</li><li>Malware & Virus Cleanups</li><li>Next-Business-Day response</li></ul>
+                <ul class="features-list"><li>2 Support Tickets / mo</li><li>Malware & Virus Cleanups</li></ul>
             </div>
-            <button class="subscribe-btn" onclick="initializeSubscription('Basic Support')">Subscribe Basic</button>
+            <button class="subscribe-btn" onclick="checkoutMonthlyPlan('Basic Support', 299)">Subscribe Basic</button>
         </div>
-
-        <!-- PLAN 2 -->
         <div class="pricing-card featured">
             <div class="badge">Most Popular</div>
             <div>
                 <div class="plan-name">Standard Tier</div>
-                <div class="plan-desc">Peace of mind for professionals.</div>
                 <div class="plan-price">R599<span>/mo</span></div>
-                <ul class="features-list"><li>Unlimited Remote Access</li><li>Printer & Network setup</li><li>4-Hour Priority SLA Response</li></ul>
+                <ul class="features-list"><li>Unlimited Remote Access</li><li>4-Hour Priority SLA Response</li></ul>
             </div>
-            <button class="subscribe-btn" onclick="initializeSubscription('Standard Tier')">Subscribe Standard</button>
+            <button class="subscribe-btn" onclick="checkoutMonthlyPlan('Standard Tier', 599)">Subscribe Standard</button>
         </div>
-
-        <!-- PLAN 3 -->
         <div class="pricing-card">
             <div>
                 <div class="plan-name">Business Growth</div>
-                <div class="plan-desc">Growing small office networks.</div>
                 <div class="plan-price">R2499<span>/mo</span></div>
-                <ul class="features-list"><li>Up to 10 Office Devices</li><li>Router & Server Tuning</li><li>2-Hour Express SLA Reply</li></ul>
+                <ul class="features-list"><li>Up to 10 Office Devices</li><li>2-Hour Express SLA Reply</li></ul>
             </div>
-            <button class="subscribe-btn" onclick="initializeSubscription('Business Growth')">Subscribe Business</button>
-        </div>
-    </div>
-
-    <div class="pricing-container" style="grid-template-columns: 1fr; max-width: 400px; margin-top: 30px;">
-        <div class="pricing-card">
-            <div>
-                <div class="plan-name">Corporate SLA</div>
-                <div class="plan-desc">Complete enterprise coverage.</div>
-                <div class="plan-price">R4999<span>/mo</span></div>
-                <ul class="features-list"><li>Up to 25 Devices covered</li><li>Automatic Cloud Backups</li><li>Dedicated Account Engineer</li></ul>
-            </div>
-            <button class="subscribe-btn" onclick="initializeSubscription('Corporate SLA')">Subscribe Corporate</button>
+            <button class="subscribe-btn" onclick="checkoutMonthlyPlan('Business Growth', 2499)">Subscribe Business</button>
         </div>
     </div>
 
     <script>
-        async function initializeSubscription(planName) {
-            try {
-                const res = await fetch('/api/paystack/initialize-subscription', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ planName: planName })
-                });
-
-                // 🔄 SMART REDIRECT ROUTING INTERCEPTOR
-                if (res.redirected || res.status === 401 || res.status === 302) {
-                    // Save the intended subscription plan to browser memory before moving away
-                    sessionStorage.setItem('pendingPlanCheckout', planName);
-                    alert("🔑 Account Connection Required:\nWe are shifting you to the portal gateway to log in or register. Once completed, your checkout session will initialize instantly!");
-                    window.location.href = "/client/login";
-                    return;
-                }
-
-                const data = await res.json();
-                if (data.success && data.redirectUrl) {
-                    window.location.href = data.redirectUrl;
-                } else {
-                    // Secondary fallback memory capture
-                    sessionStorage.setItem('pendingPlanCheckout', planName);
-                    window.location.href = "/client/login";
-                }
-            } catch(err) {
-                alert("Network communication error.");
-            }
+        function checkoutMonthlyPlan(planName, priceZAR) {
+            // Save plan context in browser space memory so it remains linked upon authentication channel routes
+            sessionStorage.setItem('pendingPlanCheckout', planName);
+            sessionStorage.setItem('pendingPlanPrice', priceZAR);
+            window.location.href = "/dashboard"; // Moves to the secured dashboard container core cleanly
         }
     </script>
 </body>
