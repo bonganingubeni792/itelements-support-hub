@@ -51,19 +51,8 @@
         .active-plan-badge { background-color: rgba(255,204,0,0.1); color: #ffd60a; border: 1px solid rgba(255,204,0,0.25); padding: 8px 16px; border-radius: 6px; font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
         .active-plan-badge.live { background-color: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.25); box-shadow: 0 0 15px rgba(48,209,88,0.1); }
         
-        .workspace-deck-layout {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            width: 100%;
-        }
-
-        .row-split-deck {
-            display: grid;
-            grid-template-columns: 1.25fr 0.75fr;
-            gap: 25px;
-            width: 100%;
-        }
+        .workspace-deck-layout { display: flex; flex-direction: column; gap: 25px; width: 100%; }
+        .row-split-deck { display: grid; grid-template-columns: 1.25fr 0.75fr; gap: 25px; width: 100%; }
 
         .dashboard-card { 
             background-color: #121318; 
@@ -76,16 +65,14 @@
         .card-subtitle { font-size: 0.85rem; color: #888888; margin-bottom: 20px; }
         
         .sub-matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        .matrix-box { background-color: #0b0c10; border: 1px solid #22252a; border-radius: 8px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; min-height: 130px; transition: border-color 0.2s; }
-        .matrix-box:hover { border-color: #ff1a1a; }
+        .matrix-box { background-color: #0b0c10; border: 1px solid #22252a; border-radius: 8px; padding: 22px; display: flex; flex-direction: column; justify-content: space-between; min-height: 130px; }
         .matrix-name { font-size: 0.95rem; font-weight: 800; color: #ffffff; }
         .matrix-price { font-size: 1.45rem; font-weight: 900; color: #ff1a1a; margin: 4px 0 12px 0; }
         .action-sub-btn { width: 100%; padding: 11px; background-color: #ff1a1a; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; }
         .cancel-pipeline-btn { background-color: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; width: 100%; }
 
         .dashboard-download-grid { display: flex; flex-direction: column; gap: 14px; }
-        .download-card { background-color: #0b0c10; border: 1px solid #22252a; border-radius: 8px; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: #ffffff; transition: border-color 0.2s; }
-        .download-card:hover { border-color: #3b82f6; }
+        .download-card { background-color: #0b0c10; border: 1px solid #22252a; border-radius: 8px; padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; text-decoration: none; color: #ffffff; }
         .dl-title { font-weight: bold; font-size: 1rem; }
         .dl-subtitle { font-size: 0.75rem; color: #888888; margin-top: 3px; }
         .dl-btn { background-color: #121318; padding: 8px 18px; border-radius: 4px; font-weight: bold; font-size: 11px; border: 1px solid #2d3748; text-transform: uppercase; color: #ffffff; }
@@ -102,36 +89,21 @@
         .hud-node.active { color: #30d158; font-weight: bold; }
         .hud-node.active::before { content: ''; display: inline-block; width: 6px; height: 6px; background-color: #30d158; border-radius: 50%; box-shadow: 0 0 8px #30d158; }
 
-        /* 📊 NEW ANALYTICS PANEL DESIGN ROWS */
-        .analytics-hud-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #22252a; font-size: 13px; }
-        .analytics-hud-row:last-child { border-bottom: none; }
-        .hud-label { color: #aaaaaa; font-weight: 500; }
-        .hud-value { font-weight: bold; font-family: monospace; color: #ffffff; }
-        .hud-status-dot { display: inline-block; width: 8px; height: 8px; background-color: #30d158; border-radius: 50%; margin-right: 6px; box-shadow: 0 0 8px #30d158; }
+        /* 📋 DYNAMIC LOGS ROW MODULE STYLES */
+        .ticket-hud-log-row { background-color: #0b0c10; border: 1px solid #22252a; border-radius: 8px; padding: 15px; margin-bottom: 12px; font-size: 13px; }
+        .ticket-hud-meta { display: flex; justify-content: space-between; border-bottom: 1px dashed #22252a; padding-bottom: 8px; margin-bottom: 8px; font-family: monospace; font-size: 11px; color: #aaaaaa; }
+        .badge-status { padding: 2px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 10px; }
+        .badge-status.open { background-color: rgba(255,26,26,0.1); color: #ff4d4d; border: 1px solid rgba(255,26,26,0.2); }
+        .badge-status.progress { background-color: rgba(255,204,0,0.1); color: #ffd60a; border: 1px solid rgba(255,204,0,0.2); }
+        .badge-status.resolved { background-color: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.2); }
 
-        @media (max-width: 992px) {
-            .row-split-deck { grid-template-columns: 1fr; gap: 25px; }
-        }
-        @media (max-width: 768px) {
-            body { padding: 20px 15px; }
-            header { flex-direction: column; text-align: center; gap: 15px; }
-            nav a { margin: 0 10px; font-size: 0.85rem; }
-            .telemetry-panel { flex-direction: column; text-align: center; gap: 15px; padding: 15px; }
-            .sub-matrix-grid { grid-template-columns: 1fr; gap: 15px; }
-            .row-split { flex-direction: column; gap: 15px; }
-            .live-status-hud-bar { flex-direction: column; gap: 10px; padding: 15px; }
-            .dashboard-card { padding: 20px; }
-        }
+        @media (max-width: 992px) { .row-split-deck { grid-template-columns: 1fr; gap: 25px; } }
     </style>
 </head>
 <body>
     <header>
         <div class="logo-text">IT <span>ELEMENTS.support</span></div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/pricing">Plans</a>
-            <a href="/client/logout" class="logout-btn">Log Out Core</a>
-        </div>
+        <div class="nav-links"><a href="/">Home</a><a href="/pricing">Plans</a><a href="/client/logout" class="logout-btn">Log Out Core</a></div>
     </header>
 
     <div class="telemetry-panel">
@@ -147,7 +119,7 @@
         <div class="row-split-deck">
             <div class="dashboard-card" id="subscription-management-zone">
                 <div class="card-title">👑 SLA Package Activation Matrix</div>
-                <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile accounts database.</div>
+                <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</div>
                 <div class="sub-matrix-grid">
                     <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299/mo</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
                     <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599/mo</div></div><form action="https://paystack.com" method="GET"><button type="submit" class="action-sub-btn">Activate</button></form></div>
@@ -171,15 +143,12 @@
                         </a>
                     </div>
                 </div>
-                <div class="dashboard-card" style="padding: 15px 20px; font-size: 11px; color: #718096; line-height: 1.4;">
-                    <strong>Non-Refundable SLA Framework Notice:</strong> Cancellation terminates connection pipeline layers instantly. No pro-rata reversals are back-issued.
-                </div>
             </div>
         </div>
 
-        <!-- 🌐 ROW 2 LAYER: BALANCED 2-COLUMN INCIDENT CONSOLE & TELEMETRY HUD -->
+        <!-- ROW 2 LAYERS -->
         <div class="row-split-deck">
-            <!-- LEFT PANEL: PERFECTLY PROPORTIONED TICKET DISPATCH FORM -->
+            <!-- LEFT MODULE: TICKET DISPATCH ENGINE FORM -->
             <div class="dashboard-card">
                 <div class="card-title">🚨 Engineering Queue Incident Dispatch</div>
                 <div class="card-subtitle">Encountering structural operating errors? Stream terminal details directly to active support queues.</div>
@@ -193,7 +162,7 @@
                 <form action="/support" method="POST" id="dashboard-ticket-form">
                     <div class="interactive-form-group">
                         <label>Client Verification Identity Name:</label>
-                        <input type="text" name="name" class="interactive-input" required placeholder="e.g. Bongani Ngubeni" oninput="document.getElementById('hud-routing').className='hud-node active';">
+                        
                     </div>
                     <div class="row-split">
                         <div class="interactive-form-group">
@@ -213,32 +182,13 @@
                 </form>
             </div>
 
-            <!-- 📊 RIGHT PANEL: ADVANCED SERVICE SECURITY ANALYTICS HUD -->
-            <div class="dashboard-card" style="display: flex; flex-direction: column; justify-content: flex-start;">
-                <div class="card-title" style="color: #ff3b30;">📡 Operations & Security Status</div>
-                <div class="card-subtitle">Real-time performance metric arrays for active terminal channels.</div>
+            <!-- 📊 RIGHT MODULE: DYNAMIC TICKET MONITOR TRACKER LIST -->
+            <div class="dashboard-card" style="display: flex; flex-direction: column;">
+                <div class="card-title" style="color: #ff3b30;">📋 Your Active Support Tickets Logs</div>
+                <div class="card-subtitle">Real-time status tracking ledger for incident reports linked to your profile email account.</div>
                 
-                <div style="background-color: #0b0c10; padding: 20px; border-radius: 8px; border: 1px solid #22252a; flex: 1;">
-                    <div class="analytics-hud-row">
-                        <div class="hud-label">Priority Response SLA</div>
-                        <div class="hud-value" style="color: #ffcc00;">4-Hour Window</div>
-                    </div>
-                    <div class="analytics-hud-row">
-                        <div class="hud-label">Tunnel Encryption Gate</div>
-                        <div class="hud-value"><span class="hud-status-dot"></span>AES-256 Bit</div>
-                    </div>
-                    <div class="analytics-hud-row">
-                        <div class="hud-label">Active Support Load</div>
-                        <div class="hud-value" style="color: #ff3b30;">High Priority</div>
-                    </div>
-                    <div class="analytics-hud-row">
-                        <div class="hud-label">Primary Server Node</div>
-                        <div class="hud-value">Mbombela Hub</div>
-                    </div>
-                    <div class="analytics-hud-row">
-                        <div class="hud-label">Database Sync State</div>
-                        <div class="hud-value" style="color: #30d158;">Synchronized</div>
-                    </div>
+                <div id="live-tickets-container" style="flex: 1; max-height: 380px; overflow-y: auto; background-color: #0b0c10; padding: 15px; border-radius: 8px; border: 1px solid #22252a;">
+                    <p style="color: #718096; text-align: center; font-size: 13px; margin-top: 20px;">Querying active support records channels...</p>
                 </div>
             </div>
         </div>
@@ -249,10 +199,13 @@
             try {
                 const res = await fetch('/api/admin/overview-data');
                 const data = await res.json();
+                
                 const user = data.users;
                 const badge = document.getElementById('hud-plan-badge');
                 const zone = document.getElementById('subscription-management-zone');
+                const ticketsContainer = document.getElementById('live-tickets-container');
 
+                // Update Active Membership Deck State
                 if (user && user.subscriptionStatus === 'Active') {
                     badge.innerText = user.subscriptionTier;
                     badge.className = "active-plan-badge live";
@@ -266,5 +219,21 @@
                     badge.innerText = "No Active Plan";
                     badge.className = "active-plan-badge";
                 }
-            } catch(e) { window.location.href = "/client/login"; }
-        }
+
+                // 🔄 DYNAMIC TICKET LEDGER CONTAINER RENDER LOGIC
+                if (data.tickets && data.tickets.length > 0) {
+                    ticketsContainer.innerHTML = ""; // Clear loader text status indicator
+                    data.tickets.forEach(ticket => {
+                        let statusClass = ticket.status === 'Open' ? 'open' : ticket.status === 'In Progress' ? 'progress' : 'resolved';
+                        ticketsContainer.innerHTML += `
+                            <div class="ticket-hud-log-row">
+                                <div class="ticket-hud-meta">
+                                    <span>ID: ${ticket.remoteId || 'N/A'}</span>
+                                    <span class="badge-status ${statusClass}">${ticket.status}</span>
+                                </div>
+                                <div style="font-weight: bold; color: #ffffff; margin-bottom: 4px;">${ticket.name || 'Anonymous'}</div>
+                                <div style="color: #aaaaaa; font-size: 12px; line-height: 1.4;">${ticket.issue || 'No diagnostic log details left.'}</div>
+                            </div>
+                        `;
+                    });
+                } else {
