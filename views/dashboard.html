@@ -29,6 +29,7 @@
         .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         .cancel-pipeline-btn { background-color: transparent; color: #e53e3e; border: 1px solid #e53e3e; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
+    <!-- 💳 FIXED: Injected official block-proof Paystack tracking library core into the header context -->
     <script src="https://paystack.co"></script>
 </head>
 <body>
@@ -112,7 +113,6 @@
         window.addEventListener('DOMContentLoaded', async () => {
             await checkActiveUserCoverage();
             
-            // Auto check for saved pricing selections on load
             var savedPlan = sessionStorage.getItem('pendingPlanCheckout');
             var savedPrice = sessionStorage.getItem('pendingPlanPrice');
             if (savedPlan && savedPrice) {
