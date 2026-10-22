@@ -82,7 +82,7 @@ app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'r
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
-// 👤 SECURE CLIENT ACCOUNT REGISTRATION PIPELINE
+// 👤 ACCOUNT REGISTRATION PIPELINE
 app.post('/client/register', async (req, res) => {
     try {
         const { fullName, phone, email, password } = req.body;
@@ -108,7 +108,6 @@ app.post('/client/login', async (req, res) => {
             req.session.isAdmin = true; 
             return res.send('<script>window.location.href="/admin";</script>'); 
         }
-        
         const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
         if (user && user.password === password) {
             req.session.isUser = true;
@@ -246,3 +245,4 @@ app.get('/api/paystack/verify-callback', async (req, res) => {
 // 💳 INITIALIZE PAYSTACK SUBSCRIPTION TRANSACTION GATEWAY
 app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
     try {
+        const { planName } = req.body;
