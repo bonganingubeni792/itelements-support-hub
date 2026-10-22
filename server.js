@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
-const https = require('https');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -43,6 +42,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -111,9 +111,13 @@ app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
 app.post('/api/bookings/hourly', async (req, res) => {
     try {
         const { hours, amount, reference, email } = req.body;
-        const newBooking = new HourlyBooking({ email: email || 'Guest Client', hoursAllocated: parseInt(hours), amountPaid: parseFloat(amount), paymentReference: reference });
+        const newBooking = new HourlyBooking({ email: email || 'Guest Client', hoursAllocated: parseInt(hours), amountPaid: parseFloat(amount), paymentReference: reference, status: 'Active' });
         await newBooking.save(); res.json({ success: true });
     } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
+    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
 });
 
 app.get('/api/admin/overview-data', async (req, res) => {
@@ -131,10 +135,6 @@ app.post('/api/bookings/update-status', checkAdminAuth, async (req, res) => {
     try { await HourlyBooking.findByIdAndUpdate(req.body.bookingId, { status: req.body.status }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
 });
 
-app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
-    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' }); res.json({ success: true, redirectUrl: '/dashboard' }); } catch (err) { res.status(500).json({ error: true }); }
-});
-
 app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
     try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
 });
@@ -142,43 +142,4 @@ app.post('/api/client/cancel-subscription', checkUserAuth, async (req, res) => {
     try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
 });
 
-app.post('/api/paystack/initialize-hourly', async (req, res) => {
-    try {
-        const { hours } = req.body;
-        const totalAmountZAR = parseInt(hours || 1) * 350;
-        const paymentReference = "ITE-HOURLY-" + Math.floor(100000 + Math.random() * 900000);
-        await new HourlyBooking({ email: req.session.userEmail || 'Ad-Hoc Guest Client', hoursAllocated: parseInt(hours), amountPaid: totalAmountZAR, paymentReference: paymentReference, status: 'Pending Verification' }).save();
-        const paystackPayload = JSON.stringify({ email: req.session.userEmail || 'customer@itelements.help', amount: totalAmountZAR * 100, reference: paymentReference, callback_url: `https://${req.get('host')}/api/paystack/verify-callback` });
-        const options = { hostname: 'api.paystack.co', port: 443, path: '/transaction/initialize', method: 'POST', headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json', 'Content-Length': paystackPayload.length } };
-        const paystackReq = https.request(options, paystackRes => {
-            let data = '';
-            paystackRes.on('data', chunk => { data += chunk; });
-            paystackRes.on('end', () => {
-                const responseData = JSON.parse(data);
-                if (responseData.status && responseData.data.authorization_url) { res.json({ success: true, redirectUrl: responseData.data.authorization_url }); }
-                else { res.status(400).json({ success: false, message: 'Paystack error.' }); }
-            });
-        });
-        paystackReq.on('error', error => { res.status(500).json({ success: false, error: error.message }); });
-        paystackReq.write(paystackPayload); paystackReq.end();
-    } catch (err) { res.status(500).json({ error: true, message: err.message }); }
-});
-
-app.get('/api/paystack/verify-callback', async (req, res) => {
-    try { await HourlyBooking.findOneAndUpdate({ paymentReference: req.query.reference }, { status: 'Active' }); res.send('<script>alert("✅ Payment Successful!");window.location.href="/dashboard";</script>'); } catch(e) { res.redirect('/'); }
-});
-
-app.post('/api/paystack/initialize-subscription', checkUserAuth, async (req, res) => {
-    try {
-        const { planName } = req.body;
-        let planPrice = planName === 'Basic Support' ? 299 : planName === 'Standard Tier' ? 599 : planName === 'Business Growth' ? 2499 : planName === 'Corporate SLA' ? 4999 : 0;
-        if (!planPrice) return res.status(400).json({ success: false, message: 'Invalid plan.' });
-        const paymentReference = "ITE-SUB-" + Math.floor(100000 + Math.random() * 900000);
-        const paystackPayload = JSON.stringify({ email: req.session.userEmail, amount: planPrice * 100, reference: paymentReference, callback_url: `https://${req.get('host')}/api/paystack/verify-subscription?plan=${encodeURIComponent(planName)}` });
-        const options = { hostname: 'api.paystack.co', port: 443, path: '/transaction/initialize', method: 'POST', headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, 'Content-Type': 'application/json', 'Content-Length': paystackPayload.length } };
-        const paystackReq = https.request(options, paystackRes => {
-            let data = '';
-            paystackRes.on('data', chunk => { data += chunk; });
-            paystackRes.on('end', () => {
-                const responseData = JSON.parse(data);
-                if (responseData.status && responseData.data.authorization_url) { res.json({ success: true, redirectUrl: responseData.data.authorization_url }); }
+app.listen(PORT, () => console.log(`🚀 Server active on port ${PORT}`));
