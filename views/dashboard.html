@@ -8,29 +8,23 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: #060709; color: #e2e8f0; font-family: 'Segoe UI', system-ui, sans-serif; padding: 30px; }
         header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a202c; padding-bottom: 20px; margin-bottom: 30px; }
-        .logo-text { font-size: 1.4rem; font-weight: 900; letter-spacing: 0.5px; }
+        .logo-text { font-size: 1.4rem; font-weight: 900; }
         .logo-text span { color: #ff3b30; }
-        .nav-links { display: flex; align-items: center; gap: 20px; }
-        .nav-links a { color: #ffffff; text-decoration: none; font-size: 0.95rem; font-weight: 500; }
-        .logout-btn { background-color: #ff3b30; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; }
-        .telemetry-panel { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 10px; padding: 25px; margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .telemetry-details h2 { font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
-        .telemetry-details p { color: #718096; font-size: 13px; }
-        .active-plan-badge { background-color: rgba(255,204,0,0.1); color: #ffd60a; border: 1px solid rgba(255,204,0,0.25); padding: 8px 16px; border-radius: 6px; font-weight: 900; font-size: 16px; text-transform: uppercase; }
+        .nav-links a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 0.95rem; }
+        .logout-btn { background-color: #ff3b30; color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; }
+        .telemetry-panel { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 10px; padding: 25px; margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; }
+        .active-plan-badge { background-color: rgba(255,204,0,0.1); color: #ffd60a; border: 1px solid rgba(255,204,0,0.25); padding: 8px 16px; border-radius: 6px; font-weight: 900; text-transform: uppercase; }
         .active-plan-badge.live { background-color: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.25); }
-        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; width: 100%; }
-        .dashboard-card { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 8px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); margin-bottom: 30px; }
-        .card-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; color: #ffffff; text-transform: uppercase; }
-        .card-subtitle { font-size: 12px; color: #4a5568; margin-bottom: 20px; }
-        .sub-matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 10px; }
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        .dashboard-card { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
+        .sub-matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
         .matrix-box { background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
         .matrix-name { font-size: 14px; font-weight: 800; color: #ffffff; }
         .matrix-price { font-size: 18px; font-weight: 900; color: #ff3b30; margin: 4px 0 10px 0; }
-        .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .native-redirect-form { width: 100%; margin-top: 5px; }
+        .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; text-align: center; text-decoration: none; display: block; font-size: 12px; }
         .cancel-pipeline-btn { background-color: transparent; color: #e53e3e; border: 1px solid #e53e3e; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
     </style>
-    <!-- 💳 Load the secure front-end Paystack library mapping channel link -->
-    <script src="https://paystack.co"></script>
 </head>
 <body>
     <header>
@@ -39,37 +33,56 @@
     </header>
 
     <div class="telemetry-panel">
-        <div class="telemetry-details">
-            <h2>IT Elements Client Command Center</h2>
-            <p>Autonomous secure infrastructure pipeline links active.</p>
-        </div>
-        <div><div class="active-plan-badge" id="hud-plan-badge">Checking...</div></div>
+        <div><h2>IT Elements Client Command Center</h2><p>Secure terminal authentication loops active.</p></div>
+        <div><div class="active-plan-badge" id="hud-plan-badge">Loading...</div></div>
     </div>
 
     <div class="dashboard-grid">
         <div class="dashboard-card" id="subscription-management-zone">
-            <div class="card-title">💳 Secure Package Activation Deck</div>
-            <div class="card-subtitle">Deploy a permanent monthly flat-rate SLA priority pipeline directly to your profile.</div>
+            <div class="card-title" style="margin-bottom: 15px;">💳 Secure Package Activation Deck</div>
             <div class="sub-matrix-grid">
-                <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299</div></div><button class="action-sub-btn" onclick="executeInlineSLA('Basic Support', 299)">Activate</button></div>
-                <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599</div></div><button class="action-sub-btn" onclick="executeInlineSLA('Standard Tier', 599)">Activate</button></div>
-                <div class="matrix-box"><div><div class="matrix-name">Business Growth</div><div class="matrix-price">R2499</div></div><button class="action-sub-btn" onclick="executeInlineSLA('Business Growth', 2499)">Activate</button></div>
-                <div class="matrix-box"><div><div class="matrix-name">Corporate SLA</div><div class="matrix-price">R4999</div></div><button class="action-sub-btn" onclick="executeInlineSLA('Corporate SLA', 4999)">Activate</button></div>
+                <!-- Basic Support Plan -->
+                <div class="matrix-box">
+                    <div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299</div></div>
+                    <form class="native-redirect-form" action="https://paystack.com" method="GET">
+                        <button type="submit" class="action-sub-btn">Activate</button>
+                    </form>
+                </div>
+                <!-- Standard Tier Plan -->
+                <div class="matrix-box">
+                    <div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599</div></div>
+                    <form class="native-redirect-form" action="https://paystack.com" method="GET">
+                        <button type="submit" class="action-sub-btn">Activate</button>
+                    </form>
+                </div>
+                <!-- Business Growth Plan -->
+                <div class="matrix-box">
+                    <div><div class="matrix-name">Business Growth</div><div class="matrix-price">R2499</div></div>
+                    <form class="native-redirect-form" action="https://paystack.com" method="GET">
+                        <button type="submit" class="action-sub-btn">Activate</button>
+                    </form>
+                </div>
+                <!-- Corporate SLA Plan -->
+                <div class="matrix-box">
+                    <div><div class="matrix-name">Corporate SLA</div><div class="matrix-price">R4999</div></div>
+                    <form class="native-redirect-form" action="https://paystack.com" method="GET">
+                        <button type="submit" class="action-sub-btn">Activate</button>
+                    </form>
+                </div>
             </div>
         </div>
         <div class="dashboard-card">
-            <div class="card-title">⚠️ Non-Refundable SLA Policy</div>
-            <p style="font-size:13px; color:#718096; line-height:1.5; margin-top:10px;">Notice: Terminating a live SLA package drops technical workflow support arrays instantly. No pro-rata refunds are back-issued.</p>
+            <h3>⚠️ Non-Refundable SLA Policy</h3>
+            <p style="font-size:13px; color:#718096; margin-top:10px;">Canceling active protection profiles terminates coverage lines immediately. No refunds back-issued.</p>
         </div>
     </div>
 
     <script>
-        async function runDashboardTelemetrySync() {
+        async function loadProfileState() {
             try {
                 const res = await fetch('/api/admin/overview-data');
                 const data = await res.json();
                 const user = data.users;
-                
                 const badge = document.getElementById('hud-plan-badge');
                 const zone = document.getElementById('subscription-management-zone');
 
@@ -77,48 +90,17 @@
                     badge.innerText = user.subscriptionTier;
                     badge.className = "active-plan-badge live";
                     zone.innerHTML = `
-                        <div class="card-title" style="color: #30d158;">🟢 Active Priority Infrastructure Connection</div>
-                        <p style="font-size: 14px; margin: 15px 0;">Your monthly coverage [${user.subscriptionTier}] is active. Priority queues are open.</p>
-                        <form action="/api/cancel-subscription" method="POST" onsubmit="return confirm('Confirm cancellation? No refunds will be back-issued.');">
-                            <button type="submit" class="cancel-pipeline-btn">Terminate Support Pipeline 🚫</button>
-                        </form>`;
+                        <h3 style="color:#30d158;">🟢 Active Protection Matrix Coverage</h3>
+                        <p style="margin: 15px 0; font-size:14px;">Your priority pipeline [${user.subscriptionTier}] is online.</p>
+                        <form action="/api/cancel-subscription" method="POST"><button type="submit" class="cancel-pipeline-btn">Cancel SLA Pipeline</button></form>`;
                 } else {
-                    badge.innerText = "No Active SLA";
+                    badge.innerText = "No Active Plan";
                     badge.className = "active-plan-badge";
                 }
             } catch(e) { window.location.href = "/client/login"; }
         }
 
-        function executeInlineSLA(planName, priceZAR) {
-            var referenceCode = "ITE-SUB-" + Math.floor(100000 + Math.random() * 900000);
-            
-            // 🚀 Bypasses backend endpoints completely to force popup activation instantly
-            var handler = PaystackPop.setup({
-                key: 'pk_test_131c4a5b9ffb6f4e8ea6fa6f4bcbb59015c6ed43b', // Your Paystack Test Public Key
-                email: 'member@itelements.help',
-                amount: priceZAR * 100, // Cents mapping
-                currency: 'ZAR',
-                ref: referenceCode,
-                callback: async function(response) {
-                    // Update user subscription state securely inside MongoDB Atlas records
-                    await fetch('/api/create-subscription-session', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ plan: planName })
-                    });
-                    alert("✅ Subscription Activated successfully!");
-                    window.location.reload();
-                },
-                onClose: function() {
-                    alert("❌ Transaction dismissed.");
-                }
-            });
-            handler.openIframe();
-        }
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            await runDashboardTelemetrySync();
-        });
+        window.addEventListener('DOMContentLoaded', loadProfileState);
     </script>
 </body>
 </html>
