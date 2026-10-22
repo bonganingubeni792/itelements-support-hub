@@ -53,5 +53,15 @@
         </section>
     </main>
 
+    <!-- 🚀 SMART ROUTING PERSISTENCE SCRIPT LAYER -->
+    <script>
+        // Check if a client clicked a plan while unauthenticated right when they arrive on the login panel
+        window.addEventListener('DOMContentLoaded', () => {
+            const preservedPlan = sessionStorage.getItem('pendingPlanCheckout');
+            if (preservedPlan) {
+                console.log("📌 Preserved active plan state found in browser memory cache: " + preservedPlan);
+            }
+        });
+    </script>
 </body>
 </html>
