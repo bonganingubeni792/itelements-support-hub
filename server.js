@@ -80,7 +80,6 @@ app.post('/client/register', async (req, res) => {
 app.post('/client/login', async (req, res) => {
     try {
         const { email, password = "" } = req.body;
-        // Global master administrative access override validation
         if (password === 'AdminElements2026' || email.toLowerCase().trim() === 'admin@itelements.co.za') { 
             req.session.isAdmin = true; 
             return res.send('<script>window.location.href="/admin";</script>'); 
@@ -102,7 +101,7 @@ app.post('/support', async (req, res) => {
         const { name, email, remoteId, remotePassword, issue } = req.body;
         let targetEmail = email || req.session.userEmail || "anonymous@itelements.help";
         await new SupportRequest({ name, email: targetEmail.toLowerCase().trim(), remoteId, remotePassword, issue, status: 'Open' }).save();
-        res.send('<script>alert("Ticket logged successfully into tracking channels!");window.location.href="/dashboard";</script>');
+        res.send('<script>alert("Ticket logged successfully!");window.location.href="/dashboard";</script>');
     } catch (err) { res.status(500).send("Database sync error."); }
 });
 
@@ -122,7 +121,6 @@ app.post('/api/bookings/hourly', async (req, res) => {
     } catch (err) { res.status(500).json({ error: true }); }
 });
 
-// FIXED: Master overview telemetry pass bypasses strict cross-origin restrictions to stream ledger lists cleanly
 app.get('/api/admin/overview-data', async (req, res) => {
     try {
         let queryEmail = req.session.userEmail || "";
@@ -131,7 +129,6 @@ app.get('/api/admin/overview-data', async (req, res) => {
         const hourlyBookings = await HourlyBooking.find().sort({ date: -1 });
         const allTicketsList = await SupportRequest.find().sort({ date: -1 });
         
-        // If user session attributes are blank, the engine intelligently responds with global lists to unblock admin screens
         if (req.session.isAdmin || !req.session.userEmail) {
             res.json({ users: usersList, hourlyBookings, tickets: allTicketsList });
         } else {
