@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0">
     <title>IT Elements - Admin Core Deck</title>
     <style>
         body {
@@ -76,68 +76,74 @@
             border-bottom: 1px solid #222;
             font-size: 14px;
         }
-        .col-client { flex: 1.5; color: #4da6ff; font-weight: 500; }
+        .col-client { flex: 1.2; color: #4da6ff; font-weight: 500; }
         .col-remote-id { flex: 1; color: #ff4d4d; font-family: monospace; }
         .col-passkey { flex: 1; color: #ffcc00; font-family: monospace; }
-        .col-issue { flex: 3; color: #b3b3b3; padding-right: 10px; }
+        .col-issue { flex: 2.5; color: #b3b3b3; padding-right: 10px; word-break: break-word; }
         .col-status { flex: 1; }
-        .col-actions { flex: 1; text-align: right; }
+        .col-actions { flex: 2.2; text-align: right; display: flex; gap: 6px; justify-content: flex-end; }
         
         .status-badge {
-            background-color: #2d1919;
-            color: #ff4d4d;
             padding: 3px 8px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
-            border: 1px solid #4a1a1a;
+            border: 1px solid #ff3333;
+            background-color: #2d1919;
+            color: #ff4d4d;
+            display: inline-block;
         }
         .action-btn {
             background-color: #1a73e8;
             color: white;
             border: none;
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
             transition: background 0.2s;
         }
-        .action-btn:hover { background-color: #155cb4; }
+        .action-btn.hold-btn { background-color: #ff9500; }
+        .action-btn.hold-btn:hover { background-color: #cc7a00; }
+        .action-btn.unhold-btn { background-color: #5856d6; }
+        .action-btn.unhold-btn:hover { background-color: #43419b; }
+        .action-btn.resolve-btn { background-color: #34c759; }
+        .action-btn.resolve-btn:hover { background-color: #248a3d; }
         
         .loading-text, .empty-text {
             text-align: center;
             padding: 30px;
             color: #666;
-            font-style: italic;
-            font-size: 14px;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
 
     <div class="header-bar">
-        <h1>🔴 IT Elements Administration Console</h1>
-        <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
+        <h1>IT Elements Admin Pipeline Enclosure</h1>
+        <a href="/admin/logout" class="logout-btn">Log Out Dashboard</a>
     </div>
 
-    <!-- 1. PRIORITY ESCALATION QUEUE CARD -->
+    <!-- 1. PRIORITY ESCALATION ACTIVE QUEUES CARD -->
     <div class="dashboard-card">
-        <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
-        <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices.</div>
+        <div class="card-title">🚨 Priority Engineering Escalation Queue</div>
+        <div class="card-subtitle">Live incoming customer ticketing arrays mapped down from secure internal form consoles.</div>
         
         <div class="table-header">
             <div class="col-client">Client</div>
             <div class="col-remote-id">Remote ID</div>
             <div class="col-passkey">Passkey</div>
-            <div class="col-issue">Incident Logs / Issues</div>
+            <div class="col-issue">Reported Incident Symptoms Log</div>
             <div class="col-status">Status</div>
             <div class="col-actions">Directive Actions</div>
         </div>
         
-        <!-- Live content container -->
         <div id="priority-queue-body">
-            <div class="loading-text">Querying cloud datacenter channels...</div>
+            <div class="loading-text">Parsing live database streams...</div>
         </div>
     </div>
 
@@ -164,7 +170,6 @@
     <script>
         async function fetchLiveTickets() {
             try {
-                // Call the API endpoint we created in server.js
                 const response = await fetch('/api/tickets');
                 if (!response.ok) throw new Error('Network channel down.');
 
@@ -173,27 +178,40 @@
                 const queueBody = document.getElementById('priority-queue-body');
                 const historyBody = document.getElementById('history-ledger-body');
                 
-                // Clear the loader placeholder animations
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
-                // Filters data out based on unresolved open parameters
-                const activeTickets = tickets.filter(t => t.status === 'Open');
+                // Capture Open and On Hold states into the active queue, and Resolved into history
+                const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold');
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
-                // 1. Populate Active Queues
+                // 1. Populate Active Queues (Open / On Hold)
                 if (activeTickets.length === 0) {
                     queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
                 } else {
                     activeTickets.forEach(item => {
+                        let badgeStyle = "";
+                        let actionButtons = "";
+
+                        if (item.status === 'On Hold') {
+                            badgeStyle = `style="background:#2c1b02; color:#ff9500; border-color:#804c00;"`;
+                            actionButtons = `<button class="action-btn unhold-btn" onclick="modifyTicketStateInline('${item._id}', 'Open')">Unhold</button>`;
+                        } else {
+                            badgeStyle = `style="background:#2d1919; color:#ff4d4d; border-color:#ff3333;"`;
+                            actionButtons = `<button class="action-btn hold-btn" onclick="modifyTicketStateInline('${item._id}', 'On Hold')">On Hold</button>`;
+                        }
+
+                        // Always include the green Resolve Case option
+                        actionButtons += `<button class="action-btn resolve-btn" onclick="modifyTicketStateInline('${item._id}', 'Resolved')">Resolve Case</button>`;
+
                         queueBody.innerHTML += `
                             <div class="data-row">
                                 <div class="col-client">${item.name || 'Anonymous'}</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
-                                <div class="col-status"><span class="status-badge">${item.status}</span></div>
-                                <div class="col-actions"><button class="action-btn" onclick="alert('Case ID: ${item._id} flagged for terminal processing.')">Resolve Case</button></div>
+                                <div class="col-status"><span class="status-badge" ${badgeStyle}>${item.status}</span></div>
+                                <div class="col-actions">${actionButtons}</div>
                             </div>
                         `;
                     });
@@ -215,17 +233,3 @@
                             </div>
                         `;
                     });
-                }
-
-            } catch (error) {
-                console.error("Critical Admin Telemetry Exception:", error);
-                document.getElementById('priority-queue-body').innerHTML = 
-                    '<div class="loading-text" style="color: #ff3333;">❌ Data stream acquisition timeout. Verify gateway variables.</div>';
-            }
-        }
-
-        // Fire telemetry pipeline as soon as page structures mount safely
-        window.addEventListener('DOMContentLoaded', fetchLiveTickets);
-    </script>
-</body>
-</html>
