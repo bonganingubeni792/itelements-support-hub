@@ -5,41 +5,289 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - SLA Command Center</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: #060709; color: #e2e8f0; padding: 30px; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a202c; padding-bottom: 20px; margin-bottom: 30px; }
-        .logo-text { font-size: 1.4rem; font-weight: 900; }
-        .logo-text span { color: #ff3b30; }
-        .nav-links a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 0.95rem; }
-        .logout-btn { background-color: #ff3b30; color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; }
-        .telemetry-panel { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 10px; padding: 25px; margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .active-plan-badge { background-color: rgba(255,204,0,0.1); color: #ffd60a; border: 1px solid rgba(255,204,0,0.25); padding: 8px 16px; border-radius: 6px; font-weight: 900; text-transform: uppercase; font-size: 14px; }
-        .active-plan-badge.live { background-color: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.25); }
-        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; width: 100%; }
-        .dashboard-card { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
-        .card-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; color: #ffffff; text-transform: uppercase; }
-        .card-subtitle { font-size: 12px; color: #4a5568; margin-bottom: 20px; }
-        .sub-matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .matrix-box { background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
-        .matrix-name { font-size: 14px; font-weight: 800; color: #ffffff; }
-        .matrix-price { font-size: 18px; font-weight: 900; color: #ff3b30; margin: 4px 0 10px 0; }
-        .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px; }
-        .cancel-pipeline-btn { background-color: transparent; color: #e53e3e; border: 1px solid #e53e3e; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 13px; }
-        .download-row { display: flex; justify-content: space-between; align-items: center; background-color: #161a22; padding: 15px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #2d3748; }
-        .download-info h4 { font-size: 14px; color: #ffffff; margin-bottom: 2px; }
-        .download-info p { font-size: 12px; color: #718096; }
-        .download-btn { background-color: #007aff; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 11px; font-weight: bold; color: #718096; margin-bottom: 6px; text-transform: uppercase; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; background-color: #060709; border: 1px solid #2d3748; border-radius: 5px; color: white; font-size: 14px; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .submit-ticket-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #ff3b30 0%, #b30000 100%); color: white; border: none; border-radius: 6px; font-weight: bold; text-transform: uppercase; cursor: pointer; }
-        .ticket-log-row { background-color: #161a22; border: 1px solid #2d3748; padding: 15px; border-radius: 6px; margin-bottom: 12px; }
-        .ticket-log-header { display: flex; justify-content: space-between; border-bottom: 1px solid #2d3748; padding-bottom: 8px; margin-bottom: 10px; font-size: 12px; }
-        .ticket-status-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .badge-open { background-color: rgba(255,59,48,0.15); color: #ff453a; }
-        .badge-onhold { background-color: rgba(255,204,0,0.15); color: #ffd60a; }
-        .badge-resolved { background-color: rgba(48,209,88,0.15); color: #30d158; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: #060709;
+            color: #e2e8f0;
+            padding: 30px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1a202c;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 900;
+        }
+
+            .logo-text span {
+                color: #ff3b30;
+            }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.95rem;
+        }
+
+        .logout-btn {
+            background-color: #ff3b30;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .telemetry-panel {
+            background-color: #0f1115;
+            border: 1px solid #1e242b;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .telemetry-details h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .telemetry-details p {
+            color: #718096;
+            font-size: 13px;
+        }
+
+        .active-plan-badge {
+            background-color: rgba(255,204,0,0.1);
+            color: #ffd60a;
+            border: 1px solid rgba(255,204,0,0.25);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+            .active-plan-badge.live {
+                background-color: rgba(48,209,88,0.1);
+                color: #30d158;
+                border: 1px solid rgba(48,209,88,0.25);
+            }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .dashboard-card {
+            background-color: #0f1115;
+            border: 1px solid #1e242b;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #ffffff;
+            text-transform: uppercase;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .sub-matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .matrix-box {
+            background-color: #161a22;
+            border: 1px solid #2d3748;
+            border-radius: 6px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .matrix-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .matrix-price {
+            font-size: 18px;
+            font-weight: 900;
+            color: #ff3b30;
+            margin: 4px 0 10px 0;
+        }
+
+        .action-sub-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff3b30;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        .cancel-pipeline-btn {
+            background-color: transparent;
+            color: #e53e3e;
+            border: 1px solid #e53e3e;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .download-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #161a22;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border: 1px solid #2d3748;
+        }
+
+        .download-info h4 {
+            font-size: 14px;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
+
+        .download-info p {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .download-btn {
+            background-color: #007aff;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+            .form-group label {
+                display: block;
+                font-size: 11px;
+                font-weight: bold;
+                color: #718096;
+                margin-bottom: 6px;
+                text-transform: uppercase;
+            }
+
+            .form-group input, .form-group textarea {
+                width: 100%;
+                padding: 12px;
+                background-color: #060709;
+                border: 1px solid #2d3748;
+                border-radius: 5px;
+                color: white;
+                font-size: 14px;
+            }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .submit-ticket-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ff3b30 0%, #b30000 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .ticket-log-row {
+            background-color: #161a22;
+            border: 1px solid #2d3748;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .ticket-log-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #2d3748;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .ticket-status-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .badge-open {
+            background-color: rgba(255,59,48,0.15);
+            color: #ff453a;
+        }
+
+        .badge-onhold {
+            background-color: rgba(255,204,0,0.15);
+            color: #ffd60a;
+        }
+
+        .badge-resolved {
+            background-color: rgba(48,209,88,0.15);
+            color: #30d158;
+        }
     </style>
 </head>
 <body>
@@ -57,7 +305,6 @@
         <div>
             <div class="dashboard-card" id="subscription-management-zone">
                 <div class="card-title">👑 SLA Package Activation Matrix</div>
-                <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</div>
                 <div class="sub-matrix-grid">
                     <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299/mo</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Basic Support')">Activate</button></div>
                     <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599/mo</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Standard Tier')">Activate</button></div>
@@ -101,49 +348,83 @@
     </div>
 
     <script>
-        async function loadDashboardCoreTelemetry() {
-            try {
-                const res = await fetch('/api/admin/overview-data');
-                const data = await res.json();
-                const user = data.users;
-                const badge = document.getElementById('hud-plan-badge');
-                const zone = document.getElementById('subscription-management-zone');
+                // 🛡️ REPAIR LOGIC: Safely tracks data and avoids premature logout redirection drops
+                async function loadDashboardCoreTelemetry() {
+                    try {
+                        const res = await fetch('/api/admin/overview-data');
 
-                if (user && user.subscriptionStatus === 'Active') {
-                    badge.innerText = user.subscriptionTier;
-                    badge.className = "active-plan-badge live";
-                    zone.innerHTML = `<div class="card-title" style="color: #30d158;">🟢 Active Protection Matrix Coverage</div><p style="margin: 15px 0; font-size:14px; color:#cbd5e0;">Your monthly coverage [<strong>${user.subscriptionTier}</strong>] is active.</p><form action="/api/cancel-subscription" method="POST" onsubmit="return confirm('Confirm monthly plan termination? As disclosed, no pro-rata refunds are back-issued.');"><button type="submit" class="cancel-pipeline-btn">Terminate Support Pipeline 🚫</button></form>`;
-                } else {
-                    badge.innerText = "No Active SLA Package";
-                    badge.className = "active-plan-badge";
+                        // Catch unauthorized guest attempts gracefully before running data parses
+                        if (res.status === 401 || res.status === 302 || res.redirected) {
+                            window.location.href = "/client/login";
+                            return;
+                        }
+
+                        const data = await res.json();
+                        const user = data.users;
+                        const badge = document.getElementById('hud-plan-badge');
+                        const zone = document.getElementById('subscription-management-zone');
+
+                        if (user && user.subscriptionStatus === 'Active') {
+                            if (badge) {
+                                badge.innerText = user.subscriptionTier;
+                                badge.className = "active-plan-badge live";
+                            }
+                            if (zone) {
+                                zone.innerHTML = `<div class="card-title" style="color: #30d158;">🟢 Active Protection Matrix Coverage</div><p style="margin: 15px 0; font-size:14px; color:#cbd5e0;">Your monthly coverage [<strong>${user.subscriptionTier}</strong>] is active.</p><form action="/api/cancel-subscription" method="POST" onsubmit="return confirm('Confirm monthly plan termination? As disclosed, no pro-rata refunds are back-issued.');"><button type="submit" class="cancel-pipeline-btn">Terminate Support Pipeline 🚫</button></form>`;
+                            }
+                        } else if (user) {
+                            if (badge) {
+                                badge.innerText = "No Active SLA Package";
+                                badge.className = "active-plan-badge";
+                            }
+                        } else {
+                            // Fallback edge case security trigger
+                            window.location.href = "/client/login";
+                            return;
+                        }
+
+                        const ticketRes = await fetch('/api/tickets');
+                        if (ticketRes.status === 200) {
+                            const tickets = await ticketRes.json();
+                            const ledgerBody = document.getElementById('client-tickets-ledger-body');
+                            if (ledgerBody) {
+                                ledgerBody.innerHTML = '';
+                                if (!tickets || tickets.length === 0) {
+                                    ledgerBody.innerHTML = '<div class="empty-text">🎉 Excellent! No tickets filed on record indexes.</div>';
+                                } else {
+                                    tickets.forEach(ticket => {
+                                        const status = ticket.status || 'Open';
+                                        const badgeClass = status === 'Resolved' ? 'badge-resolved' : status === 'On Hold' ? 'badge-onhold' : 'badge-open';
+                                        ledgerBody.innerHTML += `<div class="ticket-log-row"><div class="ticket-log-header"><span class="ticket-status-badge ${badgeClass}">${status}</span></div><div style="font-size:14px; font-weight:bold; margin-bottom:5px; color:#fff;">ID: ${ticket.remoteId}</div><p style="font-size:13px; color:#cbd5e0; line-height:1.4;">${ticket.issue}</p></div>`;
+                                    });
+                                }
+                            }
+                        }
+                    } catch(e) {
+                        console.log("Telemetry check error handled.");
+                    }
                 }
 
-                const ticketRes = await fetch('/api/tickets');
-                const tickets = await ticketRes.json();
-                const ledgerBody = document.getElementById('client-tickets-ledger-body');
-                ledgerBody.innerHTML = '';
-
-                if (!tickets || tickets.length === 0) {
-                    ledgerBody.innerHTML = '<div class="empty-text">🎉 Excellent! No tickets filed on record indexes.</div>';
-                } else {
-                    tickets.forEach(ticket => {
-                        const status = ticket.status || 'Open';
-                        const badgeClass = status === 'Resolved' ? 'badge-resolved' : status === 'On Hold' ? 'badge-onhold' : 'badge-open';
-                        ledgerBody.innerHTML += `<div class="ticket-log-row"><div class="ticket-log-header"><span class="ticket-status-badge ${badgeClass}">${status}</span></div><div style="font-size:14px; font-weight:bold; margin-bottom:5px; color:#fff;">ID: ${ticket.remoteId}</div><p style="font-size:13px; color:#cbd5e0; line-height:1.4;">${ticket.issue}</p></div>`;
-                    });
+                async function redirectToPaystackPlan(name) {
+                    try {
+                        const res = await fetch('/api/paystack/initialize-subscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ planName: name }) });
+                        const data = await res.json();
+                        if (data.success && data.redirectUrl) { window.location.href = data.redirectUrl; }
+                        else { alert("Gateway initialization fault."); }
+                    } catch(e) { alert("Network connection fault."); }
                 }
-            } catch(e) { window.location.href = "/client/login"; }
-        }
 
-        async function redirectToPaystackPlan(name) {
-            try {
-                const res = await fetch('/api/paystack/initialize-subscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ planName: name }) });
-                const data = await res.json();
-                if (data.success && data.redirectUrl) { window.location.href = data.redirectUrl; }
-                else { alert("Gateway initialization fault."); }
-            } catch(e) { alert("Network connection fault."); }
-        }
-        window.addEventListener('DOMContentLoaded', loadDashboardCoreTelemetry);
+                window.addEventListener('DOMContentLoaded', () => {
+                    loadDashboardCoreTelemetry();
+
+                    // 🚀 INTERCEPT CHECKOUT PARAMS SENT FROM PRICING
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const autoCheckoutPlan = urlParams.get('checkout');
+                    if (autoCheckoutPlan) {
+                        // Instantly execute the Paystack route for the chosen plan card context
+                        redirectToPaystackPlan(autoCheckoutPlan);
+                    }
+                });
     </script>
 </body>
 </html>
