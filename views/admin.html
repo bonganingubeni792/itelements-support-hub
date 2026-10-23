@@ -1,150 +1,245 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IT Elements - Admin Console</title>
-  <style>
-    body { background:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:20px; }
-    .header-bar { display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #222; padding-bottom:15px; margin-bottom:25px; }
-    .header-bar h1 { margin:0; font-size:24px; color:#ff3333; letter-spacing:1px; }
-    .logout-btn { background:#ff3333; color:#fff; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-weight:bold; text-decoration:none; }
-    .dashboard-card { background:#141414; border:1px solid #222; border-radius:6px; padding:20px; margin-bottom:25px; box-shadow:0 4px 6px rgba(0,0,0,0.3); }
-    .card-title { font-size:18px; font-weight:bold; margin:0 0 5px; display:flex; align-items:center; gap:10px; }
-    .card-subtitle { font-size:12px; color:#666; margin-bottom:20px; }
-    .table-header { display:flex; background:#1a1a1a; padding:10px; border-radius:4px; font-weight:bold; font-size:12px; color:#888; text-transform:uppercase; }
-    .data-row { display:flex; align-items:center; padding:12px 10px; border-bottom:1px solid #222; font-size:14px; }
-    .col-client { flex:1.5; color:#4da6ff; font-weight:500; }
-    .col-remote-id { flex:1; color:#ff4d4d; font-family:monospace; }
-    .col-passkey { flex:1; color:#ffcc00; font-family:monospace; }
-    .col-issue { flex:3; color:#b3b3b3; padding-right:10px; }
-    .col-status { flex:1; }
-    .col-actions { flex:2; text-align:right; display:flex; gap:6px; justify-content:flex-end; }
-    .status-badge { background:#2d1919; color:#ff4d4d; padding:3px 8px; border-radius:4px; font-size:11px; font-weight:bold; text-transform:uppercase; border:1px solid #4a1a1a; }
-    .action-btn { background:#1a73e8; color:#fff; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; font-size:12px; transition:background 0.2s; }
-    .action-btn:hover { background:#155cb4; }
-    .hold-btn { background:#ffcc00; color:#000; }
-    .hold-btn:hover { background:#e6b800; }
-    .unhold-btn { background:#00cc66; }
-    .unhold-btn:hover { background:#00994d; }
-    .loading-text,.empty-text { text-align:center; padding:30px; color:#666; font-style:italic; font-size:14px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Elements - Admin Core Deck</title>
+    <style>
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #222;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .header-bar h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ff3333;
+            letter-spacing: 1px;
+        }
+        .logout-btn {
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .dashboard-card {
+            background-color: #141414;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .table-header {
+            display: flex;
+            background-color: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            color: #888;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .data-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid #222;
+            font-size: 14px;
+        }
+        .col-client { flex: 1.5; color: #4da6ff; font-weight: 500; }
+        .col-remote-id { flex: 1; color: #ff4d4d; font-family: monospace; }
+        .col-passkey { flex: 1; color: #ffcc00; font-family: monospace; }
+        .col-issue { flex: 3; color: #b3b3b3; padding-right: 10px; }
+        .col-status { flex: 1; }
+        .col-actions { flex: 2; text-align: right; display: flex; gap: 8px; justify-content: flex-end; }
+                
+        .status-badge {
+            background-color: #2d1919;
+            color: #ff4d4d;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid #4a1a1a;
+        }
+        .status-badge.on-hold {
+            background-color: #2d2619;
+            color: #ffcc00;
+            border: 1px solid #4a3e1a;
+        }
+        .action-btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        .action-btn:hover { background-color: #155cb4; }
+        
+        .hold-btn {
+            background-color: #e67e22;
+        }
+        .hold-btn:hover { background-color: #d35400; }
+        
+        .unhold-btn {
+            background-color: #27ae60;
+        }
+        .unhold-btn:hover { background-color: #219a52; }
+
+        .loading-text, .empty-text {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-style: italic;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
 
-  <div class="header-bar">
-    <h1>🔴 IT Elements Administration Console</h1>
-    <a href="/client/login" class="logout-btn">Log Out 🔐</a>
-  </div>
-
-  <!-- Priority Queue -->
-  <div class="dashboard-card">
-    <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
-    <div class="card-subtitle">Active client tickets requiring attention.</div>
-    <div class="table-header">
-      <div class="col-client">Client</div>
-      <div class="col-remote-id">Remote ID</div>
-      <div class="col-passkey">Passkey</div>
-      <div class="col-issue">Issue</div>
-      <div class="col-status">Status</div>
-      <div class="col-actions">Actions</div>
+    <div class="header-bar">
+        <h1>🔴 IT Elements Administration Console</h1>
+        <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
     </div>
-    <div id="priority-queue-body">
-      <div class="loading-text">Loading tickets...</div>
+
+    <!-- 1. PRIORITY ESCALATION QUEUE CARD -->
+    <div class="dashboard-card">
+        <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
+        <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices.</div>
+                
+        <div class="table-header">
+            <div class="col-client">Client</div>
+            <div class="col-remote-id">Remote ID</div>
+            <div class="col-passkey">Passkey</div>
+            <div class="col-issue">Incident Logs / Issues</div>
+            <div class="col-status">Status</div>
+            <div class="col-actions">Directive Actions</div>
+        </div>
+                
+        <!-- Live content container -->
+        <div id="priority-queue-body">
+            <div class="loading-text">Querying cloud datacenter channels...</div>
+        </div>
     </div>
-  </div>
 
-  <!-- History Ledger -->
-  <div class="dashboard-card">
-    <div class="card-title">⏳ Job Resolution History Ledger</div>
-    <div class="card-subtitle">Previously resolved client tickets.</div>
-    <div class="table-header">
-      <div class="col-client">Client</div>
-      <div class="col-remote-id">Remote ID</div>
-      <div class="col-passkey">Passkey</div>
-      <div class="col-issue">Closed Logs</div>
-      <div class="col-status">Status</div>
-      <div class="col-actions">Actions</div>
+    <!-- 2. JOB RESOLUTION HISTORY CARD -->
+    <div class="dashboard-card">
+        <div class="card-title">⏳ Job Resolution History Ledger</div>
+        <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
+                
+        <div class="table-header">
+            <div class="col-client">Client</div>
+            <div class="col-remote-id">Remote ID</div>
+            <div class="col-passkey">Passkey</div>
+            <div class="col-issue">Closed Logs Summary</div>
+            <div class="col-status">Status</div>
+            <div class="col-actions">Directive Actions</div>
+        </div>
+                
+        <div id="history-ledger-body">
+            <div class="loading-text">Parsing historical database streams...</div>
+        </div>
     </div>
-    <div id="history-ledger-body">
-      <div class="loading-text">Loading history...</div>
-    </div>
-  </div>
 
-  <script>
-    async function fetchLiveTickets() {
-      try {
-        const response = await fetch('/api/tickets');
-        if (!response.ok) throw new Error('Failed to fetch tickets');
-        const tickets = await response.json();
+    <!-- DATA BINDING TELEMETRY SCRIPT SECTION -->
+    <script>
+        async function fetchLiveTickets() {
+            try {
+                const response = await fetch('/api/tickets');
+                if (!response.ok) throw new Error('Network channel down.');
 
-        const queueBody = document.getElementById('priority-queue-body');
-        const historyBody = document.getElementById('history-ledger-body');
-        queueBody.innerHTML = '';
-        historyBody.innerHTML = '';
+                const tickets = await response.json();
+                                
+                const queueBody = document.getElementById('priority-queue-body');
+                const historyBody = document.getElementById('history-ledger-body');
+                                
+                queueBody.innerHTML = '';
+                historyBody.innerHTML = '';
 
-        const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'Hold');
-        const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
+                // Now filters items that are Open OR On Hold into the active queue
+                const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold');
+                const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
-        if (activeTickets.length === 0) {
-          queueBody.innerHTML = '<div class="empty-text">🎉 No active tickets.</div>';
-        } else {
-          activeTickets.forEach(item => {
-            let badgeStyle = '';
-            if (item.status === 'Hold') {
-              badgeStyle = 'background:#333366; color:#ffcc00; border-color:#666699;';
-            }
-            queueBody.innerHTML += `
-              <div class="data-row">
-                <div class="col-client">${item.name || 'Anonymous'}</div>
-                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
-                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                <div class="col-issue">${item.issue || 'No description'}</div>
-                <div class="col-status"><span class="status-badge" style="${badgeStyle}">${item.status}</span></div>
-                <div class="col-actions">
-                  <button class="action-btn" onclick="resolveTicket('${item._id}')">Resolve</button>
-                  <button class="action-btn hold-btn" onclick="holdTicket('${item._id}')">Hold</button>
-                  <button class="action-btn unhold-btn" onclick="unholdTicket('${item._id}')">Unhold</button>
-                </div>
-              </div>
-            `;
-          });
-        }
+                // 1. Populate Active Queues
+                if (activeTickets.length === 0) {
+                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
+                } else {
+                    activeTickets.forEach(item => {
+                        const isOnHold = item.status === 'On Hold';
+                        
+                        // Decide status badge styling
+                        const badgeClass = isOnHold ? 'status-badge on-hold' : 'status-badge';
+                        
+                        // Decide hold button look/action based on current state
+                        const holdButtonHtml = isOnHold 
+                            ? `<button class="action-btn unhold-btn" onclick="updateStatus('${item._id}', 'Open')">Unhold Case</button>`
+                            : `<button class="action-btn hold-btn" onclick="updateStatus('${item._id}', 'On Hold')">Hold Case</button>`;
 
-        if (resolvedTickets.length === 0) {
-          historyBody.innerHTML = '<div class="empty-text">No resolved tickets yet.</div>';
-        } else {
-          resolvedTickets.forEach(item => {
-            historyBody.innerHTML += `
-              <div class="data-row" style="opacity:0.6;">
-                <div class="col-client">${item.name || 'Anonymous'}</div>
-                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
-                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                <div class="col-issue">${item.issue || 'No description'}</div>
-                <div class="col-status"><span class="status-badge" style="background:#1a331a; color:#00cc66; border-color:#004d26;">${item.status}</span></div>
-                <div class="col-actions">✔️</div>
-              </div>
-            `;
-          });
-        }
-      } catch (err) {
-        document.getElementById('priority-queue-body').innerHTML = '<div class="empty-text">Error loading tickets.</div>';
-        document.getElementById('history-ledger-body').innerHTML = '<div class="empty-text">Error loading history.</div>';
-      }
-    }
+                        queueBody.innerHTML += `
+                            <div class="data-row" style="${isOnHold ? 'border-left: 4px solid #ffcc00;' : ''}">
+                                <div class="col-client">${item.name || 'Anonymous'}</div>
+                                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
+                                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                                <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
+                                <div class="col-status"><span class="${badgeClass}">${item.status}</span></div>
+                                <div class="col-actions">
+                                    ${holdButtonHtml}
+                                    <button class="action-btn" onclick="updateStatus('${item._id}', 'Resolved')">Resolve Case</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
 
-    async function updateTicket(id, status) {
-      try {
-        await fetch(`/api/tickets/${id}/status`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ status })
-        });
-        fetchLiveTickets();
-      } catch (err) {
-        alert('Failed to update ticket');
-      }
-    }
+                // 2. Populate Ledger Histories
+                if (resolvedTickets.length === 0) {
+                    historyBody.innerHTML = '<div class="empty-text">No archived cases found in the ledger database indexes.</div>';
+                } else {
+                    resolvedTickets.forEach(item => {
+                        historyBody.innerHTML += `
+                            <div class="data-row" style="opacity: 0.5;">
+                                <div class="col-client">${item.name || 'Anonymous'}</div>
+                                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
+                                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                                <div class="col-issue">${item.issue || 'No explicit summary.'}</div>
+                                <div class="col-status"><span class="status-badge" style="background:#192d19; color:#4dff4d; border-color:#1a4a1a;">Resolved</span></div>
+                                <div class="col-actions"><span style="color:#666; font-size:12px;">Archived</span></div>
+                            </div>
+                        `;
+                    });
+                }
 
-    function resolveTicket(id) { updateTicket(id, 'Resolved'); }
-    function holdTicket
