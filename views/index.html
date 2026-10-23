@@ -72,27 +72,27 @@
             font-weight: 900;
         }
 
-            .logo-text span {
-                color: #ff1a1a;
-            }
+        .logo-text span {
+            color: #ff1a1a;
+        }
 
         nav {
             display: flex;
             align-items: center;
         }
 
-            nav a {
-                color: #ffffff;
-                text-decoration: none;
-                margin-left: 20px;
-                font-size: 0.95rem;
-                font-weight: 500;
-                transition: color 0.2s;
-            }
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
 
-                nav a:hover {
-                    color: #ff1a1a;
-                }
+        nav a:hover {
+            color: #ff1a1a;
+        }
 
         .hero-section {
             text-align: center;
@@ -100,18 +100,18 @@
             margin-bottom: 50px;
         }
 
-            .hero-section h1 {
-                font-size: 3rem;
-                font-weight: 900;
-                margin-bottom: 20px;
-                line-height: 1.2;
-            }
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
 
-            .hero-section p {
-                color: #aaaaaa;
-                font-size: 1.1rem;
-                line-height: 1.6;
-            }
+        .hero-section p {
+            color: #aaaaaa;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
 
         .compact-nav-grid {
             display: grid;
@@ -133,23 +133,23 @@
             transition: border-color 0.2s, transform 0.2s;
         }
 
-            .compact-box:hover {
-                border-color: #ff1a1a;
-                transform: translateY(-2px);
-            }
+        .compact-box:hover {
+            border-color: #ff1a1a;
+            transform: translateY(-2px);
+        }
 
-            .compact-box h3 {
-                font-size: 1.1rem;
-                font-weight: 800;
-                color: #ff1a1a;
-                margin-bottom: 8px;
-            }
+        .compact-box h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #ff1a1a;
+            margin-bottom: 8px;
+        }
 
-            .compact-box p {
-                color: #aaaaaa;
-                font-size: 0.85rem;
-                line-height: 1.4;
-            }
+        .compact-box p {
+            color: #aaaaaa;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
 
         .hourly-section {
             width: 100%;
@@ -167,17 +167,17 @@
             margin-bottom: 30px;
         }
 
-            .hourly-header h2 {
-                font-size: 1.6rem;
-                font-weight: 900;
-                margin-bottom: 5px;
-                color: #ffffff;
-            }
+        .hourly-header h2 {
+            font-size: 1.6rem;
+            font-weight: 900;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
 
-            .hourly-header p {
-                color: #888888;
-                font-size: 0.9rem;
-            }
+        .hourly-header p {
+            color: #888888;
+            font-size: 0.9rem;
+        }
 
         .calculator-interface {
             display: flex;
@@ -197,14 +197,14 @@
             text-align: left;
         }
 
-            .selector-side label {
-                font-size: 0.9rem;
-                font-weight: bold;
-                color: #cccccc;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-bottom: 5px;
-            }
+        .selector-side label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #cccccc;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
 
         .custom-select {
             width: 100%;
@@ -219,9 +219,9 @@
             outline: none;
         }
 
-            .custom-select:focus {
-                border-color: #ff1a1a;
-            }
+        .custom-select:focus {
+            border-color: #ff1a1a;
+        }
 
         .pricing-side {
             text-align: right;
@@ -238,9 +238,9 @@
             color: #ffffff;
         }
 
-            .price-display span {
-                color: #ff1a1a;
-            }
+        .price-display span {
+            color: #ff1a1a;
+        }
 
         .hourly-pay-btn {
             padding: 14px 28px;
@@ -256,9 +256,9 @@
             transition: background-color 0.2s;
         }
 
-            .hourly-pay-btn:hover {
-                background-color: #cc0000;
-            }
+        .hourly-pay-btn:hover {
+            background-color: #cc0000;
+        }
 
         .status-section {
             width: 100%;
@@ -307,9 +307,9 @@
             color: #ffffff;
         }
 
-            .status-value.green {
-                color: #25d366;
-            }
+        .status-value.green {
+            color: #25d366;
+        }
 
         footer {
             width: 100%;
@@ -323,9 +323,39 @@
             line-height: 1.6;
         }
 
-            footer strong {
-                color: #ffffff;
-            }
+        footer strong {
+            color: #ffffff;
+        }
+
+        /* 🟢 WHATSAPP ROUND CORNER FLOATING WIDGET STYLING */
+        .whatsapp-floating-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: #ffffff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            text-decoration: none;
+            z-index: 9999;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .whatsapp-floating-widget:hover {
+            transform: scale(1.08);
+            background-color: #20ba5a;
+        }
+
+        .whatsapp-svg-icon {
+            width: 32px;
+            height: 32px;
+            fill: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -380,8 +410,7 @@
             </div>
             <div class="pricing-side">
                 <div class="price-display">R<span id="calculatedPrice">350</span></div>
-                <!-- 🚀 UNIFIED ACTION BINDING: Invokes clean global runtime functions directly -->
-                <button class="hourly-pay-btn" onclick="handlePaystackRedirect()">Pay via Paystack 💳</button>
+                <button class="hourly-pay-btn" id="paystack-redirect-btn">Pay via Paystack 💳</button>
             </div>
         </div>
     </div>
@@ -398,36 +427,41 @@
 
     <footer>
         <p style="margin-bottom: 10px;">
-            📧 Corporate Mail: <strong>bongani@itelements.co.za</strong> &nbsp;|&nbsp;
-            📱 Technical Helpline: <strong>+27 60 618 1229</strong> &nbsp;|&nbsp;
+            📧 Corporate Mail: <strong>bongani@itelements.co.za</strong> &nbsp;|&nbsp; 
+            📱 Technical Helpline: <strong>+27 60 618 1229</strong> &nbsp;|&nbsp; 
             📍 Regional Coverage: <strong>South Africa</strong>
         </p>
         <p style="color: #4a5568; font-size: 13px; margin-bottom: 5px;">🇿🇦 South Africa's Trusted Remote Engineers. Minimize Downtime, Maximize Output— Get Fixed Instantly.</p>
         <p style="font-size: 12px; color: #4a5568;">&copy; 2026 IT Elements Support Framework</p>
     </footer>
 
-    <script>
-                // 🛠️ LINTER ABSOLUTE BYPASS: Accessing properties using window arrays completely silences Visual Studio errors
-                async function handlePaystackRedirect() {
-                    var dropdown = document.getElementById("hoursSelector");
-                    var hoursValue = dropdown ? dropdown.value : "1";
+    <!-- 🟢 FLOATING CORNER CONTACT WIDGET CONTAINER -->
+    <a href="https://wa.me." class="whatsapp-floating-widget" target="_blank" title="Chat via WhatsApp">
+        <svg class="whatsapp-svg-icon" viewBox="0 0 24 24">
+            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.05 11.948.05c3.176.001 6.163 1.24 8.404 3.483 2.24 2.243 3.477 5.232 3.476 8.411-.003 6.597-5.34 11.896-11.892 11.896-2.003-.001-3.973-.507-5.761-1.472L0 24zm6.59-4.846c1.657.983 3.284 1.499 4.815 1.5 5.176 0 9.385-4.143 9.388-9.225.002-2.461-.954-4.776-2.691-6.516C16.36 3.175 14.058 2.22 11.606 2.219c-5.18 0-9.39 4.144-9.393 9.227-.001 1.73.499 3.214 1.455 4.671L2.68 19.53l3.967-1.376zm12.312-6.52c-.29-.146-1.716-.848-1.981-.946-.266-.098-.46-.147-.654.146-.194.293-.75.946-.918 1.134-.168.19-.337.213-.627.067-2.94-1.464-3.842-1.945-5.353-4.527-.399-.68-.04-1.104.301-1.439.307-.302.614-.71.922-1.065.303-.355.405-.603.607-.993.203-.4.102-.746-.048-1.039-.15-.293-1.654-3.987-2.266-5.45-.595-1.424-1.206-1.231-1.655-1.253-.425-.021-.913-.022-1.4-.022-.489 0-1.284.184-1.955.914-.672.73-2.565 2.502-2.565 6.1 0 3.6 2.62 7.073 2.981 7.564.364.49 5.152 7.867 12.485 11.031 1.743.753 3.102 1.201 4.162 1.536 1.75.554 3.344.474 4.601.286 1.401-.21 2.915-1.192 3.323-2.284.407-1.092.407-2.03.285-2.228-.123-.198-.453-.317-.743-.464z"/>
+        </svg>
+    </a>
 
-                    try {
-                        var res = await fetch('/api/paystack/initialize-hourly', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ hours: hoursValue })
-                        });
-                        var data = await res.json();
-                        if (data && data.redirectUrl) {
-                            window.location.href = data.redirectUrl;
-                        } else {
-                            alert("Gateway initialization error.");
-                        }
-                    } catch(err) {
-                        alert("Communication loop fault.");
-                    }
-                }
+    <script>
+        // Form mapping logic CAST safely to silent TypeScript/VS backgrounds
+        var btnMap = document.getElementById('paystack-redirect-btn');
+        if (btnMap) {
+            btnMap.addEventListener('click', async function(e) {
+                e.preventDefault();
+                var menu = document.getElementById("hoursSelector");
+                var value = menu ? menu.value : "1";
+                try {
+                    const res = await fetch('/api/paystack/initialize-hourly', { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({ hours: value }) 
+                    });
+                    const data = await res.json();
+                    if (data && data.redirectUrl) { window.location.href = data.redirectUrl; }
+                    else { alert("Gateway initialization error."); }
+                } catch(err) { alert("Communication loop fault."); }
+            });
+        }
     </script>
 </body>
 </html>
