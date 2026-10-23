@@ -19,7 +19,7 @@ if (!dbURI) {
     console.error("Please add your MongoDB connection string to the Environment tab in your Render Dashboard.");
 }
 mongoose.connect(dbURI)
-    .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
+    .then(() => console.log('📁 Cloud Database connection established successfully!'))
     .catch(err => console.error('❌ Cloud Database communication failure:', err));
 
 // 👤 USER ACCOUNT MODEL
@@ -157,7 +157,7 @@ app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     }
 });
 
-// 🔄 UPDATE TICKET STATUS (NEW!)
+// 🔄 UPDATE TICKET STATUS
 app.post('/api/tickets/:id/status', checkAdminAuth, async (req, res) => {
     try {
         const { status } = req.body;
@@ -201,4 +201,4 @@ app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
 
 // 🚀 START SERVER
 app.listen(PORT, () => {
-    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT
+    console.log(`🚀 PRODUCTION IT ELEMENT
