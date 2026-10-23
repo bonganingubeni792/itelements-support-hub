@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IT Elements - Admin Core Deck</title>
+  <title>IT Elements - Admin Console</title>
   <style>
     body {
       background-color: #0d0d0d;
@@ -66,7 +66,6 @@
       font-weight: bold;
       font-size: 12px;
       color: #888;
-      letter-spacing: 0.5px;
       text-transform: uppercase;
     }
     .data-row {
@@ -82,7 +81,6 @@
     .col-issue { flex: 3; color: #b3b3b3; padding-right: 10px; }
     .col-status { flex: 1; }
     .col-actions { flex: 2; text-align: right; display: flex; gap: 6px; justify-content: flex-end; }
-    
     .status-badge {
       background-color: #2d1919;
       color: #ff4d4d;
@@ -108,7 +106,6 @@
     .hold-btn:hover { background-color: #e6b800; }
     .unhold-btn { background-color: #00cc66; }
     .unhold-btn:hover { background-color: #00994d; }
-    
     .loading-text, .empty-text {
       text-align: center;
       padding: 30px;
@@ -122,44 +119,40 @@
 
   <div class="header-bar">
     <h1>🔴 IT Elements Administration Console</h1>
-    <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
+    <a href="/client/login" class="logout-btn">Log Out 🔐</a>
   </div>
 
   <!-- Priority Queue -->
   <div class="dashboard-card">
     <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
-    <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices.</div>
-    
+    <div class="card-subtitle">Active client tickets requiring attention.</div>
     <div class="table-header">
       <div class="col-client">Client</div>
       <div class="col-remote-id">Remote ID</div>
       <div class="col-passkey">Passkey</div>
-      <div class="col-issue">Incident Logs / Issues</div>
+      <div class="col-issue">Issue</div>
       <div class="col-status">Status</div>
-      <div class="col-actions">Directive Actions</div>
+      <div class="col-actions">Actions</div>
     </div>
-    
     <div id="priority-queue-body">
-      <div class="loading-text">Querying cloud datacenter channels...</div>
+      <div class="loading-text">Loading tickets...</div>
     </div>
   </div>
 
   <!-- History Ledger -->
   <div class="dashboard-card">
     <div class="card-title">⏳ Job Resolution History Ledger</div>
-    <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
-    
+    <div class="card-subtitle">Previously resolved client tickets.</div>
     <div class="table-header">
       <div class="col-client">Client</div>
       <div class="col-remote-id">Remote ID</div>
       <div class="col-passkey">Passkey</div>
-      <div class="col-issue">Closed Logs Summary</div>
+      <div class="col-issue">Closed Logs</div>
       <div class="col-status">Status</div>
-      <div class="col-actions">Directive Actions</div>
+      <div class="col-actions">Actions</div>
     </div>
-    
     <div id="history-ledger-body">
-      <div class="loading-text">Parsing historical database streams...</div>
+      <div class="loading-text">Loading history...</div>
     </div>
   </div>
 
@@ -167,7 +160,7 @@
     async function fetchLiveTickets() {
       try {
         const response = await fetch('/api/tickets');
-        if (!response.ok) throw new Error('Network channel down.');
+        if (!response.ok) throw new Error('Failed to fetch tickets');
         const tickets = await response.json();
 
         const queueBody = document.getElementById('priority-queue-body');
@@ -180,7 +173,7 @@
 
         // Active tickets
         if (activeTickets.length === 0) {
-          queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
+          queueBody.innerHTML = '<div class="empty-text">🎉 No active tickets.</div>';
         } else {
           activeTickets.forEach(item => {
             let badgeStyle = '';
@@ -192,7 +185,7 @@
                 <div class="col-client">${item.name || 'Anonymous'}</div>
                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
+                <div class="col-issue">${item.issue || 'No description'}</div>
                 <div class="col-status"><span class="status-badge" style="${badgeStyle}">${item.status}</span></div>
                 <div class="col-actions">
                   <button class="action-btn" onclick="resolveTicket('${item._id}')">Resolve</button>
@@ -206,12 +199,12 @@
 
         // Resolved tickets
         if (resolvedTickets.length === 0) {
-          historyBody.innerHTML = '<div class="empty-text">No archived cases found in the ledger database indexes.</div>';
+          historyBody.innerHTML = '<div class="empty-text">No resolved tickets yet.</div>';
         } else {
           resolvedTickets.forEach(item => {
             historyBody.innerHTML += `
-              <div class="data-row" style="opacity: 0.5;">
+              <div class="data-row" style="opacity: 0.6;">
                 <div class="col-client">${item.name || 'Anonymous'}</div>
                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                <div
+                <div class="col-issue">${item.issue ||
