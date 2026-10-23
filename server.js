@@ -224,5 +224,5 @@ app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
 
 // 🚀 INITIALIZE SERVER WEB LISTENERS
 app.listen(PORT, () => {
-    console.log Levant(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
+    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
 });
