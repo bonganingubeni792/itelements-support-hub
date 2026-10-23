@@ -82,6 +82,13 @@
         .col-issue { flex: 3; color: #b3b3b3; padding-right: 10px; }
         .col-status { flex: 1; }
         .col-actions { flex: 1; text-align: right; }
+        
+        /* New Table Column Assignments for Users */
+        .col-user-name { flex: 2; color: #e0e0e0; font-weight: 500; }
+        .col-user-email { flex: 2; color: #4da6ff; }
+        .col-user-phone { flex: 1.5; color: #b3b3b3; }
+        .col-user-tier { flex: 2; color: #ffcc00; font-weight: bold; }
+        .col-user-status { flex: 1; }
                  
         .status-badge {
             background-color: #2d1919;
@@ -92,6 +99,11 @@
             font-weight: bold;
             text-transform: uppercase;
             border: 1px solid #4a1a1a;
+        }
+        .status-badge.active {
+            background-color: #192d19;
+            color: #4dff4d;
+            border: 1px solid #1a4a1a;
         }
         .action-btn {
             background-color: #1a73e8;
@@ -135,7 +147,6 @@
              <div class="col-actions">Directive Actions</div>
          </div>
                  
-         <!-- Live content container -->
          <div id="priority-queue-body">
              <div class="loading-text">Querying cloud datacenter channels...</div>
          </div>
@@ -159,12 +170,28 @@
              <div class="loading-text">Parsing historical database streams...</div>
          </div>
      </div>
+
+     <!-- 3. NEW ACTIVE SUBSCRIBERS LEDGER CARD -->
+     <div class="dashboard-card">
+         <div class="card-title">👑 Active Client Memberships Dashboard</div>
+         <div class="card-subtitle">Live database index of all client platform accounts and active subscription metrics.</div>
+                 
+         <div class="table-header">
+             <div class="col-user-name">Client Name</div>
+             <div class="col-user-email">Email Address</div>
+             <div class="col-user-phone">Phone Number</div>
+             <div class="col-user-tier">Subscription Package</div>
+             <div class="col-user-status">Status</div>
+         </div>
+                 
+         <div id="subscribers-ledger-body">
+             <div class="loading-text">Parsing subscriber infrastructure records...</div>
+         </div>
+     </div>
  
-     <!-- DATA BINDING TELEMETRY SCRIPT SECTION -->
      <script>
          async function fetchLiveTickets() {
              try {
-                 // Call the API endpoint we created in server.js
                  const response = await fetch('/api/tickets');
                  if (!response.ok) throw new Error('Network channel down.');
  
@@ -173,15 +200,12 @@
                  const queueBody = document.getElementById('priority-queue-body');
                  const historyBody = document.getElementById('history-ledger-body');
                                  
-                 // Clear the loader placeholder animations
                  queueBody.innerHTML = '';
                  historyBody.innerHTML = '';
  
-                 // Filters data out based on unresolved open parameters
                  const activeTickets = tickets.filter(t => t.status === 'Open');
                  const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
  
-                 // 1. Populate Active Queues
                  if (activeTickets.length === 0) {
                      queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
                  } else {
@@ -199,7 +223,6 @@
                      });
                  }
  
-                 // 2. Populate Ledger Histories
                  if (resolvedTickets.length === 0) {
                      historyBody.innerHTML = '<div class="empty-text">No archived cases found in the ledger database indexes.</div>';
                  } else {
@@ -219,13 +242,3 @@
  
              } catch (error) {
                  console.error("Critical Admin Telemetry Exception:", error);
-                 document.getElementById('priority-queue-body').innerHTML = 
-                     '<div class="loading-text" style="color: #ff3333;">❌ Data stream acquisition timeout. Verify gateway variables.</div>';
-             }
-         }
- 
-         // Fire telemetry pipeline as soon as page structures mount safely
-         window.addEventListener('DOMContentLoaded', fetchLiveTickets);
-     </script>
- </body>
- </html>
