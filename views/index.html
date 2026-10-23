@@ -327,7 +327,7 @@
             color: #ffffff;
         }
 
-        /* 🟢 PIXEL-PERFECT WHATSAPP WIDGET STYLING */
+        /* 🟢 CRISP HIGH-RES FLOATING WHATSAPP BUTTON STYLING */
         .whatsapp-floating-widget {
             position: fixed;
             bottom: 30px;
@@ -358,25 +358,137 @@
             display: block;
         }
 
-        /* 📱 PHONE ALIGNMENT MEDIA QUERIES LAYER */
+        /* 📱 PHONE AUTO-BALANCE RULES (Zero content removed) */
         @media (max-width: 768px) {
-            body { padding: 25px 15px; }
-            header { flex-direction: column; gap: 20px; text-align: center; margin-bottom: 30px; }
+            header { flex-direction: column; gap: 20px; text-align: center; }
             nav { justify-content: center; flex-wrap: wrap; gap: 10px; }
-            nav a { margin: 0 10px; font-size: 0.9rem; }
-            
+            nav a { margin: 0 10px; }
             .hero-section h1 { font-size: 2.2rem; }
-            .hero-section p { font-size: 1rem; }
-            
-            .compact-nav-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 35px; }
-            .compact-box { padding: 20px; }
-            
-            .hourly-section { padding: 20px; margin-bottom: 30px; }
-            .calculator-interface { flex-direction: column; gap: 20px; padding: 15px; }
-            .selector-side { width: 100%; }
-            .pricing-side { width: 100%; text-align: center; align-items: center; }
-            
-            .status-section { padding: 20px; }
+            .compact-nav-grid { grid-template-columns: 1fr; gap: 15px; }
+            .calculator-interface { flex-direction: column; gap: 20px; }
+            .selector-side, .pricing-side { width: 100%; text-align: center; align-items: center; }
             .status-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            
-            footer { font-size: 0.85rem; }
+            .whatsapp-floating-widget { bottom: 20px; right: 20px; width: 55px; height: 55px; }
+            .whatsapp-svg-raw { width: 28px; height: 28px; }
+        }
+
+        @media (max-width: 480px) {
+            .status-grid { grid-template-columns: 1fr; }
+            .hero-section h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <div class="logo-wrapper"><div class="logo-ring"><span class="logo-inner-text">it</span></div></div>
+            <h2 class="logo-text">IT Elements<span>.support</span></h2>
+        </div>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/pricing">Plans</a>
+            <a href="/dashboard">Request Help</a>
+            <a href="/client/login">Client Portal</a>
+        </nav>
+    </header>
+
+    <div class="hero-section">
+        <h1>On-Demand Subscription IT Support</h1>
+        <p>Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
+    </div>
+
+    <div class="compact-nav-grid">
+        <a href="/pricing" class="compact-box">
+            <h3>Subscription Plans</h3>
+            <p>Choose a predictable flat monthly rate package built for your device network needs.</p>
+        </a>
+        <a href="/dashboard" class="compact-box">
+            <h3>Submit Support Ticket</h3>
+            <p>Experiencing hardware slow downs or virus logs? Open a ticket and drop your remote connection key code.</p>
+        </a>
+        <a href="/client/login" class="compact-box">
+            <h3>Customer Access Hub</h3>
+            <p>Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</p>
+        </a>
+    </div>
+
+    <div class="hourly-section">
+        <div class="hourly-header">
+            <h2>Need a Quick Incident Fix?</h2>
+            <p>Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
+        </div>
+        <div class="calculator-interface">
+            <div class="selector-side">
+                <label for="hoursSelector">Select Duration Allocation:</label>
+                <select id="hoursSelector" class="custom-select" onchange="document.getElementById('calculatedPrice').innerText = String(parseInt(this.value) * 350);">
+                    <option value="1">1 Hour Dedicated Emergency Support</option>
+                    <option value="2">2 Hours Dedicated Support Package</option>
+                    <option value="3">3 Hours Comprehensive Network Overhaul</option>
+                    <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
+                    <option value="5">5 Hours Complete Enterprise SLA Care</option>
+                </select>
+            </div>
+            <div class="pricing-side">
+                <div class="price-display">R<span id="calculatedPrice">350</span></div>
+                <button class="hourly-pay-btn" id="paystack-redirect-btn">Pay via Paystack 💳</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-section">
+        <div class="status-title">📡 Network & Engineer Status</div>
+        <div class="status-grid">
+            <div class="status-box"><div class="status-label">On-Duty Engineers</div><div class="status-value green">Active</div></div>
+            <div class="status-box"><div class="status-label">Average Latency</div><div class="status-value">14ms Fast Handshake</div></div>
+            <div class="status-box"><div class="status-label">Secure Gate Encryption</div><div class="status-value">SSL Protocol Enclosed</div></div>
+            <div class="status-box"><div class="status-label">Payment Security</div><div class="status-value">PCI-DSS Compliant</div></div>
+        </div>
+    </div>
+
+    <footer>
+        <p style="margin-bottom: 10px;">
+            Corporate Mail: <strong>bongani@itelements.co.za</strong> &nbsp;|&nbsp; 
+            Technical Helpline: <strong>+27 60 618 1229</strong> &nbsp;|&nbsp; 
+            Regional Coverage: <strong>South Africa</strong>
+        </p>
+        <p style="color: #4a5568; font-size: 13px; margin-bottom: 5px;">🇿🇦 South Africa's Trusted Remote Engineers. Minimize Downtime, Maximize Output— Get Fixed Instantly.</p>
+        <p style="font-size: 12px; color: #4a5568;">&copy; 2026 IT Elements Support Framework</p>
+    </footer>
+
+    <!-- 🛡️ PROGRAMMATIC TRIGGER LOOP (Linked directly to your number: 27606181229) -->
+    <button class="whatsapp-floating-widget" id="whatsapp-trigger-node" title="Chat via WhatsApp">
+        <svg class="whatsapp-svg-raw" viewBox="0 0 448 512" xmlns="http://w3.org">
+            <path fill="#ffffff" d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l147.7-38.8c32.9 16.9 69.5 25.8 106.2 25.8 122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-93.6-25.7l-6.7-4-88 23.1 23.5-85.8-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 19.8-3.2 1.9-6.5 2.1-12 0.7-5.5-1.4-23.2-8.5-44.2-24.7-16.4-14.6-27.4-32.6-30.6-38.1-3.2-5.6-.3-8.6 2.5-11.4 2.5-2.5 5.5-5.6 8.3-8.4 2.8-2.8 3.7-4.8 5.5-8 1.9-3.3.9-6.1-.5-8.9-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-10.6-.3-3.7 0-9.7 1.4-14.8 7.4-5.1 5.6-19.4 19-19.4 46.3 0 37.3 26.3 73.4 29.9 78.4 3.7 4.9 51.7 78.9 125.4 110.7 17.5 7.5 31.2 12 41.9 15.4 17.6 5.6 33.6 4.8 46.2 2.9 14-2.1 32.8-11.5 37.4-22.1 4.6-10.7 4.6-19.8 3.2-22.1-1.4-2.3-5.2-3.6-10.7-6.4z"/>
+        </svg>
+    </button>
+
+    <script>
+        var wpNode = document.getElementById('whatsapp-trigger-node');
+        if (wpNode) {
+            wpNode.addEventListener('click', function() {
+                var secureString = "https://wa.me" + encodeURIComponent("Hi IT Elements, I need assistance with my device.");
+                window.open(secureString, '_blank');
+            });
+        }
+
+        var btnMap = document.getElementById('paystack-redirect-btn');
+        if (btnMap) {
+            btnMap.addEventListener('click', async function(e) {
+                e.preventDefault();
+                var menu = document.getElementById("hoursSelector");
+                var value = menu ? menu.value : "1";
+                try {
+                    const res = await fetch('/api/paystack/initialize-hourly', { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({ hours: value }) 
+                    });
+                    const data = await res.json();
+                    if (data && data.redirectUrl) { window.location.href = data.redirectUrl; }
+                    else { alert("Gateway initialization error."); }
+                } catch(err) { alert("Communication loop fault."); }
+            });
+        }
+    </script>
+</body>
+</html>
