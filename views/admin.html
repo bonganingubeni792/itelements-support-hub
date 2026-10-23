@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - Admin Core Deck</title>
     <style>
         body {
@@ -49,9 +49,6 @@
             font-weight: bold;
             margin-top: 0;
             margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         .card-subtitle {
             font-size: 12px;
@@ -76,78 +73,64 @@
             border-bottom: 1px solid #222;
             font-size: 14px;
         }
-        .col-client { flex: 1.2; color: #4da6ff; font-weight: 500; }
+        .col-client { flex: 1.5; color: #4da6ff; font-weight: 500; }
         .col-remote-id { flex: 1; color: #ff4d4d; font-family: monospace; }
         .col-passkey { flex: 1; color: #ffcc00; font-family: monospace; }
-        .col-issue { flex: 2.5; color: #b3b3b3; padding-right: 10px; word-break: break-word; }
-        .col-status { flex: 1; }
-        .col-actions { flex: 2.2; text-align: right; display: flex; gap: 6px; justify-content: flex-end; }
+        .col-issue { flex: 3; color: #b3b3b3; padding-right: 10px; }
+        .col-status { flex: 1.2; }
+        .col-actions { flex: 1.5; text-align: right; }
         
         .status-badge {
-            padding: 3px 8px;
+            padding: 4px 8px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: bold;
             text-transform: uppercase;
-            border: 1px solid #ff3333;
-            background-color: #2d1919;
-            color: #ff4d4d;
             display: inline-block;
         }
-        .action-btn {
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            padding: 6px 12px;
+        .badge-open { background-color: #2d1919; color: #ff4d4d; border: 1px solid #4a1a1a; }
+        .badge-onhold { background-color: #2d2719; color: #ffcc00; border: 1px solid #4a3e1a; }
+        .badge-resolved { background-color: #192d19; color: #4dff4d; border: 1px solid #1a4a1a; }
+
+        .status-select {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            padding: 6px 10px;
             border-radius: 4px;
+            font-size: 12px;
             cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: background 0.2s;
+            width: 130px;
         }
-        .action-btn.hold-btn { background-color: #ff9500; }
-        .action-btn.hold-btn:hover { background-color: #cc7a00; }
-        .action-btn.unhold-btn { background-color: #5856d6; }
-        .action-btn.unhold-btn:hover { background-color: #43419b; }
-        .action-btn.resolve-btn { background-color: #34c759; }
-        .action-btn.resolve-btn:hover { background-color: #248a3d; }
-        
-        .loading-text, .empty-text {
-            text-align: center;
-            padding: 30px;
-            color: #666;
-            font-size: 13px;
-        }
+        .status-select:focus { outline: none; border-color: #1a73e8; }
+        .loading-text, .empty-text { text-align: center; padding: 30px; color: #666; font-style: italic; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div class="header-bar">
-        <h1>IT Elements Admin Pipeline Enclosure</h1>
-        <a href="/admin/logout" class="logout-btn">Log Out Dashboard</a>
+        <h1>🔴 IT Elements Administration Console</h1>
+        <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
     </div>
 
-    <!-- 1. PRIORITY ESCALATION ACTIVE QUEUES CARD -->
     <div class="dashboard-card">
-        <div class="card-title">🚨 Priority Engineering Escalation Queue</div>
-        <div class="card-subtitle">Live incoming customer ticketing arrays mapped down from secure internal form consoles.</div>
+        <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
+        <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices (Open & On Hold).</div>
         
         <div class="table-header">
             <div class="col-client">Client</div>
             <div class="col-remote-id">Remote ID</div>
             <div class="col-passkey">Passkey</div>
-            <div class="col-issue">Reported Incident Symptoms Log</div>
-            <div class="col-status">Status</div>
-            <div class="col-actions">Directive Actions</div>
+            <div class="col-issue">Incident Logs / Issues</div>
+            <div class="col-status">Current Status</div>
+            <div class="col-actions">Change Work Status</div>
         </div>
         
         <div id="priority-queue-body">
-            <div class="loading-text">Parsing live database streams...</div>
+            <div class="loading-text">Querying cloud datacenter channels...</div>
         </div>
     </div>
 
-    <!-- 2. JOB RESOLUTION HISTORY CARD -->
     <div class="dashboard-card">
         <div class="card-title">⏳ Job Resolution History Ledger</div>
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
@@ -158,7 +141,7 @@
             <div class="col-passkey">Passkey</div>
             <div class="col-issue">Closed Logs Summary</div>
             <div class="col-status">Status</div>
-            <div class="col-actions">Directive Actions</div>
+            <div class="col-actions">Change Work Status</div>
         </div>
         
         <div id="history-ledger-body">
@@ -166,13 +149,11 @@
         </div>
     </div>
 
-    <!-- DATA BINDING TELEMETRY SCRIPT SECTION -->
     <script>
         async function fetchLiveTickets() {
             try {
                 const response = await fetch('/api/tickets');
-                if (!response.ok) throw new Error('Network channel down.');
-
+                if (!response.ok) throw new Error('Database collection fetch fault.');
                 const tickets = await response.json();
                 
                 const queueBody = document.getElementById('priority-queue-body');
@@ -181,55 +162,66 @@
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
-                // Capture Open and On Hold states into the active queue, and Resolved into history
-                const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold');
+                const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
-                // 1. Populate Active Queues (Open / On Hold)
                 if (activeTickets.length === 0) {
-                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
+                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No pending IT tickets in queue database indexes.</div>';
                 } else {
                     activeTickets.forEach(item => {
-                        let badgeStyle = "";
-                        let actionButtons = "";
-
-                        if (item.status === 'On Hold') {
-                            badgeStyle = `style="background:#2c1b02; color:#ff9500; border-color:#804c00;"`;
-                            actionButtons = `<button class="action-btn unhold-btn" onclick="modifyTicketStateInline('${item._id}', 'Open')">Unhold</button>`;
-                        } else {
-                            badgeStyle = `style="background:#2d1919; color:#ff4d4d; border-color:#ff3333;"`;
-                            actionButtons = `<button class="action-btn hold-btn" onclick="modifyTicketStateInline('${item._id}', 'On Hold')">On Hold</button>`;
-                        }
-
-                        // Always include the green Resolve Case option
-                        actionButtons += `<button class="action-btn resolve-btn" onclick="modifyTicketStateInline('${item._id}', 'Resolved')">Resolve Case</button>`;
+                        const currentStatus = item.status || 'Open';
+                        let badgeClass = 'badge-open';
+                        if (currentStatus === 'On Hold') badgeClass = 'badge-onhold';
 
                         queueBody.innerHTML += `
                             <div class="data-row">
                                 <div class="col-client">${item.name || 'Anonymous'}</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
-                                <div class="col-status"><span class="status-badge" ${badgeStyle}>${item.status}</span></div>
-                                <div class="col-actions">${actionButtons}</div>
+                                <div class="col-issue">${item.issue || 'No explicit log description.'}</div>
+                                <div class="col-status"><span class="status-badge ${badgeClass}">${currentStatus}</span></div>
+                                <div class="col-actions">
+                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
+                                        <option value="Open" ${currentStatus === 'Open' ? 'selected' : ''}>🔴 Open</option>
+                                        <option value="On Hold" ${currentStatus === 'On Hold' ? 'selected' : ''}>🟡 On Hold</option>
+                                        <option value="Resolved">🟢 Resolve Case</option>
+                                    </select>
+                                </div>
                             </div>
                         `;
                     });
                 }
 
-                // 2. Populate Ledger Histories
                 if (resolvedTickets.length === 0) {
-                    historyBody.innerHTML = '<div class="empty-text">No archived cases found in the ledger database indexes.</div>';
+                    historyBody.innerHTML = '<div class="empty-text">No completed cases found in history archives.</div>';
                 } else {
                     resolvedTickets.forEach(item => {
                         historyBody.innerHTML += `
-                            <div class="data-row" style="opacity: 0.5;">
+                            <div class="data-row" style="opacity: 0.65;">
                                 <div class="col-client">${item.name || 'Anonymous'}</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                <div class="col-issue">${item.issue || 'No explicit summary.'}</div>
-                                <div class="col-status"><span class="status-badge" style="background:#192d19; color:#4dff4d; border-color:#1a4a1a;">Resolved</span></div>
-                                <div class="col-actions"><span style="color:#666; font-size:12px;">Archived</span></div>
+                                <div class="col-issue">${item.issue || 'No explicit log summary.'}</div>
+                                <div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div>
+                                <div class="col-actions">
+                                    <select class="status-select" onchange="updateTicketStatus('${item._id}', this.value)">
+                                        <option value="Resolved" selected>🟢 Resolved</option>
+                                        <option value="Open">🔴 Reopen Case</option>
+                                        <option value="On Hold">🟡 Move to Hold</option>
+                                    </select>
+                                </div>
                             </div>
                         `;
                     });
+                }
+            } catch (error) {
+                console.error("Dashboard Sync Crash:", error);
+                document.getElementById('priority-queue-body').innerHTML = 
+                    '<div class="loading-text" style="color: #ff3333;">❌ Data acquisition error. System pipeline connection interrupted.</div>';
+            }
+        }
+
+        async function updateTicketStatus(ticketId, newStatus) {
+            try {
+                const response = await fetch('/api/tickets/update-status', {
+                    method: 'POST',
