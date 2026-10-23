@@ -1,7 +1,7 @@
 {
-  "name": "itelements-support-hub",
+  "name": "it-elements-support",
   "version": "1.0.0",
-  "description": "IT Support Dashboard Architecture Core Engine",
+  "description": "Premium Remote IT Engineering SLA Command Center Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -12,6 +12,8 @@
     "express-session": "^1.18.0",
     "mongoose": "^8.4.1"
   },
-  "author": "IT Elements",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "license": "ISC"
 }
