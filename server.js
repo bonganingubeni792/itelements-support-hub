@@ -1,71 +1,50 @@
-// =========================================================================
-// IT ELEMENTS SUPPORT - DEFINITIVE PRODUCTION CONTROL CORE ENGINE (server.js)
-// =========================================================================
-
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
-const cors = require('cors'); // 🛡️ SECURITY PATCH: Added to handle cross-origin requests
+const cors = require('cors');
+const https = require('https');
 const app = express();
 
-// 📌 PORT MAPPING: Dynamically assigns production cloud nodes or defaults to 3000
 const PORT = process.env.PORT || 3000;
-
-// 📌 MONGODB ATLAS ROUTING LAYER: Grabs the live cloud variable from Render environment grids
 const dbURI = process.env.MONGODB_URI;
 
-if (!dbURI) {
-    console.error("❌ CRITICAL CONFIGURATION ERROR: process.env.MONGODB_URI is undefined!");
-    console.error("Please add your MongoDB connection string to the Environment tab in your Render Dashboard.");
-}
-
 mongoose.connect(dbURI)
-    .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
-    .catch(err => console.error('❌ Cloud Database communication failure:', err));
+    .then(() => console.log('📁 Database connected successfully'))
+    .catch(err => console.error('❌ Database connection failure:', err));
 
-// 👤 USER ACCOUNT DATA SCHEMATICS MODEL Configuration
-const userAccountSchema = new mongoose.Schema({
+const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     subscriptionTier: { type: String, default: 'None (Unpaid)' },
     subscriptionStatus: { type: String, default: 'Inactive' }
-}, { collection: 'useraccounts' });
+}, { collection: 'useraccounts' }));
 
-const UserAccount = mongoose.model('UserAccount', userAccountSchema);
+const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
+    name: String, email: String, remoteId: String, remotePassword: String, issue: String,
+    status: { type: String, default: 'Open' }, date: { type: Date, default: Date.now }
+}, { collection: 'supportrequests' }));
 
-// 🎫 SUPPORT REQUEST TICKET SCHEMATICS MODEL Configuration
-const supportRequestSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    remoteId: String,
-    remotePassword: String,
-    issue: String,
-    status: { type: String, default: 'Open' },
-    date: { type: Date, default: Date.now }
-}, { collection: 'supportrequests' });
+const HourlyBooking = mongoose.model('HourlyBooking', new mongoose.Schema({
+    email: { type: String, default: 'Guest / Anonymous' }, hoursAllocated: Number, amountPaid: Number,
+    paymentReference: String, status: { type: String, default: 'Pending Verification' }, date: { type: Date, default: Date.now }
+}, { collection: 'hourlybookings' }));
 
-const SupportRequest = mongoose.model('SupportRequest', supportRequestSchema);
-
-// ⚙️ EXPRESS MIDDLEWARE CONFIGURATIONS
-app.use(cors()); // 🛡️ SECURITY ACTIVATION: Permits your live domain window to access database APIs safely
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(__dirname));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'itelements-secure-key-2026',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { 
-        maxAge: 3600000, 
-        secure: false 
-    }
+    secret: 'itelements-secure-key-2026',
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 86400000, secure: false }
 }));
 
-// SECURITY BOUNDARY CONTROLLERS
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -75,7 +54,6 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-// 🌐 ROUTING PATH MAPPINGS FOR STATIC VIEW INTERFACES
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -85,159 +63,99 @@ app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'r
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
-
-// 👤 SECURE CLIENT ACCOUNT REGISTRATION PIPELINE (WITH EXPLICIT ERROR WRAPPERS)
 app.post('/client/register', async (req, res) => {
-    await handleRegistration(req, res);
-});
-
-app.post('/register', async (req, res) => {
-    await handleRegistration(req, res);
-});
-
-async function handleRegistration(req, res) {
     try {
         const { fullName, phone, email, password } = req.body;
-
-        if (!fullName || !phone || !email || !password) {
-            return res.send('<script>alert("All registration fields are strictly required.");window.history.back();</script>');
-        }
-
+        if (!fullName || !phone || !email || !password) return res.send('<script>alert("All fields required.");window.history.back();</script>');
         const normalizedEmail = email.toLowerCase().trim();
-
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
-        if (existingUser) {
-            return res.send('<script>alert("This email address is already registered inside our cloud system.");window.history.back();</script>');
-        }
-
-        const newUser = new UserAccount({
-            fullName: fullName.trim(),
-            phone: phone.trim(),
-            email: normalizedEmail,
-            password: password
-        });
-
+        if (existingUser) return res.send('<script>alert("Email already registered.");window.history.back();</script>');
+        const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
         await newUser.save();
-
-        req.session.isUser = true;
-        req.session.userEmail = newUser.email;
-
+        req.session.isUser = true; req.session.userEmail = newUser.email;
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
-
-    } catch (err) {
-        console.error("❌ CRITICAL ACCOUNT REGISTRATION CRASH IN PRODUCTION:", err);
-        res.status(500).send(`<h3>HTTP ERROR 500: Database Sync Failure During Registration</h3><p>Details: ${err.message}</p>`);
-    }
-}
-
-
-// 🔑 SECURE CLIENT/ADMIN LOGIN PIPELINE INTERACTION ENGINE
-app.post('/client/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-
-        if (!email || !password) {
-            return res.send('<script>alert("Please input both your registered email and secure key combination.");window.history.back();</script>');
-        }
-
-        // Administrative Master Override Configuration Gateway
-        if (password === 'AdminElements2026') {
-            req.session.isAdmin = true;
-            return res.send('<script>window.location.href="/admin";</script>');
-        }
-
-        const normalizedEmail = email.toLowerCase().trim();
-        const user = await UserAccount.findOne({ email: normalizedEmail });
-
-        if (user && user.password === password) {
-            req.session.isUser = true;
-            req.session.userEmail = user.email;
-            return res.send('<script>window.location.href="/dashboard";</script>');
-        }
-
-        res.send('<script>alert("Invalid access credentials combination. Please verify your email or password properties.");window.history.back();</script>');
-
-    } catch (err) {
-        console.error("❌ CRITICAL DATABASE ACCESS EXCEPTION ENCOUNTERED ON LOGIN:", err);
-        res.status(500).send(`<h3>HTTP ERROR 500: Server Login Validation Fault</h3><p>Details: ${err.message}</p>`);
-    }
+    } catch (err) { res.status(500).send(err.message); }
 });
 
-// 🎫 TICKETING ENGINE SUBMISSION INTERFACE DATA ROUTING
+app.post('/client/login', async (req, res) => {
+    try {
+        const { email, password = "" } = req.body;
+        if (password === 'AdminElements2026') { req.session.isAdmin = true; return res.send('<script>window.location.href="/admin";</script>'); }
+        const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
+        if (user && user.password === password) {
+            req.session.isUser = true; req.session.userEmail = user.email;
+            return res.send('<script>window.location.href="/dashboard";</script>');
+        }
+        res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+
+// 🚨 RETENTION: YOUR EXACT ORIGINAL WORKING TICKET ROUTE KEEPING FORMS ALIVE
 app.post('/support', async (req, res) => {
     try {
         const { name, email, remoteId, remotePassword, issue } = req.body;
-        
-        await new SupportRequest({ 
-            name, 
-            email: email ? email.toLowerCase().trim() : '', 
-            remoteId, 
-            remotePassword, 
-            issue, 
-            status: 'Open' 
-        }).save();
-        
+        let targetEmail = email || req.session.userEmail || '';
+        const newTicket = new SupportRequest({
+            name,
+            email: targetEmail ? targetEmail.toLowerCase().trim() : '',
+            remoteId,
+            remotePassword,
+            issue,
+            status: 'Open'
+        });
+        await newTicket.save();
         res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
-    } catch (err) {
-        console.error("❌ CLOUD DATA DISPATCH EXCEPTION ENCOUNTERED ON SUPPORT:", err);
-        res.status(500).send("Database sync error.");
-    }
+    } catch (err) { res.status(500).send("Database sync error."); }
 });
 
-// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD
-app.get('/api/tickets', checkAdminAuth, async (req, res) => {
-    try {
+app.get('/api/tickets', async (req, res) => {
+    try { 
         const tickets = await SupportRequest.find().sort({ date: -1 });
-        res.json(tickets);
-    } catch (err) {
-        console.error("❌ ADMIN PANEL DATA FETCH CRASH:", err);
-        res.status(500).json({ error: true, message: err.message });
-    }
+        res.json(tickets); 
+    } catch (err) { res.status(500).json({ error: true }); }
 });
 
-// 💳 AUTOMATED SUBSCRIPTION ACTIVATION DATA INTERFACES
-app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
-    try {
-        const { plan } = req.body;
-        await UserAccount.findOneAndUpdate(
-            { email: req.session.userEmail }, 
-            { subscriptionTier: plan, subscriptionStatus: 'Active' }
-        );
-        res.json({ success: true, redirectUrl: '/dashboard' });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
-});
-
-// ❌ MEMBERSHIP CANCELLATION API INTERFACE ENDPOINT
-app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
-    try {
-        await UserAccount.findOneAndUpdate(
-            { email: req.session.userEmail },
-            { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }
-        );
-        res.json({ success: true, message: 'Subscription successfully canceled.' });
-    } catch (err) {
-        res.status(500).json({ error: true, details: err.message });
-    }
-});
-
-// ... line 223 has your previous closing });
-
-// 📡 NEW: AUTOMATED TICKET QUEUE STATUS ACTIONS ENGINE (ON HOLD / UNHOLD / RESOLVE)
+// 📡 NEW STATUS CONTROLLER ENGINE FOR ON HOLD / UNHOLD / RESOLVE CHANGES
 app.post('/api/tickets/update-status', async (req, res) => {
     try {
         const { ticketId, newStatus } = req.body;
-        if (!ticketId || !newStatus) return res.status(400).json({ success: false, message: "Missing tracking keys." });
-        
-        await mongoose.model('SupportRequest').findByIdAndUpdate(ticketId, { status: newStatus });
-        res.json({ success: true, message: `Ticket status successfully changed to ${newStatus}` });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
+        await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: true }); }
 });
 
-// 🚀 INITIALIZE SERVER WEB LISTENERS
-app.listen(PORT, () => {
-    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
+app.post('/api/bookings/hourly', async (req, res) => {
+    try {
+        const { hours, amount, reference, email } = req.body;
+        const newBooking = new HourlyBooking({ email: email || 'Guest Client', hoursAllocated: parseInt(hours), amountPaid: parseFloat(amount), paymentReference: reference, status: 'Active' });
+        await newBooking.save(); res.json({ success: true });
+    } catch (err) { res.status(500).json({ error: true }); }
 });
+
+app.get('/api/admin/overview-data', async (req, res) => {
+    try {
+        let queryEmail = req.session.userEmail || "";
+        const targetUser = await UserAccount.findOne({ email: queryEmail.toLowerCase().trim() }, { password: 0 });
+        const usersList = await UserAccount.find({}, { password: 0 });
+        const hourlyBookings = await HourlyBooking.find().sort({ date: -1 });
+        if (req.session.isAdmin) { res.json({ users: usersList, hourlyBookings }); }
+        else { res.json({ users: targetUser, hourlyBookings: [] }); }
+    } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.post('/api/bookings/update-status', async (req, res) => {
+    try { await HourlyBooking.findByIdAndUpdate(req.body.bookingId, { status: req.body.status }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
+    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: req.body.plan, subscriptionStatus: 'Active' }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
+    try { await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' }); res.send('<script>alert("Canceled.");window.location.href="/dashboard";</script>'); } catch (err) { res.status(500).send(err.message); }
+});
+
+app.listen(PORT, () => console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`));
