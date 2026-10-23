@@ -327,13 +327,12 @@
             color: #ffffff;
         }
 
-        /* 🟢 WHATSAPP ROUND CORNER FLOATING WIDGET STYLING */
+        /* 🟢 FIXED WHATSAPP BUTTON: Crisp resolution with exact proportional layout constraints */
         .whatsapp-floating-widget {
             position: fixed;
             bottom: 30px;
             right: 30px;
             background-color: #25d366;
-            color: #ffffff;
             width: 60px;
             height: 60px;
             border-radius: 50%;
@@ -347,14 +346,14 @@
         }
 
         .whatsapp-floating-widget:hover {
-            transform: scale(1.08);
+            transform: scale(1.06);
             background-color: #20ba5a;
         }
 
-        .whatsapp-svg-icon {
-            width: 32px;
-            height: 32px;
-            fill: #ffffff;
+        .whatsapp-img-element {
+            width: 36px;
+            height: 36px;
+            display: block;
         }
     </style>
 </head>
@@ -435,15 +434,12 @@
         <p style="font-size: 12px; color: #4a5568;">&copy; 2026 IT Elements Support Framework</p>
     </footer>
 
-    <!-- 🟢 FLOATING CORNER CONTACT WIDGET CONTAINER -->
-    <a href="https://wa.me." class="whatsapp-floating-widget" target="_blank" title="Chat via WhatsApp">
-        <svg class="whatsapp-svg-icon" viewBox="0 0 24 24">
-            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.05 11.948.05c3.176.001 6.163 1.24 8.404 3.483 2.24 2.243 3.477 5.232 3.476 8.411-.003 6.597-5.34 11.896-11.892 11.896-2.003-.001-3.973-.507-5.761-1.472L0 24zm6.59-4.846c1.657.983 3.284 1.499 4.815 1.5 5.176 0 9.385-4.143 9.388-9.225.002-2.461-.954-4.776-2.691-6.516C16.36 3.175 14.058 2.22 11.606 2.219c-5.18 0-9.39 4.144-9.393 9.227-.001 1.73.499 3.214 1.455 4.671L2.68 19.53l3.967-1.376zm12.312-6.52c-.29-.146-1.716-.848-1.981-.946-.266-.098-.46-.147-.654.146-.194.293-.75.946-.918 1.134-.168.19-.337.213-.627.067-2.94-1.464-3.842-1.945-5.353-4.527-.399-.68-.04-1.104.301-1.439.307-.302.614-.71.922-1.065.303-.355.405-.603.607-.993.203-.4.102-.746-.048-1.039-.15-.293-1.654-3.987-2.266-5.45-.595-1.424-1.206-1.231-1.655-1.253-.425-.021-.913-.022-1.4-.022-.489 0-1.284.184-1.955.914-.672.73-2.565 2.502-2.565 6.1 0 3.6 2.62 7.073 2.981 7.564.364.49 5.152 7.867 12.485 11.031 1.743.753 3.102 1.201 4.162 1.536 1.75.554 3.344.474 4.601.286 1.401-.21 2.915-1.192 3.323-2.284.407-1.092.407-2.03.285-2.228-.123-.198-.453-.317-.743-.464z"/>
-        </svg>
+    <!-- 🟢 RESOLVED URL STRING: Text queries are fully encoded with percentage tokens to ensure compatibility -->
+    <a href="https://whatsapp.com." class="whatsapp-floating-widget" target="_blank" title="Chat via WhatsApp">
+        <img class="whatsapp-img-element" src="https://wikimedia.org" alt="WhatsApp">
     </a>
 
     <script>
-        // Form mapping logic CAST safely to silent TypeScript/VS backgrounds
         var btnMap = document.getElementById('paystack-redirect-btn');
         if (btnMap) {
             btnMap.addEventListener('click', async function(e) {
