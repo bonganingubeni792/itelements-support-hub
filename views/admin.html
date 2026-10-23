@@ -100,7 +100,7 @@
             border-radius: 4px;
             font-size: 12px;
             cursor: pointer;
-            width: 130px;
+            width: 135px;
         }
         .status-select:focus { outline: none; border-color: #1a73e8; }
         .loading-text, .empty-text { text-align: center; padding: 30px; color: #666; font-style: italic; font-size: 14px; }
@@ -113,6 +113,7 @@
         <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
     </div>
 
+    <!-- ESCALATION QUEUE CARD -->
     <div class="dashboard-card">
         <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices (Open & On Hold).</div>
@@ -131,6 +132,7 @@
         </div>
     </div>
 
+    <!-- HISTORY LEDGER CARD -->
     <div class="dashboard-card">
         <div class="card-title">⏳ Job Resolution History Ledger</div>
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
@@ -162,6 +164,7 @@
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
+                // Open and On Hold items go to Priority Queue, Resolved items go to Ledger
                 const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold' || !t.status);
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
@@ -223,6 +226,3 @@
 
         async function updateTicketStatus(ticketId, newStatus) {
             try {
-                const response = await fetch('/api/tickets/update-status', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
