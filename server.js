@@ -52,9 +52,6 @@ const SupportRequest = mongoose.model('SupportRequest', supportRequestSchema);
 app.use(cors()); // 🛡️ SECURITY ACTIVATION: Permits your live domain window to access database APIs safely
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// 📁 THE SINGLE ROW LINE FIX: Directs Express to serve your static design files out of the views folder directly
-app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(__dirname));
 
 app.use(session({
@@ -89,43 +86,30 @@ app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname
 
 
 // 👤 SECURE CLIENT ACCOUNT REGISTRATION PIPELINE (WITH EXPLICIT ERROR WRAPPERS)
-app.post('/client/register', async (req, res) => {
-    await handleRegistration(req, res);
-});
-
-app.post('/register', async (req, res) => {
-    await handleRegistration(req, res);
-});
+app.post('/client/register', async (req, res) => { await handleRegistration(req, res); });
+app.post('/register', async (req, res) => { await handleRegistration(req, res); });
 
 async function handleRegistration(req, res) {
     try {
         const { fullName, phone, email, password } = req.body;
-
         if (!fullName || !phone || !email || !password) {
             return res.send('<script>alert("All registration fields are strictly required.");window.history.back();</script>');
         }
-
         const normalizedEmail = email.toLowerCase().trim();
-
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
         if (existingUser) {
             return res.send('<script>alert("This email address is already registered inside our cloud system.");window.history.back();</script>');
         }
-
         const newUser = new UserAccount({
             fullName: fullName.trim(),
             phone: phone.trim(),
             email: normalizedEmail,
             password: password
         });
-
         await newUser.save();
-
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
-
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
-
     } catch (err) {
         console.error("❌ CRITICAL ACCOUNT REGISTRATION CRASH IN PRODUCTION:", err);
         res.status(500).send(`<h3>HTTP ERROR 500: Database Sync Failure During Registration</h3><p>Details: ${err.message}</p>`);
@@ -137,28 +121,22 @@ async function handleRegistration(req, res) {
 app.post('/client/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
         if (!email || !password) {
             return res.send('<script>alert("Please input both your registered email and secure key combination.");window.history.back();</script>');
         }
-
         // Administrative Master Override Configuration Gateway
         if (password === 'AdminElements2026') {
             req.session.isAdmin = true;
             return res.send('<script>window.location.href="/admin";</script>');
         }
-
         const normalizedEmail = email.toLowerCase().trim();
         const user = await UserAccount.findOne({ email: normalizedEmail });
-
         if (user && user.password === password) {
             req.session.isUser = true;
             req.session.userEmail = user.email;
             return res.send('<script>window.location.href="/dashboard";</script>');
         }
-
         res.send('<script>alert("Invalid access credentials combination. Please verify your email or password properties.");window.history.back();</script>');
-
     } catch (err) {
         console.error("❌ CRITICAL DATABASE ACCESS EXCEPTION ENCOUNTERED ON LOGIN:", err);
         res.status(500).send(`<h3>HTTP ERROR 500: Server Login Validation Fault</h3><p>Details: ${err.message}</p>`);
@@ -169,7 +147,6 @@ app.post('/client/login', async (req, res) => {
 app.post('/support', async (req, res) => {
     try {
         const { name, email, remoteId, remotePassword, issue } = req.body;
-        
         await new SupportRequest({ 
             name, 
             email: email ? email.toLowerCase().trim() : '', 
@@ -178,7 +155,6 @@ app.post('/support', async (req, res) => {
             issue, 
             status: 'Open' 
         }).save();
-        
         res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
     } catch (err) {
         console.error("❌ CLOUD DATA DISPATCH EXCEPTION ENCOUNTERED ON SUPPORT:", err);
@@ -221,6 +197,27 @@ app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
         res.json({ success: true, message: 'Subscription successfully canceled.' });
     } catch (err) {
         res.status(500).json({ error: true, details: err.message });
+    }
+});
+
+// 🛠️ TICKET STATUS REMAPPING CONTROL ENDPOINT (INSTANT ACTION BUTTON BINDINGS)
+app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
+    try {
+        const { ticketId, newStatus } = req.body;
+        await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: true, details: err.message });
+    }
+});
+
+// 🔍 ADMINISTRATIVE DATACENTER LEDGER LOOKUP PIPELINE
+app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
+    try {
+        const users = await UserAccount.find({}, { password: 0 });
+        res.json({ users: users, hourlyBookings: [] });
+    } catch (err) {
+        res.status(500).json({ error: true });
     }
 });
 
