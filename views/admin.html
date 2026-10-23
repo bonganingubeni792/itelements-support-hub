@@ -3,227 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Elements - Infrastructure Deck Core</title>
+    <title>IT Elements - Admin Core Deck</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        
-        body { 
-            background-color: #0b0c10; 
-            color: #ffffff; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh; 
-            padding: 30px 4%;
-        }
-
-        header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            width: 100%; 
-            margin-bottom: 30px; 
-            border-bottom: 1px solid #1f242d;
-            padding-bottom: 15px;
-        }
-
-        .logo-text { font-size: 1.4rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; }
-        .logo-text span { color: #ff1a1a; }
-        .logout-btn { background-color: #ff1a1a; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        .metrics-summary-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            width: 100%;
-            margin-bottom: 35px;
-        }
-        .metric-tile {
-            background-color: #121318;
-            border: 1px solid #22252a;
-            border-radius: 8px;
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
             padding: 20px;
-            border-left: 4px solid #718096;
         }
-        .tile-title { font-size: 11px; font-weight: bold; color: #718096; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .tile-value { font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
-        .tile-desc { font-size: 11px; color: #4a5568; }
-
-        .admin-card {
-            background-color: #121318;
-            border: 1px solid #22252a;
-            border-radius: 12px;
-            padding: 25px 30px;
-            width: 100%;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #222;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
         }
-        .card-title { font-size: 1.2rem; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
-        .card-subtitle { font-size: 0.85rem; color: #718096; margin-bottom: 20px; }
-
-        .data-table-container { width: 100%; overflow-x: auto; background-color: #0b0c10; border-radius: 8px; border: 1px solid #22252a; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-        th { background-color: #161a22; color: #718096; font-weight: bold; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; padding: 14px 18px; border-bottom: 1px solid #22252a; }
-        td { padding: 14px 18px; border-bottom: 1px solid #161a22; color: #cbd5e0; line-height: 1.4; }
-        tr:last-child td { border-bottom: none; }
+        .header-bar h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #ff3333;
+            letter-spacing: 1px;
+        }
+        .logout-btn {
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .dashboard-card {
+            background-color: #141414;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .table-header {
+            display: flex;
+            background-color: #1a1a1a;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            color: #888;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .data-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 10px;
+            border-bottom: 1px solid #222;
+            font-size: 14px;
+        }
+        .col-client { flex: 1.5; color: #4da6ff; font-weight: 500; }
+        .col-remote-id { flex: 1; color: #ff4d4d; font-family: monospace; }
+        .col-passkey { flex: 1; color: #ffcc00; font-family: monospace; }
+        .col-issue { flex: 3; color: #b3b3b3; padding-right: 10px; }
+        .col-status { flex: 1; }
+        .col-actions { flex: 1; text-align: right; }
         
-        .table-status-select { background-color: #121318; border: 1px solid #2d3748; color: #ffffff; padding: 6px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; outline: none; }
-        .table-status-select:focus { border-color: #ff1a1a; }
-
-        @media (max-width: 992px) { .metrics-summary-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 600px) { .metrics-summary-grid { grid-template-columns: 1fr; } }
+        .status-badge {
+            background-color: #2d1919;
+            color: #ff4d4d;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid #4a1a1a;
+        }
+        .action-btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+        .action-btn:hover { background-color: #155cb4; }
+        
+        .loading-text, .empty-text {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-style: italic;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo-text">IT <span>Elements Infrastructure Deck</span></div>
-        <a href="/admin/logout" class="logout-btn">Terminate Session 👤</a>
-    </header>
 
-    <div class="metrics-summary-grid">
-        <div class="metric-tile" style="border-left-color: #ff4d4d;"><div class="tile-title">Active Support Load</div><div class="tile-value" id="count-tickets">0</div><div class="tile-desc">Unresolved terminal entries</div></div>
-        <div class="metric-tile" style="border-left-color: #ffd60a;"><div class="tile-title">SLA Memberships</div><div class="tile-value" id="count-users">0</div><div class="tile-desc">Total active subscription clients</div></div>
-        <div class="metric-tile" style="border-left-color: #30d158;"><div class="tile-title">Ad-Hoc Bookings</div><div class="tile-value" id="count-bookings">0</div><div class="tile-desc">Single incident hour allocations</div></div>
-        <div class="metric-tile" style="border-left-color: #007aff;"><div class="tile-title">Gross Revenue Metrics</div><div class="tile-value" id="sum-revenue">R0.00</div><div class="tile-desc">Combined pipeline capital generation</div></div>
+    <div class="header-bar">
+        <h1>🔴 IT Elements Administration Console</h1>
+        <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
     </div>
 
-    <div class="admin-card">
-        <div class="card-title">🚨 Priority Engineering Escalation Queue</div>
-        <div class="card-subtitle">Live incoming customer ticketing arrays mapped down from secure internal user diagnostic form consoles.</div>
-        <div class="data-table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Client Identity Name</th>
-                        <th>AnyDesk / TV ID</th>
-                        <th>Secure Password</th>
-                        <th>Reported Incident Symptoms Log</th>
-                        <th>Current Queue Status</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-tickets-tbody">
-                    <tr><td colspan="5" style="text-align: center; color: #718096; padding: 30px;">Synchronizing queue arrays...</td></tr>
-                </tbody>
-            </table>
+    <!-- 1. PRIORITY ESCALATION QUEUE CARD -->
+    <div class="dashboard-card">
+        <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
+        <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices.</div>
+        
+        <div class="table-header">
+            <div class="col-client">Client</div>
+            <div class="col-remote-id">Remote ID</div>
+            <div class="col-passkey">Passkey</div>
+            <div class="col-issue">Incident Logs / Issues</div>
+            <div class="col-status">Status</div>
+            <div class="col-actions">Directive Actions</div>
+        </div>
+        
+        <!-- Live content container -->
+        <div id="priority-queue-body">
+            <div class="loading-text">Querying cloud datacenter channels...</div>
         </div>
     </div>
 
-    <div class="admin-card">
-        <div class="card-title">👑 Monthly Subscription SLA Accounts Ledger</div>
-        <div class="card-subtitle">Real-time telemetry registry detailing client flat-rate support tiers and cloud active status settings.</div>
-        <div class="data-table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Subscriber Name</th>
-                        <th>Account Email Address</th>
-                        <th>Contact Number</th>
-                        <th>Subscription Tier</th>
-                        <th>Billing System Status</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-users-tbody">
-                    <tr><td colspan="5" style="text-align: center; color: #718096; padding: 30px;">Syncing subscription nodes...</td></tr>
-                </tbody>
-            </table>
+    <!-- 2. JOB RESOLUTION HISTORY CARD -->
+    <div class="dashboard-card">
+        <div class="card-title">⏳ Job Resolution History Ledger</div>
+        <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
+        
+        <div class="table-header">
+            <div class="col-client">Client</div>
+            <div class="col-remote-id">Remote ID</div>
+            <div class="col-passkey">Passkey</div>
+            <div class="col-issue">Closed Logs Summary</div>
+            <div class="col-status">Status</div>
+            <div class="col-actions">Directive Actions</div>
+        </div>
+        
+        <div id="history-ledger-body">
+            <div class="loading-text">Parsing historical database streams...</div>
         </div>
     </div>
 
-    <div class="admin-card">
-        <div class="card-title">⏳ Ad-Hoc Hourly Allocation Ledger</div>
-        <div class="card-subtitle">Tracks incoming capital payment references acquired from non-subscription emergency incidents.</div>
-        <div class="data-table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Payment Reference Code</th>
-                        <th>Assigned Client Profile</th>
-                        <th>Allocated Support Hours</th>
-                        <th>Capital Amount Paid</th>
-                        <th>Gateway Allocation State</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-bookings-tbody">
-                    <tr><td colspan="5" style="text-align: center; color: #718096; padding: 30px;">Querying ledger allocations...</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
+    <!-- DATA BINDING TELEMETRY SCRIPT SECTION -->
     <script>
-        async function refreshInfrastructureLedger() {
+        async function fetchLiveTickets() {
             try {
-                // 🔓 UNBLOCKED HANDSHAKE: Hits the wide-open endpoint we generated on the backend server
-                const res = await fetch('/api/admin/unlocked-overview');
-                const data = await res.json();
+                // Call the API endpoint we created in server.js
+                const response = await fetch('/api/tickets');
+                if (!response.ok) throw new Error('Network channel down.');
 
-                if (!data || data.error) { return; }
-
-                const ticketsList = data.tickets || [];
-                const usersList = Array.isArray(data.users) ? data.users : (data.users ? [data.users] : []);
-                const bookingsList = data.hourlyBookings || [];
-
-                let subRevenue = usersList.reduce((acc, user) => acc + (user.subscriptionStatus === 'Active' ? (user.subscriptionTier === 'Basic Support' ? 299 : user.subscriptionTier === 'Standard Tier' ? 599 : user.subscriptionTier === 'Business Growth' ? 2499 : user.subscriptionTier === 'Corporate SLA' ? 4999 : 0) : 0), 0);
-                let adhocRevenue = bookingsList.reduce((acc, book) => acc + (book.amountPaid || 0), 0);
+                const tickets = await response.json();
                 
-                document.getElementById('count-tickets').innerText = ticketsList.filter(t => t.status !== 'Resolved').length;
-                document.getElementById('count-users').innerText = usersList.filter(u => u.subscriptionStatus === 'Active').length;
-                document.getElementById('count-bookings').innerText = bookingsList.length;
-                document.getElementById('sum-revenue').innerText = "R" + parseFloat(subRevenue + adhocRevenue).toFixed(2);
+                const queueBody = document.getElementById('priority-queue-body');
+                const historyBody = document.getElementById('history-ledger-body');
+                
+                // Clear the loader placeholder animations
+                queueBody.innerHTML = '';
+                historyBody.innerHTML = '';
 
-                const ticketsTbody = document.getElementById('admin-tickets-tbody');
-                if (ticketsList.length > 0) {
-                    ticketsTbody.innerHTML = "";
-                    ticketsList.forEach(ticket => {
-                        let targetId = ticket._id || ticket.id || "";
-                        ticketsTbody.innerHTML += `
-                            <tr>
-                                <td style="font-weight: bold; color: #ffffff;">${ticket.name || 'Anonymous User'}</td>
-                                <td style="font-family: monospace; color: #ff4d4d;">${ticket.remoteId || 'N/A'}</td>
-                                <td style="font-family: monospace; color: #aaaaaa;">${ticket.remotePassword || 'N/A'}</td>
-                                <td style="color: #cbd5e0; max-width: 400px;">${ticket.issue || 'No diagnostic symptom log left.'}</td>
-                                <td>
-                                    <select class="table-status-select" onchange="updateTicketStatusInline('${targetId}', this.value)">
-                                        <option value="Open" ${ticket.status === 'Open' ? 'selected' : ''}>🔴 Open Queue</option>
-                                        <option value="In Progress" ${ticket.status === 'In Progress' ? 'selected' : ''}>🟡 In Progress</option>
-                                        <option value="Resolved" ${ticket.status === 'Resolved' ? 'selected' : ''}>🟢 Resolved</option>
-                                    </select>
-                                </td>
-                            </tr>`;
-                    });
+                // Filters data out based on unresolved open parameters
+                const activeTickets = tickets.filter(t => t.status === 'Open');
+                const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
+
+                // 1. Populate Active Queues
+                if (activeTickets.length === 0) {
+                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
                 } else {
-                    ticketsTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #4a5568; padding: 25px;">No customer tickets currently logged in database queue.</td></tr>`;
+                    activeTickets.forEach(item => {
+                        queueBody.innerHTML += `
+                            <div class="data-row">
+                                <div class="col-client">${item.name || 'Anonymous'}</div>
+                                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
+                                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                                <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
+                                <div class="col-status"><span class="status-badge">${item.status}</span></div>
+                                <div class="col-actions"><button class="action-btn" onclick="alert('Case ID: ${item._id} flagged for terminal processing.')">Resolve Case</button></div>
+                            </div>
+                        `;
+                    });
                 }
 
-                const usersTbody = document.getElementById('admin-users-tbody');
-                if (usersList.length > 0) {
-                    usersTbody.innerHTML = "";
-                    usersList.forEach(user => {
-                        let statusColor = user.subscriptionStatus === 'Active' ? '#30d158' : '#718096';
-                        usersTbody.innerHTML += `
-                            <tr>
-                                <td style="font-weight: bold; color: #ffffff;">${user.fullName || 'N/A'}</td>
-                                <td style="font-family: monospace;">${user.email || 'N/A'}</td>
-                                <td>${user.phone || 'N/A'}</td>
-                                <td style="color: #ffd60a; font-weight: bold;">${user.subscriptionTier || 'None (Unpaid)'}</td>
-                                <td style="color: ${statusColor}; font-weight: bold; text-transform: uppercase; font-size: 11px;">${user.subscriptionStatus || 'Inactive'}</td>
-                            </tr>`;
-                    });
+                // 2. Populate Ledger Histories
+                if (resolvedTickets.length === 0) {
+                    historyBody.innerHTML = '<div class="empty-text">No archived cases found in the ledger database indexes.</div>';
                 } else {
-                    usersTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #4a5568; padding: 25px;">No registered subscriber records channels online.</td></tr>`;
+                    resolvedTickets.forEach(item => {
+                        historyBody.innerHTML += `
+                            <div class="data-row" style="opacity: 0.5;">
+                                <div class="col-client">${item.name || 'Anonymous'}</div>
+                                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
+                                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                                <div class="col-issue">${item.issue || 'No explicit summary.'}</div>
+                                <div class="col-status"><span class="status-badge" style="background:#192d19; color:#4dff4d; border-color:#1a4a1a;">Resolved</span></div>
+                                <div class="col-actions"><span style="color:#666; font-size:12px;">Archived</span></div>
+                            </div>
+                        `;
+                    });
                 }
 
-                const bookingsTbody = document.getElementById('admin-bookings-tbody');
-                if (bookingsList.length > 0) {
-                    bookingsTbody.innerHTML = "";
-                    bookingsList.forEach(book => {
-                        let bookingStatusColor = book.status === 'Active' ? '#30d158' : '#ffd60a';
-                        let currentBookingId = book._id || book.id || "";
-                        bookingsTbody.innerHTML += `
-                            <tr>
-                                <td style="font-family: monospace; font-weight: bold; color: #007aff;">${book.paymentReference || 'N/A'}</td>
-                                <td>${book.email || 'Anonymous Guest'}</td>
-                                <td style="text-align: center; font-weight: bold;">${book.hoursAllocated || 1} Hr(s)</td>
-                                <td style="font-weight: bold; color: #30d158;">R${parseFloat(book.amountPaid || 0).toFixed(2)}</td>
-                                <td>
-                                    <select class="table-status-select" style="color: ${bookingStatusColor};" onchange="updateBookingStatusInline('${currentBookingId}', this.value)">
+            } catch (error) {
+                console.error("Critical Admin Telemetry Exception:", error);
+                document.getElementById('priority-queue-body').innerHTML = 
+                    '<div class="loading-text" style="color: #ff3333;">❌ Data stream acquisition timeout. Verify gateway variables.</div>';
+            }
+        }
+
+        // Fire telemetry pipeline as soon as page structures mount safely
+        window.addEventListener('DOMContentLoaded', fetchLiveTickets);
+    </script>
+</body>
+</html>
