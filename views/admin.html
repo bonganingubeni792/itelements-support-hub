@@ -81,8 +81,8 @@
         .col-passkey { flex: 1; color: #ffcc00; font-family: monospace; }
         .col-issue { flex: 3; color: #b3b3b3; padding-right: 10px; }
         .col-status { flex: 1; }
-        .col-actions { flex: 2; text-align: right; display: flex; gap: 8px; justify-content: flex-end; }
-                
+        .col-actions { flex: 1; text-align: right; }
+        
         .status-badge {
             background-color: #2d1919;
             color: #ff4d4d;
@@ -92,11 +92,6 @@
             font-weight: bold;
             text-transform: uppercase;
             border: 1px solid #4a1a1a;
-        }
-        .status-badge.on-hold {
-            background-color: #2d2619;
-            color: #ffcc00;
-            border: 1px solid #4a3e1a;
         }
         .action-btn {
             background-color: #1a73e8;
@@ -110,16 +105,6 @@
         }
         .action-btn:hover { background-color: #155cb4; }
         
-        .hold-btn {
-            background-color: #e67e22;
-        }
-        .hold-btn:hover { background-color: #d35400; }
-        
-        .unhold-btn {
-            background-color: #27ae60;
-        }
-        .unhold-btn:hover { background-color: #219a52; }
-
         .loading-text, .empty-text {
             text-align: center;
             padding: 30px;
@@ -140,7 +125,7 @@
     <div class="dashboard-card">
         <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices.</div>
-                
+        
         <div class="table-header">
             <div class="col-client">Client</div>
             <div class="col-remote-id">Remote ID</div>
@@ -149,7 +134,7 @@
             <div class="col-status">Status</div>
             <div class="col-actions">Directive Actions</div>
         </div>
-                
+        
         <!-- Live content container -->
         <div id="priority-queue-body">
             <div class="loading-text">Querying cloud datacenter channels...</div>
@@ -160,7 +145,7 @@
     <div class="dashboard-card">
         <div class="card-title">⏳ Job Resolution History Ledger</div>
         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
-                
+        
         <div class="table-header">
             <div class="col-client">Client</div>
             <div class="col-remote-id">Remote ID</div>
@@ -169,7 +154,7 @@
             <div class="col-status">Status</div>
             <div class="col-actions">Directive Actions</div>
         </div>
-                
+        
         <div id="history-ledger-body">
             <div class="loading-text">Parsing historical database streams...</div>
         </div>
@@ -179,19 +164,21 @@
     <script>
         async function fetchLiveTickets() {
             try {
+                // Call the API endpoint we created in server.js
                 const response = await fetch('/api/tickets');
                 if (!response.ok) throw new Error('Network channel down.');
 
                 const tickets = await response.json();
-                                
+                
                 const queueBody = document.getElementById('priority-queue-body');
                 const historyBody = document.getElementById('history-ledger-body');
-                                
+                
+                // Clear the loader placeholder animations
                 queueBody.innerHTML = '';
                 historyBody.innerHTML = '';
 
-                // Now filters items that are Open OR On Hold into the active queue
-                const activeTickets = tickets.filter(t => t.status === 'Open' || t.status === 'On Hold');
+                // Filters data out based on unresolved open parameters
+                const activeTickets = tickets.filter(t => t.status === 'Open');
                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
 
                 // 1. Populate Active Queues
@@ -199,27 +186,14 @@
                     queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
                 } else {
                     activeTickets.forEach(item => {
-                        const isOnHold = item.status === 'On Hold';
-                        
-                        // Decide status badge styling
-                        const badgeClass = isOnHold ? 'status-badge on-hold' : 'status-badge';
-                        
-                        // Decide hold button look/action based on current state
-                        const holdButtonHtml = isOnHold 
-                            ? `<button class="action-btn unhold-btn" onclick="updateStatus('${item._id}', 'Open')">Unhold Case</button>`
-                            : `<button class="action-btn hold-btn" onclick="updateStatus('${item._id}', 'On Hold')">Hold Case</button>`;
-
                         queueBody.innerHTML += `
-                            <div class="data-row" style="${isOnHold ? 'border-left: 4px solid #ffcc00;' : ''}">
+                            <div class="data-row">
                                 <div class="col-client">${item.name || 'Anonymous'}</div>
                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                                 <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
-                                <div class="col-status"><span class="${badgeClass}">${item.status}</span></div>
-                                <div class="col-actions">
-                                    ${holdButtonHtml}
-                                    <button class="action-btn" onclick="updateStatus('${item._id}', 'Resolved')">Resolve Case</button>
-                                </div>
+                                <div class="col-status"><span class="status-badge">${item.status}</span></div>
+                                <div class="col-actions"><button class="action-btn" onclick="alert('Case ID: ${item._id} flagged for terminal processing.')">Resolve Case</button></div>
                             </div>
                         `;
                     });
@@ -243,3 +217,15 @@
                     });
                 }
 
+            } catch (error) {
+                console.error("Critical Admin Telemetry Exception:", error);
+                document.getElementById('priority-queue-body').innerHTML = 
+                    '<div class="loading-text" style="color: #ff3333;">❌ Data stream acquisition timeout. Verify gateway variables.</div>';
+            }
+        }
+
+        // Fire telemetry pipeline as soon as page structures mount safely
+        window.addEventListener('DOMContentLoaded', fetchLiveTickets);
+    </script>
+</body>
+</html>
