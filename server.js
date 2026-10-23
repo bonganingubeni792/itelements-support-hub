@@ -222,6 +222,21 @@ app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
     }
 });
 
+// ... line 223 has your previous closing });
+
+// 📡 NEW: AUTOMATED TICKET QUEUE STATUS ACTIONS ENGINE (ON HOLD / UNHOLD / RESOLVE)
+app.post('/api/tickets/update-status', async (req, res) => {
+    try {
+        const { ticketId, newStatus } = req.body;
+        if (!ticketId || !newStatus) return res.status(400).json({ success: false, message: "Missing tracking keys." });
+        
+        await mongoose.model('SupportRequest').findByIdAndUpdate(ticketId, { status: newStatus });
+        res.json({ success: true, message: `Ticket status successfully changed to ${newStatus}` });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 // 🚀 INITIALIZE SERVER WEB LISTENERS
 app.listen(PORT, () => {
     console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
