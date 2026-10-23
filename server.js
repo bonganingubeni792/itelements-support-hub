@@ -184,24 +184,13 @@ app.post('/support', async (req, res) => {
     }
 });
 
-// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD (EMERGENCY AUTHENTICATION SHIELD BYPASS)
-app.get('/api/tickets', async (req, res) => {
+// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD
+app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     try {
         const tickets = await SupportRequest.find().sort({ date: -1 });
         res.json(tickets);
     } catch (err) {
         console.error("❌ ADMIN PANEL DATA FETCH CRASH:", err);
-        res.status(500).json({ error: true, message: err.message });
-    }
-});
-
-// 🔍 SUBSCRIBERS FETCH ROUTE FOR THE ADMIN DASHBOARD (EMERGENCY AUTHENTICATION SHIELD BYPASS)
-app.get('/api/subscribers', async (req, res) => {
-    try {
-        const subscribers = await UserAccount.find({}, 'fullName email phone subscriptionTier subscriptionStatus');
-        res.json(subscribers);
-    } catch (err) {
-        console.error("❌ ADMIN SUBSCRIBERS FETCH CRASH:", err);
         res.status(500).json({ error: true, message: err.message });
     }
 });
