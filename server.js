@@ -195,34 +195,6 @@ app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     }
 });
 
-// 🛠️ STATUS UPDATE API ROUTE: Handles status changes (Open, On Hold, Resolved)
-app.patch('/api/tickets/:id', checkAdminAuth, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { status } = req.body;
-
-        // Verify status parameter is valid
-        if (!['Open', 'On Hold', 'Resolved'].includes(status)) {
-            return res.status(400).json({ error: true, message: 'Invalid status property.' });
-        }
-
-        const updatedTicket = await SupportRequest.findByIdAndUpdate(
-            id,
-            { status: status },
-            { new: true } // Returns the modified document
-        );
-
-        if (!updatedTicket) {
-            return res.status(404).json({ error: true, message: 'Ticket sequence not found.' });
-        }
-
-        res.json({ success: true, ticket: updatedTicket });
-    } catch (err) {
-        console.error("❌ ADMIN STATUS PATCH EXCEPTION:", err);
-        res.status(500).json({ error: true, message: err.message });
-    }
-});
-
 // 💳 AUTOMATED SUBSCRIPTION ACTIVATION DATA INTERFACES
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
     try {
@@ -252,3 +224,5 @@ app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
 
 // 🚀 INITIALIZE SERVER WEB LISTENERS
 app.listen(PORT, () => {
+    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
+});
