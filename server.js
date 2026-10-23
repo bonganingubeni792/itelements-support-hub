@@ -195,19 +195,6 @@ app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     }
 });
 
-// 🔄 DYNAMIC TICKET STATUS MANAGEMENT ROUTE
-app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
-    try {
-        const { ticketId, newStatus } = req.body;
-        
-        await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus });
-        res.json({ success: true, message: 'Status updated successfully' });
-    } catch (err) {
-        console.error("❌ STATUS UPDATE ROUTE CRASH:", err);
-        res.status(500).json({ error: true, message: err.message });
-    }
-});
-
 // 💳 AUTOMATED SUBSCRIPTION ACTIVATION DATA INTERFACES
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
     try {
@@ -237,5 +224,5 @@ app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
 
 // 🚀 INITIALIZE SERVER WEB LISTENERS
 app.listen(PORT, () => {
-    console.log(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
+    console.log Levant(`🚀 PRODUCTION IT ELEMENTS ENGINE ACTIVE ON PORT ${PORT}`);
 });
