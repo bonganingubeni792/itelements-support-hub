@@ -183,16 +183,17 @@
           queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
         } else {
           activeTickets.forEach(item => {
-            let statusColor = item.status === 'Hold' 
-              ? 'background:#333366; color:#ffcc00; border-color:#666699;' 
-              : '';
+            let badgeStyle = '';
+            if (item.status === 'Hold') {
+              badgeStyle = 'background:#333366; color:#ffcc00; border-color:#666699;';
+            }
             queueBody.innerHTML += `
               <div class="data-row">
                 <div class="col-client">${item.name || 'Anonymous'}</div>
                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
                 <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
-                <div class="col-status"><span class="status-badge" style="${statusColor}">${item.status}</span></div>
+                <div class="col-status"><span class="status-badge" style="${badgeStyle}">${item.status}</span></div>
                 <div class="col-actions">
                   <button class="action-btn" onclick="resolveTicket('${item._id}')">Resolve</button>
                   <button class="action-btn hold-btn" onclick="holdTicket('${item._id}')">Hold</button>
@@ -212,4 +213,4 @@
               <div class="data-row" style="opacity: 0.5;">
                 <div class="col-client">${item.name || 'Anonymous'}</div>
                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
-                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                <div class="col-passkey">${item.remotePassword || 'N/A'
