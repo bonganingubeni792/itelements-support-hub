@@ -83,12 +83,6 @@
         .col-status { flex: 1; }
         .col-actions { flex: 1; text-align: right; }
         
-        .col-user-name { flex: 2; color: #e0e0e0; font-weight: 500; }
-        .col-user-email { flex: 2; color: #4da6ff; }
-        .col-user-phone { flex: 1.5; color: #b3b3b3; }
-        .col-user-tier { flex: 2; color: #ffcc00; font-weight: bold; }
-        .col-user-status { flex: 1; }
-                 
         .status-badge {
             background-color: #2d1919;
             color: #ff4d4d;
@@ -98,11 +92,6 @@
             font-weight: bold;
             text-transform: uppercase;
             border: 1px solid #4a1a1a;
-        }
-        .status-badge.active {
-            background-color: #192d19;
-            color: #4dff4d;
-            border: 1px solid #1a4a1a;
         }
         .action-btn {
             background-color: #1a73e8;
@@ -115,7 +104,7 @@
             transition: background 0.2s;
         }
         .action-btn:hover { background-color: #155cb4; }
-                 
+        
         .loading-text, .empty-text {
             text-align: center;
             padding: 30px;
@@ -126,120 +115,117 @@
     </style>
 </head>
 <body>
- 
-     <div class="header-bar">
+
+    <div class="header-bar">
         <h1>🔴 IT Elements Administration Console</h1>
         <a href="/client/login" class="logout-btn">Log Out Layer 🔐</a>
-     </div>
- 
-     <!-- 1. PRIORITY ESCALATION QUEUE CARD -->
-     <div class="dashboard-card">
-         <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
-         <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices.</div>
-                 
-         <div class="table-header">
-             <div class="col-client">Client</div>
-             <div class="col-remote-id">Remote ID</div>
-             <div class="col-passkey">Passkey</div>
-             <div class="col-issue">Incident Logs / Issues</div>
-             <div class="col-status">Status</div>
-             <div class="col-actions">Directive Actions</div>
-         </div>
-                 
-         <div id="priority-queue-body">
-             <div class="loading-text">Querying cloud datacenter channels...</div>
-         </div>
-     </div>
- 
-     <!-- 2. JOB RESOLUTION HISTORY CARD -->
-     <div class="dashboard-card">
-         <div class="card-title">⏳ Job Resolution History Ledger</div>
-         <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
-                 
-         <div class="table-header">
-             <div class="col-client">Client</div>
-             <div class="col-remote-id">Remote ID</div>
-             <div class="col-passkey">Passkey</div>
-             <div class="col-issue">Closed Logs Summary</div>
-             <div class="col-status">Status</div>
-             <div class="col-actions">Directive Actions</div>
-         </div>
-                 
-         <div id="history-ledger-body">
-             <div class="loading-text">Parsing historical database streams...</div>
-         </div>
-     </div>
+    </div>
 
-     <!-- 3. ACTIVE MEMBERSHIPS CARD -->
-     <div class="dashboard-card">
-         <div class="card-title">👑 Active Client Memberships Dashboard</div>
-         <div class="card-subtitle">Live database index of all client platform accounts and active subscription metrics.</div>
-                 
-         <div class="table-header">
-             <div class="col-user-name">Client Name</div>
-             <div class="col-user-email">Email Address</div>
-             <div class="col-user-phone">Phone Number</div>
-             <div class="col-user-tier">Subscription Package</div>
-             <div class="col-user-status">Status</div>
-         </div>
-                 
-         <div id="subscribers-ledger-body">
-             <div class="loading-text">Parsing subscriber infrastructure records...</div>
-         </div>
-     </div>
- 
-     <script>
-         async function fetchLiveTickets() {
-             try {
-                 const response = await fetch('/api/tickets');
-                 if (!response.ok) throw new Error('Network channel down.');
- 
-                 const tickets = await response.json();
-                                 
-                 const queueBody = document.getElementById('priority-queue-body');
-                 const historyBody = document.getElementById('history-ledger-body');
-                                 
-                 if (queueBody) queueBody.innerHTML = '';
-                 if (historyBody) historyBody.innerHTML = '';
- 
-                 let hasActive = false;
-                 let hasResolved = false;
- 
-                 // Using traditional index loops entirely bypasses type errors
-                 for (let i = 0; i < tickets.length; i++) {
-                     const item = tickets[i];
-                     if (item.status !== 'Resolved') {
-                         hasActive = true;
-                         if (queueBody) {
-                             queueBody.innerHTML += `
-                                 <div class="data-row">
-                                     <div class="col-client">${item.name || 'Anonymous'}</div>
-                                     <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
-                                     <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                     <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
-                                     <div class="col-status"><span class="status-badge">${item.status}</span></div>
-                                     <div class="col-actions"><button class="action-btn" onclick="alert('Case ID: ${item._id} flagged for terminal processing.')">Resolve Case</button></div>
-                                 </div>
-                             `;
-                         }
-                     } else {
-                         hasResolved = true;
-                         if (historyBody) {
-                             historyBody.innerHTML += `
-                                 <div class="data-row" style="opacity: 0.5;">
-                                     <div class="col-client">${item.name || 'Anonymous'}</div>
-                                     <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
-                                     <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                     <div class="col-issue">${item.issue || 'No explicit summary.'}</div>
-                                     <div class="col-status"><span class="status-badge" style="background:#192d19; color:#4dff4d; border-color:#1a4a1a;">Resolved</span></div>
-                                     <div class="col-actions"><span style="color:#666; font-size:12px;">Archived</span></div>
-                                 </div>
-                             `;
-                         }
-                     }
-                 }
- 
-                 if (!hasActive && queueBody) {
-                     queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
-                 }
-                 if (!hasResolved && historyBody) {
+    <!-- 1. PRIORITY ESCALATION QUEUE CARD -->
+    <div class="dashboard-card">
+        <div class="card-title">🔴 Priority Engineering Escalation Queue</div>
+        <div class="card-subtitle">Real-time telemetry streams mapping active client credential matrices.</div>
+        
+        <div class="table-header">
+            <div class="col-client">Client</div>
+            <div class="col-remote-id">Remote ID</div>
+            <div class="col-passkey">Passkey</div>
+            <div class="col-issue">Incident Logs / Issues</div>
+            <div class="col-status">Status</div>
+            <div class="col-actions">Directive Actions</div>
+        </div>
+        
+        <!-- Live content container -->
+        <div id="priority-queue-body">
+            <div class="loading-text">Querying cloud datacenter channels...</div>
+        </div>
+    </div>
+
+    <!-- 2. JOB RESOLUTION HISTORY CARD -->
+    <div class="dashboard-card">
+        <div class="card-title">⏳ Job Resolution History Ledger</div>
+        <div class="card-subtitle">Historical log archive of previously resolved client support records.</div>
+        
+        <div class="table-header">
+            <div class="col-client">Client</div>
+            <div class="col-remote-id">Remote ID</div>
+            <div class="col-passkey">Passkey</div>
+            <div class="col-issue">Closed Logs Summary</div>
+            <div class="col-status">Status</div>
+            <div class="col-actions">Directive Actions</div>
+        </div>
+        
+        <div id="history-ledger-body">
+            <div class="loading-text">Parsing historical database streams...</div>
+        </div>
+    </div>
+
+    <!-- DATA BINDING TELEMETRY SCRIPT SECTION -->
+    <script>
+        async function fetchLiveTickets() {
+            try {
+                // Call the API endpoint we created in server.js
+                const response = await fetch('/api/tickets');
+                if (!response.ok) throw new Error('Network channel down.');
+
+                const tickets = await response.json();
+                
+                const queueBody = document.getElementById('priority-queue-body');
+                const historyBody = document.getElementById('history-ledger-body');
+                
+                // Clear the loader placeholder animations
+                queueBody.innerHTML = '';
+                historyBody.innerHTML = '';
+
+                // Filters data out based on unresolved open parameters
+                const activeTickets = tickets.filter(t => t.status === 'Open');
+                const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
+
+                // 1. Populate Active Queues
+                if (activeTickets.length === 0) {
+                    queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
+                } else {
+                    activeTickets.forEach(item => {
+                        queueBody.innerHTML += `
+                            <div class="data-row">
+                                <div class="col-client">${item.name || 'Anonymous'}</div>
+                                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
+                                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                                <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
+                                <div class="col-status"><span class="status-badge">${item.status}</span></div>
+                                <div class="col-actions"><button class="action-btn" onclick="alert('Case ID: ${item._id} flagged for terminal processing.')">Resolve Case</button></div>
+                            </div>
+                        `;
+                    });
+                }
+
+                // 2. Populate Ledger Histories
+                if (resolvedTickets.length === 0) {
+                    historyBody.innerHTML = '<div class="empty-text">No archived cases found in the ledger database indexes.</div>';
+                } else {
+                    resolvedTickets.forEach(item => {
+                        historyBody.innerHTML += `
+                            <div class="data-row" style="opacity: 0.5;">
+                                <div class="col-client">${item.name || 'Anonymous'}</div>
+                                <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
+                                <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                                <div class="col-issue">${item.issue || 'No explicit summary.'}</div>
+                                <div class="col-status"><span class="status-badge" style="background:#192d19; color:#4dff4d; border-color:#1a4a1a;">Resolved</span></div>
+                                <div class="col-actions"><span style="color:#666; font-size:12px;">Archived</span></div>
+                            </div>
+                        `;
+                    });
+                }
+
+            } catch (error) {
+                console.error("Critical Admin Telemetry Exception:", error);
+                document.getElementById('priority-queue-body').innerHTML = 
+                    '<div class="loading-text" style="color: #ff3333;">❌ Data stream acquisition timeout. Verify gateway variables.</div>';
+            }
+        }
+
+        // Fire telemetry pipeline as soon as page structures mount safely
+        window.addEventListener('DOMContentLoaded', fetchLiveTickets);
+    </script>
+</body>
+</html>
