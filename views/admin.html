@@ -199,46 +199,47 @@
                  const queueBody = document.getElementById('priority-queue-body');
                  const historyBody = document.getElementById('history-ledger-body');
                                  
-                 queueBody.innerHTML = '';
-                 historyBody.innerHTML = '';
+                 if (queueBody) queueBody.innerHTML = '';
+                 if (historyBody) historyBody.innerHTML = '';
  
-                 // FIXED: This safety check ensures non-resolved tickets stay visible in the queue
-                 const activeTickets = tickets.filter(t => t.status !== 'Resolved');
-                 const resolvedTickets = tickets.filter(t => t.status === 'Resolved');
+                 let hasActive = false;
+                 let hasResolved = false;
  
-                 if (activeTickets.length === 0) {
+                 // Using traditional index loops entirely bypasses type errors
+                 for (let i = 0; i < tickets.length; i++) {
+                     const item = tickets[i];
+                     if (item.status !== 'Resolved') {
+                         hasActive = true;
+                         if (queueBody) {
+                             queueBody.innerHTML += `
+                                 <div class="data-row">
+                                     <div class="col-client">${item.name || 'Anonymous'}</div>
+                                     <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
+                                     <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                                     <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
+                                     <div class="col-status"><span class="status-badge">${item.status}</span></div>
+                                     <div class="col-actions"><button class="action-btn" onclick="alert('Case ID: ${item._id} flagged for terminal processing.')">Resolve Case</button></div>
+                                 </div>
+                             `;
+                         }
+                     } else {
+                         hasResolved = true;
+                         if (historyBody) {
+                             historyBody.innerHTML += `
+                                 <div class="data-row" style="opacity: 0.5;">
+                                     <div class="col-client">${item.name || 'Anonymous'}</div>
+                                     <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
+                                     <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
+                                     <div class="col-issue">${item.issue || 'No explicit summary.'}</div>
+                                     <div class="col-status"><span class="status-badge" style="background:#192d19; color:#4dff4d; border-color:#1a4a1a;">Resolved</span></div>
+                                     <div class="col-actions"><span style="color:#666; font-size:12px;">Archived</span></div>
+                                 </div>
+                             `;
+                         }
+                     }
+                 }
+ 
+                 if (!hasActive && queueBody) {
                      queueBody.innerHTML = '<div class="empty-text">🎉 Excellent! No open customer tickets in cloud records.</div>';
-                 } else {
-                     activeTickets.forEach(item => {
-                         queueBody.innerHTML += `
-                             <div class="data-row">
-                                 <div class="col-client">${item.name || 'Anonymous'}</div>
-                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
-                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                 <div class="col-issue">${item.issue || 'No explicit log description provided.'}</div>
-                                 <div class="col-status"><span class="status-badge">${item.status}</span></div>
-                                 <div class="col-actions"><button class="action-btn" onclick="alert('Case ID: ${item._id} flagged for terminal processing.')">Resolve Case</button></div>
-                             </div>
-                         `;
-                     });
                  }
- 
-                 if (resolvedTickets.length === 0) {
-                     historyBody.innerHTML = '<div class="empty-text">No archived cases found in the ledger database indexes.</div>';
-                 } else {
-                     resolvedTickets.forEach(item => {
-                         historyBody.innerHTML += `
-                             <div class="data-row" style="opacity: 0.5;">
-                                 <div class="col-client">${item.name || 'Anonymous'}</div>
-                                 <div class="col-remote-id">${item.remoteId || 'N/A'}</div>
-                                 <div class="col-passkey">${item.remotePassword || 'N/A'}</div>
-                                 <div class="col-issue">${item.issue || 'No explicit summary.'}</div>
-                                 <div class="col-status"><span class="status-badge" style="background:#192d19; color:#4dff4d; border-color:#1a4a1a;">Resolved</span></div>
-                                 <div class="col-actions"><span style="color:#666; font-size:12px;">Archived</span></div>
-                             </div>
-                         `;
-                     });
-                 }
- 
-             } catch (error) {
-                 console.error("Critical Admin Telemetry Exception:", error);
+                 if (!hasResolved && historyBody) {
