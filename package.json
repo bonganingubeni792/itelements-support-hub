@@ -10,12 +10,12 @@
   "author": "IT Elements",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "mongoose": "^8.4.1",
-    "path": "^0.12.7",
-    "bcrypt": "^5.1.1"
+    "path": "^0.12.7"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
