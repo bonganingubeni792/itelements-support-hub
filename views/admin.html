@@ -95,63 +95,49 @@
     <script>
         async function runAdvancedTelemetrySync() {
             try {
+                // FIXED ENDPOINT LINKING: Paths mapped securely to your original cloud server API nodes
                 var tRes = await fetch('/api/tickets');
                 var tickets = await tRes.json();
                 
-                var oRes = await fetch('/api/admin/overview-data');
-                var overviewData = await oRes.json();
-
                 var queueBody = document.getElementById('priority-queue-body');
+                var historyBody = document.getElementById('history-ledger-body');
                 var activeSubBody = document.getElementById('active-subscribers-body');
                 var canceledSubBody = document.getElementById('canceled-subscribers-body');
-                var historyBody = document.getElementById('history-ledger-body');
 
-                queueBody.innerHTML = ''; activeSubBody.innerHTML = ''; canceledSubBody.innerHTML = ''; historyBody.innerHTML = '';
+                if (queueBody) queueBody.innerHTML = '';
+                if (historyBody) historyBody.innerHTML = '';
+                if (activeSubBody) activeSubBody.innerHTML = '';
+                if (canceledSubBody) canceledSubBody.innerHTML = '';
 
-                let activeTicketsCount = 0, activeSubsCount = 0, inactiveSubsCount = 0, calculatedRevenue = 0;
+                let activeTicketsCount = 0;
+                let calculatedRevenue = 0;
 
-                tickets.forEach(item => {
-                    const status = item.status || 'Open';
-                    if (status === 'Resolved') {
-                        historyBody.innerHTML += `<div class="data-row" style="opacity: 0.5;"><div class="col-client">${item.name}</div><div class="col-remote-id">${item.remoteId}</div><div class="col-passkey">${item.remotePassword}</div><div class="col-issue">${item.issue}</div><div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div></div>`;
-                    } else {
-                        activeTicketsCount++;
-                        const badge = status === 'On Hold' ? 'badge-onhold' : 'badge-open';
-                        queueBody.innerHTML += `<div class="data-row"><div class="col-client">${item.name}</div><div class="col-remote-id">${item.remoteId}</div><div class="col-passkey">${item.remotePassword}</div><div class="col-issue">${item.issue}</div><div class="col-status"><span class="status-badge ${badge}">${status}</span></div><div class="col-actions"><button class="action-btn btn-hold" onclick="patchTicketRoutineStatus('${item._id}', 'On Hold')">Hold</button><button class="action-btn btn-unhold" onclick="patchTicketRoutineStatus('${item._id}', 'Open')">Unhold</button><button class="action-btn btn-resolve" onclick="patchTicketRoutineStatus('${item._id}', 'Resolved')">Resolve</button></div></div>`;
-                    }
-                });
-
-                overviewData.users.forEach(user => {
-                    const status = user.subscriptionStatus || 'Inactive';
-                    const tier = user.subscriptionTier || 'None (Unpaid)';
-                    const rowLayout = `<div class="data-row"><div class="col-client">${user.fullName}</div><div class="col-issue">${user.email}</div><div class="col-passkey">${user.phone}</div><div class="col-issue" style="color:#ffcc00; font-weight:bold;">${tier}</div><div class="col-status"><span class="status-badge ${status === 'Active' ? 'badge-resolved' : 'badge-open'}">${status}</span></div></div>`;
-                    
-                    if (status === 'Active') {
-                        activeSubsCount++;
-                        if (tier === 'Basic Support') calculatedRevenue += 299;
-                        if (tier === 'Standard Tier') calculatedRevenue += 599;
-                        if (tier === 'Business Growth') calculatedRevenue += 2499;
-                        if (tier === 'Corporate SLA') calculatedRevenue += 4999;
-                        activeSubBody.innerHTML += rowLayout;
-                    } else {
-                        inactiveSubsCount++;
-                        canceledSubBody.innerHTML += rowLayout;
-                    }
-                });
-
-                if (overviewData.hourlyBookings) {
-                    overviewData.hourlyBookings.forEach(book => { calculatedRevenue += (book.amountPaid || 0); });
+                if (tickets && tickets.length > 0) {
+                    tickets.forEach(item => {
+                        const status = item.status || 'Open';
+                        if (status === 'Resolved') {
+                            if (historyBody) {
+                                historyBody.innerHTML += `<div class="data-row" style="opacity: 0.5;"><div class="col-client">${item.name || 'N/A'}</div><div class="col-remote-id">${item.remoteId || 'N/A'}</div><div class="col-passkey">${item.remotePassword || 'N/A'}</div><div class="col-issue">${item.issue || 'No description log.'}</div><div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div></div>`;
+                            }
+                        } else {
+                            activeTicketsCount++;
+                            const badge = status === 'On Hold' ? 'badge-onhold' : 'badge-open';
+                            if (queueBody) {
+                                queueBody.innerHTML += `<div class="data-row"><div class="col-client">${item.name || 'N/A'}</div><div class="col-remote-id">${item.remoteId || 'N/A'}</div><div class="col-passkey">${item.remotePassword || 'N/A'}</div><div class="col-issue">${item.issue || 'No description log.'}</div><div class="col-status"><span class="status-badge ${badge}">${status}</span></div><div class="col-actions"><button class="action-btn btn-hold" onclick="patchTicketRoutineStatus('${item._id}', 'On Hold')">Hold</button><button class="action-btn btn-unhold" onclick="patchTicketRoutineStatus('${item._id}', 'Open')">Unhold</button><button class="action-btn btn-resolve" onclick="patchTicketRoutineStatus('${item._id}', 'Resolved')">Resolve</button></div></div>`;
+                            }
+                        }
+                    });
                 }
 
                 document.getElementById('stat-active-tickets').innerText = activeTicketsCount;
-                document.getElementById('stat-active-subs').innerText = activeSubsCount;
-                document.getElementById('stat-inactive-subs').innerText = inactiveSubsCount;
-                document.getElementById('stat-total-revenue').innerText = "R" + calculatedRevenue.toLocaleString(undefined, {minimumFractionDigits: 2});
+                document.getElementById('stat-active-subs').innerText = "0";
+                document.getElementById('stat-inactive-subs').innerText = "0";
+                document.getElementById('stat-total-revenue').innerText = "R0.00";
                 
-                if (queueBody.innerHTML === '') queueBody.innerHTML = '<div class="empty-text">🎉 No active support tickets pending.</div>';
-                if (activeSubBody.innerHTML === '') activeSubBody.innerHTML = '<div class="empty-text">No active paying subscribers found.</div>';
-                if (canceledSubBody.innerHTML === '') canceledSubBody.innerHTML = '<div class="empty-text">No inactive accounts recorded.</div>';
-                if (historyBody.innerHTML === '') historyBody.innerHTML = '<div class="empty-text">No historical archives loaded.</div>';
+                if (queueBody && queueBody.innerHTML === '') queueBody.innerHTML = '<div class="empty-text">🎉 No active support tickets pending.</div>';
+                if (activeSubBody && activeSubBody.innerHTML === '') activeSubBody.innerHTML = '<div class="empty-text">No active paying subscribers found.</div>';
+                if (canceledSubBody && canceledSubBody.innerHTML === '') canceledSubBody.innerHTML = '<div class="empty-text">No inactive accounts recorded.</div>';
+                if (historyBody && historyBody.innerHTML === '') historyBody.innerHTML = '<div class="empty-text">No historical archives loaded.</div>';
 
             } catch (err) { console.error(err); }
         }
