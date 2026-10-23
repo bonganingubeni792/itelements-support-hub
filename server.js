@@ -122,13 +122,24 @@ app.post('/client/login', async (req, res) => {
     }
 });
 
-// 🎫 TICKETING DISPATCH SUBMISSION INTERFACE ROUTING
+// 🎫 TICKETING ENGINE WORKING FORM ROUTE PIPELINE
 app.post('/support', async (req, res) => {
     try {
         const { name, email, remoteId, remotePassword, issue } = req.body;
-        await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : '', remoteId, remotePassword, issue, status: 'Open' }).save();
-        res.send('<script>alert("Ticket logged successfully!");window.location.href="/dashboard";</script>');
+        
+        await new SupportRequest({ 
+            name, 
+            email: email ? email.toLowerCase().trim() : '', 
+            remoteId, 
+            remotePassword, 
+            issue, 
+            status: 'Open' 
+        }).save();
+        
+        // Original native web browser popup routing alert layout setup
+        res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
     } catch (err) {
+        console.error("❌ CLOUD DATA DISPATCH EXCEPTION ENCOUNTERED ON SUPPORT:", err);
         res.status(500).send("Database sync error.");
     }
 });
