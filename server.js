@@ -48,11 +48,13 @@ const supportRequestSchema = new mongoose.Schema({
 }, { collection: 'supportrequests' });
 
 const SupportRequest = mongoose.model('SupportRequest', supportRequestSchema);
-
 // ⚙️ EXPRESS MIDDLEWARE CONFIGURATIONS
 app.use(cors()); // 🛡️ SECURITY ACTIVATION: Permits your live domain window to access database APIs safely
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// 📁 THE SINGLE ROW LINE FIX: Directs Express to serve your static design files out of the views folder directly
+app.use(express.static(path.join(__dirname, 'views')));
 app.use(express.static(__dirname));
 
 app.use(session({
