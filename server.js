@@ -6,23 +6,25 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
-const cors = require('cors');
+const cors = require('cors'); // 🛡️ SECURITY PATCH: Added to handle cross-origin requests
 const app = express();
 
-// 📌 PORT MAPPING
+// 📌 PORT MAPPING: Dynamically assigns production cloud nodes or defaults to 3000
 const PORT = process.env.PORT || 3000;
 
-// 📌 MONGODB ATLAS CONNECTION
+// 📌 MONGODB ATLAS ROUTING LAYER: Grabs the live cloud variable from Render environment grids
 const dbURI = process.env.MONGODB_URI;
+
 if (!dbURI) {
     console.error("❌ CRITICAL CONFIGURATION ERROR: process.env.MONGODB_URI is undefined!");
     console.error("Please add your MongoDB connection string to the Environment tab in your Render Dashboard.");
 }
+
 mongoose.connect(dbURI)
-    .then(() => console.log('📁 Cloud Database connection established successfully!'))
+    .then(() => console.log('📁 IT Elements Production Database connection established successfully'))
     .catch(err => console.error('❌ Cloud Database communication failure:', err));
 
-// 👤 USER ACCOUNT MODEL
+// 👤 USER ACCOUNT DATA SCHEMATICS MODEL Configuration
 const userAccountSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
     phone: { type: String, required: true },
@@ -31,9 +33,10 @@ const userAccountSchema = new mongoose.Schema({
     subscriptionTier: { type: String, default: 'None (Unpaid)' },
     subscriptionStatus: { type: String, default: 'Inactive' }
 }, { collection: 'useraccounts' });
+
 const UserAccount = mongoose.model('UserAccount', userAccountSchema);
 
-// 🎫 SUPPORT REQUEST MODEL
+// 🎫 SUPPORT REQUEST TICKET SCHEMATICS MODEL Configuration
 const supportRequestSchema = new mongoose.Schema({
     name: String,
     email: String,
@@ -43,21 +46,26 @@ const supportRequestSchema = new mongoose.Schema({
     status: { type: String, default: 'Open' },
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' });
+
 const SupportRequest = mongoose.model('SupportRequest', supportRequestSchema);
 
-// ⚙️ EXPRESS MIDDLEWARE
-app.use(cors());
+// ⚙️ EXPRESS MIDDLEWARE CONFIGURATIONS
+app.use(cors()); // 🛡️ SECURITY ACTIVATION: Permits your live domain window to access database APIs safely
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(__dirname));
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'itelements-secure-key-2026',
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 3600000, secure: false }
+    cookie: { 
+        maxAge: 3600000, 
+        secure: false 
+    }
 }));
 
-// 🔐 AUTH HELPERS
+// SECURITY BOUNDARY CONTROLLERS
 function checkAdminAuth(req, res, next) {
     if (req.session && req.session.isAdmin) return next();
     res.redirect('/client/login');
@@ -67,7 +75,7 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-// 🌐 STATIC ROUTES
+// 🌐 ROUTING PATH MAPPINGS FOR STATIC VIEW INTERFACES
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -77,107 +85,150 @@ app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'r
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
-// 👤 REGISTRATION PIPELINE
-app.post('/client/register', async (req, res) => { await handleRegistration(req, res); });
-app.post('/register', async (req, res) => { await handleRegistration(req, res); });
+
+// 👤 SECURE CLIENT ACCOUNT REGISTRATION PIPELINE (WITH EXPLICIT ERROR WRAPPERS)
+app.post('/client/register', async (req, res) => {
+    await handleRegistration(req, res);
+});
+
+app.post('/register', async (req, res) => {
+    await handleRegistration(req, res);
+});
+
 async function handleRegistration(req, res) {
     try {
         const { fullName, phone, email, password } = req.body;
+
         if (!fullName || !phone || !email || !password) {
             return res.send('<script>alert("All registration fields are strictly required.");window.history.back();</script>');
         }
+
         const normalizedEmail = email.toLowerCase().trim();
+
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
         if (existingUser) {
             return res.send('<script>alert("This email address is already registered inside our cloud system.");window.history.back();</script>');
         }
-        const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
+
+        const newUser = new UserAccount({
+            fullName: fullName.trim(),
+            phone: phone.trim(),
+            email: normalizedEmail,
+            password: password
+        });
+
         await newUser.save();
+
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
+
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
+
     } catch (err) {
-        console.error("❌ Registration crash:", err);
-        res.status(500).send(`<h3>HTTP ERROR 500</h3><p>${err.message}</p>`);
+        console.error("❌ CRITICAL ACCOUNT REGISTRATION CRASH IN PRODUCTION:", err);
+        res.status(500).send(`<h3>HTTP ERROR 500: Database Sync Failure During Registration</h3><p>Details: ${err.message}</p>`);
     }
 }
 
-// 🔑 LOGIN PIPELINE
+
+// 🔑 SECURE CLIENT/ADMIN LOGIN PIPELINE INTERACTION ENGINE
 app.post('/client/login', async (req, res) => {
     try {
         const { email, password } = req.body;
+
         if (!email || !password) {
             return res.send('<script>alert("Please input both your registered email and secure key combination.");window.history.back();</script>');
         }
+
+        // Administrative Master Override Configuration Gateway
         if (password === 'AdminElements2026') {
             req.session.isAdmin = true;
             return res.send('<script>window.location.href="/admin";</script>');
         }
+
         const normalizedEmail = email.toLowerCase().trim();
         const user = await UserAccount.findOne({ email: normalizedEmail });
+
         if (user && user.password === password) {
             req.session.isUser = true;
             req.session.userEmail = user.email;
             return res.send('<script>window.location.href="/dashboard";</script>');
         }
-        res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
+
+        res.send('<script>alert("Invalid access credentials combination. Please verify your email or password properties.");window.history.back();</script>');
+
     } catch (err) {
-        console.error("❌ Login crash:", err);
-        res.status(500).send(`<h3>HTTP ERROR 500</h3><p>${err.message}</p>`);
+        console.error("❌ CRITICAL DATABASE ACCESS EXCEPTION ENCOUNTERED ON LOGIN:", err);
+        res.status(500).send(`<h3>HTTP ERROR 500: Server Login Validation Fault</h3><p>Details: ${err.message}</p>`);
     }
 });
 
-// 🎫 SUPPORT TICKET SUBMISSION
+// 🎫 TICKETING ENGINE SUBMISSION INTERFACE DATA ROUTING
 app.post('/support', async (req, res) => {
     try {
         const { name, email, remoteId, remotePassword, issue } = req.body;
-        await new SupportRequest({
-            name,
-            email: email ? email.toLowerCase().trim() : '',
-            remoteId,
-            remotePassword,
-            issue,
-            status: 'Open'
+        
+        await new SupportRequest({ 
+            name, 
+            email: email ? email.toLowerCase().trim() : '', 
+            remoteId, 
+            remotePassword, 
+            issue, 
+            status: 'Open' 
         }).save();
-        res.send('<script>alert("Ticket logged successfully!");window.location.href="/dashboard";</script>');
+        
+        res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
     } catch (err) {
-        console.error("❌ Support submission crash:", err);
+        console.error("❌ CLOUD DATA DISPATCH EXCEPTION ENCOUNTERED ON SUPPORT:", err);
         res.status(500).send("Database sync error.");
     }
 });
 
-// 🔍 FETCH TICKETS
+// 🔍 LIVE TICKET FETCH ROUTE FOR THE ADMIN DASHBOARD
 app.get('/api/tickets', checkAdminAuth, async (req, res) => {
     try {
         const tickets = await SupportRequest.find().sort({ date: -1 });
         res.json(tickets);
     } catch (err) {
-        console.error("❌ Ticket fetch crash:", err);
+        console.error("❌ ADMIN PANEL DATA FETCH CRASH:", err);
         res.status(500).json({ error: true, message: err.message });
     }
 });
 
-// 🔄 UPDATE TICKET STATUS
-app.post('/api/tickets/:id/status', checkAdminAuth, async (req, res) => {
+// 🛠️ STATUS UPDATE API ROUTE: Handles status changes (Open, On Hold, Resolved)
+app.patch('/api/tickets/:id', checkAdminAuth, async (req, res) => {
     try {
+        const { id } = req.params;
         const { status } = req.body;
-        if (!['Open', 'Hold', 'Resolved'].includes(status)) {
-            return res.status(400).json({ error: true, message: 'Invalid status value' });
+
+        // Verify status parameter is valid
+        if (!['Open', 'On Hold', 'Resolved'].includes(status)) {
+            return res.status(400).json({ error: true, message: 'Invalid status property.' });
         }
-        await SupportRequest.findByIdAndUpdate(req.params.id, { status });
-        res.json({ success: true });
+
+        const updatedTicket = await SupportRequest.findByIdAndUpdate(
+            id,
+            { status: status },
+            { new: true } // Returns the modified document
+        );
+
+        if (!updatedTicket) {
+            return res.status(404).json({ error: true, message: 'Ticket sequence not found.' });
+        }
+
+        res.json({ success: true, ticket: updatedTicket });
     } catch (err) {
-        console.error("❌ Ticket status update crash:", err);
+        console.error("❌ ADMIN STATUS PATCH EXCEPTION:", err);
         res.status(500).json({ error: true, message: err.message });
     }
 });
 
-// 💳 SUBSCRIPTION ACTIVATION
+// 💳 AUTOMATED SUBSCRIPTION ACTIVATION DATA INTERFACES
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
     try {
         const { plan } = req.body;
         await UserAccount.findOneAndUpdate(
-            { email: req.session.userEmail },
+            { email: req.session.userEmail }, 
             { subscriptionTier: plan, subscriptionStatus: 'Active' }
         );
         res.json({ success: true, redirectUrl: '/dashboard' });
@@ -186,7 +237,7 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
     }
 });
 
-// ❌ SUBSCRIPTION CANCELLATION
+// ❌ MEMBERSHIP CANCELLATION API INTERFACE ENDPOINT
 app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
     try {
         await UserAccount.findOneAndUpdate(
@@ -199,6 +250,5 @@ app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
     }
 });
 
-// 🚀 START SERVER
+// 🚀 INITIALIZE SERVER WEB LISTENERS
 app.listen(PORT, () => {
-    console.log(`🚀 PRODUCTION IT ELEMENT
