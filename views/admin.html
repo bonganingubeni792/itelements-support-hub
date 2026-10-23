@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - Admin Core Deck</title>
-    <!-- 🎨 EMBEDDED DESIGN STYLE SHEET INCLUDES -->
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background-color: #060709; color: #e2e8f0; padding: 30px; }
@@ -39,6 +38,7 @@
         .btn-hold { background-color: rgba(255,204,0,0.2); color: #ffd60a; border: 1px solid #ffd60a; }
         .btn-unhold { background-color: rgba(0,122,255,0.2); color: #007aff; border: 1px solid #007aff; }
         .btn-resolve { background-color: rgba(48,209,88,0.2); color: #30d158; border: 1px solid #30d158; }
+        .btn-reopen { background-color: rgba(255,59,48,0.2); color: #ff453a; border: 1px solid #ff453a; }
 
         .status-badge { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
         .badge-open { background-color: rgba(255,59,48,0.12); color: #ff453a; border: 1px solid rgba(255,59,48,0.3); }
@@ -87,7 +87,7 @@
     <div class="dashboard-card">
         <div class="card-title" style="border-left-color: #718096; color: #718096;">⏳ Job Resolution History Ledger</div>
         <div class="table-header">
-            <div class="col-client">Client</div><div class="col-remote-id">Remote ID</div><div class="col-passkey">Passkey</div><div class="col-issue">Closed Logs Summary</div><div class="col-status">Status</div>
+            <div class="col-client">Client</div><div class="col-remote-id">Remote ID</div><div class="col-passkey">Passkey</div><div class="col-issue">Closed Logs Summary</div><div class="col-status">Status</div><div class="col-actions">Directive Actions</div>
         </div>
         <div id="history-ledger-body"><div class="loading-text">Synchronizing job history archives...</div></div>
     </div>
@@ -95,10 +95,12 @@
     <script>
         async function runAdvancedTelemetrySync() {
             try {
-                // FIXED ENDPOINT LINKING: Paths mapped securely to your original cloud server API nodes
                 var tRes = await fetch('/api/tickets');
                 var tickets = await tRes.json();
                 
+                var oRes = await fetch('/api/admin/overview-data');
+                var overviewData = await oRes.json();
+
                 var queueBody = document.getElementById('priority-queue-body');
                 var historyBody = document.getElementById('history-ledger-body');
                 var activeSubBody = document.getElementById('active-subscribers-body');
@@ -110,14 +112,14 @@
                 if (canceledSubBody) canceledSubBody.innerHTML = '';
 
                 let activeTicketsCount = 0;
-                let calculatedRevenue = 0;
 
                 if (tickets && tickets.length > 0) {
                     tickets.forEach(item => {
                         const status = item.status || 'Open';
                         if (status === 'Resolved') {
                             if (historyBody) {
-                                historyBody.innerHTML += `<div class="data-row" style="opacity: 0.5;"><div class="col-client">${item.name || 'N/A'}</div><div class="col-remote-id">${item.remoteId || 'N/A'}</div><div class="col-passkey">${item.remotePassword || 'N/A'}</div><div class="col-issue">${item.issue || 'No description log.'}</div><div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div></div>`;
+                                // 🛠️ REOPEN ACTION INCLUDED: Adds a 'Reopen' button directly inside the archival ledger rows
+                                historyBody.innerHTML += `<div class="data-row" style="opacity: 0.7;"><div class="col-client">${item.name || 'N/A'}</div><div class="col-remote-id">${item.remoteId || 'N/A'}</div><div class="col-passkey">${item.remotePassword || 'N/A'}</div><div class="col-issue">${item.issue || 'No description log.'}</div><div class="col-status"><span class="status-badge badge-resolved">Resolved</span></div><div class="col-actions"><button class="action-btn btn-reopen" onclick="patchTicketRoutineStatus('${item._id}', 'Open')">Reopen Ticket</button></div></div>`;
                             }
                         } else {
                             activeTicketsCount++;
