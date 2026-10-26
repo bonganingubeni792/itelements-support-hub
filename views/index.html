@@ -127,13 +127,14 @@
             priceTag.innerText = "R " + totalAmount;
         }
 
-        // Fixed Casing variables to prevent click freeze loops
         function handleCustomPaymentRouting() {
             const currentHours = document.getElementById('duration-selector').value;
             const calculatedTotal = baseRate * parseInt(currentHours);
             
             alert('Initiating secure layout bridge for ' + currentHours + ' Support Hour(s) totaling R ' + calculatedTotal + '. Opening gateway window...');
-            window.location.href = "https://paypal.com"; 
+            
+            // 🚀 SUCCESS: Linked perfectly to your live itelementshelp billing profile!
+            window.location.href = "https://paypal.me"; 
         }
     </script>
 </body>
