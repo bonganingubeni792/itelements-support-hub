@@ -21,13 +21,9 @@
         .incident-box { border: 2px solid #ff3333; border-radius: 6px; padding: 35px 20px; background-color: #141414; margin-bottom: 25px; position: relative; }
         .price-display { font-size: 24px; color: #ff3333; font-weight: bold; margin: 20px 0; letter-spacing: 0.5px; }
         .form-control { background-color: #1a1a1a; color: #ffffff; border: 1px solid #444; padding: 12px; border-radius: 4px; width: 100%; max-width: 400px; font-size: 14px; margin-bottom: 20px; box-sizing: border-box; }
-        .quick-downloads-container { display: center; justify-content: center; gap: 15px; margin: 0 auto 20px auto; flex-wrap: wrap; }
+        .quick-downloads-container { display: flex; justify-content: center; gap: 15px; margin: 0 auto 20px auto; flex-wrap: wrap; }
         .inline-dl-link { background-color: #1a1a1a; border: 1px solid #333; color: #ccc; text-decoration: none; padding: 6px 12px; font-size: 12px; border-radius: 4px; font-weight: bold; transition: all 0.2s; }
         .inline-dl-link:hover { border-color: #ffffff; color: #fff; }
-        
-        .pay-action-btn { background-color: #ff3333; color: #ffffff; border: none; padding: 14px 28px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; width: 100%; max-width: 320px; margin: 15px auto 0 auto; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.2s; }
-        .pay-action-btn:hover { background-color: #dd1111; }
-
         .status-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
         .status-card { background-color: #141414; border: 1px solid #222; padding: 15px; flex: 1; min-width: 200px; border-radius: 6px; text-align: left; }
         .status-val { color: #4da6ff; font-weight: bold; font-size: 15px; margin-top: 5px; }
@@ -35,7 +31,10 @@
         .whatsapp-floating-bubble { position: fixed; bottom: 20px; right: 20px; background-color: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 9999; text-decoration: none; transition: transform 0.2s; }
         .whatsapp-floating-bubble:hover { transform: scale(1.1); }
         .footer-details { color: #888; font-size: 11px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; text-align: center; }
+        #paypal-button-container { margin: 20px auto 0 auto; max-width: 400px; min-height: 150px; }
     </style>
+    <!-- Loaded using USD format to force payment buttons to render perfectly on your live domain -->
+    <script src="https://paypal.com"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -90,7 +89,8 @@
 
             <div class="price-display" id="dynamic-price-tag">R 350</div>
             
-            <button class="pay-action-btn" id="master-pay-trigger" onclick="handleCustomPaymentRouting()">PAY VIA PAYPAL 💳</button>
+            <!-- This target box will automatically mount the real PayPal buttons -->
+            <div id="paypal-button-container"></div>
         </div>
 
         <div class="main-card">
@@ -120,6 +120,7 @@
 
     <script>
         const baseRate = 350;
+        const usdRatePerHour = 20; // Approximately $20 USD per hour matching your R350 pricing layout
 
         function updatedynamicIncidentPrice(hours) {
             const priceTag = document.getElementById('dynamic-price-tag');
@@ -127,16 +128,32 @@
             priceTag.innerText = "R " + totalAmount;
         }
 
-        // Fixed string assembly: Clean slash layout separation added back
-        function handleCustomPaymentRouting() {
-            const currentHours = document.getElementById('duration-selector').value;
-            const calculatedTotal = baseRate * parseInt(currentHours);
-            
-            alert('Initiating secure layout bridge for ' + currentHours + ' Support Hour(s) totaling R ' + calculatedTotal + '. Opening gateway window...');
-            
-            // 🚀 FIXED: Full link text string with correct forward slashes preserved
-            window.location.href = "https://paypal.me" + calculatedTotal; 
-        }
+        // Initialize and display official interactive payment fields automatically
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                const hourSelector = document.getElementById('duration-selector');
+                const totalUSDValue = usdRatePerHour * parseInt(hourSelector.value);
+                
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            currency_code: 'USD',
+                            value: totalUSDValue.toString()
+                        },
+                        description: "IT Elements - Support Incident Duration: " + hourSelector.value + " Hour(s)"
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    alert('Live transaction captured successfully! Directing down to support desk queue layers...');
+                    window.location.href = "/support";
+                });
+            },
+            onError: function(err) {
+                console.error("PayPal Smart Button error:", err);
+            }
+        }).render('#paypal-button-container');
     </script>
 </body>
 </html>
