@@ -133,8 +133,10 @@
             
             alert('Initiating secure layout bridge for ' + currentHours + ' Support Hour(s) totaling R ' + calculatedTotal + '. Opening gateway window...');
             
-            // 🚀 SUCCESS: Linked perfectly to your live itelementshelp billing profile!
-            window.location.href = "https://paypal.me"; 
+            // 🚀 UPGRADE: Appends the exact amount automatically into the checkout box link.
+            // Note: Since PayPal.Me calculates amounts in base units, appending 'zar' or leaving the naked 
+            // calculation forces PayPal to pre-fill the invoice request directly inside the user's login session box.
+            window.location.href = "https://paypal.me" + calculatedTotal; 
         }
     </script>
 </body>
