@@ -3,60 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Your IT Elements Support Account</title>
+    <title>IT Elements - Register Account</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #0b0c10; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .form-card { background-color: #121318; border: 1px solid #22252a; padding: 40px; border-radius: 12px; width: 100%; max-width: 450px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        .logo-title { font-size: 1.6rem; font-weight: 900; margin-bottom: 8px; color: #ffffff; }
-        .logo-title span { color: #ff1a1a; }
-        .subtitle { color: #888888; font-size: 0.9rem; margin-bottom: 30px; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; font-size: 0.85rem; font-weight: bold; color: #aaaaaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .input-group input { width: 100%; padding: 14px; background-color: #0b0c10; border: 1px solid #22252a; border-radius: 6px; color: #ffffff; font-size: 0.95rem; transition: border-color 0.2s; }
-        .input-group input:focus { outline: none; border-color: #ff1a1a; }
-        .submit-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff1a1a 0%, #b30000 100%); color: #ffffff; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(255, 26, 26, 0.2); margin-top: 10px; transition: background 0.2s; }
-        .submit-btn:hover { background: #cc0000; }
-        .footer-link { margin-top: 25px; font-size: 0.85rem; color: #888888; }
-        .footer-link a { color: #ff1a1a; text-decoration: none; font-weight: bold; }
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .register-container { background-color: #141414; border: 1px solid #222; border-radius: 8px; padding: 40px; width: 100%; max-width: 450px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); box-sizing: border-box; }
+        .brand-header { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 5px; }
+        .brand-header h2 { margin: 0; font-size: 22px; color: #ffffff; letter-spacing: 1px; }
+        .brand-header span { color: #ff3333; }
+        .sub-header { color: #666; font-size: 12px; margin-bottom: 30px; text-align: center; line-height: 1.5; }
+        .form-group { text-align: left; margin-bottom: 20px; position: relative; }
+        .form-label { font-size: 11px; font-weight: bold; color: #888; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .form-input { background-color: #0a0a0a; color: #ffffff; border: 1px solid #222; padding: 14px; border-radius: 4px; width: 100%; font-size: 14px; box-sizing: border-box; }
+        .form-input:focus { outline: none; border-color: #ff3333; }
+        
+        /* Interactive Eye Toggle Component styles */
+        .password-wrapper { position: relative; width: 100%; }
+        .toggle-password-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #555; cursor: pointer; font-size: 12px; font-weight: bold; text-transform: uppercase; user-select: none; }
+        .toggle-password-eye:hover { color: #ff3333; }
+
+        .submit-btn { background-color: #ff1111; color: white; border: none; padding: 14px; width: 100%; border-radius: 4px; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+        .submit-btn:hover { background-color: #cc0000; }
+        .footer-link { text-align: center; margin-top: 25px; font-size: 13px; color: #666; }
+        .footer-link a { color: #ff3333; text-decoration: none; font-weight: bold; }
         .footer-link a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
-    <div class="form-card">
-        <div class="logo-title">🛡️ IT ELEMENTS<span>.HELP</span></div>
-        <p class="subtitle">Create an official system account for priority SLA coverage.</p>
-        
-        <!-- FIXED: Action endpoint points directly to our valid server route /client/register -->
-        <form action="/client/register" method="POST">
-            <div class="input-group">
-                <label>Full Corporate Name</label>
-                <input type="text" name="fullName" required placeholder="John Doe">
+    <div class="register-container">
+        <form action="/register" method="POST">
+            <div class="brand-header">
+                <h2>IT ELEMENTS<span>.HELP</span></h2>
             </div>
-            
-            <div class="input-group">
-                <label>Contact Phone Number</label>
-                <input type="tel" name="phone" required placeholder="060 618 1229">
+            <div class="sub-header">Create an official system account for priority SLA coverage.</div>
+
+            <div class="form-group">
+                <label class="form-label">Full Corporate Name</label>
+                <input type="text" name="fullName" class="form-input" placeholder="John Doe" required>
             </div>
 
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" name="email" required placeholder="name@company.co.za">
+            <div class="form-group">
+                <label class="form-label">Contact Phone Number</label>
+                <input type="text" name="phone" class="form-input" placeholder="060 618 1229" required>
             </div>
 
-            <div class="input-group">
-                <label>Security Access Password</label>
-                <input type="password" name="password" required placeholder="••••••••">
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" name="email" class="form-input" placeholder="name@company.co.za" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Security Access Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="register-password" name="password" class="form-input" placeholder="••••••••" required>
+                    <button type="button" class="toggle-password-eye" onclick="toggleRegisterPassword()">Show</button>
+                </div>
             </div>
 
             <button type="submit" class="submit-btn">Register Account</button>
-        </form>
 
-        <div class="footer-link">
-            Already have a support contract? <a href="/client/login">Sign In Here</a>
-        </div>
+            <div class="footer-link">
+                Already have a support contract? <a href="/client/login">Sign In Here</a>
+            </div>
+        </form>
     </div>
 
+    <script>
+        function toggleRegisterPassword() {
+            const passwordInput = document.getElementById('register-password');
+            const toggleButton = document.querySelector('.toggle-password-eye');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.innerText = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.innerText = 'Show';
+            }
+        }
+    </script>
 </body>
 </html>
