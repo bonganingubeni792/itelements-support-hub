@@ -5,298 +5,297 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - Subscription Plans</title>
     <style>
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-        }
-        
-        body { 
-            background-color: #0b0c10; 
-            color: #ffffff; 
-            padding: 40px 4%; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh; 
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            width: 100%; 
-            margin-bottom: 40px; 
-            border-bottom: 1px solid #1f242d;
-            padding-bottom: 15px;
+        /* Responsive Navigation Bar Component */
+        .navbar {
+            background-color: #141414;
+            border-bottom: 2px solid #222;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-
-        .logo-text { 
-            font-size: 1.4rem; 
-            font-weight: 900; 
+        .nav-brand {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff3333;
+            letter-spacing: 1px;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
-        .logo-text span { 
-            color: #ff1a1a; 
-        }
-
-        nav {
+        .nav-links {
             display: flex;
             gap: 20px;
         }
-        nav a { 
-            color: #ffffff; 
-            text-decoration: none; 
-            font-size: 0.95rem; 
-            font-weight: 600; 
+        .nav-links a {
+            color: #b3b3b3;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
             transition: color 0.2s;
         }
-        nav a:hover { 
-            color: #ff1a1a; 
+        .nav-links a:hover {
+            color: #ff3333;
         }
 
-        h1 { 
-            font-size: 2.5rem; 
-            font-weight: 900; 
-            text-align: center; 
-            margin-top: 20px;
-            margin-bottom: 10px; 
-            letter-spacing: 0.5px;
+        /* Core Layout Grid System */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
         }
-        .subtitle { 
-            color: #aaaaaa; 
-            margin-bottom: 50px; 
-            text-align: center; 
-            font-size: 1.05rem; 
-            max-width: 700px;
+        h1 {
+            color: #ffffff;
+            font-size: 32px;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+        .subtitle {
+            color: #888;
+            font-size: 15px;
+            max-width: 600px;
+            margin: 0 auto 50px auto;
             line-height: 1.5;
         }
 
-        /* 🌐 FLUID 4-COLUMN RESPONSIVE FLEX-WRAP SYSTEM */
-        .pricing-container { 
+        /* Responsive Flex-Wrap Card Configuration */
+        .pricing-grid {
             display: flex;
             flex-wrap: wrap;
+            gap: 25px;
             justify-content: center;
-            gap: 25px; 
-            width: 100%; 
-            margin-bottom: 40px;
         }
-
-        .pricing-card { 
-            background-color: #121318; 
-            border: 1px solid #22252a; 
-            border-radius: 12px; 
-            padding: 30px; 
-            text-align: center; 
-            position: relative; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            min-height: 450px; 
-            flex: 1 1 calc(25% - 25px); /* Fluidly sizes into 4 even boxes on big displays */
-            min-width: 250px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: border-color 0.2s, transform 0.2s;
+        .pricing-card {
+            background-color: #141414;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 30px;
+            width: 100%;
+            max-width: 270px; /* Uniform width blocks layout perfectly on desktop rows */
+            box-sizing: border-box;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-align: left;
+            transition: transform 0.2s, border-color 0.2s;
         }
         .pricing-card:hover {
-            border-color: #ff1a1a;
-            transform: translateY(-4px);
+            transform: translateY(-5px);
         }
 
-        .pricing-card.featured { 
-            border: 2px solid #ff1a1a; 
-            box-shadow: 0 10px 30px rgba(255,26,26,0.15); 
+        /* Most Popular Highlighted Plan Layer */
+        .pricing-card.popular {
+            border-color: #ff3333;
+            position: relative;
         }
-        .badge { 
-            position: absolute; 
-            top: -12px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            background-color: #ff1a1a; 
-            color: white; 
-            padding: 4px 14px; 
-            border-radius: 20px; 
-            font-size: 11px; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            letter-spacing: 0.5px;
-        }
-
-        .plan-name { 
-            font-size: 1.4rem; 
-            font-weight: 800; 
-            margin-bottom: 6px; 
-            color: #ffffff; 
-        }
-        .plan-desc { 
-            color: #888888; 
-            font-size: 0.85rem; 
-            margin-bottom: 20px; 
-            line-height: 1.4;
-        }
-        .plan-price { 
-            font-size: 2.4rem; 
-            font-weight: 900; 
-            margin-bottom: 25px; 
-            color: #ffffff; 
-        }
-        .plan-price span { 
-            color: #ff1a1a; 
-            font-size: 1.1rem; 
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ff3333;
+            color: #ffffff;
+            padding: 3px 12px;
+            font-size: 11px;
             font-weight: bold;
-        }
-
-        .features-list { 
-            text-align: left; 
-            list-style: none; 
-            margin-bottom: 30px; 
-            font-size: 0.9rem; 
-            color: #cbd5e0; 
-        }
-        .features-list li { 
-            margin-bottom: 12px; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            line-height: 1.4;
-        }
-        .features-list li::before { 
-            content: "✓"; 
-            color: #ff1a1a; 
-            font-weight: bold; 
-            font-size: 1.1rem;
-        }
-
-        .subscribe-btn { 
-            width: 100%; 
-            padding: 14px; 
-            background-color: #ff1a1a; 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            cursor: pointer; 
-            transition: background 0.2s; 
-            font-size: 0.9rem; 
+            border-radius: 12px;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(255,26,26,0.2);
-        }
-        .subscribe-btn:hover { 
-            background-color: #cc0000; 
         }
 
-        /* 📱 MOBILE RESPONSIVE ADAPTATION LOOP OVERRIDES */
-        @media (max-width: 1024px) {
-            .pricing-container {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr); /* Splits seamlessly into a 2x2 grid on standard tablets */
-            }
+        /* Text Content Stylings */
+        .plan-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+        .plan-target {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .plan-price {
+            font-size: 28px;
+            color: #4da6ff;
+            font-weight: 700;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #222;
+            padding-bottom: 15px;
+        }
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 35px 0;
+            font-size: 13px;
+            color: #b3b3b3;
+            line-height: 1.6;
+        }
+        .features-list li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+        .features-list li::before {
+            content: "•";
+            color: #ff3333;
+            font-weight: bold;
+            display: inline-block; 
+            width: 1em;
+            margin-left: -1em;
         }
 
-        @media (max-width: 650px) {
-            header { 
-                flex-direction: column; 
-                gap: 15px; 
-                text-align: center; 
-                padding-bottom: 20px;
+        /* Action Gateway Buttons Layout */
+        .subscribe-btn {
+            background-color: #1a73e8;
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+            text-align: center;
+        }
+        .subscribe-btn:hover {
+            background-color: #155cb4;
+        }
+        .popular .subscribe-btn {
+            background-color: #ff3333;
+        }
+        .popular .subscribe-btn:hover {
+            background-color: #cc0000;
+        }
+
+        /* Mobile Screen Breakdown Interface Realignment Rules */
+        @media (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                text-align: center;
             }
-            nav {
+            .nav-links {
+                width: 100%;
                 justify-content: center;
+                flex-wrap: wrap;
             }
             h1 {
-                font-size: 2rem;
+                font-size: 24px;
             }
             .subtitle {
-                font-size: 0.95rem;
-                margin-bottom: 35px;
-            }
-            .pricing-container { 
-                grid-template-columns: 1fr; /* Stacks vertically into standalone fluid rows for big, clean visibility on smartphones */
-                gap: 20px;
+                font-size: 13px;
+                margin-bottom: 30px;
             }
             .pricing-card {
-                min-height: auto;
-                padding: 25px;
+                max-width: 100%; /* Expands card margins to naturally fit full viewport dimensions */
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo-text">IT <span>ELEMENTS.support</span></div>
-        <nav>
+
+    <!-- Global Framework Nav Block -->
+    <nav class="navbar">
+        <div class="nav-brand">IT Elements</div>
+        <div class="nav-links">
             <a href="/">Home</a>
             <a href="/support">Tickets</a>
-            <a href="/client/login">Portal Gateway</a>
-        </nav>
-    </header>
-
-    <h1>Predictable Flat-Rate Coverage</h1>
-    <p class="subtitle">Choose an automated SLA response tier tailored to your active network matrix infrastructure.</p>
-
-    <!-- 📊 THE COMPLETED FULL FLAT-RATE MATRIX -->
-    <div class="pricing-container">
-        <!-- Basic Support -->
-        <div class="pricing-card">
-            <div>
-                <div class="plan-name">Basic Support</div>
-                <div class="plan-desc">Single home-office setups and independent remote workstations.</div>
-                <div class="plan-price">R299<span>/mo</span></div>
-                <ul class="features-list">
-                    <li>2 Support Tickets / mo</li>
-                    <li>Malware & Virus Cleanups</li>
-                    <li>System Speed Optimization</li>
-                </ul>
-            </div>
-            <button class="subscribe-btn" onclick="checkoutMonthlyPlan('Basic Support', 299)">Subscribe Basic</button>
+            <a href="/dashboard">Portal</a>
+            <a href="/admin">Gateway</a>
         </div>
+    </nav>
 
-        <!-- Standard Tier -->
-        <div class="pricing-card featured">
-            <div class="badge">Most Popular</div>
-            <div>
-                <div class="plan-name">Standard Tier</div>
-                <div class="plan-desc">Complete diagnostic peace of mind for standard professionals and remote users.</div>
-                <div class="plan-price">R599<span>/mo</span></div>
-                <ul class="features-list">
-                    <li>Unlimited Remote Access</li>
-                    <li>4-Hour Priority SLA Response</li>
-                    <li>Advanced OS Troubleshooting</li>
-                    <li>Peripheral Software Patches</li>
-                </ul>
+    <div class="container">
+        <h1>Predictable Flat-Rate Coverage</h1>
+        <div class="subtitle">Choose an automated SLA response tier tailored to your active network matrix infrastructure.</div>
+        
+        <div class="pricing-grid">
+            
+            <!-- Tier 1: Basic -->
+            <div class="pricing-card">
+                <div>
+                    <div class="plan-name">Basic Support</div>
+                    <div class="plan-target">Single home-office setups.</div>
+                    <div class="plan-price">R299/mo</div>
+                    <ul class="features-list">
+                        <li>2 Support Tickets / mo</li>
+                        <li>Malware & Virus Cleanups</li>
+                    </ul>
+                </div>
+                <button class="subscribe-btn" onclick="processPayment('Basic Support')">Subscribe Basic</button>
             </div>
-            <button class="subscribe-btn" onclick="checkoutMonthlyPlan('Standard Tier', 599)">Subscribe Standard</button>
+
+            <!-- Tier 2: Standard (Most Popular Highlight Element) -->
+            <div class="pricing-card popular">
+                <div class="popular-badge">Most Popular</div>
+                <div>
+                    <div class="plan-name">Standard Tier</div>
+                    <div class="plan-target">Peace of mind for professionals.</div>
+                    <div class="plan-price">R599/mo</div>
+                    <ul class="features-list">
+                        <li>Unlimited Remote Access</li>
+                        <li>4-Hour Priority SLA Response</li>
+                    </ul>
+                </div>
+                <button class="subscribe-btn" onclick="processPayment('Standard Tier')">Subscribe Standard</button>
+            </div>
+
+            <!-- Tier 3: Business -->
+            <div class="pricing-card">
+                <div>
+                    <div class="plan-name">Business Growth</div>
+                    <div class="plan-target">Growing small office networks.</div>
+                    <div class="plan-price">R2499/mo</div>
+                    <ul class="features-list">
+                        <li>Up to 10 Office Devices</li>
+                        <li>2-Hour Express SLA Reply</li>
+                    </ul>
+                </div>
+                <button class="subscribe-btn" onclick="processPayment('Business Growth')">Subscribe Business</button>
+            </div>
+
+            <!-- Tier 4: Corporate -->
+            <div class="pricing-card">
+                <div>
+                    <div class="plan-name">Corporate SLA</div>
+                    <div class="plan-target">Complete enterprise coverage.</div>
+                    <div class="plan-price">R4999/mo</div>
+                    <ul class="features-list">
+                        <li>Up to 25 Devices covered</li>
+                        <li>Automatic Cloud Backups</li>
+                    </ul>
+                </div>
+                <button class="subscribe-btn" onclick="processPayment('Corporate SLA')">Subscribe Corporate</button>
+            </div>
+
         </div>
+    </div>
 
-        <!-- Business Growth -->
-        <div class="pricing-card">
-            <div>
-                <div class="plan-name">Business Growth</div>
-                <div class="plan-desc">Proactive remote server engineering built for growing small office networks.</div>
-                <div class="plan-price">R2499<span>/mo</span></div>
-                <ul class="features-list">
-                    <li>Up to 10 Office Devices</li>
-                    <li>2-Hour Express SLA Reply</li>
-                    <li>Local Local-Area Network Mapping</li>
-                    <li>Dedicated Priority Hotline</li>
-                </ul>
-            </div>
-            <button class="subscribe-btn" onclick="checkoutMonthlyPlan('Business Growth', 2499)">Subscribe Business</button>
-        </div>
-
-        <!-- Corporate SLA -->
-        <div class="pricing-card">
-            <div>
-                <div class="plan-name">Corporate SLA</div>
-                <div class="plan-desc">Enterprise-grade network infrastructure deployment and system monitoring protection.</div>
-                <div class="plan-price">R4999<span>/mo</span></div>
-                <ul class="features-list">
-                    <li>Up to 25 Devices Covered</li>
-                    <li>Automatic Cloud Backups</li>
-                    <li>Critical Security Enclosure Updates</li>
-                    <li>24/7 Dedicated Server Engineers</li>
-                </ul>
-            </div>
+    <!-- Active iKhokha Data Communications Layer Integration -->
+    <script>
+        async function processPayment(planName) {
+            try {
+                const response = await fetch('/api/create-subscription-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan: planName })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('iKhokha Payment Authorization Verified. Activating ' + planName + ' profile tier.');
+                    window.location.href = data.redirectUrl;
+                } else {
