@@ -5,212 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - Subscription Plans</title>
     <style>
-        body {
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Responsive Navigation Bar Component */
-        .navbar {
-            background-color: #141414;
-            border-bottom: 2px solid #222;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .nav-brand {
-            font-size: 20px;
-            font-weight: bold;
-            color: #ff3333;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-        .nav-links a {
-            color: #b3b3b3;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover {
-            color: #ff3333;
-        }
-
-        /* Core Layout Grid System */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            text-align: center;
-        }
-        h1 {
-            color: #ffffff;
-            font-size: 32px;
-            margin: 0 0 10px 0;
-            font-weight: 700;
-        }
-        .subtitle {
-            color: #888;
-            font-size: 15px;
-            max-width: 600px;
-            margin: 0 auto 50px auto;
-            line-height: 1.5;
-        }
-
-        /* Responsive Flex-Wrap Card Configuration */
-        .pricing-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            justify-content: center;
-        }
-        .pricing-card {
-            background-color: #141414;
-            border: 1px solid #222;
-            border-radius: 8px;
-            padding: 30px;
-            width: 100%;
-            max-width: 270px;
-            box-sizing: border-box;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            text-align: left;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .pricing-card:hover {
-            transform: translateY(-5px);
-        }
-
-        /* Most Popular Highlighted Plan Layer */
-        .pricing-card.popular {
-            border-color: #ff3333;
-            position: relative;
-        }
-        .popular-badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #ff3333;
-            color: #ffffff;
-            padding: 3px 12px;
-            font-size: 11px;
-            font-weight: bold;
-            border-radius: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Text Content Stylings */
-        .plan-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 5px;
-        }
-        .plan-target {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 20px;
-        }
-        
-        /* PRICE ELEMENT STYLING - Set to bright corporate red */
-        .plan-price {
-            font-size: 28px;
-            color: #ff3333;
-            font-weight: 700;
-            margin-bottom: 25px;
-            border-bottom: 1px solid #222;
-            padding-bottom: 15px;
-        }
-        .features-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 35px 0;
-            font-size: 13px;
-            color: #b3b3b3;
-            line-height: 1.6;
-        }
-        .features-list li {
-            padding: 8px 0;
-            position: relative;
-            padding-left: 20px;
-        }
-        .features-list li::before {
-            content: "•";
-            color: #ff3333;
-            font-weight: bold;
-            display: inline-block; 
-            width: 1em;
-            margin-left: -1em;
-        }
-
-        /* Action Buttons Layout - Corporate Red Globally */
-        .subscribe-btn {
-            background-color: #ff3333;
-            color: #ffffff;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: background 0.2s;
-            text-align: center;
-        }
-        .subscribe-btn:hover {
-            background-color: #cc0000;
-        }
-
-        /* Mobile Screen Breakdown Realignment Rules */
-        @media (max-width: 600px) {
-            .navbar {
-                flex-direction: column;
-                text-align: center;
-            }
-            .nav-links {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            h1 {
-                font-size: 24px;
-            }
-            .subtitle {
-                font-size: 13px;
-                margin-bottom: 30px;
-            }
-            .pricing-card {
-                max-width: 100%;
-            }
-        }
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+        .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .nav-brand { font-size: 20px; font-weight: bold; color: #ff3333; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; margin-left: 20px; }
+        .nav-links a:hover { color: #ff3333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; text-align: center; }
+        h1 { color: #ffffff; font-size: 32px; margin: 0 0 10px 0; font-weight: 700; }
+        .subtitle { color: #888; font-size: 15px; max-width: 600px; margin: 0 auto 40px auto; line-height: 1.5; }
+        .pricing-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; }
+        .pricing-card { background-color: #141414; border: 1px solid #222; border-radius: 8px; padding: 30px; width: 100%; max-width: 270px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; }
+        .pricing-card.popular { border-color: #ff3333; position: relative; }
+        .popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background-color: #ff3333; color: #ffffff; padding: 3px 12px; font-size: 11px; font-weight: bold; border-radius: 12px; text-transform: uppercase; }
+        .plan-name { font-size: 20px; font-weight: bold; color: #ffffff; }
+        .plan-target { font-size: 13px; color: #666; margin-bottom: 20px; }
+        .plan-price { font-size: 28px; color: #ff3333; font-weight: bold; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
+        .features-list { list-style: none; padding: 0; margin: 0 0 35px 0; font-size: 13px; color: #b3b3b3; line-height: 1.6; }
+        .features-list li { padding: 8px 0; position: relative; padding-left: 20px; }
+        .features-list li::before { content: "•"; color: #ff3333; font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; }
+        .subscribe-btn { background-color: #ff3333; color: #ffffff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; text-align: center; letter-spacing: 0.5px; }
+        .subscribe-btn:hover { background-color: #cc0000; }
+        @media (max-width: 600px) { .navbar { flex-direction: column; text-align: center; } .nav-links { margin-top: 10px; } .pricing-card { max-width: 100%; } }
     </style>
 </head>
 <body>
 
-    <!-- Global Framework Nav Block -->
     <nav class="navbar">
         <div class="nav-brand">IT Elements</div>
         <div class="nav-links">
             <a href="/">Home</a>
             <a href="/support">Tickets</a>
             <a href="/dashboard">Portal</a>
-            <a href="/admin">Gateway</a>
         </div>
     </nav>
 
@@ -219,8 +44,7 @@
         <div class="subtitle">Choose an automated SLA response tier tailored to your active network matrix infrastructure.</div>
         
         <div class="pricing-grid">
-            
-            <!-- Tier 1: Basic Support (Fixed Price Endpoint) -->
+            <!-- Basic Support -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Basic Support</div>
@@ -231,10 +55,10 @@
                         <li>Malware & Virus Cleanups</li>
                     </ul>
                 </div>
-                <button type="button" class="subscribe-btn" onclick="initiatePayPalCheckout('Basic Support', 'LF9LDQEYRQRVE')">Subscribe Basic</button>
+                <button class="subscribe-btn" onclick="forceGatewayAuthentication()">Subscribe Basic</button>
             </div>
 
-            <!-- Tier 2: Standard Tier (Live Smart Subscription Plan) -->
+            <!-- Standard Tier -->
             <div class="pricing-card popular">
                 <div class="popular-badge">Most Popular</div>
                 <div>
@@ -246,10 +70,10 @@
                         <li>4-Hour Priority SLA Response</li>
                     </ul>
                 </div>
-                <button type="button" class="subscribe-btn" onclick="initiatePayPalCheckout('Standard Tier', 'P-8P327551UG640830WNLPPVDI')">Subscribe Standard</button>
+                <button class="subscribe-btn" onclick="forceGatewayAuthentication()">Subscribe Standard</button>
             </div>
 
-            <!-- Tier 3: Business Growth (Live Smart Subscription Plan) -->
+            <!-- Business Growth -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Business Growth</div>
@@ -260,10 +84,10 @@
                         <li>2-Hour Express SLA Reply</li>
                     </ul>
                 </div>
-                <button type="button" class="subscribe-btn" onclick="initiatePayPalCheckout('Business Growth', 'P-70E84340AX6323322NLPQTEA')">Subscribe Business</button>
+                <button class="subscribe-btn" onclick="forceGatewayAuthentication()">Subscribe Business</button>
             </div>
 
-            <!-- Tier 4: Corporate SLA (Placeholder until ID added) -->
+            <!-- Corporate SLA -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Corporate SLA</div>
@@ -274,20 +98,16 @@
                         <li>Automatic Cloud Backups</li>
                     </ul>
                 </div>
-                <button type="button" class="subscribe-btn" onclick="alert('Configuration Pending: Please create a Smart Subscription Plan for Corporate SLA in PayPal first!')">Subscribe Corporate</button>
+                <button class="subscribe-btn" onclick="forceGatewayAuthentication()">Subscribe Corporate</button>
             </div>
-
         </div>
     </div>
 
-    <!-- Official Unified PayPal SDK script engine -->
-    <script src="https://paypal.com"></script>
-
-    <!-- Execution Checkout Core Control Module -->
     <script>
-        function createCheckoutModal(planName) {
-            const oldModal = document.getElementById('paypal-checkout-modal');
-            if (oldModal) oldModal.remove();
-
-            const overlayModal = document.createElement('div');
-            overlayModal.id = 'paypal-checkout-modal';
+        function forceGatewayAuthentication() {
+            alert("To activate an SLA Support Package, you must create an account or verify your identity credentials first. Routing to command registration portal...");
+            window.location.href = "/register"; // Routes unauthenticated traffic straight to your register file view flow
+        }
+    </script>
+</body>
+</html>
