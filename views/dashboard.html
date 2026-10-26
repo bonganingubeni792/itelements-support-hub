@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - SLA Command Center</title>
+    <!-- Pre-loads the official unified PayPal script environment modules natively -->
     <script src="https://paypal.com"></script>
     <style>
         body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; }
@@ -13,20 +14,16 @@
         .logout-btn { background-color: #ff3333; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; }
         .main-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 20px; margin-bottom: 25px; }
         
-        /* 📐 FIXED GRID ARCHITECTURE: Ensures 4 uniform columns on desktop, clean wrap on phone */
-        .matrix-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-            gap: 20px; 
-            margin-top: 15px; 
-        }
-        .matrix-card { background-color: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 6px; padding: 25px; box-sizing: border-box; text-align: left; }
+        /* 📐 FLEX ROW ARCHITECTURE: Forces cards to remain beautifully aligned next to each other */
+        .matrix-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 15px; }
+        .matrix-card { background-color: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 6px; padding: 20px; flex: 1; min-width: 230px; box-sizing: border-box; text-align: left; }
         .matrix-card.popular { border-color: #ff3333; }
         .plan-title { font-size: 18px; font-weight: bold; color: #fff; margin: 0 0 5px 0; }
-        .plan-rate { font-size: 24px; color: #ff3333; font-weight: bold; margin-bottom: 20px; }
+        .plan-rate { font-size: 24px; color: #ff3333; font-weight: bold; margin-bottom: 15px; }
         
-        .action-trigger-btn { background-color: #ff3333; color: white; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 13px; text-align: center; display: block; margin-top: 15px; }
-        .action-trigger-btn:hover { background-color: #cc0000; }
+        /* Container box for PayPal mount targets inside cards */
+        .paypal-mount-zone { margin-top: 15px; min-height: 45px; }
+        
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; text-align: left; }
         .form-control { width: 100%; background-color: #1a1a1a; border: 1px solid #333; padding: 10px; border-radius: 4px; color: #fff; box-sizing: border-box; }
@@ -53,34 +50,36 @@
         <div id="active-package-badge" class="status-badge-box">NO ACTIVE SLA PACKAGE</div>
     </div>
 
+    <!-- 1. SLA MATRIX CONTROL BLOCKS LAYER WITH INLINE PAYPAL TARGET CONTAINERS -->
     <div class="main-card">
         <h3 style="margin-top:0; color:#fff;">👑 SLA Package Activation Matrix</h3>
-        <p style="color:#666; font-size:12px; margin-bottom:20px;">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</p>
+        <p style="color:#666; font-size:12px; margin-bottom:20px;">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile balance.</p>
         
         <div class="matrix-grid">
             <div class="matrix-card">
                 <div class="plan-title">Basic Support</div>
                 <div class="plan-rate">R299/mo</div>
-                <button type="button" class="action-trigger-btn" onclick="initializePortalCheckout('Basic Support')">Activate</button>
+                <div id="mount-basic-support" class="paypal-mount-zone"></div>
             </div>
             <div class="matrix-card popular">
                 <div class="plan-title">Standard Tier</div>
                 <div class="plan-rate">R599/mo</div>
-                <button type="button" class="action-trigger-btn" onclick="initializePortalCheckout('Standard Tier')">Activate</button>
+                <div id="mount-standard-tier" class="paypal-mount-zone"></div>
             </div>
             <div class="matrix-card">
                 <div class="plan-title">Business Growth</div>
                 <div class="plan-rate">R2499/mo</div>
-                <button type="button" class="action-trigger-btn" onclick="initializePortalCheckout('Business Growth')">Activate</button>
+                <div id="mount-business-growth" class="paypal-mount-zone"></div>
             </div>
             <div class="matrix-card">
                 <div class="plan-title">Corporate SLA</div>
                 <div class="plan-rate">R4999/mo</div>
-                <button type="button" class="action-trigger-btn" onclick="initializePortalCheckout('Corporate SLA')">Activate</button>
+                <div id="mount-corporate-sla" class="paypal-mount-zone"></div>
             </div>
         </div>
     </div>
 
+    <!-- 2. FORM INTERFACES ROUTING PATHWAYS -->
     <div class="main-card">
         <h3 style="margin-top:0; color:#fff;">🚨 Engineering Queue Incident Dispatch</h3>
         <form action="/support" method="POST">
@@ -110,52 +109,45 @@
         <div id="tickets-log-target"><div class="loading-text">Querying active support records channels...</div></div>
     </div>
 
+    <!-- 3. DIRECT EMBED BUTTON RENDERING ENGINE -->
     <script>
         const billingConfig = {
-            'Basic Support': { type: 'fixed', id: 'LF9LDQEYRQRVE' },
-            'Standard Tier': { type: 'smart', id: 'P-8P327551UG640830WNLPPVDI' },
-            'Business Growth': { type: 'smart', id: 'P-70E84340AX6323322NLPQTEA' },
-            'Corporate SLA': { type: 'smart', id: 'P-8P327551UG640830WNLPPVDI' }
+            'Basic Support': { type: 'fixed', id: 'LF9LDQEYRQRVE', target: '#mount-basic-support' },
+            'Standard Tier': { type: 'smart', id: 'P-8P327551UG640830WNLPPVDI', target: '#mount-standard-tier' },
+            'Business Growth': { type: 'smart', id: 'P-70E84340AX6323322NLPQTEA', target: '#mount-business-growth' },
+            'Corporate SLA': { type: 'smart', id: 'P-8P327551UG640830WNLPPVDI', target: '#mount-corporate-sla' }
         };
 
-        function createPortalCheckoutModal(planName) {
-            const oldModal = document.getElementById('paypal-portal-modal');
-            if (oldModal) oldModal.remove();
-
-            const overlayModal = document.createElement('div');
-            overlayModal.id = 'paypal-portal-modal';
-            overlayModal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; display:flex; justify-content:center; align-items:center;';
-
-            overlayModal.innerHTML = `
-                <div style="background:#141414; border:1px solid #ff3333; padding:30px; border-radius:8px; width:100%; max-width:340px; box-sizing:border-box; text-align:center; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.5); font-family: sans-serif; color:#fff;">
-                    <button type="button" onclick="document.getElementById('paypal-portal-modal').remove()" style="position:absolute; top:10px; right:15px; background:none; border:none; color:#ff3333; font-size:24px; font-weight:bold; cursor:pointer;">&times;</button>
-                    <h3 style="margin-top:0; margin-bottom:5px; font-size:18px;">Secure Payment Authorization</h3>
-                    <p style="color:#888; font-size:13px; margin-bottom:25px; margin-top:5px;">Activating Package: <strong style="color:#ff3333;">${planName}</strong></p>
-                    <div id="paypal-portal-mount-point"></div>
-                </div>
-            `;
-            document.body.appendChild(overlayModal);
-        }
-
-        function initializePortalCheckout(planName) {
-            const targetConfig = billingConfig[planName];
-            if (!targetConfig) return;
-
-            createPortalCheckoutModal(planName);
-
-            // 🛠️ MOUNT MATCH CORRECTION: Draws buttons perfectly into the newly opened box layout container
-            if (targetConfig.type === 'fixed') {
+        function renderEmbedButtons() {
+            try {
+                // 1. Render Tier 1 (Fixed Hosted Button)
                 paypal.HostedButtons({
-                    hostedButtonId: targetConfig.id,
-                    onApprove: async function(data, actions) { await finalizePortalActivation(planName); }
-                }).render("#paypal-portal-mount-point");
-            } else if (targetConfig.type === 'smart') {
+                    hostedButtonId: billingConfig['Basic Support'].id,
+                    onApprove: async function(data, actions) { await finalizePortalActivation('Basic Support'); }
+                }).render(billingConfig['Basic Support'].target);
+
+                // 2. Render Tier 2 (Smart Subscription Plan)
                 paypal.Buttons({
                     style: { shape: 'rect', color: 'gold', layout: 'vertical', label: 'subscribe' },
-                    createSubscription: function(data, actions) { return actions.subscription.create({ plan_id: targetConfig.id }); },
-                    onApprove: async function(data, actions) { await finalizePortalActivation(planName); }
-                }).render('#paypal-portal-mount-point');
-            }
+                    createSubscription: function(data, actions) { return actions.subscription.create({ plan_id: billingConfig['Standard Tier'].id }); },
+                    onApprove: async function(data, actions) { await finalizePortalActivation('Standard Tier'); }
+                }).render(billingConfig['Standard Tier'].target);
+
+                // 3. Render Tier 3 (Smart Subscription Plan)
+                paypal.Buttons({
+                    style: { shape: 'rect', color: 'gold', layout: 'vertical', label: 'subscribe' },
+                    createSubscription: function(data, actions) { return actions.subscription.create({ plan_id: billingConfig['Business Growth'].id }); },
+                    onApprove: async function(data, actions) { await finalizePortalActivation('Business Growth'); }
+                }).render(billingConfig['Business Growth'].target);
+
+                // 4. Render Tier 4 (Smart Subscription Plan Mirror)
+                paypal.Buttons({
+                    style: { shape: 'rect', color: 'gold', layout: 'vertical', label: 'subscribe' },
+                    createSubscription: function(data, actions) { return actions.subscription.create({ plan_id: billingConfig['Corporate SLA'].id }); },
+                    onApprove: async function(data, actions) { await finalizePortalActivation('Corporate SLA'); }
+                }).render(billingConfig['Corporate SLA'].target);
+
+            } catch (err) { console.error("PayPal embed mapping error:", err); }
         }
 
         async function finalizePortalActivation(planName) {
@@ -179,7 +171,12 @@
                 if(logsBox) { logsBox.innerHTML = '<div style="color:#666; font-size:13px; text-align:center; padding:10px;">No support request tickets filed on database record index channels for this session.</div>'; }
             } catch(e) { console.error(e); }
         }
-        window.addEventListener('DOMContentLoaded', loadProfileTelemetry);
+
+        // Fire rendering scripts sequentially as soon as layout completes loading
+        window.addEventListener('DOMContentLoaded', () => {
+            renderEmbedButtons();
+            loadProfileTelemetry();
+        });
     </script>
 </body>
 </html>
