@@ -80,7 +80,7 @@
             border-radius: 8px;
             padding: 30px;
             width: 100%;
-            max-width: 270px; /* Uniform width blocks layout perfectly on desktop rows */
+            max-width: 270px;
             box-sizing: border-box;
             box-shadow: 0 4px 10px rgba(0,0,0,0.4);
             display: flex;
@@ -155,7 +155,7 @@
             margin-left: -1em;
         }
 
-        /* Action Gateway Buttons Layout - Set to corporate red globally */
+        /* Action Gateway Buttons Layout - Uniform Red Color */
         .subscribe-btn {
             background-color: #ff3333;
             color: #ffffff;
@@ -194,7 +194,7 @@
                 margin-bottom: 30px;
             }
             .pricing-card {
-                max-width: 100%; /* Expands card margins to naturally fit full viewport dimensions */
+                max-width: 100%;
             }
         }
     </style>
@@ -218,7 +218,7 @@
         
         <div class="pricing-grid">
             
-            <!-- Tier 1: Basic -->
+            <!-- Tier 1: Basic Support (Priced at $17.00 USD / approx R299) -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Basic Support</div>
@@ -229,10 +229,10 @@
                         <li>Malware & Virus Cleanups</li>
                     </ul>
                 </div>
-                <button class="subscribe-btn" onclick="processPayment('Basic Support')">Subscribe Basic</button>
+                <button class="subscribe-btn" onclick="initiatePayPalCheckout('Basic Support', 'LF9LDQEYRQRVE')">Subscribe Basic</button>
             </div>
 
-            <!-- Tier 2: Standard (Most Popular Highlight Element) -->
+            <!-- Tier 2: Standard Tier (Priced at $34.00 USD / approx R599) -->
             <div class="pricing-card popular">
                 <div class="popular-badge">Most Popular</div>
                 <div>
@@ -244,10 +244,10 @@
                         <li>4-Hour Priority SLA Response</li>
                     </ul>
                 </div>
-                <button class="subscribe-btn" onclick="processPayment('Standard Tier')">Subscribe Standard</button>
+                <button class="subscribe-btn" onclick="initiatePayPalCheckout('Standard Tier', 'LF9LDQEYRQRVE')">Subscribe Standard</button>
             </div>
 
-            <!-- Tier 3: Business -->
+            <!-- Tier 3: Business Growth (Priced at $140.00 USD / approx R2499) -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Business Growth</div>
@@ -258,10 +258,10 @@
                         <li>2-Hour Express SLA Reply</li>
                     </ul>
                 </div>
-                <button class="subscribe-btn" onclick="processPayment('Business Growth')">Subscribe Business</button>
+                <button class="subscribe-btn" onclick="initiatePayPalCheckout('Business Growth', 'LF9LDQEYRQRVE')">Subscribe Business</button>
             </div>
 
-            <!-- Tier 4: Corporate -->
+            <!-- Tier 4: Corporate SLA (Priced at $280.00 USD / approx R4999) -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Corporate SLA</div>
@@ -272,28 +272,21 @@
                         <li>Automatic Cloud Backups</li>
                     </ul>
                 </div>
-                <button class="subscribe-btn" onclick="processPayment('Corporate SLA')">Subscribe Corporate</button>
+                <button class="subscribe-btn" onclick="initiatePayPalCheckout('Corporate SLA', 'LF9LDQEYRQRVE')">Subscribe Corporate</button>
             </div>
 
         </div>
     </div>
 
-    <!-- Active iKhokha Data Communications Layer Integration -->
+    <!-- 1. Load the official PayPal SDK Script directly from your live window configurations -->
+    <script src="https://paypal.com"></script>
+
+    <!-- 2. Execution Checkout Core Controller -->
     <script>
-        async function processPayment(planName) {
-            try {
-                const response = await fetch('/api/create-subscription-session', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ plan: planName })
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    alert('iKhokha Payment Authorization Verified. Activating ' + planName + ' profile tier.');
-                    window.location.href = data.redirectUrl;
-                } else {
-                    alert('Routing checkpoint error. Please establish active session authentication first.');
-                }
-            } catch (err) {
-                console.error("Gateway Outage:", err);
+        function initiatePayPalCheckout(planName, buttonId) {
+            // Remove any open modal elements if they exist on the page layout
+            const oldModal = document.getElementById('paypal-checkout-modal');
+            if (oldModal) oldModal.remove();
+
+            // Create a clean floating popup layout box to display your secure payment gateways safely
+            const overlayModal = document.createElement('div');
