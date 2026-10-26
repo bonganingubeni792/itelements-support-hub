@@ -18,7 +18,6 @@
         .feature-title { font-size: 17px; font-weight: bold; color: #ff3333; margin-bottom: 8px; }
         .feature-desc { font-size: 13px; color: #888; line-height: 1.5; }
         
-        /* Mobile-First Containers: Snaps perfectly inside smartphone grids */
         .incident-box { border: 2px solid #ff3333; border-radius: 6px; padding: 20px 15px; background-color: #141414; margin: 0 auto 20px auto; width: 100%; max-width: 500px; box-sizing: border-box; display: block; position: relative; }
         .price-display { font-size: 26px; color: #ff3333; font-weight: bold; margin: 15px 0; display: block; }
         
@@ -34,10 +33,9 @@
         .status-val { color: #4da6ff; font-weight: bold; font-size: 14px; margin-top: 3px; }
         .status-val.active-node { color: #4dff4d; }
         
-        .whatsapp-floating-bubble { position: fixed; bottom: 15px; right: 15px; background-color: #25d366; width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10 rgba(0,0,0,0.3); z-index: 9999; text-decoration: none; }
+        .whatsapp-floating-bubble { position: fixed; bottom: 15px; right: 15px; background-color: #25d366; width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 9999; text-decoration: none; }
         .footer-details { color: #888; font-size: 11px; line-height: 1.8; border-top: 1px solid #222; padding-top: 15px; margin-top: 35px; text-align: center; }
 
-        /* Tablet and Desktop Upscaling Layout Overrides */
         @media (min-width: 600px) {
             body { padding: 20px; }
             .navbar { flex-direction: row; padding: 15px 30px; margin-bottom: 35px; }
@@ -50,6 +48,7 @@
             .incident-box { padding: 25px 20px; margin-bottom: 25px; }
         }
     </style>
+    <!-- UPGRADED: Mobile security compatible production checkout injection gateway loader -->
     <script src="https://paystack.co"></script>
 </head>
 <body>
@@ -140,30 +139,34 @@
         }
 
         function payWithPaystack() {
-            const email = document.getElementById('customer-email').value.trim();
-            if (!email) {
-                alert("Please enter a valid email address first.");
+            const emailInput = document.getElementById('customer-email');
+            const email = emailInput ? emailInput.value.trim() : '';
+            
+            if (!email || !email.includes('@')) {
+                alert("Please type a valid email address first.");
                 return;
             }
 
-            const hours = document.getElementById('duration-selector').value;
+            const hoursSelector = document.getElementById('duration-selector');
+            const hours = hoursSelector ? hoursSelector.value : '1';
             const totalZARAmount = baseRate * parseInt(hours);
 
-            let handler = PaystackPop.setup({
+            // Upgraded implementation for Paystack Pop inline engine version 2
+            const paystack = new PaystackPop();
+            paystack.newTransaction({
                 key: 'pk_test_131c4a6591f65f4e8ea6fa6f4bcb59016c6ed43b',
                 email: email,
                 amount: totalZARAmount * 100, 
                 currency: 'ZAR',
-                ref: 'ITE-' + Math.floor((Math.random() * 100000000) + 1),
-                callback: function(response) {
-                    alert('Simulated transaction approved successfully! Reference ID: ' + response.reference);
+                reference: 'ITE-' + Math.floor((Math.random() * 100000000) + 1),
+                onSuccess: function(transaction) {
+                    alert('Simulated transaction approved successfully! Reference ID: ' + transaction.reference);
                     window.location.href = "/support";
                 },
-                onClose: function() {
-                    console.log('Dismissed.');
+                onCancel: function() {
+                    alert('Transaction loop canceled.');
                 }
             });
-            handler.openIframe();
         }
     </script>
 </body>
