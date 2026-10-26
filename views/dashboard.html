@@ -12,7 +12,7 @@
         .logout-btn { background-color: #ff3333; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; }
         .main-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 20px; margin-bottom: 25px; }
         
-        /* 📐 COMPACT FLEX LAYOUT MATRIX: Draws uniform cards that wrap smoothly on mobile devices */
+        /* 📐 COMPACT FLEX LAYOUT GRID: Ensures all cards sit balanced next to each other on desktop and stack cleanly on phone screens */
         .matrix-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 15px; }
         .matrix-card { background-color: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 6px; padding: 25px; flex: 1; min-width: 220px; box-sizing: border-box; text-align: left; }
         .matrix-card.popular { border-color: #ff3333; }
@@ -47,7 +47,7 @@
         <div id="active-package-badge" class="status-badge-box">NO ACTIVE SLA PACKAGE</div>
     </div>
 
-    <!-- 1. SLA Package Configuration using PayPal's direct verified business portal links -->
+    <!-- 1. SLA Package Configuration linked directly to your live itelementshelp balance -->
     <div class="main-card">
         <h3 style="margin-top:0; color:#fff;">👑 SLA Package Activation Matrix</h3>
         <p style="color:#666; font-size:12px; margin-bottom:20px;">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile balance.</p>
@@ -61,7 +61,6 @@
             <div class="matrix-card popular">
                 <div class="plan-title">Standard Tier</div>
                 <div class="plan-rate">R599/mo</div>
-                <!-- 🛠️ PAYPAL.ME ROUTE LINK: Links directly to your verified business profile link to handle currency blocks cleanly -->
                 <a href="https://paypal.me" target="_blank" class="action-trigger-btn">Activate Standard</a>
             </div>
             <div class="matrix-card">
