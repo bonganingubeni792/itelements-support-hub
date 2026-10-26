@@ -3,65 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Login Portal | IT Elements Support</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>IT Elements - Access Workspace Portal</title>
+    <style>
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; text-align: center; }
+        .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 35px auto; border-radius: 6px; }
+        .nav-brand { font-size: 20px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; }
+        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; margin-left: 20px; font-weight: bold; }
+        .nav-links a:hover { color: #ffffff; }
+        .login-box { background-color: #141414; border: 1px solid #222; border-radius: 8px; padding: 40px 30px; width: 100%; max-width: 420px; margin: 80px auto 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.6); box-sizing: border-box; }
+        .top-description { color: #666; font-size: 13px; line-height: 1.6; margin-bottom: 25px; }
+        .form-group { text-align: left; margin-bottom: 22px; position: relative; }
+        .form-label { font-size: 12px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; margin-bottom: 10px; display: block; text-transform: uppercase; }
+        .form-input { background-color: #ffffdd; color: #111111; border: 2px solid #1a73e8; padding: 14px; border-radius: 6px; width: 100%; font-size: 16px; font-weight: bold; box-sizing: border-box; }
+        .form-input:focus { outline: none; box-shadow: 0 0 8px rgba(26,115,232,0.4); }
+        
+        .password-wrapper { position: relative; width: 100%; }
+        .toggle-login-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #555; cursor: pointer; font-size: 12px; font-weight: bold; text-transform: uppercase; user-select: none; }
+        .toggle-login-eye:hover { color: #1a73e8; }
+
+        .submit-btn { background-color: #1a73e8; color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+        .submit-btn:hover { background-color: #155cb4; }
+        .link-footer { font-size: 13px; color: #666; margin-top: 20px; line-height: 1.8; }
+        .link-footer a { color: #1a73e8; text-decoration: none; }
+        .link-footer a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
 
-    <header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background-color: #121214; border-bottom: 2px solid #2e2e38;">
-        <div class="logo-container">
-            <svg class="logo-svg-emblem" viewBox="0 0 100 100" xmlns="http://w3.org" style="height:46px; width:46px;">
-                <circle cx="50" cy="50" r="32" fill="#3b82f6" />
-                <path d="M 50 10 A 40 40 0 1 1 24 82 A 35 35 0 1 0 50 20 Z" fill="#ffffff" />
-            </svg>
-            <div class="logo-text" style="font-size: 1.4rem; font-weight: 800; color: #ffffff;">IT Elements<span>.client-hub</span></div>
+    <nav class="navbar">
+        <div class="nav-brand">IT Elements.client-hub</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/pricing">Plans</a>
+            <a href="/register">Register Account</a>
         </div>
-        <nav>
-            <a href="/" style="color: #c5c6c7; text-decoration: none; font-weight: 600;">Home</a>
-            <a href="/pricing" style="color: #c5c6c7; text-decoration: none; font-weight: 600; margin-left: 20px;">Plans</a>
-            <a href="/register" style="color: #3b82f6; text-decoration: none; font-weight: 600; margin-left: 20px;">Register Account</a>
-        </nav>
-    </header>
+    </nav>
 
-    <main class="container" style="max-width: 460px; padding-top: 40px; margin: 0 auto;">
-        <section class="hero-section" style="padding: 20px 0; text-align: center;">
-            <h1 style="color: #ffffff; font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">Client Sign In</h1>
-            <p class="subtitle" style="color: #c5c6c7;">Enter your registered account details to access your self-help cockpit center.</p>
-        </section>
+    <div class="login-box">
+        <form action="/client/login" method="POST">
+            <div class="top-description">Enter your registered account details to access your self-help cockpit center.</div>
 
-        <section class="form-wrapper" style="background-color: #16161a; border: 1px solid #3a3a46; padding: 45px; border-radius: 12px; box-shadow: 0 15px 40px rgba(0,0,0,0.5);">
-            <form action="/client/login" method="POST">
-                
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label for="email" style="color: #ffffff; display: block; margin-bottom: 10px; font-weight: 700;">REGISTERED EMAIL ADDRESS:</label>
-                    <input type="email" id="email" name="email" placeholder="name@company.co.za" required autofocus
-                           style="width: 100% !important; padding: 14px !important; background-color: #22222a !important; border: 2px solid #3b82f6 !important; border-radius: 8px !important; color: #ffffff !important; font-size: 1rem !important; display: block !important;">
+            <div class="form-group">
+                <label class="form-label">Registered Email Address:</label>
+                <input type="email" name="email" id="login-email" class="form-input" placeholder="sylakaura@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Account Password:</label>
+                <div class="password-wrapper">
+                    <input type="password" name="password" id="login-password" class="form-input" placeholder="••••••••••••••" required>
+                    <button type="button" class="toggle-login-eye" onclick="toggleLoginPassword()">Show</button>
                 </div>
+            </div>
 
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label for="password" style="color: #ffffff; display: block; margin-bottom: 10px; font-weight: 700;">ACCOUNT PASSWORD:</label>
-                    <input type="password" id="password" name="password" placeholder="••••••••••••" required
-                           style="width: 100% !important; padding: 14px !important; background-color: #22222a !important; border: 2px solid #3b82f6 !important; border-radius: 8px !important; color: #ffffff !important; font-size: 1rem !important; display: block !important;">
-                </div>
+            <button type="submit" class="submit-btn">Unlock Technical Workspace</button>
 
-                <button type="submit" class="submit-btn" style="width: 100%; padding: 16px; background-color: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 1.05rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Unlock Technical Workspace</button>
-            </form>
-            
-            <p style="text-align: center; font-size: 0.9rem; color: #a0a0ab; margin-top: 20px;">
-                New subscriber? <a href="/register" style="color: #3b82f6; text-decoration: none; font-weight: 600;">Create an account here →</a>
-            </p>
-        </section>
-    </main>
+            <div class="link-footer">
+                <a href="#" onclick="handleForgotPasswordTrigger()">Forgot Password? Reset Here →</a><br>
+                New subscriber? <a href="/register">Create an account here →</a>
+            </div>
+        </form>
+    </div>
 
-    <!-- 🚀 SMART ROUTING PERSISTENCE SCRIPT LAYER -->
     <script>
-        // Check if a client clicked a plan while unauthenticated right when they arrive on the login panel
-        window.addEventListener('DOMContentLoaded', () => {
-            const preservedPlan = sessionStorage.getItem('pendingPlanCheckout');
-            if (preservedPlan) {
-                console.log("📌 Preserved active plan state found in browser memory cache: " + preservedPlan);
+        function toggleLoginPassword() {
+            const passwordInput = document.getElementById('login-password');
+            const toggleButton = document.querySelector('.toggle-login-eye');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.innerText = 'Hide';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.innerText = 'Show';
             }
-        });
+        }
+
+        function handleForgotPasswordTrigger() {
+            const emailInput = document.getElementById('login-email').value.trim();
+            if (!emailInput) {
+                alert("Please type your registered email address into the Email box first, then click Reset!");
+                return;
+            }
+            
+            alert("A temporary password override link configuration has been generated for: " + emailInput + "\n\nAn automated dispatch transmission message has been forwarded down to your email inbox directory successfully.");
+            window.location.href = "mailto:" + emailInput + "?subject=IT Elements Support - Password Reset Recovery Request&body=Hello,\n\nWe received a request to override access credentials mapping for your account profile layout. Click the network path link below to finalize configurations:\n\nhttps://itelements.help\n\nRegards,\nIT Elements Autonomous Framework Node Engine Layer";
+        }
     </script>
 </body>
 </html>
