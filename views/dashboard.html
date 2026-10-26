@@ -4,164 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - SLA Command Center</title>
-    <!-- 1. Official Unified PayPal SDK script engine securely pre-loaded -->
     <script src="https://paypal.com"></script>
     <style>
-        body {
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-        }
-        .navbar {
-            background-color: #141414;
-            border-bottom: 2px solid #222;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-radius: 6px;
-        }
-        .nav-brand {
-            font-size: 20px;
-            font-weight: bold;
-            color: #ff3333;
-            letter-spacing: 1px;
-        }
-        .nav-links {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        .nav-links a {
-            color: #b3b3b3;
-            text-decoration: none;
-            font-size: 14px;
-        }
-        .logout-btn {
-            background-color: #ff3333;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            text-decoration: none;
-            font-size: 13px;
-        }
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .main-card {
-            background-color: #141414;
-            border: 1px solid #222;
-            border-radius: 6px;
-            padding: 20px;
-            margin-bottom: 25px;
-        }
-        .grid-layout {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-        }
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
+        .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-radius: 6px; }
+        .nav-brand { font-size: 20px; font-weight: bold; color: #ff3333; letter-spacing: 1px; text-transform: uppercase; }
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; }
+        .logout-btn { background-color: #ff3333; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; }
+        .dashboard-container { max-width: 1200px; margin: 0 auto; }
+        .main-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 20px; margin-bottom: 25px; }
+        .grid-layout { display: flex; flex-wrap: wrap; gap: 25px; }
         .left-column { flex: 2; min-width: 300px; }
-        .right-column { flex: 1; min-width: 280px; }
-        
-        .pricing-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .pricing-card {
-            background-color: #1a1a1a;
-            border: 1px solid #2d2d2d;
-            border-radius: 6px;
-            padding: 15px;
-            flex: 1;
-            min-width: 200px;
-            box-sizing: border-box;
-        }
+        .pricing-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
+        .pricing-card { background-color: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 6px; padding: 15px; flex: 1; min-width: 200px; box-sizing: border-box; text-align: center; }
         .plan-name { font-size: 16px; font-weight: bold; color: #fff; }
         .plan-price { font-size: 20px; color: #ff3333; font-weight: bold; margin: 5px 0 15px 0; }
-        
-        .activate-btn {
-            background-color: #ff3333;
-            color: white;
-            border: none;
-            padding: 8px;
-            width: 100%;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 12px;
-        }
+        .activate-btn { background-color: #ff3333; color: white; border: none; padding: 8px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; }
         .activate-btn:hover { background-color: #cc0000; }
-        
-        .download-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #222;
-        }
-        .download-btn {
-            background-color: #1a73e8;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: bold;
-        }
-        
+        .download-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #222; }
+        .download-btn { background-color: #1a73e8; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 12px; font-weight: bold; }
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; }
-        .form-control {
-            width: 100%;
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            padding: 10px;
-            border-radius: 4px;
-            color: #fff;
-            box-sizing: border-box;
-        }
-        .form-control:focus { outline: none; border-color: #ff3333; }
-        
-        .submit-btn {
-            background-color: #ff3333;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-            font-size: 14px;
-        }
-        
-        .status-badge-box {
-            background-color: #1a1a1a;
-            border: 1px solid #333;
-            padding: 10px 15px;
-            border-radius: 4px;
-            display: inline-block;
-            font-size: 13px;
-            font-weight: bold;
-            color: #ffcc00;
-        }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; text-align: left; }
+        .form-control { width: 100%; background-color: #1a1a1a; border: 1px solid #333; padding: 10px; border-radius: 4px; color: #fff; box-sizing: border-box; }
+        .submit-btn { background-color: #ff3333; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; }
+        .status-badge-box { background-color: #1a1a1a; border: 1px solid #333; padding: 10px 15px; border-radius: 4px; display: inline-block; font-size: 13px; font-weight: bold; color: #ffcc00; }
         .loading-text { color: #666; font-style: italic; font-size: 14px; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
-
-    <!-- Main Navigation Architecture Panel -->
     <nav class="navbar">
         <div class="nav-brand">IT ELEMENTS.support</div>
         <div class="nav-links">
@@ -172,8 +43,6 @@
     </nav>
 
     <div class="dashboard-container">
-        
-        <!-- Welcome Matrix Core Command Card -->
         <div class="main-card">
             <h2 style="margin-top:0; color:#fff;">IT Elements Client Command Center</h2>
             <p style="color:#888; font-size:14px; margin-bottom:20px;">Secure remote supporting matrices across South Africa. Tunnels active and fully authenticated.</p>
@@ -181,14 +50,10 @@
         </div>
 
         <div class="grid-layout">
-            <!-- Left Workspace Pane -->
             <div class="left-column">
-                
-                <!-- 1. SLA PACKAGE ACTIVATION CONTAINER -->
                 <div class="main-card">
                     <h3 style="margin-top:0; color:#fff;">👑 SLA Package Activation Matrix</h3>
                     <p style="color:#666; font-size:12px; margin-bottom:20px;">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</p>
-                    
                     <div class="pricing-grid">
                         <div class="pricing-card">
                             <div class="plan-name">Basic Support</div>
@@ -213,30 +78,106 @@
                     </div>
                 </div>
 
-                <!-- 2. INCIDENT REPORT WORKFLOW SUBMISSION FORM -->
                 <div class="main-card">
                     <h3 style="margin-top:0; color:#fff;">🚨 Engineering Queue Incident Dispatch</h3>
-                    <p style="color:#666; font-size:12px; margin-bottom:20px;">Encountering structural operating errors? Stream terminal details directly to active support queues.</p>
-                    
                     <form action="/support" method="POST">
-                        <div class="form-group">
-                            <label>CLIENT VERIFICATION IDENTITY NAME:</label>
-                            <input type="text" name="name" class="form-control" required placeholder="Full Name">
-                        </div>
-                        <div class="form-group">
-                            <label>REGISTERED CONTACT EMAIL:</label>
-                            <input type="email" name="email" class="form-control" required placeholder="Email Address">
-                        </div>
-                        <div class="form-group">
-                            <label>ANYDESK / TEAMVIEWER ID CODE:</label>
-                            <input type="text" name="remoteId" class="form-control" required placeholder="000 000 000">
-                        </div>
-                        <div class="form-group">
-                            <label>SECURE SESSION PASSWORD KEY:</label>
-                            <input type="text" name="remotePassword" class="form-control" required placeholder="Disposable Remote Pin">
-                        </div>
-                        <div class="form-group">
-                            <label>COMPREHENSIVE INCIDENT SYMPTOM REPORT LOG:</label>
-                            <textarea name="issue" class="form-control" rows="4" required placeholder="Describe system crash metrics or error environments..."></textarea>
-                        </div>
+                        <div class="form-group"><label>CLIENT VERIFICATION IDENTITY NAME:</label><input type="text" name="name" class="form-control" required placeholder="Full Name"></div>
+                        <div class="form-group"><label>REGISTERED CONTACT EMAIL:</label><input type="email" name="email" class="form-control" required placeholder="Email Address"></div>
+                        <div class="form-group"><label>ANYDESK / TEAMVIEWER ID CODE:</label><input type="text" name="remoteId" class="form-control" required placeholder="000 000 000"></div>
+                        <div class="form-group"><label>SECURE SESSION PASSWORD KEY:</label><input type="text" name="remotePassword" class="form-control" required placeholder="Access Pin"></div>
+                        <div class="form-group"><label>COMPREHENSIVE INCIDENT SYMPTOM REPORT LOG:</label><textarea name="issue" class="form-control" rows="4" required placeholder="Describe error parameters..."></textarea></div>
                         <button type="submit" class="submit-btn">Transmit Ticket Array to Escalation Channels 🚀</button>
+                    </form>
+                </div>
+
+                <div class="main-card">
+                    <h3 style="margin-top:0; color:#fff;">📥 Required Software Downloads</h3>
+                    <div class="download-row">
+                        <div><strong>AnyDesk Controller</strong><br><small style="color:#666">Lightweight remote engine exe</small></div>
+                        <a href="https://anydesk.com" target="_blank" class="download-btn">Download</a>
+                    </div>
+                    <div class="download-row" style="border-bottom:none;">
+                        <div><strong>TeamViewer Core</strong><br><small style="color:#666">Enterprise tunnel service setup</small></div>
+                        <a href="https://teamviewer.com" target="_blank" class="download-btn">Download</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-card">
+            <h3 style="margin-top:0; color:#fff;">📋 Your Active Support Tickets Logs</h3>
+            <div id="tickets-log-target"><div class="loading-text">Querying active support records channels...</div></div>
+        </div>
+    </div>
+    <script>
+        const billingConfig = {
+            'Basic Support': { type: 'fixed', id: 'LF9LDQEYRQRVE' },
+            'Standard Tier': { type: 'smart', id: 'P-8P327551UG640830WNLPPVDI' },
+            'Business Growth': { type: 'smart', id: 'P-70E84340AX6323322NLPQTEA' },
+            'Corporate SLA': { type: 'smart', id: 'P-8P327551UG640830WNLPPVDI' }
+        };
+
+        function createPortalCheckoutModal(planName) {
+            const oldModal = document.getElementById('paypal-portal-modal');
+            if (oldModal) oldModal.remove();
+
+            const overlayModal = document.createElement('div');
+            overlayModal.id = 'paypal-portal-modal';
+            overlayModal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; display:flex; justify-content:center; align-items:center;';
+
+            overlayModal.innerHTML = `
+                <div style="background:#141414; border:2px solid #ff3333; padding:30px; border-radius:8px; width:100%; max-width:340px; box-sizing:border-box; text-align:center; position:relative; box-shadow:0 10px 25px rgba(0,0,0,0.5); font-family: sans-serif; color:#fff;">
+                    <button type="button" onclick="document.getElementById('paypal-portal-modal').remove()" style="position:absolute; top:10px; right:15px; background:none; border:none; color:#ff3333; font-size:24px; font-weight:bold; cursor:pointer;">&times;</button>
+                    <h3 style="margin-top:0; margin-bottom:5px; font-size:18px;">Secure Payment Authorization</h3>
+                    <p style="color:#888; font-size:13px; margin-bottom:25px; margin-top:5px;">Activating Package: <strong style="color:#ff3333;">${planName}</strong></p>
+                    <div id="paypal-portal-mount-point"></div>
+                </div>
+            `;
+            document.body.appendChild(overlayModal);
+        }
+
+        function initializePortalCheckout(planName) {
+            const targetConfig = billingConfig[planName];
+            if (!targetConfig) return;
+
+            createPortalCheckoutModal(planName);
+
+            if (targetConfig.type === 'fixed') {
+                paypal.HostedButtons({
+                    hostedButtonId: targetConfig.id,
+                    onApprove: async function(data, actions) { await finalizePortalActivation(planName); }
+                }).render("#paypal-portal-mount-point");
+            } else if (targetConfig.type === 'smart') {
+                paypal.Buttons({
+                    style: { shape: 'rect', color: 'gold', layout: 'vertical', label: 'subscribe' },
+                    createSubscription: function(data, actions) { return actions.subscription.create({ plan_id: targetConfig.id }); },
+                    onApprove: async function(data, actions) { await finalizePortalActivation(planName); }
+                }).render('#paypal-button-mount-point');
+            }
+        }
+
+        async function finalizePortalActivation(planName) {
+            try {
+                const response = await fetch('/api/create-subscription-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan: planName })
+                });
+                const resData = await response.json();
+                if (resData.success) {
+                    alert(`SLA Matrix successfully deployed! Activated: ${planName}`);
+                    window.location.reload();
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function loadProfileTelemetry() {
+            try {
+                const logsBox = document.getElementById('tickets-log-target');
+                if(logsBox) { logsBox.innerHTML = '<div style="color:#666; font-size:13px; text-align:center; padding:10px;">No support request tickets filed on database record index channels for this session.</div>'; }
+            } catch(e) { console.error(e); }
+        }
+        window.addEventListener('DOMContentLoaded', loadProfileTelemetry);
+    </script>
+</body>
+</html>
