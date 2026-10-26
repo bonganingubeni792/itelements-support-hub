@@ -155,9 +155,9 @@
             margin-left: -1em;
         }
 
-        /* Action Gateway Buttons Layout */
+        /* Action Gateway Buttons Layout - Set to corporate red globally */
         .subscribe-btn {
-            background-color: #1a73e8;
+            background-color: #ff3333;
             color: #ffffff;
             border: none;
             padding: 12px;
@@ -172,12 +172,6 @@
             text-align: center;
         }
         .subscribe-btn:hover {
-            background-color: #155cb4;
-        }
-        .popular .subscribe-btn {
-            background-color: #ff3333;
-        }
-        .popular .subscribe-btn:hover {
             background-color: #cc0000;
         }
 
@@ -299,3 +293,7 @@
                     alert('iKhokha Payment Authorization Verified. Activating ' + planName + ' profile tier.');
                     window.location.href = data.redirectUrl;
                 } else {
+                    alert('Routing checkpoint error. Please establish active session authentication first.');
+                }
+            } catch (err) {
+                console.error("Gateway Outage:", err);
