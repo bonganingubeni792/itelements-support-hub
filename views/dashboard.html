@@ -11,11 +11,14 @@
         .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; margin-right: 15px; }
         .logout-btn { background-color: #ff3333; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; }
         .main-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 20px; margin-bottom: 25px; }
+        
+        /* 📐 GRID SYSTEM MATRIX: Forces cards to sit uniformly next to each other across desktop rows */
         .matrix-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 15px; }
         .matrix-card { background-color: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 6px; padding: 25px; flex: 1; min-width: 220px; box-sizing: border-box; text-align: left; }
         .matrix-card.popular { border-color: #ff3333; }
         .plan-title { font-size: 18px; font-weight: bold; color: #fff; margin: 0 0 5px 0; }
         .plan-rate { font-size: 24px; color: #ff3333; font-weight: bold; margin-bottom: 20px; }
+        
         .action-trigger-btn { background-color: #ff3333; color: white; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 13px; text-align: center; display: block; margin-top: 15px; text-decoration: none; box-sizing: border-box; }
         .action-trigger-btn:hover { background-color: #cc0000; }
         .form-group { margin-bottom: 15px; }
@@ -44,6 +47,7 @@
         <div id="active-package-badge" class="status-badge-box">NO ACTIVE SLA PACKAGE</div>
     </div>
 
+    <!-- 1. SLA Package matrix linked to direct verified external hosted payment checkouts -->
     <div class="main-card">
         <h3 style="margin-top:0; color:#fff;">👑 SLA Package Activation Matrix</h3>
         <p style="color:#666; font-size:12px; margin-bottom:20px;">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile balance.</p>
@@ -52,22 +56,22 @@
             <div class="matrix-card">
                 <div class="plan-title">Basic Support</div>
                 <div class="plan-rate">R299/mo</div>
-                <a href="https://paypal.me" target="_blank" class="action-trigger-btn">Activate Basic</a>
+                <a href="https://paypal.com" target="_blank" class="action-trigger-btn">Activate Basic</a>
             </div>
             <div class="matrix-card popular">
                 <div class="plan-title">Standard Tier</div>
                 <div class="plan-rate">R599/mo</div>
-                <a href="https://paypal.me" target="_blank" class="action-trigger-btn">Activate Standard</a>
+                <a href="https://paypal.com" target="_blank" class="action-trigger-btn">Activate Standard</a>
             </div>
             <div class="matrix-card">
                 <div class="plan-title">Business Growth</div>
                 <div class="plan-rate">R2499/mo</div>
-                <a href="https://paypal.me" target="_blank" class="action-trigger-btn">Activate Business</a>
+                <a href="https://paypal.com" target="_blank" class="action-trigger-btn">Activate Business</a>
             </div>
             <div class="matrix-card">
                 <div class="plan-title">Corporate SLA</div>
                 <div class="plan-rate">R4999/mo</div>
-                <a href="https://paypal.me" target="_blank" class="action-trigger-btn">Activate Corporate</a>
+                <a href="https://paypal.com" target="_blank" class="action-trigger-btn">Activate Corporate</a>
             </div>
         </div>
     </div>
