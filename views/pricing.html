@@ -105,8 +105,8 @@
 
     <script>
         function redirectToLoginFlow() {
-            alert("To activate an SLA Support Package, you must access your self-help cockpit center first. Routing to technical workspace login...");
-            window.location.href = "/client/login"; // Redirects straight to your exact login screen link!
+            // Removed the alert message block to perform an immediate, silent automatic redirect
+            window.location.href = "/client/login";
         }
     </script>
 </body>
