@@ -4,171 +4,239 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - SLA Command Center</title>
+    <!-- 1. Official Unified PayPal SDK script engine securely pre-loaded -->
+    <script src="https://paypal.com"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: #060709; color: #e2e8f0; padding: 30px; }
-        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1a202c; padding-bottom: 20px; margin-bottom: 30px; }
-        .logo-text { font-size: 1.4rem; font-weight: 900; }
-        .logo-text span { color: #ff3b30; }
-        .nav-links a { color: #ffffff; text-decoration: none; margin-left: 20px; font-size: 0.95rem; }
-        .logout-btn { background-color: #ff3b30; color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; }
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        .navbar {
+            background-color: #141414;
+            border-bottom: 2px solid #222;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-radius: 6px;
+        }
+        .nav-brand {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff3333;
+            letter-spacing: 1px;
+        }
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .nav-links a {
+            color: #b3b3b3;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .logout-btn {
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .main-card {
+            background-color: #141414;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        .grid-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+        .left-column { flex: 2; min-width: 300px; }
+        .right-column { flex: 1; min-width: 280px; }
         
-        .telemetry-panel { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 10px; padding: 25px; margin-bottom: 35px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
-        .telemetry-details h2 { font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 6px; }
-        .telemetry-details p { color: #718096; font-size: 13px; }
-        .active-plan-badge { background-color: rgba(255,204,0,0.1); color: #ffd60a; border: 1px solid rgba(255,204,0,0.25); padding: 8px 16px; border-radius: 6px; font-weight: 900; text-transform: uppercase; font-size: 14px; }
-        .active-plan-badge.live { background-color: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.25); }
+        .pricing-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .pricing-card {
+            background-color: #1a1a1a;
+            border: 1px solid #2d2d2d;
+            border-radius: 6px;
+            padding: 15px;
+            flex: 1;
+            min-width: 200px;
+            box-sizing: border-box;
+        }
+        .plan-name { font-size: 16px; font-weight: bold; color: #fff; }
+        .plan-price { font-size: 20px; color: #ff3333; font-weight: bold; margin: 5px 0 15px 0; }
         
-        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; width: 100%; }
-        .dashboard-card { background-color: #0f1115; border: 1px solid #1e242b; border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .card-title { font-size: 16px; font-weight: 800; margin-bottom: 6px; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; }
-        .card-subtitle { font-size: 12px; color: #4a5568; margin-bottom: 20px; }
+        .activate-btn {
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            padding: 8px;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+        .activate-btn:hover { background-color: #cc0000; }
         
-        .sub-matrix-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .matrix-box { background-color: #161a22; border: 1px solid #2d3748; border-radius: 6px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
-        .matrix-name { font-size: 14px; font-weight: 800; color: #ffffff; }
-        .matrix-price { font-size: 18px; font-weight: 900; color: #ff3b30; margin: 4px 0 10px 0; }
-        .action-sub-btn { width: 100%; padding: 10px; background-color: #ff3b30; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 12px; }
-        .cancel-pipeline-btn { background-color: transparent; color: #e53e3e; border: 1px solid #e53e3e; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .download-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #222;
+        }
+        .download-btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+        }
         
-        .download-row { display: flex; justify-content: space-between; align-items: center; background-color: #161a22; padding: 15px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #2d3748; }
-        .download-info h4 { font-size: 14px; color: #ffffff; margin-bottom: 2px; }
-        .download-info p { font-size: 12px; color: #718096; }
-        .download-btn { background-color: #007aff; color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 11px; font-weight: bold; color: #718096; margin-bottom: 6px; text-transform: uppercase; }
-        .form-group input, .form-group textarea { width: 100%; padding: 12px; background-color: #060709; border: 1px solid #2d3748; border-radius: 5px; color: white; font-size: 14px; }
-        .form-group input:focus, .form-group textarea:focus { border-color: #ff3b30; outline: none; }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .submit-ticket-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #ff3b30 0%, #b30000 100%); color: white; border: none; border-radius: 6px; font-weight: bold; text-transform: uppercase; cursor: pointer; letter-spacing: 0.5px; }
-
-        .ticket-log-row { background-color: #161a22; border: 1px solid #2d3748; padding: 15px; border-radius: 6px; margin-bottom: 12px; }
-        .ticket-log-header { display: flex; justify-content: space-between; border-bottom: 1px solid #2d3748; padding-bottom: 8px; margin-bottom: 10px; font-size: 12px; }
-        .ticket-status-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
-        .badge-open { background-color: rgba(255,59,48,0.15); color: #ff453a; }
-        .badge-onhold { background-color: rgba(255,204,0,0.15); color: #ffd60a; }
-        .badge-resolved { background-color: rgba(48,209,88,0.15); color: #30d158; }
-        .indicator-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .indicator-badge { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; }
+        .form-control {
+            width: 100%;
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 10px;
+            border-radius: 4px;
+            color: #fff;
+            box-sizing: border-box;
+        }
+        .form-control:focus { outline: none; border-color: #ff3333; }
+        
+        .submit-btn {
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .status-badge-box {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 10px 15px;
+            border-radius: 4px;
+            display: inline-block;
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+        .loading-text { color: #666; font-style: italic; font-size: 14px; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo-text">IT <span>ELEMENTS</span></div>
-        <div class="nav-links"><a href="/">Home</a><a href="/pricing">Plans</a><a href="/client/logout" class="logout-btn">Log Out Core</a></div>
-    </header>
 
-    <div class="telemetry-panel">
-        <div>
-            <h2>IT Elements Client Command Center</h2>
-            <p>Secure remote supporting matrices across South Africa. Tunnels active and fully authenticated.</p>
+    <!-- Main Navigation Architecture Panel -->
+    <nav class="navbar">
+        <div class="nav-brand">IT ELEMENTS.support</div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/pricing">Plans</a>
+            <a href="/client/login" class="logout-btn">Log Out Core</a>
         </div>
-        <div><div class="active-plan-badge" id="hud-plan-badge">Loading Status...</div></div>
-    </div>
+    </nav>
 
-    <div class="dashboard-grid">
-        <div>
-            <div class="dashboard-card" id="subscription-management-zone">
-                <div class="card-title">👑 SLA Package Activation Matrix</div>
-                <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</div>
-                <div class="sub-matrix-grid">
-                    <div class="matrix-box"><div><div class="matrix-name">Basic Support</div><div class="matrix-price">R299/mo</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Basic Support')">Activate</button></div>
-                    <div class="matrix-box"><div><div class="matrix-name">Standard Tier</div><div class="matrix-price">R599/mo</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Standard Tier')">Activate</button></div>
-                    <div class="matrix-box"><div><div class="matrix-name">Business Growth</div><div class="matrix-price">R2499/mo</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Business Growth')">Activate</button></div>
-                    <div class="matrix-box"><div><div class="matrix-name">Corporate SLA</div><div class="matrix-price">R4999/mo</div></div><button class="action-sub-btn" onclick="redirectToPaystackPlan('Corporate SLA')">Activate</button></div>
-                </div>
-            </div>
-
-            <div class="dashboard-card">
-                <div class="card-title">🚨 Engineering Queue Incident Dispatch</div>
-                <div class="card-subtitle">Encountering structural operating errors? Stream terminal details directly to active support queues.</div>
-                <div class="indicator-row">
-                    <span class="indicator-badge" style="background-color: rgba(48,209,88,0.15); color: #30d158;">✓ Handshake Live</span>
-                    <span class="indicator-badge" style="background-color: rgba(0,122,255,0.15); color: #007aff;">🔒 Encryption Enclosed</span>
-                    <span class="indicator-badge" style="background-color: rgba(255,204,0,0.15); color: #ffd60a;">⚡ Dynamic Scan Active</span>
-                </div>
-                <form action="/support" method="POST">
-                    <div class="form-group"><label>Client Verification Identity Name:</label><input type="text" name="name" required placeholder="Bongani Ngubeni"></div>
-                    <div class="form-row">
-                        <div class="form-group"><label>AnyDesk / TeamViewer ID Code:</label><input type="text" name="remoteId" required placeholder="123 456 789"></div>
-                        <div class="form-group"><label>Secure Session Password Key:</label><input type="text" name="remotePassword" required placeholder="abc1234"></div>
-                    </div>
-                    <div class="form-group"><label>Comprehensive Incident Symptom Report Log:</label><textarea name="issue" required placeholder="My printer configurations are showing errors..."></textarea></div>
-                    <button type="submit" class="submit-ticket-btn">Transmit Ticket Array to Escalation Channels 🚀</button>
-                </form>
-            </div>
-
-            <div class="dashboard-card">
-                <div class="card-title">📋 Your Active Support Tickets Logs</div>
-                <div class="card-subtitle">Real-time status tracking ledger for incident reports linked to your profile email account.</div>
-                <div id="client-tickets-ledger-body"><div class="loading-text">Querying active support records channels...</div></div>
-            </div>
+    <div class="dashboard-container">
+        
+        <!-- Welcome Matrix Core Command Card -->
+        <div class="main-card">
+            <h2 style="margin-top:0; color:#fff;">IT Elements Client Command Center</h2>
+            <p style="color:#888; font-size:14px; margin-bottom:20px;">Secure remote supporting matrices across South Africa. Tunnels active and fully authenticated.</p>
+            <div id="active-package-badge" class="status-badge-box">NO ACTIVE SLA PACKAGE</div>
         </div>
 
-        <div>
-            <div class="dashboard-card">
-                <div class="card-title">📥 Required Software Downloads</div>
-                <div class="card-subtitle">Official connectivity engines required to initiate support operations.</div>
-                <div class="download-row">
-                    <div class="download-info"><h4>AnyDesk Controller</h4><p>Lightweight remote engine exe</p></div>
-                    <a href="https://anydesk.com" target="_blank" class="download-btn">Download</a>
-                </div>
-                <div class="download-row">
-                    <div class="download-info"><h4>TeamViewer Core</h4><p>Enterprise tunnel service setup</p></div>
-                    <a href="https://teamviewer.com" target="_blank" class="download-btn">Download</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        async function loadDashboardCoreTelemetry() {
-            try {
-                const res = await fetch('/api/client/profile-data');
-                if (res.status === 401 || res.redirected) { window.location.href = "/client/login"; return; }
-                const data = await res.json();
+        <div class="grid-layout">
+            <!-- Left Workspace Pane -->
+            <div class="left-column">
                 
-                const user = data.user;
-                const tickets = data.tickets;
-                const badge = document.getElementById('hud-plan-badge');
-                const zone = document.getElementById('subscription-management-zone');
+                <!-- 1. SLA PACKAGE ACTIVATION CONTAINER -->
+                <div class="main-card">
+                    <h3 style="margin-top:0; color:#fff;">👑 SLA Package Activation Matrix</h3>
+                    <p style="color:#666; font-size:12px; margin-bottom:20px;">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</p>
+                    
+                    <div class="pricing-grid">
+                        <div class="pricing-card">
+                            <div class="plan-name">Basic Support</div>
+                            <div class="plan-price">R299/mo</div>
+                            <button type="button" class="activate-btn" onclick="initializePortalCheckout('Basic Support')">Activate</button>
+                        </div>
+                        <div class="pricing-card" style="border-color:#ff3333;">
+                            <div class="plan-name">Standard Tier</div>
+                            <div class="plan-price">R599/mo</div>
+                            <button type="button" class="activate-btn" onclick="initializePortalCheckout('Standard Tier')">Activate</button>
+                        </div>
+                        <div class="pricing-card">
+                            <div class="plan-name">Business Growth</div>
+                            <div class="plan-price">R2499/mo</div>
+                            <button type="button" class="activate-btn" onclick="initializePortalCheckout('Business Growth')">Activate</button>
+                        </div>
+                        <div class="pricing-card">
+                            <div class="plan-name">Corporate SLA</div>
+                            <div class="plan-price">R4999/mo</div>
+                            <button type="button" class="activate-btn" onclick="initializePortalCheckout('Corporate SLA')">Activate</button>
+                        </div>
+                    </div>
+                </div>
 
-                if (user && user.subscriptionStatus === 'Active') {
-                    if (badge) { badge.innerText = user.subscriptionTier; badge.className = "active-plan-badge live"; }
-                    if (zone) {
-                        zone.innerHTML = `<div class="card-title" style="color: #30d158;">🟢 Active Protection Matrix Coverage</div><p style="margin: 15px 0; font-size:14px; color:#cbd5e0;">Your monthly coverage [<strong>${user.subscriptionTier}</strong>] is active. High-priority response channels are unblocked.</p><form action="/api/cancel-subscription" method="POST" onsubmit="return confirm('Confirm monthly plan termination?');"><button type="submit" class="cancel-pipeline-btn">Terminate Support Pipeline 🚫</button></form>`;
-                    }
-                } else if (user) {
-                    if (badge) { badge.innerText = "No Active SLA Package"; badge.className = "active-plan-badge"; }
-                }
-
-                const ledgerBody = document.getElementById('client-tickets-ledger-body');
-                if (ledgerBody) {
-                    ledgerBody.innerHTML = '';
-                    if (!tickets || tickets.length === 0) {
-                        ledgerBody.innerHTML = '<div class="empty-text">🎉 Excellent! No tickets filed on record indexes.</div>';
-                    } else {
-                        tickets.forEach(ticket => {
-                            const status = ticket.status || 'Open';
-                            const badgeClass = status === 'Resolved' ? 'badge-resolved' : status === 'On Hold' ? 'badge-onhold' : 'badge-open';
-                            const formattedDate = new Date(ticket.date).toLocaleDateString();
-                            ledgerBody.innerHTML += `<div class="ticket-log-row"><div class="ticket-log-header"><span style="color:#718096;">Filed: <strong>${formattedDate}</strong></span><span class="ticket-status-badge ${badgeClass}">${status}</span></div><div style="font-size:14px; font-weight:bold; margin-bottom:5px; color:#fff;">ID: ${ticket.remoteId}</div><p style="font-size:13px; color:#cbd5e0; line-height:1.4;">${ticket.issue}</p></div>`;
-                        });
-                    }
-                }
-            } catch(e) { window.location.href = "/client/login"; }
-        }
-
-        async function redirectToPaystackPlan(name) {
-            try {
-                const res = await fetch('/api/paystack/initialize-subscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ planName: name }) });
-                const data = await res.json();
-                if (data.success && data.redirectUrl) { window.location.href = data.redirectUrl; }
-                else { alert("Gateway initialization fault."); }
-            } catch(e) { alert("Network connection fault."); }
-        }
-        window.addEventListener('DOMContentLoaded', loadDashboardCoreTelemetry);
-    </script>
-</body>
-</html>
+                <!-- 2. INCIDENT REPORT WORKFLOW SUBMISSION FORM -->
+                <div class="main-card">
+                    <h3 style="margin-top:0; color:#fff;">🚨 Engineering Queue Incident Dispatch</h3>
+                    <p style="color:#666; font-size:12px; margin-bottom:20px;">Encountering structural operating errors? Stream terminal details directly to active support queues.</p>
+                    
+                    <form action="/support" method="POST">
+                        <div class="form-group">
+                            <label>CLIENT VERIFICATION IDENTITY NAME:</label>
+                            <input type="text" name="name" class="form-control" required placeholder="Full Name">
+                        </div>
+                        <div class="form-group">
+                            <label>REGISTERED CONTACT EMAIL:</label>
+                            <input type="email" name="email" class="form-control" required placeholder="Email Address">
+                        </div>
+                        <div class="form-group">
+                            <label>ANYDESK / TEAMVIEWER ID CODE:</label>
+                            <input type="text" name="remoteId" class="form-control" required placeholder="000 000 000">
+                        </div>
+                        <div class="form-group">
+                            <label>SECURE SESSION PASSWORD KEY:</label>
+                            <input type="text" name="remotePassword" class="form-control" required placeholder="Disposable Remote Pin">
+                        </div>
+                        <div class="form-group">
+                            <label>COMPREHENSIVE INCIDENT SYMPTOM REPORT LOG:</label>
+                            <textarea name="issue" class="form-control" rows="4" required placeholder="Describe system crash metrics or error environments..."></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Transmit Ticket Array to Escalation Channels 🚀</button>
