@@ -7,7 +7,7 @@
     <style>
         body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; text-align: center; }
         .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 35px auto; border-radius: 6px; }
-        .nav-brand { font-size: 20px; font-weight: bold; color: #fff; letter-spacing: 1px; }
+        .nav-brand { font-size: 20px; font-weight: bold; color: #ff3333; letter-spacing: 1px; }
         .nav-links { display: flex; }
         .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; margin-left: 20px; font-weight: bold; }
         .nav-links a:hover { color: #ffffff; }
@@ -19,10 +19,7 @@
         .feature-title { font-size: 18px; font-weight: bold; color: #ff3333; margin-bottom: 10px; }
         .feature-desc { font-size: 13px; color: #888; line-height: 1.6; }
         .incident-box { border: 2px solid #ff3333; border-radius: 6px; padding: 35px 20px; background-color: #141414; margin-bottom: 25px; position: relative; }
-        
-        /* Fixed: Small Crimson Red Price Matrix Display */
         .price-display { font-size: 24px; color: #ff3333; font-weight: bold; margin: 20px 0; letter-spacing: 0.5px; }
-        
         .form-control { background-color: #1a1a1a; color: #ffffff; border: 1px solid #444; padding: 12px; border-radius: 4px; width: 100%; max-width: 400px; font-size: 14px; margin-bottom: 20px; box-sizing: border-box; }
         .quick-downloads-container { display: flex; justify-content: center; gap: 15px; margin: 0 auto 20px auto; flex-wrap: wrap; }
         .inline-dl-link { background-color: #1a1a1a; border: 1px solid #333; color: #ccc; text-decoration: none; padding: 6px 12px; font-size: 12px; border-radius: 4px; font-weight: bold; transition: all 0.2s; }
@@ -33,16 +30,13 @@
         .status-val.active-node { color: #4dff4d; }
         .whatsapp-floating-bubble { position: fixed; bottom: 20px; right: 20px; background-color: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 9999; text-decoration: none; transition: transform 0.2s; }
         .whatsapp-floating-bubble:hover { transform: scale(1.1); }
-        .footer-details { color: #888; font-size: 11px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; text-align: left; }
+        .footer-details { color: #888; font-size: 11px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; text-align: center; }
         #paypal-button-container { margin: 20px auto 0 auto; max-width: 400px; }
     </style>
-    <!-- Fixed: USD Core SDK to allow the payment buttons to load up safely on screen -->
     <script src="https://paypal.com"></script>
 </head>
 <body>
-
     <nav class="navbar">
-        <!-- Kept Exactly: Your original brand log text layout -->
         <div class="nav-brand">IT Elements.support</div>
         <div class="nav-links">
             <a href="/">Home</a>
@@ -51,7 +45,6 @@
             <a href="/dashboard">Client Portal</a>
         </div>
     </nav>
-
     <div class="container">
         <div class="main-card">
             <h1 style="margin-top:0; color:#fff; font-size:32px;">On-Demand Subscription IT Support</h1>
@@ -84,7 +77,6 @@
 
             <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-align:center;">SELECT DURATION ALLOCATION:</div>
             
-            <!-- Fixed: Triggering the exact function matching your screen layout properties -->
             <select class="form-control" id="duration-selector" onchange="updatedynamicIncidentPrice(this.value)">
                 <option value="1">1 Hour Dedicated Emergency Services</option>
                 <option value="2">2 Hours Dedicated Support Package</option>
@@ -95,7 +87,6 @@
 
             <div class="price-display" id="dynamic-price-tag">R 350</div>
             
-            <!-- PayPal Gateway Container -->
             <div id="paypal-button-container"></div>
         </div>
 
@@ -118,7 +109,6 @@
         </div>
     </div>
 
-    <!-- Fixed WhatsApp Floating Element Layer (Trailing dots removed completely) -->
     <a href="https://wa.me" target="_blank" class="whatsapp-floating-bubble">
         <svg style="width:32px; height:32px; fill:#fff;" viewBox="0 0 24 24">
             <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.503-5.714-1.458L0 24zm6.59-4.846c1.6.95 3.498 1.451 5.411 1.451 5.46 0 9.901-4.44 9.905-9.904.002-2.646-1.02-5.133-2.878-6.993-1.858-1.858-4.346-2.88-6.989-2.88-5.464 0-9.903 4.44-9.908 9.903-.001 1.921.502 3.798 1.457 5.4l-.993 3.626 3.722-.976zm11.567-7.382c-.314-.158-1.854-.915-2.134-1.015-.281-.101-.484-.151-.688.151-.204.303-.787.98-.965 1.181-.177.202-.355.228-.669.07-1.22-.61-2.094-1.1-2.923-2.522-.218-.376.218-.349.624-1.159.07-.139.035-.26-.017-.362-.053-.102-.483-1.164-.662-1.597-.175-.421-.368-.363-.507-.37l-.431-.009c-.149 0-.393.055-.599.281-.206.226-.787.77-0.787 1.878s.804 2.17 0.915 2.322c.113.152 1.582 2.415 3.832 3.387.536.231.954.369 1.28.473.537.171 1.026.147 1.411.089.431-.064 1.854-.758 2.115-1.454.26-.697.26-1.294.183-1.421-.077-.127-.282-.204-.596-.362z"/>
@@ -127,9 +117,9 @@
 
     <script>
         const baseRate = 350;
-        const usdRatePerHour = 20; // Maps R350 to $20 USD internally for checkout validation
+        const usdRatePerHour = 20;
 
-        // Fixed: Exact casing to resolve the price tag alternation lag
+        // Fixed: Spelled element locator correctly with a capital I (Id)
         function updatedynamicIncidentPrice(hours) {
             const priceTag = document.getElementById('dynamic-price-tag');
             const totalRand = baseRate * parseInt(hours);
@@ -147,19 +137,19 @@
                             currency_code: 'USD',
                             value: totalUSDValue.toString()
                         },
-                        description: "IT Elements Support Request - Duration allocation: " + hourSelector.value + " Hour(s)"
+                        description: "IT Elements Support Request - Hours: " + hourSelector.value
                     }]
                 });
             },
             onApprove: function(data, actions) {
                 return actions.order.capture().then(function(details) {
-                    alert('Transaction approved safely! Directing down to incident logs setup queue...');
+                    alert('Transaction approved successfully!');
                     window.location.href = "/support";
                 });
             },
             onError: function(err) {
-                console.error("Gateway Outage:", err);
-                alert("Payment portal connection failure. Please confirm account settings properties.");
+                console.error("PayPal Error:", err);
+                alert("Payment layout error initialization fault.");
             }
         }).render('#paypal-button-container');
     </script>
