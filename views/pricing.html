@@ -125,9 +125,11 @@
             color: #666;
             margin-bottom: 20px;
         }
+        
+        /* 🚨 PRICE ELEMENT STYLING - Altered text output to corporate engineering red */
         .plan-price {
             font-size: 28px;
-            color: #4da6ff;
+            color: #ff3333;
             font-weight: 700;
             margin-bottom: 25px;
             border-bottom: 1px solid #222;
@@ -155,7 +157,7 @@
             margin-left: -1em;
         }
 
-        /* Action Gateway Buttons Layout - Uniform Red Color */
+        /* Action Gateway Buttons Layout */
         .subscribe-btn {
             background-color: #ff3333;
             color: #ffffff;
@@ -218,7 +220,7 @@
         
         <div class="pricing-grid">
             
-            <!-- Tier 1: Basic Support (Priced at $17.00 USD / approx R299) -->
+            <!-- Tier 1: Basic Support -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Basic Support</div>
@@ -232,7 +234,7 @@
                 <button class="subscribe-btn" onclick="initiatePayPalCheckout('Basic Support', 'LF9LDQEYRQRVE')">Subscribe Basic</button>
             </div>
 
-            <!-- Tier 2: Standard Tier (Priced at $34.00 USD / approx R599) -->
+            <!-- Tier 2: Standard Tier (Most Popular) -->
             <div class="pricing-card popular">
                 <div class="popular-badge">Most Popular</div>
                 <div>
@@ -247,7 +249,7 @@
                 <button class="subscribe-btn" onclick="initiatePayPalCheckout('Standard Tier', 'LF9LDQEYRQRVE')">Subscribe Standard</button>
             </div>
 
-            <!-- Tier 3: Business Growth (Priced at $140.00 USD / approx R2499) -->
+            <!-- Tier 3: Business Growth -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Business Growth</div>
@@ -261,7 +263,7 @@
                 <button class="subscribe-btn" onclick="initiatePayPalCheckout('Business Growth', 'LF9LDQEYRQRVE')">Subscribe Business</button>
             </div>
 
-            <!-- Tier 4: Corporate SLA (Priced at $280.00 USD / approx R4999) -->
+            <!-- Tier 4: Corporate SLA -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Corporate SLA</div>
@@ -278,15 +280,17 @@
         </div>
     </div>
 
-    <!-- 1. Load the official PayPal SDK Script directly from your live window configurations -->
+    <!-- Official PayPal SDK Integration Script -->
     <script src="https://paypal.com"></script>
 
-    <!-- 2. Execution Checkout Core Controller -->
+    <!-- Execution Checkout Core Controller -->
     <script>
         function initiatePayPalCheckout(planName, buttonId) {
-            // Remove any open modal elements if they exist on the page layout
             const oldModal = document.getElementById('paypal-checkout-modal');
             if (oldModal) oldModal.remove();
 
-            // Create a clean floating popup layout box to display your secure payment gateways safely
             const overlayModal = document.createElement('div');
+            overlayModal.id = 'paypal-checkout-modal';
+            overlayModal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; display:flex; justify-content:center; align-items:center;';
+
+            overlayModal.innerHTML = `
