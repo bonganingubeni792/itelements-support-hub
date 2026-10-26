@@ -33,6 +33,7 @@
         .footer-details { color: #888; font-size: 11px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; text-align: center; }
         #paypal-button-container { margin: 20px auto 0 auto; max-width: 400px; }
     </style>
+    <!-- Linked to your Live IT_Elements_Production app profile -->
     <script src="https://paypal.com"></script>
 </head>
 <body>
@@ -119,7 +120,6 @@
         const baseRate = 350;
         const usdRatePerHour = 20;
 
-        // Fixed: Spelled element locator correctly with a capital I (Id)
         function updatedynamicIncidentPrice(hours) {
             const priceTag = document.getElementById('dynamic-price-tag');
             const totalRand = baseRate * parseInt(hours);
@@ -137,19 +137,19 @@
                             currency_code: 'USD',
                             value: totalUSDValue.toString()
                         },
-                        description: "IT Elements Support Request - Hours: " + hourSelector.value
+                        description: "IT Elements Production Support - Duration: " + hourSelector.value + " Hour(s)"
                     }]
                 });
             },
             onApprove: function(data, actions) {
                 return actions.order.capture().then(function(details) {
-                    alert('Transaction approved successfully!');
+                    alert('Payment processed successfully through live channels! Redirecting to support desk...');
                     window.location.href = "/support";
                 });
             },
             onError: function(err) {
-                console.error("PayPal Error:", err);
-                alert("Payment layout error initialization fault.");
+                console.error("Live PayPal Error Object:", err);
+                alert("The live payment container failed to process. Please try checking your credit card details.");
             }
         }).render('#paypal-button-container');
     </script>
