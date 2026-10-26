@@ -126,6 +126,7 @@
             margin-bottom: 20px;
         }
         
+        /* PRICE ELEMENT STYLING - Set to bright corporate red */
         .plan-price {
             font-size: 28px;
             color: #ff3333;
@@ -156,7 +157,7 @@
             margin-left: -1em;
         }
 
-        /* Action Gateway Buttons Layout - Red Theme */
+        /* Action Buttons Layout - Corporate Red Globally */
         .subscribe-btn {
             background-color: #ff3333;
             color: #ffffff;
@@ -230,7 +231,7 @@
                         <li>Malware & Virus Cleanups</li>
                     </ul>
                 </div>
-                <button type="button" class="subscribe-btn" onclick="openFixedButtonCheckout('Basic Support', 'LF9LDQEYRQRVE')">Subscribe Basic</button>
+                <button type="button" class="subscribe-btn" onclick="initiatePayPalCheckout('Basic Support', 'LF9LDQEYRQRVE')">Subscribe Basic</button>
             </div>
 
             <!-- Tier 2: Standard Tier (Live Smart Subscription Plan) -->
@@ -245,7 +246,7 @@
                         <li>4-Hour Priority SLA Response</li>
                     </ul>
                 </div>
-                <button type="button" class="subscribe-btn" onclick="openSmartSubscriptionCheckout('Standard Tier', 'P-8P327551UG640830WNLPPVDI')">Subscribe Standard</button>
+                <button type="button" class="subscribe-btn" onclick="initiatePayPalCheckout('Standard Tier', 'P-8P327551UG640830WNLPPVDI')">Subscribe Standard</button>
             </div>
 
             <!-- Tier 3: Business Growth (Live Smart Subscription Plan) -->
@@ -259,7 +260,7 @@
                         <li>2-Hour Express SLA Reply</li>
                     </ul>
                 </div>
-                <button type="button" class="subscribe-btn" onclick="openSmartSubscriptionCheckout('Business Growth', 'P-70E84340AX6323322NLPQTEA')">Subscribe Business</button>
+                <button type="button" class="subscribe-btn" onclick="initiatePayPalCheckout('Business Growth', 'P-70E84340AX6323322NLPQTEA')">Subscribe Business</button>
             </div>
 
             <!-- Tier 4: Corporate SLA (Placeholder until ID added) -->
@@ -280,7 +281,7 @@
     </div>
 
     <!-- Official Unified PayPal SDK script engine -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AZxbiLFia3e_9VYD-Hk2Df8MVLgOiTzjf8Hvk86a8moOLKsJn9JCKKaEWKPLetkNwpJ-tVzvEofpGbJE&vault=true&intent=subscription"></script>
+    <script src="https://paypal.com"></script>
 
     <!-- Execution Checkout Core Control Module -->
     <script>
