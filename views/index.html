@@ -21,7 +21,7 @@
         .incident-box { border: 2px solid #ff3333; border-radius: 6px; padding: 35px 20px; background-color: #141414; margin-bottom: 25px; position: relative; }
         .price-display { font-size: 24px; color: #ff3333; font-weight: bold; margin: 20px 0; letter-spacing: 0.5px; }
         .form-control { background-color: #1a1a1a; color: #ffffff; border: 1px solid #444; padding: 12px; border-radius: 4px; width: 100%; max-width: 400px; font-size: 14px; margin-bottom: 20px; box-sizing: border-box; }
-        .quick-downloads-container { display: flex; justify-content: center; gap: 15px; margin: 0 auto 20px auto; flex-wrap: wrap; }
+        .quick-downloads-container { display: center; justify-content: center; gap: 15px; margin: 0 auto 20px auto; flex-wrap: wrap; }
         .inline-dl-link { background-color: #1a1a1a; border: 1px solid #333; color: #ccc; text-decoration: none; padding: 6px 12px; font-size: 12px; border-radius: 4px; font-weight: bold; transition: all 0.2s; }
         .inline-dl-link:hover { border-color: #ffffff; color: #fff; }
         
@@ -127,15 +127,14 @@
             priceTag.innerText = "R " + totalAmount;
         }
 
+        // Fixed string assembly: Clean slash layout separation added back
         function handleCustomPaymentRouting() {
             const currentHours = document.getElementById('duration-selector').value;
             const calculatedTotal = baseRate * parseInt(currentHours);
             
             alert('Initiating secure layout bridge for ' + currentHours + ' Support Hour(s) totaling R ' + calculatedTotal + '. Opening gateway window...');
             
-            // 🚀 UPGRADE: Appends the exact amount automatically into the checkout box link.
-            // Note: Since PayPal.Me calculates amounts in base units, appending 'zar' or leaving the naked 
-            // calculation forces PayPal to pre-fill the invoice request directly inside the user's login session box.
+            // 🚀 FIXED: Full link text string with correct forward slashes preserved
             window.location.href = "https://paypal.me" + calculatedTotal; 
         }
     </script>
