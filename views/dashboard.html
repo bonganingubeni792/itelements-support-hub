@@ -20,7 +20,10 @@
         .plan-name { font-size: 16px; font-weight: bold; color: #fff; margin-bottom: 5px; }
         .plan-price { font-size: 24px; color: #ff3333; font-weight: bold; margin: 10px 0; }
         .bank-info-box { background-color: #0b0b0b; border: 1px dashed #ff3333; border-radius: 4px; padding: 12px; margin-bottom: 15px; font-size: 12px; width: 100%; box-sizing: border-box; text-align: left; line-height: 1.5; color: #ddd; }
-        .eft-whatsapp-btn { background-color: #25d366; color: white; border: none; padding: 12px; width: 100%; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        
+        .eft-whatsapp-btn { background-color: #25d366; color: white; border: none; padding: 14px; width: 100%; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.2s; }
+        .eft-whatsapp-btn:hover { background-color: #1ebd58; }
+
         .form-group { text-align: left; margin-bottom: 18px; width: 100%; }
         .form-label { font-size: 11px; font-weight: bold; color: #888; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; display: block; }
         .form-input, .form-textarea { background-color: #0a0a0a; color: #ffffff; border: 1px solid #222; padding: 12px; border-radius: 4px; width: 100%; font-size: 14px; box-sizing: border-box; }
@@ -54,6 +57,7 @@
             <div class="card-title">IT Elements Client Command Center</div>
             <div class="card-subtitle" style="margin-bottom:0;">Secure remote supporting matrices across South Africa. Tunnels active and fully authenticated.</div>
         </div>
+
         <div class="main-card">
             <div class="card-title">👑 SLA Package Activation Matrix</div>
             <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</div>
@@ -61,29 +65,30 @@
                 <div class="plan-item">
                     <div class="plan-name">Basic Support</div>
                     <div class="plan-price">R299/mo</div>
-                    <div class="bank-info-box">Capitec • Acc Name: It Elements Shop<br>Acc: 2539607590 • BIC: CABLZAJJ</div>
-                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Basic Support Tier', 'R299')">Activate via EFT 💬</button>
+                    <div class="bank-info-box">Capitec Business Account<br>Acc Name: It Elements Shop<br>Acc Num: 2539607590<br>Branch Code: 470010</div>
+                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Basic Support Tier', 'R299')">Send a Proof of Payment 💬</button>
                 </div>
                 <div class="plan-item">
                     <div class="plan-name">Standard Tier</div>
                     <div class="plan-price">R599/mo</div>
-                    <div class="bank-info-box">Capitec • Acc Name: It Elements Shop<br>Acc: 2539607590 • BIC: CABLZAJJ</div>
-                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Standard Support Tier', 'R599')">Activate via EFT 💬</button>
+                    <div class="bank-info-box">Capitec Business Account<br>Acc Name: It Elements Shop<br>Acc Num: 2539607590<br>Branch Code: 470010</div>
+                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Standard Support Tier', 'R599')">Send a Proof of Payment 💬</button>
                 </div>
                 <div class="plan-item">
                     <div class="plan-name">Business Growth</div>
                     <div class="plan-price">R2499/mo</div>
-                    <div class="bank-info-box">Capitec • Acc Name: It Elements Shop<br>Acc: 2539607590 • BIC: CABLZAJJ</div>
-                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Business Growth Tier', 'R2499')">Activate via EFT 💬</button>
+                    <div class="bank-info-box">Capitec Business Account<br>Acc Name: It Elements Shop<br>Acc Num: 2539607590<br>Branch Code: 470010</div>
+                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Business Growth Tier', 'R2499')">Send a Proof of Payment 💬</button>
                 </div>
                 <div class="plan-item">
                     <div class="plan-name">Corporate SLA</div>
                     <div class="plan-price">R4999/mo</div>
-                    <div class="bank-info-box">Capitec • Acc Name: It Elements Shop<br>Acc: 2539607590 • BIC: CABLZAJJ</div>
-                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Corporate SLA Tier', 'R4999')">Activate via EFT 💬</button>
+                    <div class="bank-info-box">Capitec Business Account<br>Acc Name: It Elements Shop<br>Acc Num: 2539607590<br>Branch Code: 470010</div>
+                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Corporate SLA Tier', 'R4999')">Send a Proof of Payment 💬</button>
                 </div>
             </div>
         </div>
+
         <div class="main-card">
             <div class="card-title">🚨 Engineering Queue Incident Dispatch</div>
             <div class="card-subtitle">Encountering structural operating errors? Stream terminal details directly to active support queues.</div>
@@ -105,14 +110,16 @@
                     <label class="form-label">Comprehensive Incident Symptom Report Log:</label>
                     <textarea name="issue" class="form-textarea" rows="4" placeholder="Describe system crash slow downs or errors here..." required></textarea>
                 </div>
-                <button type="submit" class="submit-ticket-btn">Transmit Ticket Array to Escalation Channels 🚀</button>
+                <button type="submit" class="submit-ticket-btn">Transmit Ticket Array to Escalation Channels ⚖️</button>
             </form>
         </div>
+
         <div class="main-card">
             <div class="card-title">📋 Your Active Support Tickets Logs</div>
             <div class="card-subtitle">Real-time status tracking ledger for incident reports linked to your profile email account.</div>
             <div style="color:#666; font-size:13px; font-style:italic; text-align:center; padding:10px 0;">Querying active support records channels...</div>
         </div>
+
         <div class="main-card">
             <div class="card-title">📥 Required Software Downloads</div>
             <div class="card-subtitle" style="margin-bottom:15px;">Official connectivity engines required to initiate support operations.</div>
@@ -134,10 +141,12 @@
             </div>
         </div>
     </div>
+
     <script>
         function triggerDashboardPlanWhatsApp(tierName, billingPrice) {
-            alert("⚠️ Subscription Gateway Notice:\nOur digital processing gateways are currently undergoing live business review loops.\n\nPlease process your monthly tier transfer via Capitec business bank deposit and click OK to alert support nodes via WhatsApp for manual account activation.");
-            const txtMsg = encodeURIComponent("Hello IT Elements Network, I would like to activate the " + tierName + " premium contract allocation listed at " + billingPrice + "/mo. I have processed the Capitec bank deposit transfer and attached my proof of payment receipt layout.");
+            alert("🔒 Secure Billing Channel Notice:\nOur direct gateway processing accounts are currently undergoing live security review validations.\n\nPlease process your payment via Capitec deposit transfer and attach your proof of payment receipt on the WhatsApp chat window that opens next.");
+            
+            const txtMsg = encodeURIComponent("Hello IT Elements Support Node, I would like to activate the premium " + tierName + " contract allocation listed at " + billingPrice + "/mo. I have completed the Capitec business deposit transfer to It Elements Shop (Acc: 2539607590, Branch: 470010) and attached my proof of payment receipt.");
             window.location.href = "https://wa.me" + txtMsg;
         }
     </script>
