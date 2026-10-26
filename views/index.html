@@ -15,12 +15,15 @@
         .feature-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 25px 20px; flex: 1; min-width: 280px; text-align: center; text-decoration: none; color: inherit; }
         .feature-title { font-size: 18px; font-weight: bold; color: #ff3333; margin-bottom: 10px; }
         .feature-desc { font-size: 13px; color: #888; line-height: 1.6; }
-        .incident-box { border: 2px solid #ff3333; border-radius: 6px; padding: 25px 20px; background-color: #141414; margin-bottom: 25px; max-width: 650px; margin: 0 auto 25px auto; }
+        .incident-box { border: 2px solid #ff3333; border-radius: 6px; padding: 25px 20px; background-color: #141414; margin-bottom: 25px; max-width: 650px; margin: 0 auto 25px auto; box-sizing: border-box; }
         .price-display { font-size: 24px; color: #ff3333; font-weight: bold; margin: 15px 0; }
-        .form-control { background-color: #1a1a1a; color: #ffffff; border: 1px solid #444; padding: 12px; border-radius: 4px; width: 100%; max-width: 400px; font-size: 14px; margin-bottom: 15px; text-align: center; }
+        .form-control { background-color: #1a1a1a; color: #ffffff; border: 1px solid #444; padding: 12px; border-radius: 4px; width: 100%; max-width: 400px; font-size: 14px; margin-bottom: 15px; text-align: center; box-sizing: border-box; }
         .quick-downloads-container { display: flex; justify-content: center; gap: 15px; margin: 0 auto 20px auto; }
         .inline-dl-link { background-color: #1a1a1a; border: 1px solid #333; color: #ccc; text-decoration: none; padding: 6px 12px; font-size: 12px; border-radius: 4px; font-weight: bold; }
-        .pay-action-btn { background-color: #ff3333; color: #ffffff; border: none; padding: 14px 28px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; width: 100%; max-width: 320px; margin: 10px auto; display: block; }
+        
+        .paystack-btn { background-color: #38b2ac; color: #ffffff; border: none; padding: 14px 28px; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; width: 100%; max-width: 320px; margin: 10px auto; display: block; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: background 0.2s; }
+        .paystack-btn:hover { background-color: #2c9791; }
+
         .status-grid { display: flex; flex-wrap: wrap; gap: 15px; }
         .status-card { background-color: #141414; border: 1px solid #222; padding: 15px; flex: 1; min-width: 200px; border-radius: 6px; text-align: left; }
         .status-val { color: #4da6ff; font-weight: bold; font-size: 15px; }
@@ -28,6 +31,7 @@
         .whatsapp-floating-bubble { position: fixed; bottom: 20px; right: 20px; background-color: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; z-index: 9999; text-decoration: none; }
         .footer-details { color: #888; font-size: 11px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; }
     </style>
+    <script src="https://paystack.co"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -70,6 +74,8 @@
                 <a href="https://teamviewer.com" target="_blank" class="inline-dl-link">🔒 Download TeamViewer</a>
             </div>
 
+            <input type="email" id="customer-email" class="form-control" placeholder="Enter Your Email Address" required>
+
             <div style="font-size:12px; color:#aaa; margin-bottom:8px;">SELECT DURATION ALLOCATION:</div>
             <select class="form-control" id="duration-selector" onchange="updatedynamicIncidentPrice(this.value)">
                 <option value="1">1 Hour Dedicated Emergency Support</option>
@@ -80,7 +86,8 @@
             </select>
 
             <div class="price-display" id="dynamic-price-tag">R 350</div>
-            <button class="pay-action-btn" onclick="handleCustomPaymentRouting()">PAY VIA PAYPAL 💳</button>
+            
+            <button type="button" class="paystack-btn" onclick="payWithPaystack()">Pay Securely with Card / EFT 💳</button>
         </div>
 
         <div class="main-card">
@@ -112,13 +119,32 @@
             document.getElementById('dynamic-price-tag').innerText = "R " + (baseRate * parseInt(hours));
         }
 
-        function handleCustomPaymentRouting() {
+        function payWithPaystack() {
+            const email = document.getElementById('customer-email').value.trim();
+            if (!email) {
+                alert("Please enter a valid email address to route your receipt securely.");
+                return;
+            }
+
             const hours = document.getElementById('duration-selector').value;
-            const amount = baseRate * parseInt(hours);
-            
-            // This builds the precise URL layout with no broken parameters
-            const paymentUrl = "https://paypal.me" + amount;
-            window.location.href = paymentUrl;
+            const totalZARAmount = baseRate * parseInt(hours);
+
+            let handler = PaystackPop.setup({
+                // 🔒 SECURED: Fully linked with your active test channel token environment
+                key: 'pk_test_131c4a6591f65f4e8ea6fa6f4bcb59016c6ed43b',
+                email: email,
+                amount: totalZARAmount * 100, 
+                currency: 'ZAR',
+                ref: 'ITE-' + Math.floor((Math.random() * 100000000) + 1),
+                callback: function(response) {
+                    alert('Simulated transaction approved successfully! Reference ID: ' + response.reference);
+                    window.location.href = "/support";
+                },
+                onClose: function() {
+                    alert('Test interface dismissed.');
+                }
+            });
+            handler.openIframe();
         }
     </script>
 </body>
