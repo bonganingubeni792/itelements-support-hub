@@ -248,7 +248,7 @@
                 <button type="button" class="subscribe-btn" onclick="openSmartSubscriptionCheckout('Standard Tier', 'P-8P327551UG640830WNLPPVDI')">Subscribe Standard</button>
             </div>
 
-            <!-- Tier 3: Business Growth (Placeholder until ID added) -->
+            <!-- Tier 3: Business Growth (Live Smart Subscription Plan) -->
             <div class="pricing-card">
                 <div>
                     <div class="plan-name">Business Growth</div>
@@ -259,7 +259,7 @@
                         <li>2-Hour Express SLA Reply</li>
                     </ul>
                 </div>
-                <button type="button" class="subscribe-btn" onclick="alert('Configuration Pending: Please create a Smart Subscription Plan for Business Growth in PayPal first!')">Subscribe Business</button>
+                <button type="button" class="subscribe-btn" onclick="openSmartSubscriptionCheckout('Business Growth', 'P-70E84340AX6323322NLPQTEA')">Subscribe Business</button>
             </div>
 
             <!-- Tier 4: Corporate SLA (Placeholder until ID added) -->
@@ -284,7 +284,6 @@
 
     <!-- Execution Checkout Core Control Module -->
     <script>
-        // Creates the popup backdrop interface container globally
         function createCheckoutModal(planName) {
             const oldModal = document.getElementById('paypal-checkout-modal');
             if (oldModal) oldModal.remove();
