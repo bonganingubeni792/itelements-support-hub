@@ -5,114 +5,141 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - SLA Command Center</title>
     <style>
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; }
-        .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-radius: 6px; }
-        .nav-brand { font-size: 20px; font-weight: bold; color: #ff3333; letter-spacing: 1px; }
-        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; margin-right: 15px; }
-        .logout-btn { background-color: #ff3333; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; text-decoration: none; font-size: 13px; }
-        .main-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 20px; margin-bottom: 25px; }
-        
-        /* 📐 GRID SYSTEM MATRIX: Forces cards to sit uniformly next to each other across desktop rows */
-        .matrix-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 15px; }
-        .matrix-card { background-color: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 6px; padding: 25px; flex: 1; min-width: 220px; box-sizing: border-box; text-align: left; }
-        .matrix-card.popular { border-color: #ff3333; }
-        .plan-title { font-size: 18px; font-weight: bold; color: #fff; margin: 0 0 5px 0; }
-        .plan-rate { font-size: 24px; color: #ff3333; font-weight: bold; margin-bottom: 20px; }
-        
-        .action-trigger-btn { background-color: #ff3333; color: white; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 13px; text-align: center; display: block; margin-top: 15px; text-decoration: none; box-sizing: border-box; }
-        .action-trigger-btn:hover { background-color: #cc0000; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #aaa; text-align: left; }
-        .form-control { width: 100%; background-color: #1a1a1a; border: 1px solid #333; padding: 10px; border-radius: 4px; color: #fff; box-sizing: border-box; }
-        .submit-btn { background-color: #ff3333; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; }
-        .status-badge-box { background-color: #1a1a1a; border: 1px solid #333; padding: 10px 15px; border-radius: 4px; display: inline-block; font-size: 13px; font-weight: bold; color: #ffcc00; }
-        .download-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #222; }
-        .download-btn { background-color: #1a73e8; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 12px; font-weight: bold; }
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 15px; text-align: center; box-sizing: border-box; }
+        .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px; border-radius: 6px; margin-bottom: 25px; }
+        .nav-brand { font-size: 18px; font-weight: bold; color: #ff3333; letter-spacing: 0.5px; }
+        .nav-links { display: flex; gap: 15px; font-size: 13px; font-weight: bold; }
+        .nav-links a { color: #b3b3b3; text-decoration: none; }
+        .nav-links a.logout-btn { color: #ff3333; }
+        .container { max-width: 1100px; margin: 0 auto; box-sizing: border-box; padding: 0 5px; }
+        .main-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 25px 15px; margin-bottom: 20px; text-align: left; box-sizing: border-box; }
+        .card-title { font-size: 20px; font-weight: bold; color: #fff; margin: 0 0 5px 0; }
+        .card-subtitle { font-size: 12px; color: #666; margin-bottom: 20px; line-height: 1.5; }
+        .plans-grid { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+        .plan-item { background-color: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 6px; padding: 20px 15px; box-sizing: border-box; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .plan-name { font-size: 16px; font-weight: bold; color: #fff; margin-bottom: 5px; }
+        .plan-price { font-size: 24px; color: #ff3333; font-weight: bold; margin: 10px 0; }
+        .bank-info-box { background-color: #0b0b0b; border: 1px dashed #ff3333; border-radius: 4px; padding: 12px; margin-bottom: 15px; font-size: 12px; width: 100%; box-sizing: border-box; text-align: left; line-height: 1.5; color: #ddd; }
+        .eft-whatsapp-btn { background-color: #25d366; color: white; border: none; padding: 12px; width: 100%; font-size: 13px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .form-group { text-align: left; margin-bottom: 18px; width: 100%; }
+        .form-label { font-size: 11px; font-weight: bold; color: #888; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .form-input, .form-textarea { background-color: #0a0a0a; color: #ffffff; border: 1px solid #222; padding: 12px; border-radius: 4px; width: 100%; font-size: 14px; box-sizing: border-box; }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: #ff3333; }
+        .submit-ticket-btn { background-color: #ff3333; color: white; border: none; padding: 14px; width: 100%; border-radius: 4px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; }
+        .dl-grid { display: flex; flex-direction: column; gap: 12px; }
+        .dl-row { background-color: #1a1a1a; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; text-align: left; }
+        .dl-title { font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 3px; }
+        .dl-desc { font-size: 12px; color: #666; }
+        .dl-btn { background-color: #222; color: #fff; border: 1px solid #444; padding: 8px 16px; border-radius: 4px; text-decoration: none; font-size: 12px; font-weight: bold; }
+        @media (min-width: 650px) {
+            .navbar { flex-direction: row; justify-content: space-between; padding: 15px 30px; }
+            .plans-grid { flex-direction: row; gap: 15px; }
+            .plan-item { flex: 1; }
+            .dl-grid { flex-direction: row; gap: 15px; }
+            .dl-row { flex: 1; }
+        }
     </style>
 </head>
 <body>
-
     <nav class="navbar">
-        <div class="nav-brand">IT ELEMENTS.support</div>
+        <div class="nav-brand">IT Elements - Access Control Center</div>
         <div class="nav-links">
             <a href="/">Home</a>
             <a href="/pricing">Plans</a>
-            <a href="/client/login" class="logout-btn">Log Out Core</a>
+            <a href="/client/login" class="logout-btn">Log Out Core 🔌</a>
         </div>
     </nav>
-
-    <div class="main-card">
-        <h2 style="margin-top:0; color:#fff;">IT Elements Client Command Center</h2>
-        <p style="color:#888; font-size:14px; margin-bottom:20px;">Secure remote supporting matrices across South Africa. Tunnels active and fully authenticated.</p>
-        <div id="active-package-badge" class="status-badge-box">NO ACTIVE SLA PACKAGE</div>
-    </div>
-
-    <!-- 1. SLA Package matrix linked to direct verified external hosted payment checkouts -->
-    <div class="main-card">
-        <h3 style="margin-top:0; color:#fff;">👑 SLA Package Activation Matrix</h3>
-        <p style="color:#666; font-size:12px; margin-bottom:20px;">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile balance.</p>
-        
-        <div class="matrix-grid">
-            <div class="matrix-card">
-                <div class="plan-title">Basic Support</div>
-                <div class="plan-rate">R299/mo</div>
-                <a href="https://paypal.com" target="_blank" class="action-trigger-btn">Activate Basic</a>
+    <div class="container">
+        <div class="main-card">
+            <div class="card-title">IT Elements Client Command Center</div>
+            <div class="card-subtitle" style="margin-bottom:0;">Secure remote supporting matrices across South Africa. Tunnels active and fully authenticated.</div>
+        </div>
+        <div class="main-card">
+            <div class="card-title">👑 SLA Package Activation Matrix</div>
+            <div class="card-subtitle">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</div>
+            <div class="plans-grid">
+                <div class="plan-item">
+                    <div class="plan-name">Basic Support</div>
+                    <div class="plan-price">R299/mo</div>
+                    <div class="bank-info-box">Capitec • Acc Name: It Elements Shop<br>Acc: 2539607590 • BIC: CABLZAJJ</div>
+                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Basic Support Tier', 'R299')">Activate via EFT 💬</button>
+                </div>
+                <div class="plan-item">
+                    <div class="plan-name">Standard Tier</div>
+                    <div class="plan-price">R599/mo</div>
+                    <div class="bank-info-box">Capitec • Acc Name: It Elements Shop<br>Acc: 2539607590 • BIC: CABLZAJJ</div>
+                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Standard Support Tier', 'R599')">Activate via EFT 💬</button>
+                </div>
+                <div class="plan-item">
+                    <div class="plan-name">Business Growth</div>
+                    <div class="plan-price">R2499/mo</div>
+                    <div class="bank-info-box">Capitec • Acc Name: It Elements Shop<br>Acc: 2539607590 • BIC: CABLZAJJ</div>
+                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Business Growth Tier', 'R2499')">Activate via EFT 💬</button>
+                </div>
+                <div class="plan-item">
+                    <div class="plan-name">Corporate SLA</div>
+                    <div class="plan-price">R4999/mo</div>
+                    <div class="bank-info-box">Capitec • Acc Name: It Elements Shop<br>Acc: 2539607590 • BIC: CABLZAJJ</div>
+                    <button class="eft-whatsapp-btn" onclick="triggerDashboardPlanWhatsApp('Corporate SLA Tier', 'R4999')">Activate via EFT 💬</button>
+                </div>
             </div>
-            <div class="matrix-card popular">
-                <div class="plan-title">Standard Tier</div>
-                <div class="plan-rate">R599/mo</div>
-                <a href="https://paypal.com" target="_blank" class="action-trigger-btn">Activate Standard</a>
-            </div>
-            <div class="matrix-card">
-                <div class="plan-title">Business Growth</div>
-                <div class="plan-rate">R2499/mo</div>
-                <a href="https://paypal.com" target="_blank" class="action-trigger-btn">Activate Business</a>
-            </div>
-            <div class="matrix-card">
-                <div class="plan-title">Corporate SLA</div>
-                <div class="plan-rate">R4999/mo</div>
-                <a href="https://paypal.com" target="_blank" class="action-trigger-btn">Activate Corporate</a>
+        </div>
+        <div class="main-card">
+            <div class="card-title">🚨 Engineering Queue Incident Dispatch</div>
+            <div class="card-subtitle">Encountering structural operating errors? Stream terminal details directly to active support queues.</div>
+            <div style="color: #4dff4d; font-size:11px; margin-bottom:20px; font-weight:bold; text-align:left;">✓ Handshake Live 🔒 Encryption Enclosed ⚡ Dynamic Scan Active</div>
+            <form action="/support" method="POST">
+                <div class="form-group">
+                    <label class="form-label">Client Verification Identity Name:</label>
+                    <input type="text" name="name" class="form-input" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">AnyDesk / TeamViewer ID Code:</label>
+                    <input type="text" name="remoteId" class="form-input" placeholder="000 000 000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Secure Session Password Key:</label>
+                    <input type="text" name="remotePassword" class="form-input" placeholder="Password Key Pin" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Comprehensive Incident Symptom Report Log:</label>
+                    <textarea name="issue" class="form-textarea" rows="4" placeholder="Describe system crash slow downs or errors here..." required></textarea>
+                </div>
+                <button type="submit" class="submit-ticket-btn">Transmit Ticket Array to Escalation Channels 🚀</button>
+            </form>
+        </div>
+        <div class="main-card">
+            <div class="card-title">📋 Your Active Support Tickets Logs</div>
+            <div class="card-subtitle">Real-time status tracking ledger for incident reports linked to your profile email account.</div>
+            <div style="color:#666; font-size:13px; font-style:italic; text-align:center; padding:10px 0;">Querying active support records channels...</div>
+        </div>
+        <div class="main-card">
+            <div class="card-title">📥 Required Software Downloads</div>
+            <div class="card-subtitle" style="margin-bottom:15px;">Official connectivity engines required to initiate support operations.</div>
+            <div class="dl-grid">
+                <div class="dl-row">
+                    <div>
+                        <div class="dl-title">AnyDesk Controller</div>
+                        <div class="dl-desc">Lightweight remote engine exe</div>
+                    </div>
+                    <a href="https://anydesk.com" target="_blank" class="dl-btn">Download</a>
+                </div>
+                <div class="dl-row">
+                    <div>
+                        <div class="dl-title">TeamViewer Core</div>
+                        <div class="dl-desc">Enterprise tunnel service setup</div>
+                    </div>
+                    <a href="https://teamviewer.com" target="_blank" class="dl-btn">Download</a>
+                </div>
             </div>
         </div>
     </div>
-
-    <div class="main-card">
-        <h3 style="margin-top:0; color:#fff;">🚨 Engineering Queue Incident Dispatch</h3>
-        <form action="/support" method="POST">
-            <div class="form-group"><label>CLIENT VERIFICATION IDENTITY NAME:</label><input type="text" name="name" class="form-control" required placeholder="Full Name"></div>
-            <div class="form-group"><label>REGISTERED CONTACT EMAIL:</label><input type="email" name="email" class="form-control" required placeholder="Email Address"></div>
-            <div class="form-group"><label>ANYDESK / TEAMVIEWER ID CODE:</label><input type="text" name="remoteId" class="form-control" required placeholder="000 000 000"></div>
-            <div class="form-group"><label>SECURE SESSION PASSWORD KEY:</label><input type="text" name="remotePassword" class="form-control" required placeholder="Access Pin"></div>
-            <div class="form-group"><label>COMPREHENSIVE INCIDENT SYMPTOM REPORT LOG:</label><textarea name="issue" class="form-control" rows="4" required placeholder="Describe error parameters..."></textarea></div>
-            <button type="submit" class="submit-btn">Transmit Ticket Array to Escalation Channels 🚀</button>
-        </form>
-    </div>
-
-    <div class="main-card">
-        <h3 style="margin-top:0; color:#fff;">📥 Required Software Downloads</h3>
-        <div class="download-row">
-            <div><strong>AnyDesk Controller</strong><br><small style="color:#666">Lightweight remote engine exe</small></div>
-            <a href="https://anydesk.com" target="_blank" class="download-btn">Download</a>
-        </div>
-        <div class="download-row" style="border-bottom:none;">
-            <div><strong>TeamViewer Core</strong><br><small style="color:#666">Enterprise tunnel service setup</small></div>
-            <a href="https://teamviewer.com" target="_blank" class="download-btn">Download</a>
-        </div>
-    </div>
-
-    <div class="main-card">
-        <h3 style="margin-top:0; color:#fff;">📋 Your Active Support Tickets Logs</h3>
-        <div id="tickets-log-target"><div class="loading-text">Querying active support records channels...</div></div>
-    </div>
-
     <script>
-        async function loadProfileTelemetry() {
-            try {
-                const logsBox = document.getElementById('tickets-log-target');
-                if(logsBox) { logsBox.innerHTML = '<div style="color:#666; font-size:13px; text-align:center; padding:10px;">No support request tickets filed on database record index channels for this session.</div>'; }
-            } catch(e) { console.error(e); }
+        function triggerDashboardPlanWhatsApp(tierName, billingPrice) {
+            alert("⚠️ Subscription Gateway Notice:\nOur digital processing gateways are currently undergoing live business review loops.\n\nPlease process your monthly tier transfer via Capitec business bank deposit and click OK to alert support nodes via WhatsApp for manual account activation.");
+            const txtMsg = encodeURIComponent("Hello IT Elements Network, I would like to activate the " + tierName + " premium contract allocation listed at " + billingPrice + "/mo. I have processed the Capitec bank deposit transfer and attached my proof of payment receipt layout.");
+            window.location.href = "https://wa.me" + txtMsg;
         }
-        window.addEventListener('DOMContentLoaded', loadProfileTelemetry);
     </script>
 </body>
 </html>
