@@ -156,7 +156,8 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
         
         // Note: For live production card swipes, set this to 'https://payfast.co.za'
         // Keeping Sandbox here so you can test cards completely for free before your account approval maps finish!
-        const checkoutUrl = `https://payfast.co.za{params}`;
+       // ✅ TO THIS LINE:
+const checkoutUrl = `https://payfast.co.za{params}`;
 
         res.json({ success: true, redirectUrl: checkoutUrl });
     } catch (err) {
