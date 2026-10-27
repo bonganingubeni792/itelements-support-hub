@@ -26,11 +26,12 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     status: { type: String, default: 'Open' }, date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
+// Middleware Layer Setup
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'views')));
-app.use(express.static(__dirname));
+app.use('/views', express.static(path.join(__dirname, 'views')));
 
 app.use(session({
     secret: 'itelements-secure-key-2026',
@@ -48,6 +49,7 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
+// Static Views Routing Engine Mappings
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -85,7 +87,7 @@ app.post('/client/login', async (req, res) => {
 });
 
 app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
-app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+app.get('/client/logout', (req, res) => { req.session.destroy(() => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); }); });
 
 app.post('/support', async (req, res) => {
     try {
@@ -153,7 +155,7 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
 
         const params = new URLSearchParams(payfastData).toString();
         
-        // 🧪 SANDBOX TESTING GATEWAY ROUTE: Allows testing checkouts safely before account verification closes
+        // 🧪 SANDBOX GATEWAY MODE: Allows instant credit card simulation testing before account activation finishes
         const checkoutUrl = `https://payfast.co.za{params}`;
 
         res.json({ success: true, redirectUrl: checkoutUrl });
@@ -170,7 +172,7 @@ app.post('/api/payfast-itn', async (req, res) => {
             const clientEmail = payfastPayload.custom_str1;
             const chosenTier = payfastPayload.custom_str2;
 
-            console.log("💰 Sandbox Card transaction verified for user: " + clientEmail);
+            console.log(`💰 Verified Credit/Debit Card transaction completed for user: ${clientEmail}`);
 
             await UserAccount.findOneAndUpdate(
                 { email: clientEmail.toLowerCase().trim() },
