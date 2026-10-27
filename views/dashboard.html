@@ -122,6 +122,28 @@
         .download-card { background-color: #111; border: 1px solid #222; padding: 15px; border-radius: 4px; flex: 1; text-align: center; }
         .download-link { color: #4da6ff; text-decoration: none; font-size: 14px; font-weight: bold; }
     </style>
+    
+    <!-- ⚡ IMMEDIATE GLOBAL EXECUTION INTERFACES -->
+    <script>
+        async function triggerPayFastCheckout(planName, priceValue) {
+            try {
+                const response = await fetch('/api/create-subscription-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ plan: planName, amount: priceValue })
+                });
+
+                const session = await response.json();
+                if (session.success && session.redirectUrl) {
+                    window.location.href = session.redirectUrl;
+                } else {
+                    alert("Handshake failure: " + (session.message || "Failed."));
+                }
+            } catch (err) {
+                alert("Network communication error with PayFast wallet grids.");
+            }
+        }
+    </script>
 </head>
 <body>
 
@@ -215,22 +237,7 @@
         </div>
     </div>
 
-    <!-- ⚡ AUTOMATED TELEMETRY PIPELINES -->
+    <!-- ⚡ TELEMETRY MAPPING LAYERS -->
     <script>
         async function loadDashboardTelemetry() {
             try {
-                const response = await fetch('/api/client/profile-data');
-                if (!response.ok) throw new Error('Data sync lost.');
-                
-                const data = await response.json();
-                
-                if (data.user) {
-                    document.getElementById('user-display-name').innerText = `Welcome, ${data.user.fullName}`;
-                    document.getElementById('user-sla-status').innerText = `${data.user.subscriptionTier} (${data.user.subscriptionStatus})`;
-                    document.getElementById('form-client-name').value = data.user.fullName;
-                    if (data.user.subscriptionStatus === 'Active') {
-                        document.getElementById('user-sla-status').style.color = '#4da6ff';
-                    }
-                }
-
-                const container = document.getElementById('tickets-log-container');
