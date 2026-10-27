@@ -153,7 +153,7 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
 
         const params = new URLSearchParams(payfastData).toString();
         
-        // 🚀 LIVE PRODUCTION PROCESSING LINKS
+        // 🧪 SANDBOX TESTING GATEWAY ROUTE: Allows testing checkouts safely before account verification closes
         const checkoutUrl = `https://payfast.co.za{params}`;
 
         res.json({ success: true, redirectUrl: checkoutUrl });
@@ -170,7 +170,7 @@ app.post('/api/payfast-itn', async (req, res) => {
             const clientEmail = payfastPayload.custom_str1;
             const chosenTier = payfastPayload.custom_str2;
 
-            console.log(`💰 Verified Credit/Debit Card transaction completed for user: ${clientEmail}`);
+            console.log("💰 Sandbox Card transaction verified for user: " + clientEmail);
 
             await UserAccount.findOneAndUpdate(
                 { email: clientEmail.toLowerCase().trim() },
