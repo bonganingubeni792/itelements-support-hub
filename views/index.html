@@ -140,5 +140,65 @@
             window.location.href = "https://wa.me?text=" + message;
         }
     </script>
+    <!-- 1. Include the official SDK script loader inside your template HTML layout -->
+<script src="https://yoco.com"></script>
+    
+<script>
+    // Initialize the Yoco front-end interface using your verified Public Test Key
+    const yocoSdkEngine = new YocoSDK({
+        publicKey: 'pk_test_a5949eaaN4zjq4R2a744'
+    });
+
+    // Handle On-Demand Ad-Hoc Checkout Triggers
+    function initiateAdHocPayment() {
+        // Reads your hours selection drop-down layout box selector variable value
+        const selectedHoursElement = document.getElementById('duration-selector') || { value: 1 };
+        const totalHoursValue = parseInt(selectedHoursElement.value) || 1;
+        
+        // Calculate costs matrix: R350 per hour multiplied into cents parameter requirements
+        const hourlyRateRand = 350;
+        const computedCentsTotal = totalHoursValue * hourlyRateRand * 100;
+
+        yocoSdkEngine.showPopup({
+            amountInCents: computedCentsTotal,
+            currency: 'ZAR',
+            name: 'IT Elements Support',
+            description: `${totalHoursValue} Hour(s) Dedicated Technical Engineering Support`,
+            callback: async function (result) {
+                if (result.error) {
+                    alert("Transaction Verification Exception: " + result.error.message);
+                } else {
+                    // Send token safely down to our back-end charge execution routes
+                    const response = await fetch('/api/payment/yoco-charge', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            token: result.id,
+                            amountInCents: computedCentsTotal,
+                            planName: `${totalHoursValue} Hour(s) Ad-Hoc Support`,
+                            isAdHoc: true
+                        })
+                    });
+
+                    const chargeStatus = await response.json();
+                    if (chargeStatus.success) {
+                        alert("🎉 Payment successful! Your technical channel links have been initialized. Please submit your support ticket now.");
+                        window.location.href = '/support';
+                    } else {
+                        alert("Transaction Processing Failure: " + chargeStatus.error.message);
+                    }
+                }
+            }
+        });
+    }
+
+    // Connect this to your checkout action button element event listener triggers
+    // Example layout reference target configuration:
+    const paymentButton = document.getElementById('pay-button-node') || document.querySelector('.pay-paypal-class');
+    if (paymentButton) {
+        paymentButton.setAttribute('onclick', 'initiateAdHocPayment()');
+        paymentButton.innerHTML = "Pay Securely with Card via Yoco 💳";
+    }
+</script>
 </body>
 </html>
