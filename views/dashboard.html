@@ -145,22 +145,22 @@
             <div class="plan-card">
                 <h3>Basic Support</h3>
                 <div class="price">R299/mo</div>
-                <button class="activate-btn" onclick="triggerPayFastCheckout('Basic Support', 299)">Activate Card Payment 💳</button>
+                <button class="activate-btn" onclick="triggerPayFastCheckout('Basic Support', 299)">Activate Card Payment</button>
             </div>
             <div class="plan-card">
                 <h3>Standard Tier</h3>
                 <div class="price">R599/mo</div>
-                <button class="activate-btn" onclick="triggerPayFastCheckout('Standard Tier', 599)">Activate Card Payment 💳</button>
+                <button class="activate-btn" onclick="triggerPayFastCheckout('Standard Tier', 599)">Activate Card Payment</button>
             </div>
             <div class="plan-card">
                 <h3>Business Growth</h3>
                 <div class="price">R2499/mo</div>
-                <button class="activate-btn" onclick="triggerPayFastCheckout('Business Growth', 2499)">Activate Card Payment 💳</button>
+                <button class="activate-btn" onclick="triggerPayFastCheckout('Business Growth', 2499)">Activate Card Payment</button>
             </div>
             <div class="plan-card">
                 <h3>Corporate SLA</h3>
                 <div class="price">R4999/mo</div>
-                <button class="activate-btn" onclick="triggerPayFastCheckout('Corporate SLA', 4999)">Activate Card Payment 💳</button>
+                <button class="activate-btn" onclick="triggerPayFastCheckout('Corporate SLA', 4999)">Activate Card Payment</button>
             </div>
         </div>
     </div>
@@ -216,7 +216,6 @@
 
     <!-- ⚡ REAL-TIME TELEMETRY DATA CONNECTOR BINDINGS -->
     <script>
-        // 1. Fetch live user data and their logged tickets automatically on load
         async function loadDashboardTelemetry() {
             try {
                 const response = await fetch('/api/client/profile-data');
@@ -224,10 +223,14 @@
                 
                 const data = await response.json();
                 
-                // Map user profile parameters
                 if (data.user) {
                     document.getElementById('user-display-name').innerText = `Welcome, ${data.user.fullName}`;
                     document.getElementById('user-sla-status').innerText = `${data.user.subscriptionTier} (${data.user.subscriptionStatus})`;
                     document.getElementById('form-client-name').value = data.user.fullName;
                     
                     if (data.user.subscriptionStatus === 'Active') {
+                        document.getElementById('user-sla-status').style.color = '#4da6ff';
+                    }
+                }
+
+                const container = document.getElementById('tickets-log-container');
