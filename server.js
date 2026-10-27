@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
+const https = require('https'); // Required to make native secure requests to Yoco APIs safely
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -26,12 +27,11 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     status: { type: String, default: 'Open' }, date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
-// Middleware Layer Setup
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'views')));
-app.use('/views', express.static(path.join(__dirname, 'views')));
+app.use(express.static(__dirname));
 
 app.use(session({
     secret: 'itelements-secure-key-2026',
@@ -49,7 +49,6 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-// Static Views Routing Engine Mappings
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
 app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
@@ -58,6 +57,74 @@ app.get('/client/login', (req, res) => res.sendFile(path.join(__dirname, 'views'
 app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
+
+// 💳 YOCO AUTOMATED GATEWAY PAYMENT CHARGE ROUTE ENDPOINT
+app.post('/api/payment/yoco-charge', async (req, res) => {
+    try {
+        const { token, amountInCents, planName, isAdHoc } = req.body;
+
+        if (!token || !amountInCents) {
+            return res.status(400).json({ success: false, message: "Missing required tokenization properties." });
+        }
+
+        // Formulating payload metadata structure required by Yoco Online API Nodes
+        const postData = JSON.stringify({
+            token: token,
+            amountInCents: amountInCents,
+            currency: 'ZAR'
+        });
+
+        // Set up the HTTPS post parameters securely targeting the Yoco cloud gateway endpoints
+        const options = {
+            hostname: '://yoco.com',
+            port: 443,
+            path: '/v1/charges',
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer sk_test_369adbdby6Gbg60694549cdbf721', // Your private secret test key
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(postData)
+            }
+        };
+
+        // Fire request to Yoco servers
+        const yocoReq = https.request(options, (yocoRes) => {
+            let body = '';
+            yocoRes.on('data', (chunk) => body += chunk);
+            yocoRes.on('end', async () => {
+                const responseData = JSON.parse(body);
+
+                // Yoco processes successfully when the transaction record fields return 'successful'
+                if (yocoRes.statusCode === 201 && responseData.status === 'successful') {
+                    
+                    // If it was triggered from a user logged inside their subscription panel deck dashboard:
+                    if (!isAdHoc && req.session.userEmail) {
+                        await UserAccount.findOneAndUpdate(
+                            { email: req.session.userEmail },
+                            { subscriptionTier: planName, subscriptionStatus: 'Active' }
+                        );
+                    }
+                    
+                    return res.json({ success: true, data: responseData });
+                } else {
+                    return res.status(400).json({ success: false, error: responseData });
+                }
+            });
+        });
+
+        yocoReq.on('error', (e) => {
+            console.error("❌ YOCO SERVICE DISPATCH FAILURE:", e);
+            res.status(500).json({ success: false, message: "Gateway channel link timeout error." });
+        });
+
+        yocoReq.write(postData);
+        yocoReq.end();
+
+    } catch (error) {
+        console.error("❌ CRITICAL TRANSACTION ENGINE FAULT:", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
 
 app.post('/client/register', async (req, res) => {
     try {
@@ -87,7 +154,7 @@ app.post('/client/login', async (req, res) => {
 });
 
 app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
-app.get('/client/logout', (req, res) => { req.session.destroy(() => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); }); });
+app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
 
 app.post('/support', async (req, res) => {
     try {
@@ -115,85 +182,6 @@ app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
 
 app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
     try { res.json({ users: await UserAccount.find({}, { password: 0 }), hourlyBookings: [] }); } catch (err) { res.status(500).json({ error: true }); }
-});
-
-// =========================================================================
-// 💳 PAYFAST SECURE CARD PAYMENT & PRODUCTION SUBSCRIPTION LAYER
-// =========================================================================
-app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
-    try {
-        const { plan, amount } = req.body;
-        const userEmail = req.session.userEmail;
-
-        const merchantId = process.env.PAYFAST_MERCHANT_ID || '26628389';
-        const merchantKey = process.env.PAYFAST_MERCHANT_KEY || '2tdxn02woe7we';
-        const passphrase = process.env.PAYFAST_PASSPHRASE;
-
-        const payfastData = {
-            merchant_id: merchantId,
-            merchant_key: merchantKey,
-            return_url: 'https://itelements.help',
-            cancel_url: 'https://itelements.help',
-            notify_url: 'https://itelements.help',
-            name_first: 'IT Elements Customer',
-            email_address: userEmail,
-            m_payment_id: `SUB-${Date.now()}`,
-            amount: parseFloat(amount).toFixed(2),
-            item_name: `IT Elements Support Plan: ${plan}`,
-            custom_str1: userEmail,
-            custom_str2: plan
-        };
-
-        let getString = new URLSearchParams(payfastData).toString();
-        if (passphrase) {
-            getString += `&passphrase=${encodeURIComponent(passphrase.trim())}`;
-        }
-        
-        const crypto = require('crypto');
-        const signature = crypto.createHash('md5').update(getString).digest('hex');
-        payfastData.signature = signature;
-
-        const params = new URLSearchParams(payfastData).toString();
-        
-        // 🧪 SANDBOX GATEWAY MODE: Allows instant credit card simulation testing before account activation finishes
-        const checkoutUrl = `https://payfast.co.za{params}`;
-
-        res.json({ success: true, redirectUrl: checkoutUrl });
-    } catch (err) {
-        res.status(500).json({ error: true, message: err.message });
-    }
-});
-
-app.post('/api/payfast-itn', async (req, res) => {
-    try {
-        const payfastPayload = req.body;
-
-        if (payfastPayload.payment_status === 'COMPLETE') {
-            const clientEmail = payfastPayload.custom_str1;
-            const chosenTier = payfastPayload.custom_str2;
-
-            console.log(`💰 Verified Credit/Debit Card transaction completed for user: ${clientEmail}`);
-
-            await UserAccount.findOneAndUpdate(
-                { email: clientEmail.toLowerCase().trim() },
-                { subscriptionTier: chosenTier, subscriptionStatus: 'Active' }
-            );
-            console.log(`✅ MongoDB Account tier upgraded successfully!`);
-        }
-        res.sendStatus(200);
-    } catch (err) {
-        console.error("❌ WEBHOOK SYNC FAILURE:", err);
-        res.sendStatus(500);
-    }
-});
-
-app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
-    try {
-        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' });
-        res.json({ success: true });
-    } catch (err) {
-        res.status(500).json({ error: true });
-    }
 });
 
 app.listen(PORT, () => { console.log(`🚀 PRODUCTION ENGINE ACTIVE ON PORT ${PORT}`); });
