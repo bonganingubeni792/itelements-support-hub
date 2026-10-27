@@ -5,179 +5,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - On-Demand Remote Support</title>
     <style>
+        /* =========================================================================
+           ADVANCED CYBERPUNK THEME DESIGN MATRIX
+           ========================================================================= */
         body {
-            background-color: #0c0c0c;
+            background-color: #050505;
             color: #d1d5db;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
         }
+
+        /* Top Navigation Cluster Header */
         .nav-header {
             display: flex;
             justify-content: center;
             gap: 30px;
-            padding: 25px 0;
-            background-color: #111111;
-            border-bottom: 1px solid #1f1f1f;
+            padding: 20px 0;
+            background-color: #0a0a0a;
+            border-bottom: 1px solid #141414;
         }
         .nav-header a {
             color: #4da6ff;
             text-decoration: none;
             font-size: 14px;
             font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
         }
         .nav-header a:hover {
             color: #ff3333;
         }
-        .main-container {
-            max-width: 1000px;
+
+        .main-mainframe {
+            max-width: 1050px;
             margin: 50px auto;
             padding: 0 20px;
             text-align: center;
         }
+
         h1 {
             color: #ffffff;
             font-size: 32px;
-            margin-bottom: 10px;
+            font-weight: 800;
+            margin-bottom: 15px;
         }
+
         .main-subtitle {
             color: #888888;
             font-size: 15px;
-            max-width: 750px;
+            max-width: 800px;
             margin: 0 auto 40px auto;
             line-height: 1.6;
         }
+
+        /* Top Utility Software Download Row Links */
+        .utility-download-row {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+        .utility-download-btn {
+            background-color: #0f0f0f;
+            border: 1px solid #222222;
+            color: #ffffff;
+            padding: 12px 24px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+        .utility-download-btn:hover {
+            border-color: #ff3333;
+            background-color: #141414;
+        }
+
+        /* Advanced Floating 3-Box Cluster Dashboard Layout */
         .dashboard-triple-grid {
             display: flex;
             justify-content: space-between;
             gap: 20px;
             margin-bottom: 50px;
         }
-        .action-card {
-            background-color: #141414;
-            border: 1px solid #222222;
+        .action-card-node {
+            background-color: #0c0c0c;
+            border: 1px solid #141414;
             border-radius: 6px;
-            padding: 25px 20px;
+            padding: 30px 20px;
             flex: 1;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            transition: border-color 0.2s, transform 0.2s;
+            cursor: pointer;
         }
-        .action-card h3 {
+        .action-card-node:hover {
+            border-color: #ff3333;
+            transform: translateY(-2px);
+        }
+        .action-card-node h3 {
             color: #ff3333;
-            font-size: 18px;
+            font-size: 17px;
+            font-weight: 700;
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
         }
-        .action-card p {
-            color: #aaaaaa;
+        .action-card-node p {
+            color: #9ca3af;
             font-size: 13px;
             line-height: 1.5;
             margin-bottom: 0;
         }
-        .incident-workspace-box {
+
+        /* Core Red-Bordered Incident Resolution Panel Box Workspace */
+        .workspace-panel-box {
             border: 2px solid #ff3333;
             background-color: #070707;
             border-radius: 8px;
-            max-width: 700px;
-            margin: 0 auto 50px auto;
-            padding: 35px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.6);
+            max-width: 800px;
+            margin: 0 auto 60px auto;
+            padding: 40px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.7);
         }
-        .incident-workspace-box h2 {
+        .workspace-panel-box h2 {
             color: #ffffff;
-            font-size: 22px;
+            font-size: 24px;
+            font-weight: 800;
             margin-top: 0;
             margin-bottom: 10px;
         }
-        .incident-workspace-box p {
-            color: #777777;
+        .workspace-panel-box p {
+            color: #6b7280;
             font-size: 13px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
-        .download-utility-row {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .utility-download-btn {
-            background-color: #161616;
-            border: 1px solid #333333;
-            color: #ffffff;
-            padding: 10px 20px;
-            font-size: 13px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .utility-download-btn:hover {
-            border-color: #ff3333;
-            background-color: #1a1a1a;
-        }
-        .selector-row-flex {
+
+        .telemetry-row-wrapper {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #121212;
-            border: 1px solid #222222;
-            padding: 15px 25px;
+            background-color: #0a0a0a;
+            border: 1px solid #141414;
+            padding: 18px 30px;
             border-radius: 6px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: left;
         }
-        .selector-title-label {
-            font-size: 12px;
-            color: #aaaaaa;
-            font-weight: bold;
-            letter-spacing: 0.5px;
+        .telemetry-row-label {
+            font-size: 11px;
+            color: #9ca3af;
+            font-weight: 700;
+            letter-spacing: 1px;
         }
-        .live-price-text-value {
+        .telemetry-price-counter {
             font-size: 26px;
             font-weight: 900;
             color: #ffffff;
             font-family: monospace;
         }
-        .duration-dropdown-select {
-            background-color: #181818;
+
+        .advanced-custom-select {
+            background-color: #111111;
             color: #ffffff;
-            border: 1px solid #333333;
-            padding: 14px;
+            border: 1px solid #222222;
+            padding: 14px 18px;
             width: 100%;
             border-radius: 4px;
-            font-size: 15px;
-            margin-bottom: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 30px;
             cursor: pointer;
             outline: none;
         }
-        .duration-dropdown-select:focus {
+        .advanced-custom-select:focus {
             border-color: #ff3333;
         }
-        .yoco-checkout-submit-btn {
-            background-color: #1a73e8;
+
+        .yoco-production-btn {
+            background-color: #2563eb;
             color: #ffffff;
             border: none;
             padding: 16px;
             width: 100%;
             border-radius: 4px;
-            font-size: 15px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            transition: background 0.2s;
+            transition: background-color 0.2s;
         }
-        .yoco-checkout-submit-btn:hover {
-            background-color: #155cb4;
+        .yoco-production-btn:hover {
+            background-color: #1d4ed8;
         }
+
+        /* Lower Real-time Tracking Diagnostics Telemetry Section */
         .telemetry-header-title {
             color: #ffffff;
-            font-size: 18px;
+            font-size: 16px;
+            font-weight: 800;
             margin-top: 50px;
             margin-bottom: 5px;
             letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         .telemetry-header-subtitle {
-            color: #555555;
+            color: #4b5563;
             font-size: 12px;
             margin-bottom: 25px;
         }
@@ -185,43 +220,45 @@
             display: flex;
             justify-content: center;
             gap: 15px;
-            max-width: 900px;
-            margin: 0 auto 50px auto;
-        }
-        .telemetry-node-card {
-            background-color: #141414;
-            border: 1px solid #222222;
-            border-radius: 4px;
-            padding: 15px;
-            flex: 1;
+            max-width: 950px;
+            margin: 0 auto 60px auto;
             text-align: left;
         }
+        .telemetry-node-card {
+            background-color: #0a0a0a;
+            border: 1px solid #141414;
+            border-radius: 4px;
+            padding: 18px;
+            flex: 1;
+        }
         .node-card-label {
-            color: #555555;
-            font-size: 10px;
+            color: #4b5563;
+            font-size: 9px;
             text-transform: uppercase;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 700;
+            margin-bottom: 6px;
             letter-spacing: 0.5px;
         }
         .node-card-value {
-            color: #e0e0e0;
-            font-weight: bold;
-            font-size: 14px;
+            color: #e5e7eb;
+            font-weight: 700;
+            font-size: 13px;
         }
+
+        /* Corporate Signature Base Footer Banner */
         .system-core-footer {
-            border-top: 1px solid #1f1f1f;
-            padding-top: 25px;
+            border-top: 1px solid #141414;
+            padding-top: 30px;
             padding-bottom: 40px;
             font-size: 12px;
-            color: #666666;
+            color: #4b5563;
             line-height: 1.8;
         }
     </style>
 </head>
 <body>
 
-    <!-- 🌐 NAVIGATION ROUTING LAYER -->
+    <!-- 🌐 BASE LINKS LAYER -->
     <div class="nav-header">
         <a href="/">Home</a> | 
         <a href="/pricing">Plans</a> | 
@@ -229,60 +266,41 @@
         <a href="/client/login">Client Portal</a>
     </div>
 
-    <div class="main-container">
+    <div class="main-mainframe">
         
-        <!-- 🔴 PRIMARY BRAND BLOCKS -->
+        <!-- 🔴 ALIGNED HEADER METRICS -->
         <h1># On-Demand Subscription IT Support</h1>
         <div class="main-subtitle">Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</div>
 
-        <!-- 🟦 FLOATING 3-BOX ACTION DASHBOARD -->
+        <!-- 📥 CONNECTION PORT UTILITY CHANNELS -->
+        <div class="utility-download-row">
+            <button class="utility-download-btn" onclick="window.open('https://anydesk.com', '_blank')">⚙ Download AnyDesk</button>
+            <button class="utility-download-btn" onclick="window.open('https://teamviewer.com', '_blank')">🔒 Download TeamViewer</button>
+        </div>
+
+        <!-- 🟦 FLOATING 3-BOX ACTION CORE MODULES -->
         <div class="dashboard-triple-grid">
-            <div class="action-card" onclick="window.location.href='/pricing'">
+            <div class="action-card-node" onclick="window.location.href='/pricing'">
                 <h3>Subscription Plans</h3>
                 <p>Choose a predictable flat monthly rate package built for your device network needs.</p>
             </div>
-            <div class="action-card" onclick="window.location.href='/support'">
+            <div class="action-card-node" onclick="window.location.href='/support'">
                 <h3>Submit Support Ticket</h3>
                 <p>Experiencing hardware slow downs or virus logs? Open a ticket and drop your remote connection key code.</p>
             </div>
-            <div class="action-card" onclick="window.location.href='/client/login'">
+            <div class="action-card-node" onclick="window.location.href='/client/login'">
                 <h3>Customer Access Hub</h3>
                 <p>Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</p>
             </div>
         </div>
 
-        <!-- 💳 INCIDENT WORKSPACE (INTEGRATING AUTOMATED YOCO CHECKOUT) -->
-        <div class="incident-workspace-box">
+        <!-- 💳 ADVANCED ACTIVE INTERACTIVE CHECKOUT FRAMEWORK PANEL -->
+        <div class="workspace-panel-box">
             <h2>## Need a Quick Incident Fix?</h2>
             <p>Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
             
-            <!-- UTILITIES UTILITY CONNECTION SHORTCUT ARRAYS -->
-            <div class="download-utility-row">
-                <button class="utility-download-btn" onclick="window.open('https://anydesk.com', '_blank')">⚙ Download AnyDesk</button>
-                <button class="utility-download-btn" onclick="window.open('https://teamviewer.com', '_blank')">🔒 Download TeamViewer</button>
+            <div class="telemetry-row-wrapper">
+                <div class="telemetry-row-label">SELECT DURATION ALLOCATION:</div>
+                <div class="telemetry-price-counter" id="live-price-text">R 350</div>
             </div>
 
-            <div class="selector-row-flex">
-                <div class="selector-title-label">SELECT DURATION ALLOCATION:</div>
-                <div class="live-price-text-value" id="live-price-text">R 350</div>
-            </div>
-
-            <!-- EXPLICIT DURATION DROPDOWN OPTIONS (MAPPED 1 TO 5 HOURS) -->
-            <select class="duration-dropdown-select" id="duration-selector">
-                <option value="1">1 Hour Dedicated Emergency Services</option>
-                <option value="2">2 Hours Dedicated Support Package</option>
-                <option value="3">3 Hours Comprehensive Network Overhaul</option>
-                <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
-                <option value="5">5 Hours Complete Enterprise SLA Care</option>
-            </select>
-
-            <!-- Fully integrated checkout engine switch node -->
-            <button class="yoco-checkout-submit-btn" id="yoco-checkout-trigger">PAY SECURELY WITH CARD VIA YOCO 💳</button>
-        </div>
-
-        <!-- 📡 TELEMETRY INFRASTRUCTURE NODES STATUS ARRAYS -->
-        <div class="telemetry-header-title">### 📡 Network & Engineer Status</div>
-        <div class="telemetry-header-subtitle">Real-time technical tracking arrays for active on-duty nodes.</div>
-
-        <div class="telemetry-node-grid">
-            <div class="telemetry-node-card">
