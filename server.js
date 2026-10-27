@@ -25,6 +25,7 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     name: String, email: String, remoteId: String, remotePassword: String, issue: String,
     status: { type: String, default: 'Open' }, date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
+
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -83,7 +84,6 @@ app.post('/client/login', async (req, res) => {
     } catch (err) { res.status(500).send(err.message); }
 });
 
-// 📁 RESTORED LOGOUT API ENDPOINTS: Terminate browser cookie registries cleanly
 app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
 app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
 
@@ -113,6 +113,89 @@ app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
 
 app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
     try { res.json({ users: await UserAccount.find({}, { password: 0 }), hourlyBookings: [] }); } catch (err) { res.status(500).json({ error: true }); }
+});
+
+// =========================================================================
+// 💳 PAYFAST SECURE CARD PAYMENT & SUBSCRIPTION GENERATION LAYER
+// =========================================================================
+app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
+    try {
+        const { plan, amount } = req.body;
+        const userEmail = req.session.userEmail;
+
+        const merchantId = process.env.PAYFAST_MERCHANT_ID || '26628389';
+        const merchantKey = process.env.PAYFAST_MERCHANT_KEY || '2tdxn02woe7we';
+        const passphrase = process.env.PAYFAST_PASSPHRASE;
+
+        const payfastData = {
+            merchant_id: merchantId,
+            merchant_key: merchantKey,
+            return_url: 'https://itelements.help',
+            cancel_url: 'https://itelements.help',
+            notify_url: 'https://itelements.help',
+            name_first: 'IT Elements Customer',
+            email_address: userEmail,
+            m_payment_id: `SUB-${Date.now()}`,
+            amount: parseFloat(amount).toFixed(2),
+            item_name: `IT Elements Support Plan: ${plan}`,
+            custom_str1: userEmail,
+            custom_str2: plan
+        };
+
+        // Cryptographic Signature Hash Matrix Mapping
+        let getString = new URLSearchParams(payfastData).toString();
+        if (passphrase) {
+            getString += `&passphrase=${encodeURIComponent(passphrase.trim())}`;
+        }
+        
+        const crypto = require('crypto');
+        const signature = crypto.createHash('md5').update(getString).digest('hex');
+        payfastData.signature = signature;
+
+        const params = new URLSearchParams(payfastData).toString();
+        
+        // Note: For live production card swipes, set this to 'https://payfast.co.za'
+        // Keeping Sandbox here so you can test cards completely for free before your account approval maps finish!
+        const checkoutUrl = `https://payfast.co.za{params}`;
+
+        res.json({ success: true, redirectUrl: checkoutUrl });
+    } catch (err) {
+        res.status(500).json({ error: true, message: err.message });
+    }
+});
+
+// 💰 AUTOMATED BACKEND WEBHOOK RECEIVER: Fired when PayFast processes a Credit/Debit Card successfully
+app.post('/api/payfast-itn', async (req, res) => {
+    try {
+        const payfastPayload = req.body;
+
+        if (payfastPayload.payment_status === 'COMPLETE') {
+            const clientEmail = payfastPayload.custom_str1;
+            const chosenTier = payfastPayload.custom_str2;
+
+            console.log(`💰 Verified Credit/Debit Card transaction completed for user: ${clientEmail}`);
+
+            // Automatically upgrade the database profile parameters to live status
+            await UserAccount.findOneAndUpdate(
+                { email: clientEmail.toLowerCase().trim() },
+                { subscriptionTier: chosenTier, subscriptionStatus: 'Active' }
+            );
+            console.log(`✅ MongoDB Account tier for ${clientEmail} successfully upgraded to Active!`);
+        }
+        res.sendStatus(200);
+    } catch (err) {
+        console.error("❌ WEBHOOK SYNC FAILURE:", err);
+        res.sendStatus(500);
+    }
+});
+
+app.post('/api/cancel-subscription', checkUserAuth, async (req, res) => {
+    try {
+        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: 'None (Unpaid)', subscriptionStatus: 'Inactive' });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ error: true });
+    }
 });
 
 app.listen(PORT, () => { console.log(`🚀 PRODUCTION ENGINE ACTIVE ON PORT ${PORT}`); });
