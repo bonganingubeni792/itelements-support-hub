@@ -142,7 +142,6 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
             custom_str2: plan
         };
 
-        // Cryptographic Signature Generation Routing Parameters
         let getString = new URLSearchParams(payfastData).toString();
         if (passphrase) {
             getString += `&passphrase=${encodeURIComponent(passphrase.trim())}`;
@@ -154,7 +153,7 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
 
         const params = new URLSearchParams(payfastData).toString();
         
-        // 🚀 LIVE PRODUCTION ROUTING GATEWAY NODE: Forces secure card collection swipes
+        // 🚀 LIVE PRODUCTION PROCESSING LINKS
         const checkoutUrl = `https://payfast.co.za{params}`;
 
         res.json({ success: true, redirectUrl: checkoutUrl });
@@ -163,7 +162,6 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
     }
 });
 
-// 💰 AUTOMATED BACKEND WEBHOOK RECEIVER: Automatically triggered on complete card verification
 app.post('/api/payfast-itn', async (req, res) => {
     try {
         const payfastPayload = req.body;
@@ -178,7 +176,7 @@ app.post('/api/payfast-itn', async (req, res) => {
                 { email: clientEmail.toLowerCase().trim() },
                 { subscriptionTier: chosenTier, subscriptionStatus: 'Active' }
             );
-            console.log(`✅ MongoDB Account tier for ${clientEmail} successfully upgraded to Active!`);
+            console.log(`✅ MongoDB Account tier upgraded successfully!`);
         }
         res.sendStatus(200);
     } catch (err) {
