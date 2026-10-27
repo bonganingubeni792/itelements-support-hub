@@ -116,7 +116,7 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
 });
 
 // =========================================================================
-// 💳 PAYFAST SECURE CARD PAYMENT & SUBSCRIPTION GENERATION LAYER
+// 💳 PAYFAST SECURE CARD PAYMENT & PRODUCTION SUBSCRIPTION LAYER
 // =========================================================================
 app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => {
     try {
@@ -142,7 +142,7 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
             custom_str2: plan
         };
 
-        // Cryptographic Signature Hash Matrix Mapping
+        // Cryptographic Signature Generation Routing Parameters
         let getString = new URLSearchParams(payfastData).toString();
         if (passphrase) {
             getString += `&passphrase=${encodeURIComponent(passphrase.trim())}`;
@@ -154,10 +154,8 @@ app.post('/api/create-subscription-session', checkUserAuth, async (req, res) => 
 
         const params = new URLSearchParams(payfastData).toString();
         
-        // Note: For live production card swipes, set this to 'https://payfast.co.za'
-        // Keeping Sandbox here so you can test cards completely for free before your account approval maps finish!
-       // ✅ TO THIS LINE:
-const checkoutUrl = `https://payfast.co.za{params}`;
+        // 🚀 LIVE PRODUCTION ROUTING GATEWAY NODE: Forces secure card collection swipes
+        const checkoutUrl = `https://payfast.co.za{params}`;
 
         res.json({ success: true, redirectUrl: checkoutUrl });
     } catch (err) {
@@ -165,7 +163,7 @@ const checkoutUrl = `https://payfast.co.za{params}`;
     }
 });
 
-// 💰 AUTOMATED BACKEND WEBHOOK RECEIVER: Fired when PayFast processes a Credit/Debit Card successfully
+// 💰 AUTOMATED BACKEND WEBHOOK RECEIVER: Automatically triggered on complete card verification
 app.post('/api/payfast-itn', async (req, res) => {
     try {
         const payfastPayload = req.body;
@@ -176,7 +174,6 @@ app.post('/api/payfast-itn', async (req, res) => {
 
             console.log(`💰 Verified Credit/Debit Card transaction completed for user: ${clientEmail}`);
 
-            // Automatically upgrade the database profile parameters to live status
             await UserAccount.findOneAndUpdate(
                 { email: clientEmail.toLowerCase().trim() },
                 { subscriptionTier: chosenTier, subscriptionStatus: 'Active' }
