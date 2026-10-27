@@ -62,12 +62,13 @@
             background-color: #ff3333;
             color: #fff;
             border: none;
-            padding: 8px 20px;
+            padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 13px;
+            font-size: 14px;
             width: 100%;
+            display: block;
         }
         .activate-btn:hover { background-color: #cc0000; }
 
@@ -145,22 +146,22 @@
             <div class="plan-card">
                 <h3>Basic Support</h3>
                 <div class="price">R299/mo</div>
-                <button class="activate-btn" onclick="triggerPayFastCheckout('Basic Support', 299)">Activate Card Payment</button>
+                <button type="button" class="activate-btn" onclick="triggerPayFastCheckout('Basic Support', 299)">Activate Card Payment</button>
             </div>
             <div class="plan-card">
                 <h3>Standard Tier</h3>
                 <div class="price">R599/mo</div>
-                <button class="activate-btn" onclick="triggerPayFastCheckout('Standard Tier', 599)">Activate Card Payment</button>
+                <button type="button" class="activate-btn" onclick="triggerPayFastCheckout('Standard Tier', 599)">Activate Card Payment</button>
             </div>
             <div class="plan-card">
                 <h3>Business Growth</h3>
                 <div class="price">R2499/mo</div>
-                <button class="activate-btn" onclick="triggerPayFastCheckout('Business Growth', 2499)">Activate Card Payment</button>
+                <button type="button" class="activate-btn" onclick="triggerPayFastCheckout('Business Growth', 2499)">Activate Card Payment</button>
             </div>
             <div class="plan-card">
                 <h3>Corporate SLA</h3>
                 <div class="price">R4999/mo</div>
-                <button class="activate-btn" onclick="triggerPayFastCheckout('Corporate SLA', 4999)">Activate Card Payment</button>
+                <button type="button" class="activate-btn" onclick="triggerPayFastCheckout('Corporate SLA', 4999)">Activate Card Payment</button>
             </div>
         </div>
     </div>
@@ -214,12 +215,12 @@
         </div>
     </div>
 
-    <!-- ⚡ REAL-TIME TELEMETRY DATA CONNECTOR BINDINGS -->
+    <!-- ⚡ AUTOMATED TELEMETRY PIPELINES -->
     <script>
         async function loadDashboardTelemetry() {
             try {
                 const response = await fetch('/api/client/profile-data');
-                if (!response.ok) throw new Error('Failed to fetch data profile channels.');
+                if (!response.ok) throw new Error('Data sync lost.');
                 
                 const data = await response.json();
                 
@@ -227,7 +228,6 @@
                     document.getElementById('user-display-name').innerText = `Welcome, ${data.user.fullName}`;
                     document.getElementById('user-sla-status').innerText = `${data.user.subscriptionTier} (${data.user.subscriptionStatus})`;
                     document.getElementById('form-client-name').value = data.user.fullName;
-                    
                     if (data.user.subscriptionStatus === 'Active') {
                         document.getElementById('user-sla-status').style.color = '#4da6ff';
                     }
