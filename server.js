@@ -76,12 +76,12 @@ app.post('/api/payment/yoco-charge', async (req, res) => {
 
         // Set up the HTTPS post parameters securely targeting the Yoco cloud gateway endpoints
         const options = {
-            hostname: '://yoco.com',
+            hostname: 'online.yoco.co.za', // Fixed target hostname connectivity typo
             port: 443,
             path: '/v1/charges',
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer sk_test_369adbdby6Gbg60694549cdbf721', // Your private secret test key
+                'Authorization': 'Bearer sk_test_369adbdbY6Gbg60694549cdbf721', // Your private test secret key
                 'Content-Type': 'application/json',
                 'Content-Length': Buffer.byteLength(postData)
             }
