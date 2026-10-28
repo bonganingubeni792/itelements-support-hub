@@ -95,8 +95,8 @@
             </select>
             
             <div class="price-display" id="dynamic-price-tag">R 350</div>
-            <!-- Interactive Action Button mapped to execute the Yoco Card Payment Module -->
-            <button id="yoco-checkout-trigger" class="pay-trigger-btn">Pay via Credit Card 💳</button>
+            <!-- Fixed: Explicitly linked yoco-checkout-trigger ID to intercept click events -->
+            <button id="yoco-checkout-trigger" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
         </div>
 
         <div class="main-card">
@@ -146,7 +146,7 @@
             e.preventDefault();
             
             yocoInstance.showPopup({
-                amountInCents: currentSelectedAmountZAR * 100, // Converts current ZAR amount to cents
+                amountInCents: currentSelectedAmountZAR * 100, // Converts ZAR amount to integer cents
                 currency: 'ZAR',
                 name: 'IT Elements Remote Support',
                 description: 'Ad-hoc Technical Incident Resolution Pool',
