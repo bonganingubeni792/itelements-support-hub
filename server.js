@@ -493,15 +493,56 @@ app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
 });
 
 app.get('/api/tickets', checkAdminAuth, async (req, res) => {
-    try { res.json(await SupportRequest.find().sort({ date: -1 })); } catch (err) { res.status(500).json({ error: true }); }
+    try { res.json(await SupportRequest.find().sort({ date: -1 }).lean()); } catch (err) { res.status(500).json({ error: true }); }
 });
 
 app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
-    try { await SupportRequest.findByIdAndUpdate(req.body.ticketId, { status: req.body.newStatus }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
+    const { ticketId, newStatus } = req.body;
+    if (!mongoose.isValidObjectId(ticketId) || !['Open', 'On Hold', 'Resolved'].includes(newStatus)) {
+        return res.status(400).json({ success: false, message: 'Invalid ticket or status.' });
+    }
+    try {
+        const updated = await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus }, { new: true });
+        if (!updated) return res.status(404).json({ success: false, message: 'Ticket not found.' });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: 'Could not update ticket status.' }); }
 });
 
 app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
-    try { res.json({ users: await UserAccount.find({}, { password: 0 }), hourlyBookings: [] }); } catch (err) { res.status(500).json({ error: true }); }
+    try {
+        const now = new Date();
+        await UserAccount.updateMany(
+            { subscriptionStatus: 'Active', subscriptionExpiresAt: { $lte: now } },
+            { $set: { subscriptionStatus: 'Expired' } }
+        );
+        const [users, tickets, revenueRows] = await Promise.all([
+            UserAccount.find({}, { password: 0 }).sort({ fullName: 1 }).lean(),
+            SupportRequest.find({}, { remotePassword: 0 }).lean(),
+            YocoCheckout.aggregate([
+                { $match: { status: 'paid' } },
+                { $group: { _id: null, cents: { $sum: '$amount' }, count: { $sum: 1 } } }
+            ])
+        ]);
+        const activeSubscribers = users.filter(user => user.subscriptionStatus === 'Active');
+        const inactiveUsers = users.filter(user => user.subscriptionStatus !== 'Active');
+        const activeTickets = tickets.filter(ticket => ticket.status !== 'Resolved').length;
+        const confirmedPlanRevenue = revenueRows.length ? revenueRows[0].cents / 100 : 0;
+        res.json({
+            users,
+            activeSubscribers,
+            inactiveUsers,
+            stats: {
+                activeTickets,
+                activeSubscribers: activeSubscribers.length,
+                inactiveUsers: inactiveUsers.length,
+                confirmedPlanRevenue,
+                confirmedPlanPayments: revenueRows.length ? revenueRows[0].count : 0
+            }
+        });
+    } catch (err) {
+        console.error('Admin overview error:', err.message);
+        res.status(500).json({ error: true, message: 'Could not load admin overview.' });
+    }
 });
 
 app.listen(PORT, () => { console.log(`🚀 PRODUCTION ENGINE ACTIVE ON PORT ${PORT}`); });
