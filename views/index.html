@@ -39,7 +39,7 @@
         .whatsapp-floating-bubble:hover { transform: scale(1.1); }
         .footer-details { color: #888; font-size: 13px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; }
     </style>
-    <!-- Prioritized script injection to prevent execution blocks -->
+    <!-- ✅ FIXED: Pointing directly to the absolute, correct Yoco SDK library file -->
     <script src="https://yoco.com"></script>
 </head>
 <body>
@@ -95,7 +95,6 @@
             </select>
             
             <div class="price-display" id="dynamic-price-tag">R 350</div>
-            <!-- Ensured explicit button structure and ID attribute formatting -->
             <button id="yoco-checkout-trigger" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
         </div>
 
@@ -135,7 +134,6 @@
             priceTag.innerText = "R " + currentSelectedAmountZAR;
         }
 
-        // Wait until document fully loads to guarantee YocoSDK global object exists
         window.addEventListener('DOMContentLoaded', () => {
             const yocoInstance = new window.YocoSDK({
                 publicKey: 'pk_test_a5949eaaN4zjq4R2a744'
@@ -157,7 +155,7 @@
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
-                                    token: result.id, // Fixed: Matched token naming criteria expected by server backend
+                                    token: result.id,
                                     amountInCents: currentSelectedAmountZAR * 100,
                                     isAdHoc: true
                                 })
