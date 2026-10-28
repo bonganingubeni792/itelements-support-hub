@@ -1,184 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Elements - On-Demand Remote Support</title>
-    <style>
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; text-align: center; }
-        .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 25px auto; border-radius: 6px; }
-        .nav-brand { font-size: 20px; font-weight: bold; color: #ff3333; letter-spacing: 1px; }
-        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; margin-left: 20px; }
-        .nav-links a:hover { color: #ff3333; }
-        .container { max-width: 1100px; margin: 0 auto; }
-        .main-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 35px 20px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        
-        /* 🛠️ CARD REDIRECTION MATRIX: Transformed boxes into interactive hover-active elements */
-        .feature-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 25px; }
-        .feature-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 25px 20px; flex: 1; min-width: 280px; text-align: center; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; cursor: pointer; }
-        .feature-card:hover { border-color: #ff3333; transform: translateY(-3px); }
-        .feature-title { font-size: 18px; font-weight: bold; color: #ff3333; margin-bottom: 10px; }
-        .feature-desc { font-size: 13px; color: #888; line-height: 1.6; }
-        
-        .incident-box { border: 2px solid #ff3333; border-radius: 8px; padding: 35px 20px; background-color: #141414; margin-bottom: 25px; position: relative; }
-        .price-display { font-size: 32px; color: #ff3333; font-weight: bold; margin: 20px 0; }
-        .form-control { background-color: #1a1a1a; border: 1px solid #333; padding: 12px; border-radius: 4px; color: #fff; width: 100%; max-width: 400px; font-size: 14px; margin-bottom: 20px; box-sizing: border-box; }
-        .pay-trigger-btn { background-color: #ff3333; color: white; border: none; padding: 14px 35px; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; transition: background 0.2s; display: inline-block; text-decoration: none; width: 100%; max-width: 400px; }
-        .pay-trigger-btn:hover { background-color: #cc0000; }
-        
-        .quick-downloads-container { display: flex; justify-content: center; gap: 15px; margin: 0 auto 20px auto; flex-wrap: wrap; }
-        .inline-dl-link { background-color: #1a1a1a; border: 1px solid #333; color: #ccc; text-decoration: none; padding: 6px 12px; font-size: 12px; border-radius: 4px; font-weight: bold; transition: all 0.2s; }
-        .inline-dl-link:hover { border-color: #ff3333; color: #fff; }
-        
-        .status-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
-        .status-card { background-color: #141414; border: 1px solid #222; padding: 15px; flex: 1; min-width: 200px; border-radius: 6px; }
-        .status-val { color: #4da6ff; font-weight: bold; font-size: 15px; margin-top: 5px; }
-        .status-val.active-node { color: #4dff4d; }
-        
-        .whatsapp-floating-bubble { position: fixed; bottom: 20px; right: 20px; background-color: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 999999; text-decoration: none; transition: transform 0.2s; }
-        .whatsapp-floating-bubble:hover { transform: scale(1.1); }
-        .footer-details { color: #888; font-size: 13px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; }
-    </style>
-    <!-- Prioritized script injection to prevent execution blocks -->
-    <script src="https://yoco.com"></script>
-</head>
-<body>
+const express = require('express');
+const mongoose = require('mongoose');
+const path = require('path');
+const session = require('express-session');
+const cors = require('cors');
+const https = require('https'); // Required to make native secure requests to Yoco APIs safely
+const app = express();
 
-    <nav class="navbar">
-        <div class="nav-brand">IT Elements.support</div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/pricing">Plans</a>
-            <a href="/support">Request Help</a>
-            <a href="/dashboard">Client Portal</a>
-        </div>
-    </nav>
+const PORT = process.env.PORT || 3000;
+const dbURI = process.env.MONGODB_URI;
 
-    <div class="container">
-        
-        <div class="main-card">
-            <h1 style="margin-top:0; color:#fff; font-size:32px;">On-Demand Subscription IT Support</h1>
-            <p style="color:#888; font-size:15px; max-width:700px; margin: 0 auto; line-height: 1.6;">Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
-        </div>
+mongoose.connect(dbURI)
+    .then(() => console.log('📁 Database connection established successfully'))
+    .catch(err => console.error('❌ Cloud Database communication failure:', err));
 
-        <div class="feature-grid">
-            <a href="/pricing" class="feature-card">
-                <div class="feature-title">Subscription Plans</div>
-                <div class="feature-desc">Choose a predictable flat monthly rate package built for your device network needs.</div>
-            </a>
-            <a href="/support" class="feature-card">
-                <div class="feature-title">Submit Support Ticket</div>
-                <div class="feature-desc">Experiencing hardware slow downs or virus logs? Open a ticket and drop your remote connection key code.</div>
-            </a>
-            <a href="/client/login" class="feature-card">
-                <div class="feature-title">Customer Access Hub</div>
-                <div class="feature-desc">Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</div>
-            </a>
-        </div>
-        
-        <div class="incident-box">
-            <h2 style="margin-top:0; color:#fff; font-size:24px;">Need a Quick Incident Fix?</h2>
-            <p style="color:#888; font-size:14px; margin-bottom:25px;">Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
-            
-            <div class="quick-downloads-container">
-                <a href="https://anydesk.com" target="_blank" class="inline-dl-link">⚙️ Download AnyDesk</a>
-                <a href="https://teamviewer.com" target="_blank" class="inline-dl-link">🔒 Download TeamViewer</a>
-            </div>
+const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
+    fullName: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    subscriptionTier: { type: String, default: 'None (Unpaid)' },
+    subscriptionStatus: { type: String, default: 'Inactive' }
+}, { collection: 'useraccounts' }));
 
-            <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-align:center;">SELECT DURATION ALLOCATION:</div>
-            <select class="form-control" id="duration-selector" onchange="updateDynamicIncidentPrice(this.value)">
-                <option value="1">1 Hour Dedicated Emergency Services</option>
-                <option value="2">2 Hours Dedicated Support Package</option>
-                <option value="3">3 Hours Comprehensive Network Overhaul</option>
-                <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
-                <option value="5">5 Hours Complete Enterprise SLA Care</option>
-            </select>
-            
-            <div class="price-display" id="dynamic-price-tag">R 350</div>
-            <!-- Ensured explicit button structure and ID attribute formatting -->
-            <button id="yoco-checkout-trigger" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
-        </div>
+const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
+    name: String, email: String, remoteId: String, remotePassword: String, issue: String,
+    status: { type: String, default: 'Open' }, date: { type: Date, default: Date.now }
+}, { collection: 'supportrequests' }));
 
-        <div class="main-card">
-            <h3 style="margin-top:0; color:#fff; text-align:left;">📡 Network & Engineer Status</h3>
-            <p style="color:#666; font-size:12px; text-align:left; margin-bottom:20px;">Real-time technical tracking arrays for active on-duty nodes.</p>
-            
-            <div class="status-grid">
-                <div class="status-card"><div>On-Duty Engineers</div><div class="status-val active-node">Active</div></div>
-                <div class="status-card"><div>Average Connection Latency</div><div class="status-val">14ms Fast Handshake</div></div>
-                <div class="status-card"><div>Secure Gate Encryption</div><div class="status-val">SSL Protocol Enclosed</div></div>
-                <div class="status-card"><div>Payment Security Level</div><div class="status-val">PCI-DSS Compliant</div></div>
-            </div>
-        </div>
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'views')));
+app.use(express.static(__dirname));
 
-        <div class="footer-details">
-            <p>📧 Corporate Mail: <strong>bongani@itelements.co.za</strong> | 📱 Technical Helpline: <strong>+27 60 618 1229</strong> | 📍 Regional Coverage: <strong>South Africa</strong></p>
-            <p style="color:#555; font-size:12px; margin-top:15px;">🇿🇦 South Africa's Trusted Remote Engineers. Minimize Downtime, Maximize Output— Get Fixed Instantly.</p>
-            <p style="color:#444; font-size:11px; margin-top:10px;">© 2026 IT Elements Support Framework</p>
-        </div>
+app.use(session({
+    secret: 'itelements-secure-key-2026',
+    resave: true,
+    saveUninitialized: true,
+    cookie: { maxAge: 86400000, secure: false, sameSite: 'lax' }
+}));
 
-    </div>
+function checkAdminAuth(req, res, next) {
+    if (req.session && req.session.isAdmin) return next();
+    res.redirect('/client/login');
+}
+function checkUserAuth(req, res, next) {
+    if (req.session && (req.session.isUser || req.session.isAdmin)) return next();
+    res.redirect('/client/login');
+}
 
-    <a href="https://wa.me." target="_blank" class="whatsapp-floating-bubble">
-        <svg style="width:32px; height:32px; fill:#fff;" viewBox="0 0 24 24">
-            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.753-1.454L0 24zm6.59-4.846c1.666.988 3.396 1.472 5.351 1.473 5.4 0 9.795-4.388 9.798-9.779.003-2.584-1.002-5.013-2.831-6.841C17.086 2.18 14.65 1.176 12.01 1.176c-5.405 0-9.803 4.389-9.806 9.78-.001 1.992.504 3.736 1.514 5.394L2.684 20.31l3.963-1.156zm11.516-7.142c-.31-.156-1.84-.908-2.125-1.01-.284-.103-.491-.156-.697.156-.206.311-.799.982-.979 1.19-.18.207-.361.233-.671.078-1.58-.79-2.73-1.371-3.81-3.218-.28-.48.28-.445.8-.1.467.31 1.026 1.156 1.129 1.311.103.156.052.284-.026.44-.077.157-.722.956-.877 1.137-.155.18-.317.187-.627.031-.31-.156-1.31-.482-2.493-1.375-.92-.821-1.54-1.837-1.72-2.148-.18-.311-.019-.479.136-.634.14-.139.31-.362.465-.544.155-.181.206-.31.31-.517.103-.207.051-.389-.026-.544-.078-.156-.697-1.678-.954-2.302-.25-.602-.51-.522-.697-.525-.18-.003-.387-.004-.594-.004-.207 0-.543.078-.827.388-.284.311-1.086 1.062-1.086 2.587 0 1.526 1.11 3.003 1.265 3.21.155.208 2.183 3.333 5.291 4.673.74.32 1.317.511 1.77.653.743.236 1.42.203 1.954.124.595-.088 1.84-.752 2.1-1.441.26-.689.26-1.279.181-1.402-.078-.124-.284-.19-.595-.347z"/>
-        </svg>
-    </a>
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
+app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
+app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
+app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
+app.get('/client/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
+app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
+app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
-    <script>
-        let currentSelectedAmountZAR = 350;
+// 💳 YOCO AUTOMATED GATEWAY PAYMENT CHARGE ROUTE ENDPOINT
+app.post('/api/payment/yoco-charge', async (req, res) => {
+    try {
+        const { token, amountInCents, planName, isAdHoc } = req.body;
 
-        function updateDynamicIncidentPrice(hours) {
-            const priceTag = document.getElementById('dynamic-price-tag');
-            const baseRate = 350;
-            currentSelectedAmountZAR = baseRate * parseInt(hours);
-            priceTag.innerText = "R " + currentSelectedAmountZAR;
+        if (!token || !amountInCents) {
+            return res.status(400).json({ success: false, message: "Missing required tokenization properties." });
         }
 
-        // Wait until document fully loads to guarantee YocoSDK global object exists
-        window.addEventListener('DOMContentLoaded', () => {
-            const yocoInstance = new window.YocoSDK({
-                publicKey: 'pk_test_a5949eaaN4zjq4R2a744'
-            });
+        // Formulating payload metadata structure required by Yoco Online API Nodes
+        const postData = JSON.stringify({
+            token: token,
+            amountInCents: amountInCents,
+            currency: 'ZAR'
+        });
 
-            document.getElementById('yoco-checkout-trigger').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                yocoInstance.showPopup({
-                    amountInCents: currentSelectedAmountZAR * 100,
-                    currency: 'ZAR',
-                    name: 'IT Elements Remote Support',
-                    description: 'Ad-hoc Technical Incident Resolution Pool',
-                    callback: function (result) {
-                        if (result.error) {
-                            alert("Payment Processing Exception: " + result.error.message);
-                        } else {
-                            fetch('/api/payment/yoco-charge', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    token: result.id, // Fixed: Matched token naming criteria expected by server backend
-                                    amountInCents: currentSelectedAmountZAR * 100,
-                                    isAdHoc: true
-                                })
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    alert("🎉 Payment Authorized successfully! An engineer will patch into your desktop pipeline shortly.");
-                                    window.location.href = "/dashboard";
-                                } else {
-                                    alert("❌ Processing failure: " + (data.message || "Declined by gateway."));
-                                }
-                            })
-                            .catch(err => {
-                                alert("Unable to process billing data stream connection.");
-                            });
-                        }
+        // Set up the HTTPS post parameters securely targeting the Yoco cloud gateway endpoints
+        const options = {
+            hostname: 'online.yoco.co.za', // Fixed target hostname connectivity typo
+            port: 443,
+            path: '/v1/charges',
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer sk_test_369adbdbY6Gbg60694549cdbf721', // Your private test secret key
+                'Content-Type': 'application/json',
+                'Content-Length': Buffer.byteLength(postData)
+            }
+        };
+
+        // Fire request to Yoco servers
+        const yocoReq = https.request(options, (yocoRes) => {
+            let body = '';
+            yocoRes.on('data', (chunk) => body += chunk);
+            yocoRes.on('end', async () => {
+                const responseData = JSON.parse(body);
+
+                // Yoco processes successfully when the transaction record fields return 'successful'
+                if (yocoRes.statusCode === 201 && responseData.status === 'successful') {
+                    
+                    // If it was triggered from a user logged inside their subscription panel deck dashboard:
+                    if (!isAdHoc && req.session.userEmail) {
+                        await UserAccount.findOneAndUpdate(
+                            { email: req.session.userEmail },
+                            { subscriptionTier: planName, subscriptionStatus: 'Active' }
+                        );
                     }
-                });
+                    return res.json({ success: true, data: responseData });
+                } else {
+                    return res.status(400).json({ success: false, error: responseData });
+                }
             });
         });
-    </script>
-</body>
-</html>
+
+        yocoReq.on('error', (e) => {
+            console.error("❌ YOCO SERVICE DISPATCH FAILURE:", e);
+            res.status(500).json({ success: false, message: "Gateway channel link timeout error." });
+        });
+
+        yocoReq.write(postData);
+        yocoReq.end();
+
+    } catch (error) {
+        console.error("❌ CRITICAL TRANSACTION ENGINE FAULT:", error);
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+app.post('/client/register', async (req, res) => {
+    try {
+        const { fullName, phone, email, password } = req.body;
+        if (!fullName || !phone || !email || !password) return res.send('<script>alert("All fields required.");window.history.back();</script>');
+        const normalizedEmail = email.toLowerCase().trim();
+        const existingUser = await UserAccount.findOne({ email: normalizedEmail });
+        if (existingUser) return res.send('<script>alert("Email already registered.");window.history.back();</script>');
+        const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
+        await newUser.save();
+        req.session.isUser = true; req.session.userEmail = newUser.email;
+        res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+app.post('/client/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (password === 'AdminElements2026') { req.session.isAdmin = true; return res.send('<script>window.location.href="/admin";</script>'); }
+        const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
+        if (user && user.password === password) {
+            req.session.isUser = true; req.session.userEmail = user.email;
+            return res.send('<script>window.location.href="/dashboard";</script>');
+        }
+        res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+
+app.post('/support', async (req, res) => {
+    try {
+        const { name, email, remoteId, remotePassword, issue } = req.body;
+        await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : (req.session.userEmail || ''), remoteId, remotePassword, issue, status: 'Open' }).save();
+        res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
+    } catch (err) { res.status(500).send("Database sync error."); }
+});
+
+app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
+    try {
+        const user = await UserAccount.findOne({ email: req.session.userEmail }, { password: 0 });
+        const tickets = await SupportRequest.find({ email: req.session.userEmail }).sort({ date: -1 });
+        res.json({ user, tickets });
+    } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.get('/api/tickets', checkAdminAuth, async (req, res) => {
+    try { res.json(await SupportRequest.find().sort({ date: -1 })); } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
+    try { await SupportRequest.findByIdAndUpdate(req.body.ticketId, { status: req.body.newStatus }); res.json({ success: true }); } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
+    try { res.json({ users: await UserAccount.find({}, { password: 0 }), hourlyBookings: [] }); } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.listen(PORT, () => { console.log(`🚀 PRODUCTION ENGINE ACTIVE ON PORT ${PORT}`); });
