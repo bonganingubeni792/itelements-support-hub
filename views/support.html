@@ -1,69 +1,42 @@
-﻿<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open Remote Connection Support Ticket</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d0d0d">
+    <title>IT Elements - Request Support</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #0b0c10; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .ticket-card { background-color: #121318; border: 1px solid #22252a; padding: 40px; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .title { font-size: 1.5rem; font-weight: 900; margin-bottom: 8px; text-align: center; }
-        .title span { color: #ff1a1a; }
-        .subtitle { color: #888888; font-size: 0.9rem; margin-bottom: 30px; text-align: center; }
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 0.85rem; font-weight: bold; color: #aaaaaa; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .input-group input, .input-group textarea { width: 100%; padding: 14px; background-color: #0b0c10; border: 1px solid #22252a; border-radius: 6px; color: #ffffff; font-size: 0.95rem; transition: border-color 0.2s; }
-        .input-group input:focus, .input-group textarea:focus { outline: none; border-color: #ff1a1a; }
-        .input-group textarea { resize: none; height: 120px; }
-        .row-split { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .submit-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #ff1a1a 0%, #b30000 100%); color: #ffffff; border: none; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(255, 26, 26, 0.2); margin-top: 10px; transition: transform 0.2s; }
-        .submit-btn:hover { transform: translateY(-1px); }
-        .back-link { text-align: center; margin-top: 20px; font-size: 0.85rem; }
-        .back-link a { color: #888888; text-decoration: none; }
-        .back-link a:hover { color: #ffffff; }
+        * { box-sizing:border-box; }
+        body { margin:0; padding:20px; background:#0d0d0d; color:#e5e5e5; font-family:'Segoe UI',Tahoma,sans-serif; }
+        .navbar { max-width:1100px; margin:0 auto 34px; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; gap:16px; background:#141414; border-bottom:2px solid #222; border-radius:6px; }
+        .brand { color:#ff3939; text-decoration:none; font-size:19px; font-weight:800; letter-spacing:.5px; }
+        .links { display:flex; flex-wrap:wrap; gap:10px 20px; }.links a { color:#bbb; text-decoration:none; font-size:14px; }.links a:hover { color:#fff; }
+        main { max-width:720px; margin:0 auto; padding:30px; background:#141414; border:1px solid #262626; border-radius:8px; }
+        h1 { margin:0 0 10px; color:#fff; font-size:27px; }.intro { margin:0 0 25px; color:#929292; font-size:14px; line-height:1.6; }
+        .notice { padding:12px 14px; margin-bottom:20px; border:1px solid #343434; border-radius:5px; color:#bfc7d1; background:#101216; font-size:13px; line-height:1.5; }
+        .field { margin:0 0 17px; }.field label { display:block; margin-bottom:7px; color:#aaa; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; }
+        input,textarea { width:100%; padding:12px; border:1px solid #363636; border-radius:4px; background:#0d0d0d; color:#fff; font:inherit; font-size:14px; }
+        input:focus,textarea:focus { outline:2px solid #ff3939; outline-offset:1px; }.help { color:#737373; font-size:11px; margin:6px 0 0; }.submit { width:100%; border:0; border-radius:4px; padding:13px; color:white; background:#ff3333; font-weight:800; text-transform:uppercase; cursor:pointer; }.submit:hover { background:#cc0000; }
+        @media(max-width:560px) { body { padding:12px; }.navbar { align-items:flex-start; flex-direction:column; }.links { gap:10px 15px; }main { padding:22px 17px; } }
     </style>
 </head>
 <body>
-
-    <div class="ticket-card">
-        <div class="title">🚨 Dispatch <span>Support Request</span></div>
-        <p class="subtitle">Provide your remote access token credentials to connect to your computer.</p>
-        
-        <form action="/support" method="POST">
-            <div class="input-group">
-                <label>Your Full Name</label>
-                <input type="text" name="name" required placeholder="ITelements Support">
-            </div>
-
-            <div class="input-group">
-                <label>Corporate E-mail Address</label>
-                <input type="email" name="email" required placeholder="bongani@itelements.co.za">
-            </div>
-
-            <div class="row-split">
-                <div class="input-group">
-                    <label>AnyDesk / TV ID</label>
-                    <input type="text" name="remoteId" required placeholder="123 456 789">
-                </div>
-                <div class="input-group">
-                    <label>Remote Password</label>
-                    <input type="text" name="remotePassword" required placeholder="abc1234">
-                </div>
-            </div>
-
-            <div class="input-group">
-                <label>Describe the Problem / Error Symptoms</label>
-                <textarea name="issue" required placeholder="My printer network configurations are showing layout errors..."></textarea>
-            </div>
-
-            <button type="submit" class="submit-btn">Transmit Ticket to Queue</button>
+    <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/">IT Elements Support</a>
+        <div class="links"><a href="/">Home</a><a href="/pricing">Plans</a><a href="/dashboard">Client Portal</a></div>
+    </nav>
+    <main>
+        <h1>Request technical support</h1>
+        <p class="intro">Tell us what is happening and include your AnyDesk or TeamViewer ID. Send a session password only when you are ready for a support session.</p>
+        <div class="notice"><strong>Safety:</strong> Only share remote access details with an IT Elements engineer you are currently speaking with. Never send your account password or payment card details here.</div>
+        <form action="/support" method="post">
+            <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" minlength="2" maxlength="100" required></div>
+            <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+            <div class="field"><label for="remoteId">AnyDesk / TeamViewer ID</label><input id="remoteId" name="remoteId" maxlength="100" autocomplete="off" required><p class="help">Enter the connection ID shown in your remote support app.</p></div>
+            <div class="field"><label for="remotePassword">Temporary session password (if required)</label><input id="remotePassword" name="remotePassword" type="password" maxlength="200" autocomplete="off"><p class="help">Optional. Provide it only when an engineer is ready to connect.</p></div>
+            <div class="field"><label for="issue">Describe the problem</label><textarea id="issue" name="issue" rows="6" maxlength="5000" required placeholder="What happened, when it started, and any error message you see"></textarea></div>
+            <button class="submit" type="submit">Submit support request</button>
         </form>
-
-        <div class="back-link">
-            <a href="/dashboard">◀ Cancel and Return to Workspace</a>
-        </div>
-    </div>
-
+    </main>
 </body>
 </html>
