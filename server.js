@@ -251,6 +251,13 @@ app.use(express.static(viewsPath, { index: false }));
 
 app.get('/', (req, res) => res.sendFile(path.join(viewsPath, 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(viewsPath, 'pricing.html')));
+app.get('/subscribe/:planId', (req, res) => {
+    const planId = String(req.params.planId || '');
+    if (!SLA_PLANS[planId]) return res.status(404).send('Plan not found.');
+    req.session.pendingPlanId = planId;
+    if (req.session.isUser) return res.redirect(`/dashboard?plan=${encodeURIComponent(planId)}`);
+    return res.redirect('/client/login');
+});
 app.get('/support', (req, res) => res.sendFile(path.join(viewsPath, 'support.html')));
 app.get('/admin/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
 app.get('/client/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
@@ -382,7 +389,10 @@ app.post('/client/register', async (req, res) => {
         await newUser.save();
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
-        res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
+        const nextUrl = req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+            ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+            : '/dashboard';
+        res.send(`<script>alert("Account created successfully!");window.location.href=${JSON.stringify(nextUrl)};</script>`);
     } catch (err) { res.status(500).send(err.message); }
 });
 
@@ -397,7 +407,10 @@ app.post('/client/login', async (req, res) => {
         if (user && await verifyAndUpgradePassword(user, password)) {
             req.session.isUser = true;
             req.session.userEmail = user.email;
-            return res.send('<script>window.location.href="/dashboard";</script>');
+            const nextUrl = req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+                ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+                : '/dashboard';
+            return res.send(`<script>window.location.href=${JSON.stringify(nextUrl)};</script>`);
         }
         res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
     } catch (err) { res.status(500).send(err.message); }
