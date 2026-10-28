@@ -1,113 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d0d0d">
     <title>IT Elements - Subscription Plans</title>
     <style>
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .nav-brand { font-size: 20px; font-weight: bold; color: #ff3333; text-transform: uppercase; letter-spacing: 1px; }
-        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; margin-left: 20px; }
-        .nav-links a:hover { color: #ff3333; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; text-align: center; }
-        h1 { color: #ffffff; font-size: 32px; margin: 0 0 10px 0; font-weight: 700; }
-        .subtitle { color: #888; font-size: 15px; max-width: 600px; margin: 0 auto 40px auto; line-height: 1.5; }
-        .pricing-grid { display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; }
-        .pricing-card { background-color: #141414; border: 1px solid #222; border-radius: 8px; padding: 30px; width: 100%; max-width: 270px; display: flex; flex-direction: column; justify-content: space-between; text-align: left; }
-        .pricing-card.popular { border-color: #ff3333; position: relative; }
-        .popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background-color: #ff3333; color: #ffffff; padding: 3px 12px; font-size: 11px; font-weight: bold; border-radius: 12px; text-transform: uppercase; }
-        .plan-name { font-size: 20px; font-weight: bold; color: #ffffff; }
-        .plan-target { font-size: 13px; color: #666; margin-bottom: 20px; }
-        .plan-price { font-size: 28px; color: #ff3333; font-weight: bold; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 15px; }
-        .features-list { list-style: none; padding: 0; margin: 0 0 35px 0; font-size: 13px; color: #b3b3b3; line-height: 1.6; }
-        .features-list li { padding: 8px 0; position: relative; padding-left: 20px; }
-        .features-list li::before { content: "•"; color: #ff3333; font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; }
-        .subscribe-btn { background-color: #ff3333; color: #ffffff; border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 12px; text-align: center; letter-spacing: 0.5px; }
-        .subscribe-btn:hover { background-color: #cc0000; }
-        @media (max-width: 600px) { .navbar { flex-direction: column; text-align: center; } .nav-links { margin-top: 10px; } .pricing-card { max-width: 100%; } }
+        * { box-sizing:border-box; }
+        body { background:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',sans-serif; margin:0; }
+        .navbar { background:#141414; border-bottom:2px solid #222; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+        .nav-brand { font-size:20px; font-weight:bold; color:#ff3333; text-transform:uppercase; letter-spacing:1px; text-decoration:none; }
+        .nav-links { display:flex; flex-wrap:wrap; gap:10px 20px; }
+        .nav-links a { color:#b3b3b3; text-decoration:none; font-size:14px; }
+        .nav-links a:hover { color:#ff3333; }
+        .container { max-width:1200px; margin:0 auto; padding:48px 20px; text-align:center; }
+        h1 { color:#fff; font-size:clamp(27px,4vw,36px); margin:0 0 10px; }
+        .subtitle { color:#999; font-size:15px; max-width:680px; margin:0 auto 42px; line-height:1.6; }
+        .pricing-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; align-items:stretch; }
+        .pricing-card { background:#141414; border:1px solid #292929; border-radius:8px; padding:26px 22px; display:flex; flex-direction:column; text-align:left; position:relative; }
+        .pricing-card.popular { border:2px solid #ff3333; }
+        .popular-badge { position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:#ff3333; color:#fff; padding:4px 13px; font-size:11px; font-weight:bold; border-radius:20px; text-transform:uppercase; white-space:nowrap; }
+        .plan-name { font-size:20px; font-weight:bold; color:#fff; }
+        .plan-target { font-size:13px; color:#858585; margin:8px 0 18px; min-height:40px; line-height:1.5; }
+        .plan-price { font-size:29px; color:#ff4545; font-weight:bold; padding-bottom:15px; border-bottom:1px solid #292929; }
+        .plan-price span { font-size:13px; color:#888; font-weight:normal; }
+        .features-list { list-style:none; padding:0; margin:16px 0 24px; font-size:13px; color:#c4c4c4; line-height:1.6; flex:1; }
+        .features-list li { padding:7px 0 7px 19px; position:relative; }
+        .features-list li::before { content:'✓'; color:#ff4545; font-weight:bold; position:absolute; left:0; }
+        .subscribe-btn { display:block; background:#ff3333; color:#fff; border:0; padding:13px 10px; width:100%; border-radius:4px; cursor:pointer; font-weight:bold; text-transform:uppercase; font-size:12px; text-align:center; letter-spacing:.4px; text-decoration:none; }
+        .subscribe-btn:hover { background:#cc0000; }
+        .checkout-note { color:#777; font-size:12px; line-height:1.6; margin:24px auto 0; max-width:650px; }
+        @media(max-width:900px) { .pricing-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media(max-width:560px) { .navbar { align-items:flex-start; flex-direction:column; }.container { padding:36px 16px; }.pricing-grid { grid-template-columns:1fr; gap:22px; }.plan-target { min-height:0; } }
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="nav-brand">IT Elements</div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/support">Tickets</a>
-            <a href="/dashboard">Portal</a>
-        </div>
+    <nav class="navbar" aria-label="Main navigation">
+        <a class="nav-brand" href="/">IT Elements</a>
+        <div class="nav-links"><a href="/">Home</a><a href="/support">Tickets</a><a href="/dashboard">Portal</a><a href="/client/login">Sign in</a></div>
     </nav>
-
-    <div class="container">
+    <main class="container">
         <h1>Predictable Flat-Rate Coverage</h1>
-        <div class="subtitle">Choose an automated SLA response tier tailored to your active network matrix infrastructure.</div>
-        
-        <div class="pricing-grid">
-            <!-- Basic Support -->
-            <div class="pricing-card">
-                <div>
-                    <div class="plan-name">Basic Support</div>
-                    <div class="plan-target">Single home-office setups.</div>
-                    <div class="plan-price">R299/mo</div>
-                    <ul class="features-list">
-                        <li>2 Support Tickets / mo</li>
-                        <li>Malware & Virus Cleanups</li>
-                    </ul>
-                </div>
-                <button type="button" class="subscribe-btn" onclick="redirectToLoginFlow()">Subscribe Basic</button>
-            </div>
-
-            <!-- Standard Tier -->
-            <div class="pricing-card popular">
-                <div class="popular-badge">Most Popular</div>
-                <div>
-                    <div class="plan-name">Standard Tier</div>
-                    <div class="plan-target">Peace of mind for professionals.</div>
-                    <div class="plan-price">R599/mo</div>
-                    <ul class="features-list">
-                        <li>Unlimited Remote Access</li>
-                        <li>4-Hour Priority SLA Response</li>
-                    </ul>
-                </div>
-                <button type="button" class="subscribe-btn" onclick="redirectToLoginFlow()">Subscribe Standard</button>
-            </div>
-
-            <!-- Business Growth -->
-            <div class="pricing-card">
-                <div>
-                    <div class="plan-name">Business Growth</div>
-                    <div class="plan-target">Growing small office networks.</div>
-                    <div class="plan-price">R2499/mo</div>
-                    <ul class="features-list">
-                        <li>Up to 10 Office Devices</li>
-                        <li>2-Hour Express SLA Reply</li>
-                    </ul>
-                </div>
-                <button type="button" class="subscribe-btn" onclick="redirectToLoginFlow()">Subscribe Business</button>
-            </div>
-
-            <!-- Corporate SLA -->
-            <div class="pricing-card">
-                <div>
-                    <div class="plan-name">Corporate SLA</div>
-                    <div class="plan-target">Complete enterprise coverage.</div>
-                    <div class="plan-price">R4999/mo</div>
-                    <ul class="features-list">
-                        <li>Up to 25 Devices covered</li>
-                        <li>Automatic Cloud Backups</li>
-                    </ul>
-                </div>
-                <button type="button" class="subscribe-btn" onclick="redirectToLoginFlow()">Subscribe Corporate</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function redirectToLoginFlow() {
-            // Removed the alert message block to perform an immediate, silent automatic redirect
-            window.location.href = "/client/login";
-        }
-    </script>
+        <p class="subtitle">Choose a support plan for your home office or business. Sign in or create an account, then complete payment securely through Yoco.</p>
+        <section class="pricing-grid" aria-label="Support plans">
+            <article class="pricing-card">
+                <div class="plan-name">Basic Support</div><div class="plan-target">For a single home-office setup.</div>
+                <div class="plan-price">R299<span> / 30 days</span></div>
+                <ul class="features-list"><li>2 support tickets per 30 days</li><li>Malware and virus cleanup support</li></ul>
+                <a class="subscribe-btn" href="/subscribe/basic">Choose Basic</a>
+            </article>
+            <article class="pricing-card popular">
+                <span class="popular-badge">Most popular</span>
+                <div class="plan-name">Standard Tier</div><div class="plan-target">For professionals who need dependable help.</div>
+                <div class="plan-price">R599<span> / 30 days</span></div>
+                <ul class="features-list"><li>Remote support access</li><li>Priority response target: 4 business hours</li></ul>
+                <a class="subscribe-btn" href="/subscribe/standard">Choose Standard</a>
+            </article>
+            <article class="pricing-card">
+                <div class="plan-name">Business Growth</div><div class="plan-target">For small office networks and growing teams.</div>
+                <div class="plan-price">R2,499<span> / 30 days</span></div>
+                <ul class="features-list"><li>Coverage for up to 10 devices</li><li>Priority response target: 2 business hours</li></ul>
+                <a class="subscribe-btn" href="/subscribe/business">Choose Business</a>
+            </article>
+            <article class="pricing-card">
+                <div class="plan-name">Corporate SLA</div><div class="plan-target">For organizations needing broader device coverage.</div>
+                <div class="plan-price">R4,999<span> / 30 days</span></div>
+                <ul class="features-list"><li>Coverage for up to 25 devices</li><li>Priority support for your organization</li></ul>
+                <a class="subscribe-btn" href="/subscribe/corporate">Choose Corporate</a>
+            </article>
+        </section>
+        <p class="checkout-note">Plans are paid in advance for 30 days and renewed manually. Your plan is activated after Yoco confirms payment.</p>
+    </main>
 </body>
 </html>
