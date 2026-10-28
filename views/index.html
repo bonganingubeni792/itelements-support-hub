@@ -39,6 +39,7 @@
         .whatsapp-floating-bubble:hover { transform: scale(1.1); }
         .footer-details { color: #888; font-size: 13px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; }
     </style>
+    <!-- Yoco SDK Script File Connection -->
     <script src="https://yoco.com"></script>
 </head>
 <body>
@@ -60,6 +61,7 @@
             <p style="color:#888; font-size:15px; max-width:700px; margin: 0 auto; line-height: 1.6;">Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
         </div>
 
+        <!-- 🛠️ DYNAMIC ACTION LINKS INTEGRATION: Connected blocks directly to target site paths -->
         <div class="feature-grid">
             <a href="/pricing" class="feature-card">
                 <div class="feature-title">Subscription Plans</div>
@@ -85,7 +87,7 @@
 
             <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-align:center;">SELECT DURATION ALLOCATION:</div>
             <select class="form-control" id="duration-selector" onchange="updateDynamicIncidentPrice(this.value)">
-                <option value="1">1 Hour Dedicated Support</option>
+                <option value="1">1 Hour Dedicated Emergency Services</option>
                 <option value="2">2 Hours Dedicated Support Package</option>
                 <option value="3">3 Hours Comprehensive Network Overhaul</option>
                 <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
@@ -93,6 +95,7 @@
             </select>
             
             <div class="price-display" id="dynamic-price-tag">R 350</div>
+            <!-- Interactive Action Button mapped to execute the Yoco Card Payment Module -->
             <button id="yoco-checkout-trigger" class="pay-trigger-btn">Pay via Credit Card 💳</button>
         </div>
 
@@ -123,6 +126,7 @@
     </a>
 
     <script>
+        // Track the current price selection state (Defaulting to 350 ZAR)
         let currentSelectedAmountZAR = 350;
 
         function updateDynamicIncidentPrice(hours) {
@@ -132,21 +136,25 @@
             priceTag.innerText = "R " + currentSelectedAmountZAR;
         }
 
-        const yoco = new window.YocoSDK({
+        // Initialize the inline Web SDK with your Public Sandbox Test Key
+        const yocoInstance = new window.YocoSDK({
             publicKey: 'pk_test_a5949eaaN4zjq4R2a744'
         });
 
+        // Trigger payment popup window on user selection click event
         document.getElementById('yoco-checkout-trigger').addEventListener('click', function(e) {
             e.preventDefault();
-            yoco.showPopup({
-                amountInCents: currentSelectedAmountZAR * 100,
+            
+            yocoInstance.showPopup({
+                amountInCents: currentSelectedAmountZAR * 100, // Converts current ZAR amount to cents
                 currency: 'ZAR',
                 name: 'IT Elements Remote Support',
                 description: 'Ad-hoc Technical Incident Resolution Pool',
                 callback: function (result) {
                     if (result.error) {
-                        alert("Payment Gate Error: " + result.error.message);
+                        alert("Payment Processing Exception: " + result.error.message);
                     } else {
+                        // Deliver payment token ID metadata to background server routes
                         fetch('/api/payment/yoco-charge', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
