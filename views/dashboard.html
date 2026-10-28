@@ -8,11 +8,17 @@
         :root { color-scheme:dark; --bg:#0d0d0d; --panel:#141414; --line:#252525; --muted:#777; --red:#ff3333; --blue:#4da6ff; }
         * { box-sizing:border-box; }
         body { background:var(--bg); color:#e0e0e0; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:25px; }
-        .page { max-width:1200px; margin:0 auto; }
+        .page { width:min(100%,1500px); margin:0 auto; }
         .header { display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:2px solid #222; padding-bottom:10px; margin-bottom:25px; }
         .header h1 { font-size:20px; color:var(--red); margin:0; }
         .logout-link { color:var(--red); text-decoration:none; font-weight:bold; font-size:13px; }
+        .header-actions { display:flex; align-items:center; flex-wrap:wrap; gap:10px 18px; }.header-actions a { color:#bdbdbd; text-decoration:none; font-size:13px; font-weight:700; }.header-actions a:hover { color:#fff; }.header-actions .logout-link { color:var(--red); }
         .intro { font-size:13px; color:#777; margin-top:-15px; margin-bottom:25px; }
+        .welcome { margin:0 0 6px; color:#fff; font-size:clamp(21px,3vw,28px); }.welcome-subtitle { color:#8c8c8c; font-size:14px; margin:0 0 20px; line-height:1.6; }
+        .quick-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:0 0 28px; }
+        .quick-stat { background:linear-gradient(145deg,#17191d,#111214); border:1px solid #292d33; border-radius:8px; padding:16px; }
+        .quick-stat-label { display:block; color:#898989; font-size:11px; text-transform:uppercase; letter-spacing:.4px; }
+        .quick-stat-value { display:block; margin-top:5px; color:#fff; font-size:23px; font-weight:800; }.quick-stat-value.green { color:#65dc85; }.quick-stat-value.yellow { color:#ffd166; }
         .section-title { font-size:16px; color:#fff; text-align:left; border-bottom:1px solid #222; padding-bottom:5px; }
         .section-note { font-size:12px; color:#777; margin-top:-5px; margin-bottom:15px; }
         .subscription-summary { background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:18px 20px; margin:0 0 24px; display:flex; gap:12px 30px; flex-wrap:wrap; align-items:center; }
@@ -22,8 +28,8 @@
         .summary-value.pending { color:#ffd166; }
         .plans-wrapper { display:flex; gap:15px; flex-wrap:wrap; margin-bottom:30px; justify-content:space-between; }
         .plan-box { background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:20px; width:22%; min-width:200px; text-align:left; }
-        .plan-name { font-weight:bold; font-size:16px; color:var(--blue); }
-        .plan-price { font-size:22px; font-weight:bold; color:#fff; margin:10px 0 2px; }
+        .plan-name { font-weight:bold; font-size:16px; color:#b8b8b8; }
+        .plan-price { font-size:24px; font-weight:bold; color:var(--red); margin:10px 0 2px; }
         .plan-term { color:#777; font-size:12px; margin-bottom:12px; }
         .pay-btn { background:#1a73e8; color:#fff; border:0; width:100%; padding:10px; font-weight:bold; border-radius:4px; cursor:pointer; text-transform:uppercase; font-size:11px; }
         .pay-btn:hover { background:#155cb4; }
@@ -33,6 +39,7 @@
         .form-group { margin-bottom:15px; }
         .form-group label { display:block; font-size:12px; color:#999; margin-bottom:5px; text-transform:uppercase; }
         .form-control { background:#1a1a1a; color:#fff; border:1px solid #333; padding:10px; width:100%; border-radius:4px; }
+        .password-wrap { position:relative; }.password-wrap .form-control { padding-right:78px; }.password-toggle { position:absolute; right:7px; top:50%; transform:translateY(-50%); border:1px solid #465364; border-radius:4px; background:#11151b; color:#c8d5e4; padding:7px 10px; font-size:11px; font-weight:700; cursor:pointer; }.password-toggle:hover { border-color:var(--blue); color:#fff; }
         textarea.form-control { height:80px; resize:vertical; }
         .submit-btn { background:#d93025; color:#fff; border:0; font-weight:bold; padding:12px 24px; border-radius:4px; cursor:pointer; text-transform:uppercase; font-size:13px; }
         .table-logs { width:100%; border-collapse:collapse; margin-top:15px; font-size:14px; text-align:left; min-width:600px; }
@@ -46,18 +53,26 @@
         .notice.success { color:#8be28b; }
         .status-badge { display:inline-block; padding:3px 8px; border-radius:12px; background:#292929; color:#ccc; font-size:12px; }
         .status-badge.open { color:#ffd166; }
+        .status-badge.hold { color:#ffb86b; background:#352514; }
         .status-badge.resolved { color:#8be28b; }
         @media(max-width:900px) { .plan-box { width:calc(50% - 10px); } }
-        @media(max-width:560px) { body { padding:15px; } .header { align-items:flex-start; flex-direction:column; } .plan-box { width:100%; } .ticket-card { padding:18px; } .soft-box { flex-direction:column; } }
+        @media(max-width:560px) { body { padding:12px; } .header { align-items:flex-start; flex-direction:column; } .header-actions { gap:10px 14px; } .quick-stats { grid-template-columns:1fr 1fr; }.quick-stat:last-child { grid-column:1 / -1; }.plan-box { width:100%; min-width:0; } .plans-wrapper { display:grid; grid-template-columns:1fr; gap:12px; } .ticket-card { padding:16px; margin-bottom:18px; } .soft-box { flex-direction:column; } .section-title { font-size:15px; } .subscription-summary { gap:14px 20px; padding:15px; } }
+        @media(max-width:560px) { .table-logs { min-width:0; table-layout:fixed; font-size:11px; }.table-logs th,.table-logs td { padding:8px 5px; overflow-wrap:anywhere; }.quick-stat { padding:13px; }.quick-stat-value { font-size:20px; } }
     </style>
 </head>
 <body>
 <main class="page">
     <header class="header">
-        <h1>IT Elements Client Command Center</h1>
-        <a href="/client/logout" class="logout-link">Home · Plans · Log Out 🔌</a>
+        <h1>IT Elements Client Portal</h1>
+        <nav class="header-actions" aria-label="Client navigation"><a href="/">Home</a><a href="/pricing">Plans</a><a href="#ticket-request">Request help</a><a href="/client/logout" class="logout-link">Log out</a></nav>
     </header>
-    <p class="intro">Your IT support account and plan status.</p>
+    <h2 class="welcome" id="welcome-title">Welcome to your support portal</h2>
+    <p class="welcome-subtitle">Manage your plan, submit a support request, and follow your ticket progress here.</p>
+    <section class="quick-stats" aria-label="Your support overview">
+        <article class="quick-stat"><span class="quick-stat-label">Support requests</span><strong class="quick-stat-value" id="ticket-total">—</strong></article>
+        <article class="quick-stat"><span class="quick-stat-label">Needs attention</span><strong class="quick-stat-value yellow" id="ticket-open-count">—</strong></article>
+        <article class="quick-stat"><span class="quick-stat-label">Resolved</span><strong class="quick-stat-value green" id="ticket-resolved-count">—</strong></article>
+    </section>
 
     <h2 class="section-title">👑 SLA Package Activation Matrix</h2>
     <p class="section-note">Choose a 30-day support plan. Payment is securely completed on Yoco.</p>
@@ -95,19 +110,19 @@
         </article>
     </section>
 
-    <section class="ticket-card">
+    <section class="ticket-card" id="ticket-request">
         <h2 style="color:#ff3333;">🚨 Engineering Queue Incident Dispatch</h2>
         <p style="font-size:11px;color:#777;margin-top:-5px;margin-bottom:20px;">Submit your issue and our team will arrange a secure remote support session.</p>
         <form action="/support" method="POST">
             <div class="form-group"><label for="ticket-name">Client name</label><input id="ticket-name" type="text" name="name" class="form-control" required placeholder="Enter full name"></div>
-            <div class="form-group"><label for="ticket-remote-id">AnyDesk / TeamViewer ID</label><input id="ticket-remote-id" type="text" name="remoteId" class="form-control" required placeholder="e.g. 123 456 789"></div>
-            <div class="form-group"><label for="ticket-remote-password">Remote session password</label><input id="ticket-remote-password" type="password" name="remotePassword" class="form-control" required placeholder="Only provide when support asks for it"></div>
+            <div class="form-group"><label for="ticket-remote-id">AnyDesk / TeamViewer ID</label><input id="ticket-remote-id" type="text" name="remoteId" class="form-control" autocomplete="off" autocapitalize="off" required placeholder="Enter the ID shown in your remote support app"></div>
+            <div class="form-group"><label for="ticket-remote-password">Temporary remote session password (optional)</label><div class="password-wrap"><input id="ticket-remote-password" type="password" name="remotePassword" class="form-control" autocomplete="new-password" placeholder="Only provide when support asks for it"><button class="password-toggle" type="button" data-password-target="ticket-remote-password" aria-pressed="false">Show</button></div><small style="display:block;color:#777;margin-top:6px;">Use Show to check what you typed. Share this only when an engineer is ready to connect.</small></div>
             <div class="form-group"><label for="ticket-issue">Describe the issue</label><textarea id="ticket-issue" name="issue" class="form-control" required placeholder="Describe the computer problem..."></textarea></div>
             <button type="submit" class="submit-btn">Submit Support Ticket</button>
         </form>
     </section>
 
-    <section class="ticket-card">
+    <section class="ticket-card" id="ticket-history">
         <h2>📋 Your Active Support Tickets</h2>
         <p style="font-size:12px;color:#777;margin-top:-5px;">Ticket history linked to your account.</p>
         <table class="table-logs">
@@ -133,6 +148,10 @@
     const currentPlan = document.getElementById('current-plan');
     const planStatus = document.getElementById('plan-status');
     const planExpiry = document.getElementById('plan-expiry');
+    const welcomeTitle = document.getElementById('welcome-title');
+    const totalTicketCount = document.getElementById('ticket-total');
+    const openTicketCount = document.getElementById('ticket-open-count');
+    const resolvedTicketCount = document.getElementById('ticket-resolved-count');
     const query = new URLSearchParams(window.location.search);
     const returnedFromYoco = query.get('payment') === 'returned';
     const checkoutReference = query.get('ref');
@@ -147,7 +166,12 @@
 
     function renderTickets(tickets) {
         ticketRows.replaceChildren();
-        if (!Array.isArray(tickets) || tickets.length === 0) {
+        const rows = Array.isArray(tickets) ? tickets : [];
+        const resolvedCount = rows.filter(ticket => String(ticket.status || '').toLowerCase() === 'resolved').length;
+        totalTicketCount.textContent = String(rows.length);
+        openTicketCount.textContent = String(rows.length - resolvedCount);
+        resolvedTicketCount.textContent = String(resolvedCount);
+        if (rows.length === 0) {
             const row = ticketRows.insertRow();
             const cell = row.insertCell();
             cell.colSpan = 4;
@@ -155,7 +179,7 @@
             cell.textContent = 'You have no support tickets yet.';
             return;
         }
-        for (const ticket of tickets) {
+        for (const ticket of rows) {
             const row = ticketRows.insertRow();
             const dateCell = row.insertCell();
             dateCell.textContent = ticket.date ? new Date(ticket.date).toLocaleString() : '—';
@@ -163,7 +187,8 @@
             row.insertCell().textContent = ticket.issue || '—';
             const statusCell = row.insertCell();
             const badge = document.createElement('span');
-            badge.className = 'status-badge ' + (String(ticket.status || '').toLowerCase() === 'resolved' ? 'resolved' : 'open');
+            const normalizedStatus = String(ticket.status || 'Open').toLowerCase();
+            badge.className = 'status-badge ' + (normalizedStatus === 'resolved' ? 'resolved' : normalizedStatus === 'on hold' ? 'hold' : 'open');
             badge.textContent = ticket.status || 'Open';
             statusCell.appendChild(badge);
         }
@@ -179,6 +204,7 @@
         if (!response.ok) throw new Error('Could not load your account details.');
         const data = await response.json();
         const user = data.user || {};
+        welcomeTitle.textContent = `Welcome back${user.fullName ? ', ' + user.fullName.split(/\s+/)[0] : ''}!`;
         currentPlan.textContent = user.subscriptionTier || 'No active plan';
         planStatus.textContent = user.subscriptionStatus || 'Inactive';
         planStatus.className = 'summary-value ' + (user.subscriptionStatus === 'Active' ? 'active' : '');
@@ -226,6 +252,15 @@
     }
 
     document.querySelectorAll('.pay-btn').forEach(button => button.addEventListener('click', () => startPlanCheckout(button)));
+    document.querySelectorAll('[data-password-target]').forEach(button => {
+        button.addEventListener('click', () => {
+            const input = document.getElementById(button.dataset.passwordTarget);
+            const isVisible = input.type === 'password';
+            input.type = isVisible ? 'text' : 'password';
+            button.textContent = isVisible ? 'Hide' : 'Show';
+            button.setAttribute('aria-pressed', String(isVisible));
+        });
+    });
 
     (async () => {
         try {
