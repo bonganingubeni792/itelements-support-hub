@@ -67,44 +67,40 @@ app.post('/api/payment/yoco-charge', async (req, res) => {
             return res.status(400).json({ success: false, message: "Missing required tokenization properties." });
         }
 
-        // Formulating payload metadata structure required by Yoco Online API Nodes
         const postData = JSON.stringify({
             token: token,
             amountInCents: amountInCents,
             currency: 'ZAR'
         });
 
-        // Set up the HTTPS post parameters securely targeting the Yoco cloud gateway endpoints
+        // ✅ FIXED CONNECTIVITY HOSTNAME ROUTING STRING PARAMETER
         const options = {
-            hostname: 'online.yoco.co.za', // Fixed target hostname connectivity typo
+            hostname: 'online.yoco.co.za',
             port: 443,
             path: '/v1/charges',
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer sk_test_369adbdbY6Gbg60694549cdbf721', // Your private test secret key
+                'Authorization': 'Bearer sk_test_369adbdbY6Gbg60694549cdbf721',
                 'Content-Type': 'application/json',
                 'Content-Length': Buffer.byteLength(postData)
             }
         };
 
-        // Fire request to Yoco servers
         const yocoReq = https.request(options, (yocoRes) => {
             let body = '';
             yocoRes.on('data', (chunk) => body += chunk);
             yocoRes.on('end', async () => {
                 const responseData = JSON.parse(body);
 
-                // Yoco processes successfully when the transaction record fields return 'successful'
                 if (yocoRes.statusCode === 201 && responseData.status === 'successful') {
-                    
-                    // If it was triggered from a user logged inside their subscription panel deck dashboard:
                     if (!isAdHoc && req.session.userEmail) {
                         await UserAccount.findOneAndUpdate(
                             { email: req.session.userEmail },
                             { subscriptionTier: planName, subscriptionStatus: 'Active' }
                         );
                     }
-                    return res.json({ success: true, data: responseData });
+
+                                    return res.json({ success: true, data: responseData });
                 } else {
                     return res.status(400).json({ success: false, error: responseData });
                 }
