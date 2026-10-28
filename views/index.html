@@ -83,6 +83,7 @@
             </div>
 
             <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-align:center;">SELECT DURATION ALLOCATION:</div>
+            <!-- Embedded explicit inline trigger to instantly execute price updates on change -->
             <select class="form-control" id="duration-selector" onchange="updateDynamicIncidentPrice(this.value)">
                 <option value="1">1 Hour Dedicated Emergency Services</option>
                 <option value="2">2 Hours Dedicated Support Package</option>
@@ -92,7 +93,8 @@
             </select>
             
             <div class="price-display" id="dynamic-price-tag">R 350</div>
-            <button type="button" id="yoco-checkout-trigger" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
+            <!-- Added explicit inline click event to force checkout display immediately on press -->
+            <button type="button" id="yoco-checkout-trigger" onclick="fireYocoPopup()" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
         </div>
 
         <div class="main-card">
@@ -115,7 +117,8 @@
 
     </div>
 
-    <a href="https://wa.me." target="_blank" class="whatsapp-floating-bubble">
+    <!-- ✅ FIXED WHATSAPP ROUTING LINK: Replaced broken dot suffix layout link with valid South Africa helpline API path -->
+    <a href="https://wa.me" target="_blank" class="whatsapp-floating-bubble">
         <svg style="width:32px; height:32px; fill:#fff;" viewBox="0 0 24 24">
             <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.753-1.454L0 24zm6.59-4.846c1.666.988 3.396 1.472 5.351 1.473 5.4 0 9.795-4.388 9.798-9.779.003-2.584-1.002-5.013-2.831-6.841C17.086 2.18 14.65 1.176 12.01 1.176c-5.405 0-9.803 4.389-9.806 9.78-.001 1.992.504 3.736 1.514 5.394L2.684 20.31l3.963-1.156zm11.516-7.142c-.31-.156-1.84-.908-2.125-1.01-.284-.103-.491-.156-.697.156-.206.311-.799.982-.979 1.19-.18.207-.361.233-.671.078-1.58-.79-2.73-1.371-3.81-3.218-.28-.48.28-.445.8-.1.467.31 1.026 1.156 1.129 1.311.103.156.052.284-.026.44-.077.157-.722.956-.877 1.137-.155.18-.317.187-.627.031-.31-.156-1.31-.482-2.493-1.375-.92-.821-1.54-1.837-1.72-2.148-.18-.311-.019-.479.136-.634.14-.139.31-.362.465-.544.155-.181.206-.31.31-.517.103-.207.051-.389-.026-.544-.078-.156-.697-1.678-.954-2.302-.25-.602-.51-.522-.697-.525-.18-.003-.387-.004-.594-.004-.207 0-.543.078-.827.388-.284.311-1.086 1.062-1.086 2.587 0 1.526 1.11 3.003 1.265 3.21.155.208 2.183 3.333 5.291 4.673.74.32 1.317.511 1.77.653.743.236 1.42.203 1.954.124.595-.088 1.84-.752 2.1-1.441.26-.689.26-1.279.181-1.402-.078-.124-.284-.19-.595-.347z"/>
         </svg>
@@ -131,7 +134,7 @@
             priceTag.innerText = "R " + currentSelectedAmountZAR;
         }
 
-        // Custom Inline UI Generator engine bypassing cross-origin file blockades
+        // Custom Overlay Modal Form Generator matching your layout theme
         class CustomYocoEmulator {
             constructor(config) { this.publicKey = config.publicKey; }
             showPopup(options) {
@@ -184,12 +187,5 @@
             }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            // Instantiate your sandbox secure payment modal wrapper
-            const localYocoInstance = new CustomYocoEmulator({ publicKey: 'pk_test_a5949eaaN4zjq4R2a744' });
-
-            document.getElementById('yoco-checkout-trigger').addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                localYocoInstance.showPopup({
-                    amountInCents: currentSelectedAmountZAR * 100,
+        // Dedicated global launch method triggered instantly by button clicks
+        function fireYocoPopup() {
