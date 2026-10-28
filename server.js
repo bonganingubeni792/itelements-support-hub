@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
-const { randomUUID } = require('crypto');
+const crypto = require('crypto');
+const { randomUUID } = crypto;
 const fs = require('fs');
 
 // Load .env for local development without requiring an extra package.
@@ -22,6 +23,12 @@ const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
 const PRICE_PER_HOUR_CENTS = 35000;
 const viewsPath = path.join(__dirname, 'views');
+const SLA_PLANS = {
+    basic: { name: 'Basic Support', amount: 29900 },
+    standard: { name: 'Standard Tier', amount: 59900 },
+    business: { name: 'Business Growth', amount: 249900 },
+    corporate: { name: 'Corporate SLA', amount: 499900 }
+};
 
 if (dbURI) {
     mongoose.connect(dbURI)
@@ -37,8 +44,24 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     subscriptionTier: { type: String, default: 'None (Unpaid)' },
-    subscriptionStatus: { type: String, default: 'Inactive' }
+    subscriptionStatus: { type: String, default: 'Inactive' },
+    subscriptionPaidAt: { type: Date, default: null },
+    subscriptionExpiresAt: { type: Date, default: null }
 }, { collection: 'useraccounts' }));
+
+const YocoCheckout = mongoose.model('YocoCheckout', new mongoose.Schema({
+    checkoutId: { type: String, required: true, unique: true },
+    referenceId: { type: String, required: true, unique: true },
+    userEmail: { type: String, required: true },
+    planId: { type: String, required: true },
+    planName: { type: String, required: true },
+    amount: { type: Number, required: true },
+    status: { type: String, default: 'pending' },
+    eventId: { type: String, default: null },
+    paidAt: { type: Date, default: null },
+    expiresAt: { type: Date, default: null },
+    createdAt: { type: Date, default: Date.now }
+}, { collection: 'yococheckouts' }));
 
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     name: String,
@@ -56,6 +79,77 @@ app.use((req, res, next) => {
     next();
 });
 app.use(express.urlencoded({ extended: true }));
+
+// Yoco sends a signed raw body. Keep this route before express.json() so the
+// signature is checked against the exact bytes Yoco sent.
+app.post('/webhooks/yoco', express.raw({ type: 'application/json', limit: '100kb' }), async (req, res) => {
+    const webhookSecret = process.env.YOCO_WEBHOOK_SECRET;
+    if (!webhookSecret || !webhookSecret.startsWith('whsec_')) {
+        return res.status(503).send('Yoco webhook secret is not configured.');
+    }
+
+    const webhookId = req.get('webhook-id');
+    const timestamp = req.get('webhook-timestamp');
+    const signatureHeader = req.get('webhook-signature') || '';
+    const timestampSeconds = Number(timestamp);
+    if (!webhookId || !Number.isFinite(timestampSeconds) || Math.abs(Date.now() / 1000 - timestampSeconds) > 180) {
+        return res.status(400).send('Invalid or expired webhook.');
+    }
+
+    try {
+        const secretBytes = Buffer.from(webhookSecret.slice('whsec_'.length), 'base64');
+        const signedContent = `${webhookId}.${timestamp}.${req.body.toString('utf8')}`;
+        const expected = crypto.createHmac('sha256', secretBytes).update(signedContent).digest();
+        const validSignature = signatureHeader.split(' ').some((versionedSignature) => {
+            const [version, encodedSignature] = versionedSignature.split(',');
+            if (version !== 'v1' || !encodedSignature) return false;
+            const received = Buffer.from(encodedSignature, 'base64');
+            return received.length === expected.length && crypto.timingSafeEqual(received, expected);
+        });
+        if (!validSignature) return res.status(403).send('Invalid webhook signature.');
+
+        const event = JSON.parse(req.body.toString('utf8'));
+        const payment = event.payload || {};
+        const checkoutId = payment.metadata && payment.metadata.checkoutId;
+        if (!checkoutId) return res.sendStatus(200);
+        if (process.env.YOCO_SECRET_KEY?.startsWith('sk_test_') && payment.mode !== 'test') {
+            console.warn('Ignored a non-test Yoco event while test keys are configured.');
+            return res.sendStatus(200);
+        }
+
+        if (event.type === 'payment.failed') {
+            await YocoCheckout.updateOne({ checkoutId, status: 'pending' }, { $set: { status: 'failed', eventId: event.id || null } });
+            return res.sendStatus(200);
+        }
+        if (event.type !== 'payment.succeeded' || payment.status !== 'succeeded' || payment.currency !== 'ZAR') return res.sendStatus(200);
+
+        const purchase = await YocoCheckout.findOne({ checkoutId, status: 'pending' });
+        if (!purchase) return res.sendStatus(200); // Unknown or already processed checkout.
+        if (Number(payment.amount) !== purchase.amount) {
+            console.error('Yoco payment amount did not match the pending checkout:', checkoutId);
+            return res.sendStatus(200);
+        }
+
+        const paidAt = new Date(event.createdDate || Date.now());
+        const expiresAt = new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000);
+        await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, {
+            $set: {
+                subscriptionTier: purchase.planName,
+                subscriptionStatus: 'Active',
+                subscriptionPaidAt: paidAt,
+                subscriptionExpiresAt: expiresAt
+            }
+        });
+        await YocoCheckout.updateOne({ checkoutId, status: 'pending' }, {
+            $set: { status: 'paid', eventId: event.id || null, paidAt, expiresAt }
+        });
+        return res.sendStatus(200);
+    } catch (err) {
+        console.error('Yoco webhook processing error:', err.message);
+        return res.sendStatus(500);
+    }
+});
+
 app.use(express.json({ limit: '20kb' }));
 if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
     throw new Error('SESSION_SECRET must be set in production.');
@@ -111,6 +205,7 @@ app.post('/api/payment/yoco-checkout', async (req, res) => {
 
     try {
         const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+        const referenceId = randomUUID();
         const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
             method: 'POST',
             headers: {
@@ -140,6 +235,60 @@ app.post('/api/payment/yoco-checkout', async (req, res) => {
     } catch (err) {
         console.error('Yoco connection error:', err.message);
         return res.status(502).json({ success: false, message: 'Could not connect to Yoco. Please try again.' });
+    }
+});
+
+// Create a one-time 30-day plan payment. The accepted plans and totals come
+// from this server, never from a price sent by the browser.
+app.post('/api/payment/yoco-plan-checkout', checkUserAuth, async (req, res) => {
+    const secretKey = process.env.YOCO_SECRET_KEY;
+    const userEmail = req.session.userEmail;
+    const planId = String(req.body.planId || '');
+    const plan = SLA_PLANS[planId];
+
+    if (!userEmail) return res.status(403).json({ success: false, message: 'Sign in with a customer account before choosing a plan.' });
+    if (!secretKey || !secretKey.startsWith('sk_test_')) {
+        return res.status(503).json({ success: false, message: 'A Yoco TEST secret key is not configured on the server.' });
+    }
+    if (!plan) return res.status(400).json({ success: false, message: 'Choose one of the available support plans.' });
+
+    try {
+        const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+        const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${secretKey}`,
+                'Content-Type': 'application/json',
+                'Idempotency-Key': randomUUID()
+            },
+            body: JSON.stringify({
+                amount: plan.amount,
+                currency: 'ZAR',
+                successUrl: `${publicBaseUrl}/dashboard?payment=returned&ref=${encodeURIComponent(referenceId)}`,
+                cancelUrl: `${publicBaseUrl}/dashboard?payment=cancelled&ref=${encodeURIComponent(referenceId)}`,
+                failureUrl: `${publicBaseUrl}/dashboard?payment=failed&ref=${encodeURIComponent(referenceId)}`,
+                metadata: { product: 'support-plan', planId, referenceId }
+            })
+        });
+
+        const checkout = await yocoResponse.json().catch(() => ({}));
+        if (!yocoResponse.ok || !checkout.id || typeof checkout.redirectUrl !== 'string' || !checkout.redirectUrl.startsWith('https://')) {
+            console.error('Yoco plan checkout error:', yocoResponse.status, checkout);
+            return res.status(502).json({ success: false, message: 'Yoco could not create the plan checkout. Check the server logs.' });
+        }
+
+        await YocoCheckout.create({
+            checkoutId: checkout.id,
+            referenceId,
+            userEmail,
+            planId,
+            planName: plan.name,
+            amount: plan.amount
+        });
+        return res.json({ success: true, redirectUrl: checkout.redirectUrl });
+    } catch (err) {
+        console.error('Yoco plan checkout error:', err.message);
+        return res.status(502).json({ success: false, message: 'Could not start plan checkout. Please try again.' });
     }
 });
 
@@ -194,8 +343,15 @@ app.post('/support', async (req, res) => {
 app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
     try {
         const user = await UserAccount.findOne({ email: req.session.userEmail }, { password: 0 });
-        const tickets = await SupportRequest.find({ email: req.session.userEmail }).sort({ date: -1 });
-        res.json({ user, tickets });
+        if (user && user.subscriptionStatus === 'Active' && user.subscriptionExpiresAt && user.subscriptionExpiresAt <= new Date()) {
+            user.subscriptionStatus = 'Expired';
+            await UserAccount.updateOne({ _id: user._id }, { $set: { subscriptionStatus: 'Expired' } });
+        }
+        const tickets = await SupportRequest.find({ email: req.session.userEmail }, { remotePassword: 0 }).sort({ date: -1 });
+        const checkout = req.query.reference
+            ? await YocoCheckout.findOne({ referenceId: String(req.query.reference), userEmail: req.session.userEmail }, { checkoutId: 0, userEmail: 0, __v: 0 })
+            : null;
+        res.json({ user, tickets, checkout });
     } catch (err) { res.status(500).json({ error: true }); }
 });
 
