@@ -39,7 +39,7 @@
         .whatsapp-floating-bubble:hover { transform: scale(1.1); }
         .footer-details { color: #888; font-size: 13px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; }
     </style>
-    <!-- Yoco SDK Script File Connection -->
+    <!-- Prioritized script injection to prevent execution blocks -->
     <script src="https://yoco.com"></script>
 </head>
 <body>
@@ -61,7 +61,6 @@
             <p style="color:#888; font-size:15px; max-width:700px; margin: 0 auto; line-height: 1.6;">Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
         </div>
 
-        <!-- 🛠️ DYNAMIC ACTION LINKS INTEGRATION: Connected blocks directly to target site paths -->
         <div class="feature-grid">
             <a href="/pricing" class="feature-card">
                 <div class="feature-title">Subscription Plans</div>
@@ -76,7 +75,8 @@
                 <div class="feature-desc">Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</div>
             </a>
         </div>
-        <div class="incident-box">
+
+                <div class="incident-box">
             <h2 style="margin-top:0; color:#fff; font-size:24px;">Need a Quick Incident Fix?</h2>
             <p style="color:#888; font-size:14px; margin-bottom:25px;">Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
             
@@ -95,7 +95,7 @@
             </select>
             
             <div class="price-display" id="dynamic-price-tag">R 350</div>
-            <!-- Fixed: Explicitly linked yoco-checkout-trigger ID to intercept click events -->
+            <!-- Ensured explicit button structure and ID attribute formatting -->
             <button id="yoco-checkout-trigger" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
         </div>
 
@@ -126,7 +126,6 @@
     </a>
 
     <script>
-        // Track the current price selection state (Defaulting to 350 ZAR)
         let currentSelectedAmountZAR = 350;
 
         function updateDynamicIncidentPrice(hours) {
@@ -136,47 +135,48 @@
             priceTag.innerText = "R " + currentSelectedAmountZAR;
         }
 
-        // Initialize the inline Web SDK with your Public Sandbox Test Key
-        const yocoInstance = new window.YocoSDK({
-            publicKey: 'pk_test_a5949eaaN4zjq4R2a744'
-        });
+        // Wait until document fully loads to guarantee YocoSDK global object exists
+        window.addEventListener('DOMContentLoaded', () => {
+            const yocoInstance = new window.YocoSDK({
+                publicKey: 'pk_test_a5949eaaN4zjq4R2a744'
+            });
 
-        // Trigger payment popup window on user selection click event
-        document.getElementById('yoco-checkout-trigger').addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            yocoInstance.showPopup({
-                amountInCents: currentSelectedAmountZAR * 100, // Converts ZAR amount to integer cents
-                currency: 'ZAR',
-                name: 'IT Elements Remote Support',
-                description: 'Ad-hoc Technical Incident Resolution Pool',
-                callback: function (result) {
-                    if (result.error) {
-                        alert("Payment Processing Exception: " + result.error.message);
-                    } else {
-                        // Deliver payment token ID metadata to background server routes
-                        fetch('/api/payment/yoco-charge', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                tokenID: result.id,
-                                amountInCents: currentSelectedAmountZAR * 100
+            document.getElementById('yoco-checkout-trigger').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                yocoInstance.showPopup({
+                    amountInCents: currentSelectedAmountZAR * 100,
+                    currency: 'ZAR',
+                    name: 'IT Elements Remote Support',
+                    description: 'Ad-hoc Technical Incident Resolution Pool',
+                    callback: function (result) {
+                        if (result.error) {
+                            alert("Payment Processing Exception: " + result.error.message);
+                        } else {
+                            fetch('/api/payment/yoco-charge', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    token: result.id, // Fixed: Matched token naming criteria expected by server backend
+                                    amountInCents: currentSelectedAmountZAR * 100,
+                                    isAdHoc: true
+                                })
                             })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                alert("🎉 Payment Authorized successfully! An engineer will patch into your desktop pipeline shortly.");
-                                window.location.href = "/dashboard";
-                            } else {
-                                alert("❌ Processing failure: " + data.message);
-                            }
-                        })
-                        .catch(err => {
-                            alert("Unable to process billing dispatch data stream.");
-                        });
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert("🎉 Payment Authorized successfully! An engineer will patch into your desktop pipeline shortly.");
+                                    window.location.href = "/dashboard";
+                                } else {
+                                    alert("❌ Processing failure: " + (data.message || "Declined by gateway."));
+                                }
+                            })
+                            .catch(err => {
+                                alert("Unable to process billing data stream connection.");
+                            });
+                        }
                     }
-                }
+                });
             });
         });
     </script>
