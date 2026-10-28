@@ -3,15 +3,33 @@ const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
-const https = require('https');
-const app = express();
+const { randomUUID } = require('crypto');
+const fs = require('fs');
 
+// Load .env for local development without requiring an extra package.
+const envPath = path.join(__dirname, '.env');
+if (fs.existsSync(envPath)) {
+    for (const line of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
+        const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
+        if (match && !Object.prototype.hasOwnProperty.call(process.env, match[1])) {
+            process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, '');
+        }
+    }
+}
+
+const app = express();
 const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
+const PRICE_PER_HOUR_CENTS = 35000;
+const viewsPath = path.join(__dirname, 'views');
 
-mongoose.connect(dbURI)
-    .then(() => console.log('📁 Database connection established successfully'))
-    .catch(err => console.error('❌ Cloud Database communication failure:', err));
+if (dbURI) {
+    mongoose.connect(dbURI)
+        .then(() => console.log('📁 Database connection established successfully'))
+        .catch(err => console.error('❌ Cloud Database communication failure:', err.message));
+} else {
+    console.warn('⚠️ MONGODB_URI is not set; database features will not connect.');
+}
 
 const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     fullName: { type: String, required: true },
@@ -23,27 +41,36 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
 }, { collection: 'useraccounts' }));
 
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
-    name: String, email: String, remoteId: String, remotePassword: String, issue: String,
-    status: { type: String, default: 'Open' }, date: { type: Date, default: Date.now }
+    name: String,
+    email: String,
+    remoteId: String,
+    remotePassword: String,
+    issue: String,
+    status: { type: String, default: 'Open' },
+    date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
 app.use(cors());
-
 app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.yoco.com https://*.yoco.co.za; img-src 'self' data: https://*.whatsapp.com; connect-src 'self' https://*.yoco.co.za https://*.yoco.com");
+    res.setHeader('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.yoco.com https://*.yoco.co.za; img-src 'self' data: https://*.whatsapp.com; connect-src 'self' https://*.yoco.co.za https://*.yoco.com");
     next();
 });
-
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'views')));
-app.use(express.static(__dirname));
-
+app.use(express.json({ limit: '20kb' }));
+if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET must be set in production.');
+}
+if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
 app.use(session({
-    secret: 'itelements-secure-key-2026',
-    resave: true,
-    saveUninitialized: true,
-    cookie: { maxAge: 86400000, secure: false, sameSite: 'lax' }
+    secret: process.env.SESSION_SECRET || randomUUID(),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 86400000,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        httpOnly: true
+    }
 }));
 
 function checkAdminAuth(req, res, next) {
@@ -55,52 +82,70 @@ function checkUserAuth(req, res, next) {
     res.redirect('/client/login');
 }
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'index.html')));
-app.get('/pricing', (req, res) => res.sendFile(path.join(__dirname, 'views', 'pricing.html')));
-app.get('/support', (req, res) => res.sendFile(path.join(__dirname, 'views', 'support.html')));
-app.get('/admin/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
-app.get('/client/login', (req, res) => res.sendFile(path.join(__dirname, 'views', 'client-login.html')));
-app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'register.html')));
-app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
-app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
+// Do not let static-file requests bypass the session checks on these pages.
+app.get('/admin.html', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
+app.get('/dashboard.html', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
+app.use(express.static(viewsPath, { index: false }));
 
-app.post('/api/payment/yoco-charge', async (req, res) => {
+app.get('/', (req, res) => res.sendFile(path.join(viewsPath, 'index.html')));
+app.get('/pricing', (req, res) => res.sendFile(path.join(viewsPath, 'pricing.html')));
+app.get('/support', (req, res) => res.sendFile(path.join(viewsPath, 'support.html')));
+app.get('/admin/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
+app.get('/client/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(viewsPath, 'register.html')));
+app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
+app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
+
+// Yoco Checkout API: create a hosted checkout on the server. The browser never
+// receives the secret key, and the amount is calculated here from allowed hours.
+app.post('/api/payment/yoco-checkout', async (req, res) => {
+    const secretKey = process.env.YOCO_SECRET_KEY;
+    if (!secretKey || !secretKey.startsWith('sk_test_')) {
+        return res.status(503).json({ success: false, message: 'Set a valid Yoco TEST secret key in the server environment.' });
+    }
+
+    const hours = Number(req.body.hours);
+    if (!Number.isInteger(hours) || hours < 1 || hours > 5) {
+        return res.status(400).json({ success: false, message: 'Choose a support duration from 1 to 5 hours.' });
+    }
+
     try {
-        const { token, amountInCents, planName, isAdHoc } = req.body;
-        if (!token || !amountInCents) return res.status(400).json({ success: false, message: "Missing required properties." });
-
-        const postData = JSON.stringify({ token, amountInCents, currency: 'ZAR' });
-        const options = {
-            hostname: 'online.yoco.co.za',
-            port: 443,
-            path: '/v1/charges',
+        const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+        const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
             method: 'POST',
             headers: {
-                'Authorization': 'Bearer sk_test_369adbdbY6Gbg60694549cdbf721',
+                Authorization: `Bearer ${secretKey}`,
                 'Content-Type': 'application/json',
-                'Content-Length': Buffer.byteLength(postData)
-            }
-        };
-
-        const yocoReq = https.request(options, (yocoRes) => {
-            let body = '';
-            yocoRes.on('data', (chunk) => body += chunk);
-            yocoRes.on('end', async () => {
-                const responseData = JSON.parse(body);
-                if (yocoRes.statusCode === 201 && responseData.status === 'successful') {
-                    if (!isAdHoc && req.session.userEmail) {
-                        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: planName, subscriptionStatus: 'Active' });
-                    }
-                    return res.json({ success: true, data: responseData });
-                } else {
-                    return res.status(400).json({ success: false, error: responseData });
-                }
-            });
+                'Idempotency-Key': randomUUID()
+            },
+            body: JSON.stringify({
+                amount: PRICE_PER_HOUR_CENTS * hours,
+                currency: 'ZAR',
+                successUrl: `${publicBaseUrl}/?payment=returned`,
+                cancelUrl: `${publicBaseUrl}/?payment=cancelled`,
+                failureUrl: `${publicBaseUrl}/?payment=failed`,
+                metadata: { product: 'remote-support', hours: String(hours) }
+            })
         });
-        yocoReq.on('error', (e) => res.status(500).json({ success: false, message: "Timeout error." }));
-        yocoReq.write(postData);
-        yocoReq.end();
-    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
+
+        const checkout = await yocoResponse.json().catch(() => ({}));
+        if (!yocoResponse.ok) {
+            console.error('Yoco checkout error:', yocoResponse.status, checkout);
+            return res.status(502).json({ success: false, message: 'Yoco could not create the checkout. Check your test key and server logs.' });
+        }
+        if (typeof checkout.redirectUrl !== 'string' || !checkout.redirectUrl.startsWith('https://')) {
+            return res.status(502).json({ success: false, message: 'Yoco did not return a valid checkout link.' });
+        }
+        return res.json({ success: true, redirectUrl: checkout.redirectUrl });
+    } catch (err) {
+        console.error('Yoco connection error:', err.message);
+        return res.status(502).json({ success: false, message: 'Could not connect to Yoco. Please try again.' });
+    }
+});
+
+// Keep old clients from submitting fake browser-generated card tokens.
+app.post('/api/payment/yoco-charge', (req, res) => {
+    res.status(410).json({ success: false, message: 'Direct card charges are no longer supported. Use the hosted Yoco checkout.' });
 });
 
 app.post('/client/register', async (req, res) => {
@@ -112,18 +157,23 @@ app.post('/client/register', async (req, res) => {
         if (existingUser) return res.send('<script>alert("Email already registered.");window.history.back();</script>');
         const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
         await newUser.save();
-        req.session.isUser = true; req.session.userEmail = newUser.email;
+        req.session.isUser = true;
+        req.session.userEmail = newUser.email;
         res.send('<script>alert("Account created successfully!");window.location.href="/dashboard";</script>');
     } catch (err) { res.status(500).send(err.message); }
 });
 
 app.post('/client/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        if (password === 'AdminElements2026') { req.session.isAdmin = true; return res.send('<script>window.location.href="/admin";</script>'); }
+        const { email = '', password = '' } = req.body;
+        if (process.env.ADMIN_PASSWORD && password === process.env.ADMIN_PASSWORD) {
+            req.session.isAdmin = true;
+            return res.send('<script>window.location.href="/admin";</script>');
+        }
         const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
         if (user && user.password === password) {
-            req.session.isUser = true; req.session.userEmail = user.email;
+            req.session.isUser = true;
+            req.session.userEmail = user.email;
             return res.send('<script>window.location.href="/dashboard";</script>');
         }
         res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
@@ -138,7 +188,7 @@ app.post('/support', async (req, res) => {
         const { name, email, remoteId, remotePassword, issue } = req.body;
         await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : (req.session.userEmail || ''), remoteId, remotePassword, issue, status: 'Open' }).save();
         res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
-    } catch (err) { res.status(500).send("Database sync error."); }
+    } catch (err) { res.status(500).send('Database sync error.'); }
 });
 
 app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
