@@ -27,7 +27,7 @@
         .toolbar input { flex:1; min-width:220px; }
         .refresh-btn { min-height:38px; border:1px solid #3579bf; background:#122438; color:#91caff; border-radius:5px; padding:8px 13px; cursor:pointer; font-weight:700; }
         .table-scroll { overflow-x:auto; }
-        .table-header,.data-row { min-width:1050px; display:grid; grid-template-columns:1.25fr 1fr 1.2fr 2fr .8fr 1.7fr; align-items:center; gap:10px; }
+        .table-header,.data-row { min-width:830px; display:grid; grid-template-columns:1.05fr 1fr 1.05fr 1.45fr .7fr 1.45fr; align-items:center; gap:8px; }
         .table-header { background:#161a22; padding:12px; border-radius:6px; font-weight:bold; font-size:10px; color:#a0aec0; text-transform:uppercase; border:1px solid #222933; }
         .data-row { padding:13px 12px; border-bottom:1px solid #1a202c; font-size:13px; }
         .cell { min-width:0; overflow-wrap:anywhere; }
@@ -40,7 +40,7 @@
         .btn-hold { color:var(--yellow); border:1px solid var(--yellow); }.btn-unhold { color:#168cff; border:1px solid #168cff; }.btn-resolve { color:var(--green); border:1px solid var(--green); }.btn-reopen { color:#ff635a; border:1px solid #ff635a; }
         .copy-btn { color:#b9c7d9; border:1px solid #465364; }.copy-btn:hover,.action-btn:hover,.refresh-btn:hover { filter:brightness(1.25); }
         .credential-value { color:#748196; font-family:Consolas,monospace; }
-        .subscriber-header,.subscriber-row { min-width:800px; display:grid; grid-template-columns:1.1fr 1.5fr .9fr 1.2fr 1fr; align-items:center; gap:12px; }
+        .subscriber-header,.subscriber-row { min-width:760px; display:grid; grid-template-columns:1.1fr 1.5fr .9fr 1.2fr 1fr; align-items:center; gap:12px; }
         .subscriber-header { background:#161a22; padding:12px; border-radius:6px; font-weight:bold; font-size:10px; color:#a0aec0; text-transform:uppercase; }
         .subscriber-row { padding:13px 12px; border-bottom:1px solid #1a202c; font-size:13px; }
         .loading-text,.empty-text,.error-text { text-align:center; padding:24px; color:#718096; font-style:italic; font-size:13px; }
@@ -71,7 +71,7 @@
         <p class="note">Connection IDs and session keys are sensitive. Reveal only when needed; copy buttons do not show the value.</p>
         <div class="toolbar">
             <input type="search" id="ticket-search" placeholder="Search client, remote ID, or issue…" aria-label="Search tickets">
-            <select id="ticket-status-filter" aria-label="Filter tickets by status"><option value="active">Active tickets</option><option value="all">All tickets</option><option value="Open">Open</option><option value="On Hold">On hold</option><option value="Resolved">Resolved</option></select>
+            <select id="ticket-status-filter" aria-label="Filter tickets by status"><option value="all">All tickets</option><option value="active">Active queue + resolved history</option><option value="Open">Open</option><option value="On Hold">On hold</option><option value="Resolved">Resolved</option></select>
             <button class="refresh-btn" id="refresh-button" type="button">Refresh data</button>
         </div>
         <div class="table-scroll">
@@ -210,10 +210,16 @@
 
         const statusCell = document.createElement('div');
         statusCell.className = 'cell';
-        const badge = document.createElement('span');
         const status = ticket.status || 'Open';
+        const badge = document.createElement(status === 'Resolved' ? 'button' : 'span');
+        if (status === 'Resolved') {
+            badge.type = 'button';
+            badge.title = 'Click to reopen this ticket';
+            badge.style.cursor = 'pointer';
+            badge.addEventListener('click', () => updateTicketStatus(ticket._id, 'Open', badge));
+        }
         badge.className = `status-badge ${status === 'Resolved' ? 'badge-resolved' : status === 'On Hold' ? 'badge-onhold' : 'badge-open'}`;
-        badge.textContent = status;
+        badge.textContent = status === 'Resolved' ? 'RESOLVED · REOPEN' : status;
         statusCell.appendChild(badge);
         row.appendChild(statusCell);
 
@@ -239,17 +245,21 @@
         historyBody.replaceChildren();
         const query = searchInput.value.trim().toLowerCase();
         const filter = statusFilter.value;
-        const visible = tickets.filter(ticket => {
+        const matchingSearch = tickets.filter(ticket => {
             const status = ticket.status || 'Open';
             const text = [ticket.name, ticket.email, ticket.remoteId, ticket.issue].join(' ').toLowerCase();
-            const matchesText = !query || text.includes(query);
-            const matchesStatus = filter === 'all' || (filter === 'active' ? status !== 'Resolved' : status === filter);
-            return matchesText && matchesStatus;
+            return !query || text.includes(query);
         });
-        for (const ticket of visible) {
-            const isResolved = ticket.status === 'Resolved';
-            (isResolved ? historyBody : queueBody).appendChild(makeTicketRow(ticket, isResolved));
-        }
+        const activeTickets = matchingSearch.filter(ticket => {
+            const status = ticket.status || 'Open';
+            return status !== 'Resolved' && (filter === 'all' || filter === 'active' || status === filter);
+        });
+        const resolvedTickets = matchingSearch.filter(ticket => {
+            const status = ticket.status || 'Open';
+            return status === 'Resolved' && (filter === 'all' || filter === 'active' || filter === 'Resolved');
+        });
+        for (const ticket of activeTickets) queueBody.appendChild(makeTicketRow(ticket, false));
+        for (const ticket of resolvedTickets) historyBody.appendChild(makeTicketRow(ticket, true));
         if (!queueBody.children.length) showMessage(queueBody, 'No tickets match this filter.');
         if (!historyBody.children.length) showMessage(historyBody, 'No resolved tickets match this filter.');
     }
