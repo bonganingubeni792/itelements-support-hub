@@ -72,8 +72,7 @@
                 <div class="feature-desc">Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</div>
             </a>
         </div>
-
-                <div class="incident-box">
+        <div class="incident-box">
             <h2 style="margin-top:0; color:#fff; font-size:24px;">Need a Quick Incident Fix?</h2>
             <p style="color:#888; font-size:14px; margin-bottom:25px;">Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
             
@@ -83,7 +82,7 @@
             </div>
 
             <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-align:center;">SELECT DURATION ALLOCATION:</div>
-            <!-- ✅ REMOVED OLD BROKEN SCRIPT CODES FROM THE DROPDOWN MARKUP CONTAINER -->
+            <!-- Clean hours dropdown with simple numerical value tags -->
             <select class="form-control" id="duration-selector">
                 <option value="1">1 Hour Dedicated Emergency Services</option>
                 <option value="2">2 Hours Dedicated Support Package</option>
@@ -123,22 +122,22 @@
     </a>
 
     <script>
-        // ✅ CLEAN REWRITTEN JAVASCRIPT LOGIC BLOCK UPON MOUNT STATES
         let currentSelectedAmountZAR = 350;
 
+        // Simplified event synchronization script
         window.addEventListener('DOMContentLoaded', () => {
             const selectMenu = document.getElementById('duration-selector');
             const priceTag = document.getElementById('dynamic-price-tag');
             const checkoutButton = document.getElementById('yoco-checkout-trigger');
 
-            // 1. Direct standard event tracking method fixing price layout updates instantly
+            // Listens for manual dropdown modifications and instantly updates price strings
             selectMenu.addEventListener('change', function() {
                 const hourMultiplier = parseInt(this.value) || 1;
                 currentSelectedAmountZAR = 350 * hourMultiplier;
                 priceTag.innerText = "R " + currentSelectedAmountZAR;
             });
 
-            // 2. Custom isolated template frame ensuring the popup launches perfectly bypassing browser blocks
+            // Dedicated popup builder script to override opaque response blocks
             class CustomYocoEmulator {
                 constructor(config) { this.publicKey = config.publicKey; }
                 showPopup(options) {
@@ -164,7 +163,7 @@
                             <div style="flex:1;">
                                 <label style="font-size:11px; color:#888; display:block; margin-bottom:5px; text-transform:uppercase;">Expiry</label>
                                 <input type="text" maxlength="5" placeholder="MM/YY" style="width:100%; padding:10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px; box-sizing:border-box; text-align:center;">
-                            </div>
+                        </div>
                             <div style="flex:1;">
                                 <label style="font-size:11px; color:#888; display:block; margin-bottom:5px; text-transform:uppercase;">CVC / CVV</label>
                                 <input type="text" maxlength="3" placeholder="123" style="width:100%; padding:10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px; box-sizing:border-box; text-align:center;">
