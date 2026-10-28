@@ -370,7 +370,11 @@ app.post('/api/payment/yoco-charge', (req, res) => {
 app.post('/client/register', async (req, res) => {
     try {
         const { fullName, phone, email, password } = req.body;
-        if (!fullName || !phone || !email || !password) return res.send('<script>alert("All fields required.");window.history.back();</script>');
+        if (!fullName || !phone || !email || !password) return res.status(400).send('<script>alert("Please complete every field.");window.history.back();</script>');
+        if (fullName.trim().length < 2 || fullName.trim().length > 100) return res.status(400).send('<script>alert("Enter a name or company name between 2 and 100 characters.");window.history.back();</script>');
+        if (phone.trim().length < 7 || phone.trim().length > 25) return res.status(400).send('<script>alert("Enter a valid contact phone number.");window.history.back();</script>');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return res.status(400).send('<script>alert("Enter a valid email address.");window.history.back();</script>');
+        if (password.length < 12 || password.length > 256) return res.status(400).send('<script>alert("Choose a password between 12 and 256 characters.");window.history.back();</script>');
         const normalizedEmail = email.toLowerCase().trim();
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
         if (existingUser) return res.send('<script>alert("Email already registered.");window.history.back();</script>');
