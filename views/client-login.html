@@ -1,93 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>IT Elements - Access Workspace Portal</title>
     <style>
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; text-align: center; }
-        .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 35px auto; border-radius: 6px; }
-        .nav-brand { font-size: 20px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; }
-        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; margin-left: 20px; font-weight: bold; }
-        .nav-links a:hover { color: #ffffff; }
-        .login-box { background-color: #141414; border: 1px solid #222; border-radius: 8px; padding: 40px 30px; width: 100%; max-width: 420px; margin: 80px auto 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.6); box-sizing: border-box; }
-        .top-description { color: #666; font-size: 13px; line-height: 1.6; margin-bottom: 25px; }
-        .form-group { text-align: left; margin-bottom: 22px; position: relative; }
-        .form-label { font-size: 12px; font-weight: bold; color: #ffffff; letter-spacing: 0.5px; margin-bottom: 10px; display: block; text-transform: uppercase; }
-        .form-input { background-color: #ffffdd; color: #111111; border: 2px solid #1a73e8; padding: 14px; border-radius: 6px; width: 100%; font-size: 16px; font-weight: bold; box-sizing: border-box; }
-        .form-input:focus { outline: none; box-shadow: 0 0 8px rgba(26,115,232,0.4); }
-        
-        .password-wrapper { position: relative; width: 100%; }
-        .toggle-login-eye { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #555; cursor: pointer; font-size: 12px; font-weight: bold; text-transform: uppercase; user-select: none; }
-        .toggle-login-eye:hover { color: #1a73e8; }
-
-        .submit-btn { background-color: #1a73e8; color: white; border: none; padding: 15px; width: 100%; border-radius: 6px; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
-        .submit-btn:hover { background-color: #155cb4; }
-        .link-footer { font-size: 13px; color: #666; margin-top: 20px; line-height: 1.8; }
-        .link-footer a { color: #1a73e8; text-decoration: none; }
-        .link-footer a:hover { text-decoration: underline; }
+        * { box-sizing:border-box; }
+        body { background:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:20px; text-align:center; }
+        .navbar { background:#141414; border-bottom:2px solid #222; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; gap:16px; max-width:1100px; margin:0 auto 35px; border-radius:6px; }
+        .nav-brand { font-size:20px; font-weight:bold; color:#fff; letter-spacing:.5px; text-decoration:none; }
+        .nav-links { display:flex; flex-wrap:wrap; gap:10px 20px; }
+        .nav-links a { color:#b3b3b3; text-decoration:none; font-size:14px; font-weight:bold; }
+        .nav-links a:hover { color:#fff; }
+        .login-box { background:#141414; border:1px solid #222; border-radius:8px; padding:40px 30px; width:100%; max-width:420px; margin:80px auto 0; box-shadow:0 4px 15px rgba(0,0,0,.6); }
+        .top-description { color:#777; font-size:13px; line-height:1.6; margin-bottom:25px; }
+        .form-group { text-align:left; margin-bottom:22px; position:relative; }
+        .form-label { font-size:12px; font-weight:bold; color:#fff; letter-spacing:.5px; margin-bottom:10px; display:block; text-transform:uppercase; }
+        .form-input { background:#ffffdd; color:#111; border:2px solid #1a73e8; padding:14px; border-radius:6px; width:100%; font-size:16px; font-weight:bold; }
+        .form-input:focus { outline:none; box-shadow:0 0 8px rgba(26,115,232,.4); }
+        .password-wrapper { position:relative; width:100%; }
+        .password-wrapper .form-input { padding-right:70px; }
+        .toggle-login-eye { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:0; color:#555; cursor:pointer; font-size:12px; font-weight:bold; text-transform:uppercase; }
+        .toggle-login-eye:hover { color:#1a73e8; }
+        .submit-btn { background:#1a73e8; color:#fff; border:0; padding:15px; width:100%; border-radius:6px; font-size:14px; font-weight:bold; text-transform:uppercase; letter-spacing:.5px; cursor:pointer; margin-top:10px; }
+        .submit-btn:hover { background:#155cb4; }
+        .link-footer { font-size:13px; color:#777; margin-top:20px; line-height:1.8; }
+        .link-footer a { color:#1a73e8; text-decoration:none; }
+        .link-footer a:hover { text-decoration:underline; }
+        @media(max-width:560px) { body { padding:12px; } .navbar { align-items:flex-start; flex-direction:column; padding:15px 18px; } .login-box { margin-top:45px; padding:30px 20px; } }
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
-        <div class="nav-brand">IT Elements.client-hub</div>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/pricing">Plans</a>
-            <a href="/register">Register Account</a>
-        </div>
+    <nav class="navbar" aria-label="Main navigation">
+        <a class="nav-brand" href="/">IT Elements.client-hub</a>
+        <div class="nav-links"><a href="/">Home</a><a href="/pricing">Plans</a><a href="/register">Register Account</a></div>
     </nav>
 
-    <div class="login-box">
+    <main class="login-box">
         <form action="/client/login" method="POST">
-            <div class="top-description">Enter your registered account details to access your self-help cockpit center.</div>
-
+            <p class="top-description">Enter your registered account details to access your client portal.</p>
             <div class="form-group">
-                <label class="form-label">Registered Email Address:</label>
-                <input type="email" name="email" id="login-email" class="form-input" placeholder="sylakaura@gmail.com" required>
+                <label class="form-label" for="login-email">Registered email address</label>
+                <input type="email" name="email" id="login-email" class="form-input" autocomplete="username" required>
             </div>
-
             <div class="form-group">
-                <label class="form-label">Account Password:</label>
+                <label class="form-label" for="login-password">Account password</label>
                 <div class="password-wrapper">
-                    <input type="password" name="password" id="login-password" class="form-input" placeholder="••••••••••••••" required>
-                    <button type="button" class="toggle-login-eye" onclick="toggleLoginPassword()">Show</button>
+                    <input type="password" name="password" id="login-password" class="form-input" autocomplete="current-password" required>
+                    <button type="button" class="toggle-login-eye" id="toggle-password" aria-pressed="false">Show</button>
                 </div>
             </div>
-
             <button type="submit" class="submit-btn">Unlock Technical Workspace</button>
-
             <div class="link-footer">
-                <a href="#" onclick="handleForgotPasswordTrigger()">Forgot Password? Reset Here →</a><br>
+                <a href="/client/forgot-password">Forgot your password? Reset it here →</a><br>
                 New subscriber? <a href="/register">Create an account here →</a>
             </div>
         </form>
-    </div>
+    </main>
 
     <script>
-        function toggleLoginPassword() {
-            const passwordInput = document.getElementById('login-password');
-            const toggleButton = document.querySelector('.toggle-login-eye');
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleButton.innerText = 'Hide';
-            } else {
-                passwordInput.type = 'password';
-                toggleButton.innerText = 'Show';
-            }
-        }
-
-        function handleForgotPasswordTrigger() {
-            const emailInput = document.getElementById('login-email').value.trim();
-            if (!emailInput) {
-                alert("Please type your registered email address into the Email box first, then click Reset!");
-                return;
-            }
-            
-            alert("A temporary password override link configuration has been generated for: " + emailInput + "\n\nAn automated dispatch transmission message has been forwarded down to your email inbox directory successfully.");
-            window.location.href = "mailto:" + emailInput + "?subject=IT Elements Support - Password Reset Recovery Request&body=Hello,\n\nWe received a request to override access credentials mapping for your account profile layout. Click the network path link below to finalize configurations:\n\nhttps://itelements.help\n\nRegards,\nIT Elements Autonomous Framework Node Engine Layer";
-        }
+        document.getElementById('toggle-password').addEventListener('click', function () {
+            const password = document.getElementById('login-password');
+            const showing = password.type === 'password';
+            password.type = showing ? 'text' : 'password';
+            this.textContent = showing ? 'Hide' : 'Show';
+            this.setAttribute('aria-pressed', String(showing));
+        });
     </script>
 </body>
 </html>
