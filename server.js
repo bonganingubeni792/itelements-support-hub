@@ -205,7 +205,6 @@ app.post('/api/payment/yoco-checkout', async (req, res) => {
 
     try {
         const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
-        const referenceId = randomUUID();
         const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
             method: 'POST',
             headers: {
@@ -254,6 +253,7 @@ app.post('/api/payment/yoco-plan-checkout', checkUserAuth, async (req, res) => {
 
     try {
         const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+        const referenceId = randomUUID();
         const yocoResponse = await fetch('https://payments.yoco.com/api/checkouts', {
             method: 'POST',
             headers: {
