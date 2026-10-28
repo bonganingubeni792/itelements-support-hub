@@ -136,6 +136,7 @@
     const query = new URLSearchParams(window.location.search);
     const returnedFromYoco = query.get('payment') === 'returned';
     const checkoutReference = query.get('ref');
+    const selectedPlanId = query.get('plan');
 
     if (query.get('payment') === 'cancelled') {
         statusMessage.textContent = 'Checkout was cancelled. Your plan has not changed.';
@@ -229,7 +230,17 @@
     (async () => {
         try {
             let data = await loadProfile();
-            if (!data || !returnedFromYoco) return;
+            if (!data) return;
+            if (selectedPlanId) {
+                const selectedButton = Array.from(document.querySelectorAll('.pay-btn'))
+                    .find(button => button.dataset.planId === selectedPlanId);
+                if (selectedButton) {
+                    window.history.replaceState({}, '', window.location.pathname);
+                    await startPlanCheckout(selectedButton);
+                    return;
+                }
+            }
+            if (!returnedFromYoco) return;
             let state = showReturnedPaymentState(data);
             if (state !== 'pending' || !checkoutReference) return;
             const timeoutAt = Date.now() + 60000;
