@@ -6,6 +6,7 @@ const cors = require('cors');
 const crypto = require('crypto');
 const { randomUUID } = crypto;
 const fs = require('fs');
+const scryptAsync = require('util').promisify(crypto.scrypt);
 
 // Load .env for local development without requiring an extra package.
 const envPath = path.join(__dirname, '.env');
@@ -62,6 +63,73 @@ const YocoCheckout = mongoose.model('YocoCheckout', new mongoose.Schema({
     expiresAt: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
 }, { collection: 'yococheckouts' }));
+
+const PasswordReset = mongoose.model('PasswordReset', new mongoose.Schema({
+    email: { type: String, required: true, index: true },
+    tokenHash: { type: String, required: true, unique: true },
+    expiresAt: { type: Date, required: true, index: { expires: 0 } },
+    usedAt: { type: Date, default: null },
+    createdAt: { type: Date, default: Date.now }
+}, { collection: 'passwordresets' }));
+
+async function hashPassword(password) {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const derived = await scryptAsync(password, salt, 64);
+    return `scrypt$${salt}$${Buffer.from(derived).toString('hex')}`;
+}
+
+async function verifyAndUpgradePassword(user, candidate) {
+    if (user.password.startsWith('scrypt$')) {
+        const [, salt, storedHex] = user.password.split('$');
+        if (!salt || !storedHex) return false;
+        const derived = Buffer.from(await scryptAsync(candidate, salt, 64));
+        const stored = Buffer.from(storedHex, 'hex');
+        return derived.length === stored.length && crypto.timingSafeEqual(derived, stored);
+    }
+
+    // Existing accounts have plaintext passwords. Upgrade the hash after a
+    // successful login so customers keep access while the database migrates.
+    if (user.password !== candidate) return false;
+    user.password = await hashPassword(candidate);
+    await user.save();
+    return true;
+}
+
+const resetRequestBuckets = new Map();
+function rateLimitPasswordReset(req, res, next) {
+    const now = Date.now();
+    const key = req.ip || req.socket.remoteAddress || 'unknown';
+    const bucket = resetRequestBuckets.get(key);
+    if (!bucket || now - bucket.startedAt > 15 * 60 * 1000) {
+        resetRequestBuckets.set(key, { startedAt: now, count: 1 });
+        return next();
+    }
+    if (bucket.count >= 5) return res.status(429).json({ message: 'Too many reset requests. Please wait 15 minutes and try again.' });
+    bucket.count += 1;
+    return next();
+}
+
+async function sendPasswordResetEmail(to, resetUrl) {
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESET_EMAIL_FROM;
+    if (!apiKey || !from) throw new Error('Password reset email settings are missing.');
+
+    const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            from,
+            to: [to],
+            subject: 'Reset your IT Elements password',
+            html: `<p>We received a request to reset the password for your IT Elements account.</p><p><a href="${resetUrl}">Reset my password</a></p><p>This link expires in 15 minutes and can be used once. If you did not request this, you can ignore this email.</p>`
+        })
+    });
+    if (!response.ok) {
+        const details = await response.text();
+        console.error('Password reset email provider error:', response.status, details);
+        throw new Error('Password reset email could not be sent.');
+    }
+}
 
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     name: String,
@@ -186,6 +254,8 @@ app.get('/pricing', (req, res) => res.sendFile(path.join(viewsPath, 'pricing.htm
 app.get('/support', (req, res) => res.sendFile(path.join(viewsPath, 'support.html')));
 app.get('/admin/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
 app.get('/client/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
+app.get('/client/forgot-password', (req, res) => res.sendFile(path.join(viewsPath, 'forgot-password.html')));
+app.get('/reset-password', (req, res) => res.sendFile(path.join(viewsPath, 'reset-password.html')));
 app.get('/register', (req, res) => res.sendFile(path.join(viewsPath, 'register.html')));
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
@@ -304,7 +374,7 @@ app.post('/client/register', async (req, res) => {
         const normalizedEmail = email.toLowerCase().trim();
         const existingUser = await UserAccount.findOne({ email: normalizedEmail });
         if (existingUser) return res.send('<script>alert("Email already registered.");window.history.back();</script>');
-        const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password });
+        const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password: await hashPassword(password) });
         await newUser.save();
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
@@ -320,13 +390,80 @@ app.post('/client/login', async (req, res) => {
             return res.send('<script>window.location.href="/admin";</script>');
         }
         const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
-        if (user && user.password === password) {
+        if (user && await verifyAndUpgradePassword(user, password)) {
             req.session.isUser = true;
             req.session.userEmail = user.email;
             return res.send('<script>window.location.href="/dashboard";</script>');
         }
         res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
     } catch (err) { res.status(500).send(err.message); }
+});
+
+app.post('/api/auth/forgot-password', rateLimitPasswordReset, async (req, res) => {
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ message: 'Enter a valid email address.' });
+    }
+    if (!process.env.RESEND_API_KEY || !process.env.RESET_EMAIL_FROM || !process.env.PUBLIC_BASE_URL) {
+        console.error('Password reset is unavailable: set RESEND_API_KEY, RESET_EMAIL_FROM, and PUBLIC_BASE_URL.');
+        return res.status(503).json({ message: 'Password reset email is not configured yet. Please contact IT Elements support.' });
+    }
+
+    try {
+        const user = await UserAccount.findOne({ email });
+        if (!user) return res.status(202).json({ message: 'If an account exists for that address, a reset link will be emailed.' });
+
+        const token = crypto.randomBytes(32).toString('hex');
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        await PasswordReset.deleteMany({ email, usedAt: null });
+        await PasswordReset.create({ email, tokenHash, expiresAt: new Date(Date.now() + 15 * 60 * 1000) });
+        const baseUrl = process.env.PUBLIC_BASE_URL.replace(/\/$/, '');
+        const resetUrl = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
+
+        try {
+            await sendPasswordResetEmail(email, resetUrl);
+        } catch (mailError) {
+            await PasswordReset.deleteOne({ tokenHash });
+            throw mailError;
+        }
+        return res.status(202).json({ message: 'If an account exists for that address, a reset link will be emailed.' });
+    } catch (err) {
+        console.error('Password reset request failed:', err.message);
+        return res.status(503).json({ message: 'We could not send the reset email right now. Please contact IT Elements support.' });
+    }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+    const token = String(req.body.token || '');
+    const password = String(req.body.password || '');
+    if (password.length < 12) return res.status(400).json({ message: 'Choose a password with at least 12 characters.' });
+    if (password.length > 256) return res.status(400).json({ message: 'Password is too long.' });
+    if (!/^[a-f0-9]{64}$/i.test(token)) return res.status(400).json({ message: 'This reset link is invalid or expired. Request a new one.' });
+
+    try {
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        const now = new Date();
+        const reset = await PasswordReset.findOneAndUpdate(
+            { tokenHash, usedAt: null, expiresAt: { $gt: now } },
+            { $set: { usedAt: now } },
+            { new: true }
+        );
+        if (!reset) return res.status(400).json({ message: 'This reset link is invalid, expired, or already used. Request a new one.' });
+
+        try {
+            const passwordHash = await hashPassword(password);
+            const result = await UserAccount.updateOne({ email: reset.email }, { $set: { password: passwordHash } });
+            if (!result.matchedCount) return res.status(400).json({ message: 'This account no longer exists. Contact IT Elements support.' });
+            await PasswordReset.updateMany({ email: reset.email, usedAt: null }, { $set: { usedAt: now } });
+            return res.json({ success: true, message: 'Password updated. You can now sign in with your new password.' });
+        } catch (updateError) {
+            await PasswordReset.updateOne({ _id: reset._id, usedAt: now }, { $set: { usedAt: null } });
+            throw updateError;
+        }
+    } catch (err) {
+        console.error('Password reset failed:', err.message);
+        return res.status(500).json({ message: 'Password reset failed. Please request a new link and try again.' });
+    }
 });
 
 app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
