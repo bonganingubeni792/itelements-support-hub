@@ -1,173 +1,253 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>IT Elements Client Command Center</title>
     <style>
-        body {
-            background-color: #0d0d0d;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 25px;
-        }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #222; padding-bottom: 10px; margin-bottom: 25px; }
-        .header h1 { font-size: 20px; color: #ff3333; margin: 0; }
-        .logout-link { color: #ff3333; text-decoration: none; font-weight: bold; font-size: 13px; }
-        
-        /* Pricing Cards Framework Structure */
-        .plans-wrapper { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 30px; justify-content: space-between; }
-        .plan-box { background: #141414; border: 1px solid #222; border-radius: 4px; padding: 20px; width: 22%; min-width: 200px; text-align: left; }
-        .plan-name { font-weight: bold; font-size: 16px; color: #4da6ff; }
-        .plan-price { font-size: 22px; font-weight: bold; color: #fff; margin: 10px 0; }
-        .pay-btn { background-color: #1a73e8; color: white; border: none; width: 100%; padding: 10px; font-weight: bold; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 11px; }
-        .pay-btn:hover { background-color: #155cb4; }
-
-        /* Incident Dispatch Ticket Form Structures */
-        .ticket-card { background: #141414; border: 1px solid #222; border-radius: 4px; padding: 25px; margin-bottom: 30px; text-align: left; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
-        .form-control { background: #1a1a1a; color: #fff; border: 1px solid #333; padding: 10px; width: 100%; border-radius: 4px; box-sizing: border-box; }
-        textarea.form-control { height: 80px; resize: none; }
-        .submit-btn { background-color: #d93025; color: white; border: none; font-weight: bold; padding: 12px 24px; border-radius: 4px; cursor: pointer; text-transform: uppercase; font-size: 13px; }
-        
-        /* Tracking History Table Logs */
-        .table-logs { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; text-align: left; }
-        .table-logs th { background: #1a1a1a; padding: 10px; color: #888; font-size: 12px; text-transform: uppercase; }
-        .table-logs td { padding: 12px 10px; border-bottom: 1px solid #222; }
-        
-        .soft-box { display: flex; gap: 15px; margin-top: 15px; }
-        .soft-item { background: #1a1a1a; padding: 15px; border-radius: 4px; flex: 1; border: 1px solid #222; }
-        .dl-link { color: #4da6ff; text-decoration: none; font-weight: bold; font-size: 13px; display: block; margin-top: 5px; }
+        :root { color-scheme:dark; --bg:#0d0d0d; --panel:#141414; --line:#252525; --muted:#777; --red:#ff3333; --blue:#4da6ff; }
+        * { box-sizing:border-box; }
+        body { background:var(--bg); color:#e0e0e0; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:25px; }
+        .page { max-width:1200px; margin:0 auto; }
+        .header { display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:2px solid #222; padding-bottom:10px; margin-bottom:25px; }
+        .header h1 { font-size:20px; color:var(--red); margin:0; }
+        .logout-link { color:var(--red); text-decoration:none; font-weight:bold; font-size:13px; }
+        .intro { font-size:13px; color:#777; margin-top:-15px; margin-bottom:25px; }
+        .section-title { font-size:16px; color:#fff; text-align:left; border-bottom:1px solid #222; padding-bottom:5px; }
+        .section-note { font-size:12px; color:#777; margin-top:-5px; margin-bottom:15px; }
+        .subscription-summary { background:var(--panel); border:1px solid var(--line); border-radius:5px; padding:18px 20px; margin:0 0 24px; display:flex; gap:12px 30px; flex-wrap:wrap; align-items:center; }
+        .summary-label { color:#888; font-size:12px; text-transform:uppercase; }
+        .summary-value { color:#fff; font-weight:700; margin-top:4px; }
+        .summary-value.active { color:#4dff4d; }
+        .summary-value.pending { color:#ffd166; }
+        .plans-wrapper { display:flex; gap:15px; flex-wrap:wrap; margin-bottom:30px; justify-content:space-between; }
+        .plan-box { background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:20px; width:22%; min-width:200px; text-align:left; }
+        .plan-name { font-weight:bold; font-size:16px; color:var(--blue); }
+        .plan-price { font-size:22px; font-weight:bold; color:#fff; margin:10px 0 2px; }
+        .plan-term { color:#777; font-size:12px; margin-bottom:12px; }
+        .pay-btn { background:#1a73e8; color:#fff; border:0; width:100%; padding:10px; font-weight:bold; border-radius:4px; cursor:pointer; text-transform:uppercase; font-size:11px; }
+        .pay-btn:hover { background:#155cb4; }
+        .pay-btn:disabled { opacity:.6; cursor:wait; }
+        .ticket-card { background:var(--panel); border:1px solid var(--line); border-radius:4px; padding:25px; margin-bottom:30px; text-align:left; overflow-x:auto; }
+        .ticket-card h2 { font-size:16px; color:#fff; margin-top:0; }
+        .form-group { margin-bottom:15px; }
+        .form-group label { display:block; font-size:12px; color:#999; margin-bottom:5px; text-transform:uppercase; }
+        .form-control { background:#1a1a1a; color:#fff; border:1px solid #333; padding:10px; width:100%; border-radius:4px; }
+        textarea.form-control { height:80px; resize:vertical; }
+        .submit-btn { background:#d93025; color:#fff; border:0; font-weight:bold; padding:12px 24px; border-radius:4px; cursor:pointer; text-transform:uppercase; font-size:13px; }
+        .table-logs { width:100%; border-collapse:collapse; margin-top:15px; font-size:14px; text-align:left; min-width:600px; }
+        .table-logs th { background:#1a1a1a; padding:10px; color:#999; font-size:12px; text-transform:uppercase; }
+        .table-logs td { padding:12px 10px; border-bottom:1px solid #222; vertical-align:top; }
+        .soft-box { display:flex; gap:15px; margin-top:15px; }
+        .soft-item { background:#1a1a1a; padding:15px; border-radius:4px; flex:1; border:1px solid #222; }
+        .dl-link { color:var(--blue); text-decoration:none; font-weight:bold; font-size:13px; display:block; margin-top:5px; }
+        .notice { color:#bbb; font-size:13px; margin:0 0 18px; min-height:20px; }
+        .notice.error { color:#ff8585; }
+        .notice.success { color:#8be28b; }
+        .status-badge { display:inline-block; padding:3px 8px; border-radius:12px; background:#292929; color:#ccc; font-size:12px; }
+        .status-badge.open { color:#ffd166; }
+        .status-badge.resolved { color:#8be28b; }
+        @media(max-width:900px) { .plan-box { width:calc(50% - 10px); } }
+        @media(max-width:560px) { body { padding:15px; } .header { align-items:flex-start; flex-direction:column; } .plan-box { width:100%; } .ticket-card { padding:18px; } .soft-box { flex-direction:column; } }
     </style>
 </head>
 <body>
-
-    <div class="header">
+<main class="page">
+    <header class="header">
         <h1>IT Elements Client Command Center</h1>
-        <a href="/client/logout" class="logout-link">Home Plans Log Out Core 🔌</a>
-    </div>
-    <p style="font-size:13px; color:#666; margin-top:-15px; margin-bottom:30px;">Secure remote supporting matrices across South Africa. Tunnels active and fully authenticated.</p>
+        <a href="/client/logout" class="logout-link">Home · Plans · Log Out 🔌</a>
+    </header>
+    <p class="intro">Your IT support account and plan status.</p>
 
-    <!-- 1. RESTORED SUBSCRIPTION TIER GRID WITH YOCO AUTO-CHECKOUTS -->
-    <h2 style="font-size:16px; color:#fff; text-align:left; border-bottom:1px solid #222; padding-bottom:5px;">👑 SLA Package Activation Matrix</h2>
-    <p style="font-size:12px; color:#666; margin-top:-5px; margin-bottom:15px;">Deploy a permanent monthly flat-rate premium IT infrastructure link directly to your profile.</p>
-    
-    <div class="plans-wrapper">
-        <div class="plan-box">
+    <h2 class="section-title">👑 SLA Package Activation Matrix</h2>
+    <p class="section-note">Choose a 30-day support plan. Payment is securely completed on Yoco.</p>
+    <section class="subscription-summary" aria-live="polite">
+        <div><div class="summary-label">Current plan</div><div class="summary-value" id="current-plan">Loading…</div></div>
+        <div><div class="summary-label">Plan status</div><div class="summary-value" id="plan-status">Loading…</div></div>
+        <div><div class="summary-label">Paid through</div><div class="summary-value" id="plan-expiry">—</div></div>
+    </section>
+    <p id="checkout-message" class="notice" role="status" aria-live="polite"></p>
+
+    <section class="plans-wrapper" aria-label="Support plans">
+        <article class="plan-box">
             <div class="plan-name">Basic Support</div>
-            <div class="plan-price">R299<span style="font-size:12px; color:#444;">/mo</span></div>
-            <button class="pay-btn" onclick="runSlaCheckout('Basic Support', 299)">Activate Plan 💳</button>
-        </div>
-        <div class="plan-box">
+            <div class="plan-price">R299<span style="font-size:12px;color:#777;"> / 30 days</span></div>
+            <div class="plan-term">One-time payment; renew manually.</div>
+            <button class="pay-btn" data-plan-id="basic">Pay with Yoco 💳</button>
+        </article>
+        <article class="plan-box">
             <div class="plan-name">Standard Tier</div>
-            <div class="plan-price">R599<span style="font-size:12px; color:#444;">/mo</span></div>
-            <button class="pay-btn" onclick="runSlaCheckout('Standard Tier', 599)">Activate Plan 💳</button>
-        </div>
-        <div class="plan-box">
+            <div class="plan-price">R599<span style="font-size:12px;color:#777;"> / 30 days</span></div>
+            <div class="plan-term">One-time payment; renew manually.</div>
+            <button class="pay-btn" data-plan-id="standard">Pay with Yoco 💳</button>
+        </article>
+        <article class="plan-box">
             <div class="plan-name">Business Growth</div>
-            <div class="plan-price">R2499<span style="font-size:12px; color:#444;">/mo</span></div>
-            <button class="pay-btn" onclick="runSlaCheckout('Business Growth', 2499)">Activate Plan 💳</button>
-        </div>
-        <div class="plan-box">
+            <div class="plan-price">R2,499<span style="font-size:12px;color:#777;"> / 30 days</span></div>
+            <div class="plan-term">One-time payment; renew manually.</div>
+            <button class="pay-btn" data-plan-id="business">Pay with Yoco 💳</button>
+        </article>
+        <article class="plan-box">
             <div class="plan-name">Corporate SLA</div>
-            <div class="plan-price">R4999<span style="font-size:12px; color:#444;">/mo</span></div>
-            <button class="pay-btn" onclick="runSlaCheckout('Corporate SLA', 4999)">Activate Plan 💳</button>
-        </div>
-    </div>
+            <div class="plan-price">R4,999<span style="font-size:12px;color:#777;"> / 30 days</span></div>
+            <div class="plan-term">One-time payment; renew manually.</div>
+            <button class="pay-btn" data-plan-id="corporate">Pay with Yoco 💳</button>
+        </article>
+    </section>
 
-    <!-- 2. FULL ORIGINAL INCIDENT FORM LAYOUT -->
-    <div class="ticket-card">
-        <h2 style="font-size:16px; color:#ff3333; margin-top:0;">🚨 Engineering Queue Incident Dispatch</h2>
-        <p style="font-size:11px; color:#555; margin-top:-5px; margin-bottom:20px;">✓ Handshake Live 🔒 Encryption Enclosed ⚡ Dynamic Scan Active</p>
-        
+    <section class="ticket-card">
+        <h2 style="color:#ff3333;">🚨 Engineering Queue Incident Dispatch</h2>
+        <p style="font-size:11px;color:#777;margin-top:-5px;margin-bottom:20px;">Submit your issue and our team will arrange a secure remote support session.</p>
         <form action="/support" method="POST">
-            <div class="form-group">
-                <label>Client Verification Identity Name:</label>
-                <input type="text" name="name" class="form-control" required placeholder="Enter full name">
-            </div>
-            <div class="form-group">
-                <label>AnyDesk / TeamViewer ID Code:</label>
-                <input type="text" name="remoteId" class="form-control" required placeholder="e.g., 123 456 789">
-            </div>
-            <div class="form-group">
-                <label>Secure Session Password Key:</label>
-                <input type="text" name="remotePassword" class="form-control" required placeholder="Access key pin">
-            </div>
-            <div class="form-group">
-                <label>Comprehensive Incident Symptom Report Log:</label>
-                <textarea name="issue" class="form-control" required placeholder="Describe computer crashes or operating issues details..."></textarea>
-            </div>
-            <button type="submit" class="submit-btn">Transmit Ticket Array to Escalation Channels ⚖</button>
+            <div class="form-group"><label for="ticket-name">Client name</label><input id="ticket-name" type="text" name="name" class="form-control" required placeholder="Enter full name"></div>
+            <div class="form-group"><label for="ticket-remote-id">AnyDesk / TeamViewer ID</label><input id="ticket-remote-id" type="text" name="remoteId" class="form-control" required placeholder="e.g. 123 456 789"></div>
+            <div class="form-group"><label for="ticket-remote-password">Remote session password</label><input id="ticket-remote-password" type="password" name="remotePassword" class="form-control" required placeholder="Only provide when support asks for it"></div>
+            <div class="form-group"><label for="ticket-issue">Describe the issue</label><textarea id="ticket-issue" name="issue" class="form-control" required placeholder="Describe the computer problem..."></textarea></div>
+            <button type="submit" class="submit-btn">Submit Support Ticket</button>
         </form>
-    </div>
+    </section>
 
-    <!-- 3. FULL ORIGINAL LOGS TABLE ARCHITECTURE -->
-    <div class="ticket-card">
-        <h2 style="font-size:16px; color:#fff; margin-top:0;">📋 Your Active Support Tickets Logs</h2>
-        <p style="font-size:12px; color:#555; margin-top:-5px; margin-bottom:15px;">Real-time status tracking ledger for incident reports linked to your profile email account.</p>
-        
+    <section class="ticket-card">
+        <h2>📋 Your Active Support Tickets</h2>
+        <p style="font-size:12px;color:#777;margin-top:-5px;">Ticket history linked to your account.</p>
         <table class="table-logs">
-            <thead>
-                <tr>
-                    <th>Log Date</th>
-                    <th>Remote ID</th>
-                    <th>Issue Description</th>
-                    <th>Queue Status</th>
-                </tr>
-            </thead>
-            <tbody id="tickets-log-rows">
-                <tr>
-                    <td colspan="4" style="color:#666; font-style:italic; text-align:center; padding:20px;">Querying active support records channels...</td>
-                </tr>
-            </tbody>
+            <thead><tr><th>Log Date</th><th>Remote ID</th><th>Issue Description</th><th>Queue Status</th></tr></thead>
+            <tbody id="tickets-log-rows"><tr><td colspan="4" style="color:#777;text-align:center;padding:20px;">Loading your tickets…</td></tr></tbody>
         </table>
-    </div>
+    </section>
 
-    <!-- 4. FULL ORIGINAL DOWNLOADING UTILITY MATRIX -->
-    <div class="ticket-card">
-        <h2 style="font-size:16px; color:#fff; margin-top:0;">📥 Required Software Downloads</h2>
-        <p style="font-size:12px; color:#555; margin-top:-5px;">Official connectivity engines required to initiate support operations.</p>
+    <section class="ticket-card">
+        <h2>📥 Required Software Downloads</h2>
+        <p style="font-size:12px;color:#777;margin-top:-5px;">Download remote support software only when asked by your engineer.</p>
         <div class="soft-box">
-            <div class="soft-item">
-                <strong>AnyDesk Controller</strong>
-                <span style="color:#555; font-size:12px; display:block;">Lightweight remote engine exe</span>
-                <a href="https://anydesk.com" target="_blank" class="dl-link">Download</a>
-            </div>
-            <div class="soft-item">
-                <strong>TeamViewer Core</strong>
-                <span style="color:#555; font-size:12px; display:block;">Enterprise tunnel service setup</span>
-                <a href="https://teamviewer.com" target="_blank" class="dl-link">Download</a>
-            </div>
+            <div class="soft-item"><strong>AnyDesk</strong><span style="color:#777;font-size:12px;display:block;">Remote support application</span><a href="https://anydesk.com/en/downloads" target="_blank" rel="noopener noreferrer" class="dl-link">Download AnyDesk</a></div>
+            <div class="soft-item"><strong>TeamViewer</strong><span style="color:#777;font-size:12px;display:block;">Remote support application</span><a href="https://www.teamviewer.com/en/download/" target="_blank" rel="noopener noreferrer" class="dl-link">Download TeamViewer</a></div>
         </div>
-    </div>
+    </section>
+</main>
 
-    <!-- YOCO CHECKOUT ENGINE PIPELINES -->
-    <script src="https://yoco.com"></script>
-    <script>
-        const yocoDashboard = new YocoSDK({
-            publicKey: 'pk_test_a5949eaaN4zjq4R2a744'
-        });
+<script>
+(() => {
+    const statusMessage = document.getElementById('checkout-message');
+    const ticketRows = document.getElementById('tickets-log-rows');
+    const currentPlan = document.getElementById('current-plan');
+    const planStatus = document.getElementById('plan-status');
+    const planExpiry = document.getElementById('plan-expiry');
+    const query = new URLSearchParams(window.location.search);
+    const returnedFromYoco = query.get('payment') === 'returned';
+    const checkoutReference = query.get('ref');
 
-        function runSlaCheckout(tier, amount) {
-            const centValue = amount * 100;
-            yocoDashboard.showPopup({
-                amountInCents: centValue,
-                currency: 'ZAR',
-                name: 'IT Elements SLA',
-                description: `Monthly Subscription: ${tier}`,
-                callback: async function (result) {
-                    if (result.error) {
-                        alert("Transaction Canceled: " + result.error.message);
-                    } else {
-                        const res = await fetch('/api/payment/yoco-charge', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ token: result.id, amountInCents: centValue, planName: tier, isAdHoc: false })
-                        });
-                        const status = await res.json();
-                        if (status.success) {
-                            alert(`🎉 Activation Successful! Your profile is now active on ${tier}.`);
-                            window.location.reload();
-                        } else {
+    if (query.get('payment') === 'cancelled') {
+        statusMessage.textContent = 'Checkout was cancelled. Your plan has not changed.';
+    } else if (query.get('payment') === 'failed') {
+        statusMessage.textContent = 'Yoco could not complete the payment. Your plan has not changed.';
+        statusMessage.className = 'notice error';
+    }
+
+    function renderTickets(tickets) {
+        ticketRows.replaceChildren();
+        if (!Array.isArray(tickets) || tickets.length === 0) {
+            const row = ticketRows.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 4;
+            cell.style.cssText = 'color:#777;font-style:italic;text-align:center;padding:20px;';
+            cell.textContent = 'You have no support tickets yet.';
+            return;
+        }
+        for (const ticket of tickets) {
+            const row = ticketRows.insertRow();
+            const dateCell = row.insertCell();
+            dateCell.textContent = ticket.date ? new Date(ticket.date).toLocaleString() : '—';
+            row.insertCell().textContent = ticket.remoteId || '—';
+            row.insertCell().textContent = ticket.issue || '—';
+            const statusCell = row.insertCell();
+            const badge = document.createElement('span');
+            badge.className = 'status-badge ' + (String(ticket.status || '').toLowerCase() === 'resolved' ? 'resolved' : 'open');
+            badge.textContent = ticket.status || 'Open';
+            statusCell.appendChild(badge);
+        }
+    }
+
+    async function loadProfile() {
+        const params = checkoutReference ? '?reference=' + encodeURIComponent(checkoutReference) : '';
+        const response = await fetch('/api/client/profile-data' + params, { headers: { Accept: 'application/json' } });
+        if (response.status === 401 || response.redirected) {
+            window.location.assign('/client/login');
+            return null;
+        }
+        if (!response.ok) throw new Error('Could not load your account details.');
+        const data = await response.json();
+        const user = data.user || {};
+        currentPlan.textContent = user.subscriptionTier || 'No active plan';
+        planStatus.textContent = user.subscriptionStatus || 'Inactive';
+        planStatus.className = 'summary-value ' + (user.subscriptionStatus === 'Active' ? 'active' : '');
+        planExpiry.textContent = user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt).toLocaleDateString() : '—';
+        renderTickets(data.tickets);
+        return data;
+    }
+
+    function showReturnedPaymentState(data) {
+        const checkout = data && data.checkout;
+        if (checkout && checkout.status === 'paid') {
+            statusMessage.textContent = `Yoco confirmed payment. ${checkout.planName} is active on your dashboard until ${new Date(checkout.expiresAt).toLocaleDateString()}.`;
+            statusMessage.className = 'notice success';
+            return 'paid';
+        }
+        if (checkout && checkout.status === 'failed') {
+            statusMessage.textContent = 'Yoco reported that payment did not complete. You can try again.';
+            statusMessage.className = 'notice error';
+            return 'failed';
+        }
+        statusMessage.textContent = 'Yoco returned you to the dashboard. Waiting for Yoco to securely confirm payment…';
+        statusMessage.className = 'notice';
+        return 'pending';
+    }
+
+    async function startPlanCheckout(button) {
+        button.disabled = true;
+        statusMessage.textContent = 'Connecting securely to Yoco…';
+        statusMessage.className = 'notice';
+        try {
+            const response = await fetch('/api/payment/yoco-plan-checkout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                body: JSON.stringify({ planId: button.dataset.planId })
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.message || 'Could not start Yoco checkout.');
+            if (typeof result.redirectUrl !== 'string' || !result.redirectUrl.startsWith('https://')) throw new Error('Yoco returned an invalid checkout link.');
+            window.location.assign(result.redirectUrl);
+        } catch (error) {
+            statusMessage.textContent = error.message || 'Could not connect to Yoco. Please try again.';
+            statusMessage.className = 'notice error';
+            button.disabled = false;
+        }
+    }
+
+    document.querySelectorAll('.pay-btn').forEach(button => button.addEventListener('click', () => startPlanCheckout(button)));
+
+    (async () => {
+        try {
+            let data = await loadProfile();
+            if (!data || !returnedFromYoco) return;
+            let state = showReturnedPaymentState(data);
+            if (state !== 'pending' || !checkoutReference) return;
+            const timeoutAt = Date.now() + 60000;
+            while (Date.now() < timeoutAt) {
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                data = await loadProfile();
+                if (!data) return;
+                state = showReturnedPaymentState(data);
+                if (state !== 'pending') return;
+            }
+            statusMessage.textContent = 'Payment is still awaiting Yoco confirmation. Refresh this page shortly; the plan will activate when confirmation arrives.';
+        } catch (error) {
+            statusMessage.textContent = error.message;
+            statusMessage.className = 'notice error';
+            ticketRows.innerHTML = '<tr><td colspan="4" style="color:#ff8585;text-align:center;padding:20px;">Could not load account data. Refresh the page to try again.</td></tr>';
+        }
+    })();
+})();
+</script>
+</body>
+</html>
