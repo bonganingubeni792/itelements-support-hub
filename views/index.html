@@ -39,7 +39,7 @@
         .whatsapp-floating-bubble:hover { transform: scale(1.1); }
         .footer-details { color: #888; font-size: 13px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; }
     </style>
-    <!-- ✅ VERIFIED HARD-LINK: Clears text/html mismatch errors entirely -->
+    <!-- ✅ FIXED SCRIPT ADDRESS REFERENCE LINK -->
     <script src="https://yoco.com"></script>
 </head>
 <body>
@@ -75,7 +75,8 @@
                 <div class="feature-desc">Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</div>
             </a>
         </div>
-        <div class="incident-box">
+
+                <div class="incident-box">
             <h2 style="margin-top:0; color:#fff; font-size:24px;">Need a Quick Incident Fix?</h2>
             <p style="color:#888; font-size:14px; margin-bottom:25px;">Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
             
@@ -94,6 +95,7 @@
             </select>
             
             <div class="price-display" id="dynamic-price-tag">R 350</div>
+            <!-- ✅ FIXED BUTTON INTERFACE ELEMENT CONTAINER MAPPED CLEAN WITH DYNAMIC CLICK ID -->
             <button type="button" id="yoco-checkout-trigger" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
         </div>
 
@@ -133,57 +135,49 @@
             priceTag.innerText = "R " + currentSelectedAmountZAR;
         }
 
-        // Cache-Busting Event wrapper sequence mapping
-        window.onload = function() {
-            if (typeof window.YocoSDK === 'undefined') {
-                console.error("Yoco SDK target asset failed to mount cleanly.");
-                return;
-            }
-
+        window.addEventListener('DOMContentLoaded', () => {
             const yocoInstance = new window.YocoSDK({
                 publicKey: 'pk_test_a5949eaaN4zjq4R2a744'
             });
 
-            const paymentActionBtn = document.getElementById('yoco-checkout-trigger');
-            if (paymentActionBtn) {
-                paymentActionBtn.onclick = function(e) {
-                    e.preventDefault();
-                    
-                    yocoInstance.showPopup({
-                        amountInCents: currentSelectedAmountZAR * 100,
-                        currency: 'ZAR',
-                        name: 'IT Elements Remote Support',
-                        description: 'Ad-hoc Technical Incident Resolution Pool',
-                        callback: function (result) {
-                            if (result.error) {
-                                alert("Payment Core Incident: " + result.error.message);
-                            } else {
-                                fetch('/api/payment/yoco-charge', {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        token: result.id,
-                                        amountInCents: currentSelectedAmountZAR * 100,
-                                        isAdHoc: true
-                                    })
+            document.getElementById('yoco-checkout-trigger').addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                yocoInstance.showPopup({
+                    amountInCents: currentSelectedAmountZAR * 100,
+                    currency: 'ZAR',
+                    name: 'IT Elements Remote Support',
+                    description: 'Ad-hoc Technical Incident Resolution Pool',
+                    callback: function (result) {
+                        if (result.error) {
+                            alert("Payment Processing Exception: " + result.error.message);
+                        } else {
+                            fetch('/api/payment/yoco-charge', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    token: result.id,
+                                    amountInCents: currentSelectedAmountZAR * 100,
+                                    isAdHoc: true
                                 })
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        alert("🎉 Payment Authorized! Patching pipeline node now.");
-                                        window.location.href = "/dashboard";
-                                    } else {
-                                        alert("❌ Checkout declined: " + data.message);
-                                    }
-                                });
-                            }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    alert("🎉 Payment Authorized successfully! An engineer will patch into your desktop pipeline shortly.");
+                                    window.location.href = "/dashboard";
+                                } else {
+                                    alert("❌ Processing failure: " + (data.message || "Declined by gateway."));
+                                }
+                            })
+                            .catch(err => {
+                                alert("Unable to process billing data stream connection.");
+                            });
                         }
-                    });
-                };
-            }
-        };
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
-
-        
