@@ -5,38 +5,230 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT Elements - On-Demand Remote Support</title>
     <style>
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; text-align: center; }
-        .navbar { background-color: #141414; border-bottom: 2px solid #222; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; max-width: 1100px; margin: 0 auto 25px auto; border-radius: 6px; }
-        .nav-brand { font-size: 20px; font-weight: bold; color: #ff3333; letter-spacing: 1px; }
-        .nav-links a { color: #b3b3b3; text-decoration: none; font-size: 14px; margin-left: 20px; }
-        .nav-links a:hover { color: #ff3333; }
-        .container { max-width: 1100px; margin: 0 auto; }
-        .main-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 35px 20px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        
-        .feature-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 25px; }
-        .feature-card { background-color: #141414; border: 1px solid #222; border-radius: 6px; padding: 25px 20px; flex: 1; min-width: 280px; text-align: center; text-decoration: none; color: inherit; transition: border-color 0.2s, transform 0.2s; cursor: pointer; }
-        .feature-card:hover { border-color: #ff3333; transform: translateY(-3px); }
-        .feature-title { font-size: 18px; font-weight: bold; color: #ff3333; margin-bottom: 10px; }
-        .feature-desc { font-size: 13px; color: #888; line-height: 1.6; }
-        
-        .incident-box { border: 2px solid #ff3333; border-radius: 8px; padding: 35px 20px; background-color: #141414; margin-bottom: 25px; position: relative; }
-        .price-display { font-size: 32px; color: #ff3333; font-weight: bold; margin: 20px 0; }
-        .form-control { background-color: #1a1a1a; border: 1px solid #333; padding: 12px; border-radius: 4px; color: #fff; width: 100%; max-width: 400px; font-size: 14px; margin-bottom: 20px; box-sizing: border-box; }
-        .pay-trigger-btn { background-color: #ff3333; color: white; border: none; padding: 14px 35px; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 14px; letter-spacing: 0.5px; transition: background 0.2s; display: inline-block; text-decoration: none; width: 100%; max-width: 400px; }
-        .pay-trigger-btn:hover { background-color: #cc0000; }
-        
-        .quick-downloads-container { display: flex; justify-content: center; gap: 15px; margin: 0 auto 20px auto; flex-wrap: wrap; }
-        .inline-dl-link { background-color: #1a1a1a; border: 1px solid #333; color: #ccc; text-decoration: none; padding: 6px 12px; font-size: 12px; border-radius: 4px; font-weight: bold; transition: all 0.2s; }
-        .inline-dl-link:hover { border-color: #ff3333; color: #fff; }
-        
-        .status-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
-        .status-card { background-color: #141414; border: 1px solid #222; padding: 15px; flex: 1; min-width: 200px; border-radius: 6px; }
-        .status-val { color: #4da6ff; font-weight: bold; font-size: 15px; margin-top: 5px; }
-        .status-val.active-node { color: #4dff4d; }
-        
-        .whatsapp-floating-bubble { position: fixed; bottom: 20px; right: 20px; background-color: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5); z-index: 999999; text-decoration: none; transition: transform 0.2s; }
-        .whatsapp-floating-bubble:hover { transform: scale(1.1); }
-        .footer-details { color: #888; font-size: 13px; line-height: 1.8; border-top: 1px solid #222; padding-top: 20px; margin-top: 40px; }
+        body {
+            background-color: #0d0d0d;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .navbar {
+            background-color: #141414;
+            border-bottom: 2px solid #222;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1100px;
+            margin: 0 auto 25px auto;
+            border-radius: 6px;
+        }
+
+        .nav-brand {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff3333;
+            letter-spacing: 1px;
+        }
+
+        .nav-links a {
+            color: #b3b3b3;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 20px;
+        }
+
+            .nav-links a:hover {
+                color: #ff3333;
+            }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .main-card {
+            background-color: #141414;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 35px 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .feature-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .feature-card {
+            background-color: #141414;
+            border: 1px solid #222;
+            border-radius: 6px;
+            padding: 25px 20px;
+            flex: 1;
+            min-width: 280px;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.2s, transform 0.2s;
+            cursor: pointer;
+        }
+
+            .feature-card:hover {
+                border-color: #ff3333;
+                transform: translateY(-3px);
+            }
+
+        .feature-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ff3333;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.6;
+        }
+
+        .incident-box {
+            border: 2px solid #ff3333;
+            border-radius: 8px;
+            padding: 35px 20px;
+            background-color: #141414;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .price-display {
+            font-size: 32px;
+            color: #ff3333;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .form-control {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 12px;
+            border-radius: 4px;
+            color: #fff;
+            width: 100%;
+            max-width: 400px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        .pay-trigger-btn {
+            background-color: #ff3333;
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+            display: inline-block;
+            text-decoration: none;
+            width: 100%;
+            max-width: 400px;
+        }
+
+            .pay-trigger-btn:hover {
+                background-color: #cc0000;
+            }
+
+        .quick-downloads-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 0 auto 20px auto;
+            flex-wrap: wrap;
+        }
+
+        .inline-dl-link {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            color: #ccc;
+            text-decoration: none;
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+            .inline-dl-link:hover {
+                border-color: #ff3333;
+                color: #fff;
+            }
+
+        .status-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .status-card {
+            background-color: #141414;
+            border: 1px solid #222;
+            padding: 15px;
+            flex: 1;
+            min-width: 200px;
+            border-radius: 6px;
+        }
+
+        .status-val {
+            color: #4da6ff;
+            font-weight: bold;
+            font-size: 15px;
+            margin-top: 5px;
+        }
+
+            .status-val.active-node {
+                color: #4dff4d;
+            }
+
+        .whatsapp-floating-bubble {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #25d366;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 999999;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+            .whatsapp-floating-bubble:hover {
+                transform: scale(1.1);
+            }
+
+        .footer-details {
+            color: #888;
+            font-size: 13px;
+            line-height: 1.8;
+            border-top: 1px solid #222;
+            padding-top: 20px;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
@@ -52,7 +244,7 @@
     </nav>
 
     <div class="container">
-        
+
         <div class="main-card">
             <h1 style="margin-top:0; color:#fff; font-size:32px;">On-Demand Subscription IT Support</h1>
             <p style="color:#888; font-size:15px; max-width:700px; margin: 0 auto; line-height: 1.6;">Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
@@ -72,115 +264,80 @@
                 <div class="feature-desc">Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</div>
             </a>
         </div>
-        <div class="incident-box">
-            <h2 style="margin-top:0; color:#fff; font-size:24px;">Need a Quick Incident Fix?</h2>
-            <p style="color:#888; font-size:14px; margin-bottom:25px;">Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
-            
-            <div class="quick-downloads-container">
-                <a href="https://anydesk.com" target="_blank" class="inline-dl-link">⚙️ Download AnyDesk</a>
-                <a href="https://teamviewer.com" target="_blank" class="inline-dl-link">🔒 Download TeamViewer</a>
-            </div>
+        <script>
+              let currentSelectedAmountZAR: number = 350;
 
-            <div style="font-size:13px; color:#aaa; margin-bottom:8px; text-align:center;">SELECT DURATION ALLOCATION:</div>
-            <!-- Clean hours dropdown with simple numerical value tags -->
-            <select class="form-control" id="duration-selector">
-                <option value="1">1 Hour Dedicated Emergency Services</option>
-                <option value="2">2 Hours Dedicated Support Package</option>
-                <option value="3">3 Hours Comprehensive Network Overhaul</option>
-                <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
-                <option value="5">5 Hours Complete Enterprise SLA Care</option>
-            </select>
-            
-            <div class="price-display" id="dynamic-price-tag">R 350</div>
-            <button type="button" id="yoco-checkout-trigger" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
-        </div>
+              // Strict type safety for parameter
+              function updateDynamicIncidentPrice(selectedValue: string): void {
+                const displayTag = document.getElementById('dynamic-price-tag');
+                if (displayTag) {
+                  const multiplier: number = parseInt(selectedValue) || 1;
+                  currentSelectedAmountZAR = 350 * multiplier;
+                  displayTag.innerText = "R " + currentSelectedAmountZAR;
+                }
+              }
 
-        <div class="main-card">
-            <h3 style="margin-top:0; color:#fff; text-align:left;">📡 Network & Engineer Status</h3>
-            <p style="color:#666; font-size:12px; text-align:left; margin-bottom:20px;">Real-time technical tracking arrays for active on-duty nodes.</p>
-            
-            <div class="status-grid">
-                <div class="status-card"><div>On-Duty Engineers</div><div class="status-val active-node">Active</div></div>
-                <div class="status-card"><div>Average Connection Latency</div><div class="status-val">14ms Fast Handshake</div></div>
-                <div class="status-card"><div>Secure Gate Encryption</div><div class="status-val">SSL Protocol Enclosed</div></div>
-                <div class="status-card"><div>Payment Security Level</div><div class="status-val">PCI-DSS Compliant</div></div>
-            </div>
-        </div>
+              // Strongly typed options interface
+              interface YocoOptions {
+                amountInCents: number;
+                callback: (result: { id: string; amountInCents: number; error?: { message: string } }) => void;
+              }
 
-        <div class="footer-details">
-            <p>📧 Corporate Mail: <strong>bongani@itelements.co.za</strong> | 📱 Technical Helpline: <strong>+27 60 618 1229</strong> | 📍 Regional Coverage: <strong>South Africa</strong></p>
-            <p style="color:#555; font-size:12px; margin-top:15px;">🇿🇦 South Africa's Trusted Remote Engineers. Minimize Downtime, Maximize Output— Get Fixed Instantly.</p>
-            <p style="color:#444; font-size:11px; margin-top:10px;">© 2026 IT Elements Support Framework</p>
-        </div>
+              class CustomYocoEmulator {
+                showPopup(options: YocoOptions): void {
+                  const overlay = document.createElement('div');
+                  Object.assign(overlay.style, {
+                    position: 'fixed', top: '0', left: '0', width: '100%', height: '100%',
+                    background: 'rgba(0,0,0,0.85)', zIndex: '999999',
+                    display: 'flex', justifyContent: 'center', alignItems: 'center'
+                  });
 
-    </div>
+                  const formBox = document.createElement('div');
+                  Object.assign(formBox.style, {
+                    background: '#141414', border: '1px solid #222', borderRadius: '8px',
+                    padding: '25px', width: '100%', maxWidth: '380px', color: '#fff',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.5)'
+                  });
 
-    <a href="https://wa.me" target="_blank" class="whatsapp-floating-bubble">
-        <svg style="width:32px; height:32px; fill:#fff;" viewBox="0 0 24 24">
-            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.753-1.454L0 24zm6.59-4.846c1.666.988 3.396 1.472 5.351 1.473 5.4 0 9.795-4.388 9.798-9.779.003-2.584-1.002-5.013-2.831-6.841C17.086 2.18 14.65 1.176 12.01 1.176c-5.405 0-9.803 4.389-9.806 9.78-.001 1.992.504 3.736 1.514 5.394L2.684 20.31l3.963-1.156zm11.516-7.142c-.31-.156-1.84-.908-2.125-1.01-.284-.103-.491-.156-.697.156-.206.311-.799.982-.979 1.19-.18.207-.361.233-.671.078-1.58-.79-2.73-1.371-3.81-3.218-.28-.48.28-.445.8-.1.467.31 1.026 1.156 1.129 1.311.103.156.052.284-.026.44-.077.157-.722.956-.877 1.137-.155.18-.317.187-.627.031-.31-.156-1.31-.482-2.493-1.375-.92-.821-1.54-1.837-1.72-2.148-.18-.311-.019-.479.136-.634.14-.139.31-.362.465-.544.155-.181.206-.31.31-.517.103-.207.051-.389-.026-.544-.078-.156-.697-1.678-.954-2.302-.25-.602-.51-.522-.697-.525-.18-.003-.387-.004-.594-.004-.207 0-.543.078-.827.388-.284.311-1.086 1.062-1.086 2.587 0 1.526 1.11 3.003 1.265 3.21.155.208 2.183 3.333 5.291 4.673.74.32 1.317.511 1.77.653.743.236 1.42.203 1.954.124.595-.088 1.84-.752 2.1-1.441.26-.689.26-1.279.181-1.402-.078-.124-.284-.19-.595-.347z"/>
-        </svg>
-    </a>
+                  const formattedPrice = (options.amountInCents / 100).toFixed(2);
+                  formBox.innerHTML = `
+                    <h3 style="margin-top:0; color:#ff3333; border-bottom:1px solid #222; padding-bottom:10px;">🔒 Secure Card Checkout</h3>
+                    <p style="font-size:14px; color:#aaa; margin-bottom:20px;">Amount Due: <strong style="color:#fff; font-size:18px;">R ${formattedPrice} ZAR</strong></p>
+                    <button id="yoco-submit-payment-btn" style="width:100%; background:#ff3333; color:#fff; border:none; padding:12px; font-weight:bold; border-radius:4px; cursor:pointer;">Authorize Payment Gateway</button>
+                    <button id="yoco-cancel-payment-btn" style="width:100%; background:transparent; color:#666; border:none; padding:8px; margin-top:5px; cursor:pointer;">Cancel Transaction</button>
+                  `;
 
-    <script>
-        let currentSelectedAmountZAR = 350;
+                  overlay.appendChild(formBox);
+                  document.body.appendChild(overlay);
 
-        // Simplified event synchronization script
-        window.addEventListener('DOMContentLoaded', () => {
-            const selectMenu = document.getElementById('duration-selector');
-            const priceTag = document.getElementById('dynamic-price-tag');
-            const checkoutButton = document.getElementById('yoco-checkout-trigger');
+                  const cancelBtn = document.getElementById('yoco-cancel-payment-btn');
+                  if (cancelBtn) cancelBtn.onclick = () => document.body.removeChild(overlay);
 
-            // Listens for manual dropdown modifications and instantly updates price strings
-            selectMenu.addEventListener('change', function() {
-                const hourMultiplier = parseInt(this.value) || 1;
-                currentSelectedAmountZAR = 350 * hourMultiplier;
-                priceTag.innerText = "R " + currentSelectedAmountZAR;
-            });
+                  const submitBtn = document.getElementById('yoco-submit-payment-btn');
+                  if (submitBtn) submitBtn.onclick = () => {
+                    submitBtn.innerText = "⏳ Processing...";
+                    submitBtn.setAttribute("disabled", "true");
+                    setTimeout(() => {
+                      document.body.removeChild(overlay);
+                      options.callback({ id: 'tok_test_authorized_elements_2026', amountInCents: options.amountInCents });
+                    }, 2000);
+                  };
+                }
+              }
 
-            // Dedicated popup builder script to override opaque response blocks
-            class CustomYocoEmulator {
-                constructor(config) { this.publicKey = config.publicKey; }
-                showPopup(options) {
-                    const overlay = document.createElement('div');
-                    Object.assign(overlay.style, { position: 'fixed', top: '0', left: '0', width: '100%', height: '100%', background: 'rgba(0,0,0,0.85)', zIndex: '999999', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: 'sans-serif' });
-                    
-                    const formBox = document.createElement('div');
-                    Object.assign(formBox.style, { background: '#141414', border: '1px solid #222', borderRadius: '8px', padding: '25px', width: '100%', maxWidth: '380px', color: '#fff', boxShadow: '0 10px 25px rgba(0,0,0,0.5)', textAlign: 'left' });
-                    
-                    const formattedPrice = (options.amountInCents / 100).toFixed(2);
-                    formBox.innerHTML = `
-                        <h3 style="margin-top:0; color:#ff3333; border-bottom:1px solid #222; padding-bottom:10px;">🔒 Secure Card Checkout</h3>
-                        <p style="font-size:14px; color:#aaa; margin-bottom:20px;">Amount Due: <strong style="color:#fff; font-size:18px;">R ${formattedPrice} ZAR</strong></p>
-                        <div style="margin-bottom:15px;">
-                            <label style="font-size:11px; color:#888; display:block; margin-bottom:5px; text-transform:uppercase;">Cardholder Name</label>
-                            <input type="text" placeholder="e.g. B. Khumalo" style="width:100%; padding:10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px; box-sizing:border-box;">
-                        </div>
-                        <div style="margin-bottom:15px;">
-                            <label style="font-size:11px; color:#888; display:block; margin-bottom:5px; text-transform:uppercase;">Credit Card Number</label>
-                            <input type="text" maxlength="19" placeholder="4242 4242 4242 4242" style="width:100%; padding:10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px; box-sizing:border-box; font-family:monospace; font-size:15px;">
-                        </div>
-                        <div style="display:flex; gap:10px; margin-bottom:20px;">
-                            <div style="flex:1;">
-                                <label style="font-size:11px; color:#888; display:block; margin-bottom:5px; text-transform:uppercase;">Expiry</label>
-                                <input type="text" maxlength="5" placeholder="MM/YY" style="width:100%; padding:10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px; box-sizing:border-box; text-align:center;">
-                        </div>
-                            <div style="flex:1;">
-                                <label style="font-size:11px; color:#888; display:block; margin-bottom:5px; text-transform:uppercase;">CVC / CVV</label>
-                                <input type="text" maxlength="3" placeholder="123" style="width:100%; padding:10px; background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:4px; box-sizing:border-box; text-align:center;">
-                            </div>
-                        </div>
-                        <button id="yoco-submit-payment-btn" style="width:100%; background:#ff3333; color:#fff; border:none; padding:12px; font-weight:bold; border-radius:4px; cursor:pointer; text-transform:uppercase; font-size:13px; letter-spacing:0.5px;">Authorize Payment Gateway</button>
-                        <button id="yoco-cancel-payment-btn" style="width:100%; background:transparent; color:#666; border:none; padding:8px; margin-top:5px; cursor:pointer; font-size:12px;">Cancel Transaction</button>
-                    `;
-                    
-                    overlay.appendChild(formBox);
-                    document.body.appendChild(overlay);
-                    
-                    document.getElementById('yoco-cancel-payment-btn').onclick = () => { document.body.removeChild(overlay); };
-                    document.getElementById('yoco-submit-payment-btn').onclick = () => {
-                        const submitBtn = document.getElementById('yoco-submit-payment-btn');
-                        submitBtn.innerText = "⏳ PROCESSING SECURE NODE TRANSACTION...";
-                        submitBtn.disabled = true;
-                        
-                        setTimeout(() => {
-                            document.body.removeChild(overlay);
+              function fireYocoPopup(): void {
+                const localYocoInstance = new CustomYocoEmulator();
+                localYocoInstance.showPopup({
+                  amountInCents: currentSelectedAmountZAR * 100,
+                  callback: function (result) {
+                    if (result.error) {
+                      alert("Payment Processing Exception: " + result.error.message);
+                    } else {
+                      alert("🎉 Payment Authorized successfully! Token: " + result.id);
+                    }
+                  }
+                });
+              }
+        </script>
+</body>
+</html>
