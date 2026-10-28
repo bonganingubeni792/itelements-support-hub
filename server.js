@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
-const https = require('https'); // Required to make native secure requests to Yoco APIs safely
+const https = require('https');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -28,6 +28,12 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
 }, { collection: 'supportrequests' }));
 
 app.use(cors());
+
+app.use((req, res, next) => {
+    res.setHeader("Content-Security-Policy", "default-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.yoco.com https://*.yoco.co.za; img-src 'self' data: https://*.whatsapp.com; connect-src 'self' https://*.yoco.co.za https://*.yoco.com");
+    next();
+});
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'views')));
@@ -58,22 +64,12 @@ app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'views', 'r
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(__dirname, 'views', 'admin.html')));
 
-// 💳 YOCO AUTOMATED GATEWAY PAYMENT CHARGE ROUTE ENDPOINT
 app.post('/api/payment/yoco-charge', async (req, res) => {
     try {
         const { token, amountInCents, planName, isAdHoc } = req.body;
+        if (!token || !amountInCents) return res.status(400).json({ success: false, message: "Missing required properties." });
 
-        if (!token || !amountInCents) {
-            return res.status(400).json({ success: false, message: "Missing required tokenization properties." });
-        }
-
-        const postData = JSON.stringify({
-            token: token,
-            amountInCents: amountInCents,
-            currency: 'ZAR'
-        });
-
-        // ✅ FIXED CONNECTIVITY HOSTNAME ROUTING STRING PARAMETER
+        const postData = JSON.stringify({ token, amountInCents, currency: 'ZAR' });
         const options = {
             hostname: 'online.yoco.co.za',
             port: 443,
@@ -91,34 +87,20 @@ app.post('/api/payment/yoco-charge', async (req, res) => {
             yocoRes.on('data', (chunk) => body += chunk);
             yocoRes.on('end', async () => {
                 const responseData = JSON.parse(body);
-
                 if (yocoRes.statusCode === 201 && responseData.status === 'successful') {
                     if (!isAdHoc && req.session.userEmail) {
-                        await UserAccount.findOneAndUpdate(
-                            { email: req.session.userEmail },
-                            { subscriptionTier: planName, subscriptionStatus: 'Active' }
-                        );
+                        await UserAccount.findOneAndUpdate({ email: req.session.userEmail }, { subscriptionTier: planName, subscriptionStatus: 'Active' });
                     }
-
-                                    return res.json({ success: true, data: responseData });
+                    return res.json({ success: true, data: responseData });
                 } else {
                     return res.status(400).json({ success: false, error: responseData });
                 }
             });
         });
-
-        yocoReq.on('error', (e) => {
-            console.error("❌ YOCO SERVICE DISPATCH FAILURE:", e);
-            res.status(500).json({ success: false, message: "Gateway channel link timeout error." });
-        });
-
+        yocoReq.on('error', (e) => res.status(500).json({ success: false, message: "Timeout error." }));
         yocoReq.write(postData);
         yocoReq.end();
-
-    } catch (error) {
-        console.error("❌ CRITICAL TRANSACTION ENGINE FAULT:", error);
-        res.status(500).json({ success: false, message: error.message });
-    }
+    } catch (error) { res.status(500).json({ success: false, message: error.message }); }
 });
 
 app.post('/client/register', async (req, res) => {
