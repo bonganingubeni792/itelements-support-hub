@@ -31,6 +31,13 @@ const SLA_PLANS = {
     corporate: { name: 'Corporate SLA', amount: 499900 }
 };
 
+function yocoModeForSecret(secretKey) {
+    if (typeof secretKey !== 'string') return null;
+    if (secretKey.startsWith('sk_test_')) return 'test';
+    if (secretKey.startsWith('sk_live_')) return 'live';
+    return null;
+}
+
 if (dbURI) {
     mongoose.connect(dbURI)
         .then(() => console.log('📁 Database connection established successfully'))
@@ -180,8 +187,9 @@ app.post('/webhooks/yoco', express.raw({ type: 'application/json', limit: '100kb
         const payment = event.payload || {};
         const checkoutId = payment.metadata && payment.metadata.checkoutId;
         if (!checkoutId) return res.sendStatus(200);
-        if (process.env.YOCO_SECRET_KEY?.startsWith('sk_test_') && payment.mode !== 'test') {
-            console.warn('Ignored a non-test Yoco event while test keys are configured.');
+        const configuredMode = yocoModeForSecret(process.env.YOCO_SECRET_KEY);
+        if (!configuredMode || payment.mode !== configuredMode) {
+            console.warn('Ignored a Yoco event whose mode does not match the configured key.');
             return res.sendStatus(200);
         }
 
@@ -271,8 +279,8 @@ app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath
 // receives the secret key, and the amount is calculated here from allowed hours.
 app.post('/api/payment/yoco-checkout', async (req, res) => {
     const secretKey = process.env.YOCO_SECRET_KEY;
-    if (!secretKey || !secretKey.startsWith('sk_test_')) {
-        return res.status(503).json({ success: false, message: 'Set a valid Yoco TEST secret key in the server environment.' });
+    if (!yocoModeForSecret(secretKey)) {
+        return res.status(503).json({ success: false, message: 'Set a valid Yoco TEST or LIVE secret key in the server environment.' });
     }
 
     const hours = Number(req.body.hours);
@@ -323,8 +331,8 @@ app.post('/api/payment/yoco-plan-checkout', checkUserAuth, async (req, res) => {
     const plan = SLA_PLANS[planId];
 
     if (!userEmail) return res.status(403).json({ success: false, message: 'Sign in with a customer account before choosing a plan.' });
-    if (!secretKey || !secretKey.startsWith('sk_test_')) {
-        return res.status(503).json({ success: false, message: 'A Yoco TEST secret key is not configured on the server.' });
+    if (!yocoModeForSecret(secretKey)) {
+        return res.status(503).json({ success: false, message: 'A valid Yoco TEST or LIVE secret key is not configured on the server.' });
     }
     if (!plan) return res.status(400).json({ success: false, message: 'Choose one of the available support plans.' });
 
