@@ -198,10 +198,13 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     area: String,
     serviceType: String,
     preferredDate: String,
+    preferredTime: String,
+    confirmedVisitAt: Date,
+    callOutFee: { type: Number, min: 0 },
     remoteId: String,
     remotePassword: String,
     issue: String,
-    status: { type: String, enum: ['Open', 'Contacted', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'], default: 'Open' },
+    status: { type: String, enum: ['Open', 'Contacted', 'Session Confirmed', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'], default: 'Open' },
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
@@ -574,7 +577,7 @@ app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearC
 
 app.post('/support', async (req, res) => {
     try {
-        const { name, email, phone, area, serviceType, preferredDate, details, remoteId, remotePassword, issue, requestType } = req.body;
+        const { name, email, phone, area, serviceType, preferredDate, preferredTime, details, remoteId, remotePassword, issue, requestType } = req.body;
         const isOnsiteEnquiry = requestType === 'onsite';
         const normalizedEmail = email ? String(email).toLowerCase().trim() : (req.session.userEmail || '');
         const request = new SupportRequest({
@@ -584,7 +587,8 @@ app.post('/support', async (req, res) => {
             requestType: isOnsiteEnquiry ? 'onsite' : 'remote',
             area: isOnsiteEnquiry ? String(area || '').trim() : '',
             serviceType: isOnsiteEnquiry ? String(serviceType || '').trim() : '',
-            preferredDate: isOnsiteEnquiry ? String(preferredDate || '').trim() : '',
+            preferredDate: String(preferredDate || '').trim(),
+            preferredTime: String(preferredTime || '').trim(),
             remoteId: String(remoteId || '').trim(),
             remotePassword: String(remotePassword || ''),
             issue: isOnsiteEnquiry ? String(details || issue || '').trim() : String(issue || '').trim(),
@@ -638,21 +642,37 @@ app.get('/api/tickets', checkAdminAuth, async (req, res) => {
 });
 
 app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
-    const { ticketId, newStatus } = req.body;
+        const { ticketId, newStatus } = req.body;
     if (!mongoose.isValidObjectId(ticketId)) return res.status(400).json({ success: false, message: 'Invalid ticket.' });
     try {
         const current = await SupportRequest.findById(ticketId);
         if (!current) return res.status(404).json({ success: false, message: 'Ticket not found.' });
         const isOnsite = current.requestType === 'onsite' || String(current.issue || '').startsWith('ON-SITE SUPPORT ENQUIRY');
-        const allowedStatuses = isOnsite ? ['Open', 'Contacted', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'] : ['Open', 'On Hold', 'Resolved'];
+        const allowedStatuses = isOnsite ? ['Open', 'Contacted', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'] : ['Open', 'Contacted', 'Session Confirmed', 'On Hold', 'Resolved'];
         if (!allowedStatuses.includes(newStatus)) return res.status(400).json({ success: false, message: 'That status is not available for this request.' });
         const update = { status: newStatus };
+        if (isOnsite && newStatus === 'Visit Confirmed') {
+            const visitAt = new Date(req.body.confirmedVisitAt);
+            const callOutFee = Number(req.body.callOutFee);
+            if (!req.body.confirmedVisitAt || Number.isNaN(visitAt.getTime()) || visitAt.getTime() < Date.now() || String(req.body.callOutFee ?? '').trim() === '' || !Number.isFinite(callOutFee) || callOutFee < 0) {
+                return res.status(400).json({ success: false, message: 'Enter a future confirmed visit date and time, and a call-out fee (enter 0 if there is no fee).' });
+            }
+            update.confirmedVisitAt = visitAt;
+            update.callOutFee = callOutFee;
+        }
+        if (!isOnsite && newStatus === 'Session Confirmed') {
+            const sessionAt = new Date(req.body.confirmedVisitAt);
+            if (!req.body.confirmedVisitAt || Number.isNaN(sessionAt.getTime()) || sessionAt.getTime() < Date.now()) {
+                return res.status(400).json({ success: false, message: 'Enter a future confirmed support session date and time.' });
+            }
+            update.confirmedVisitAt = sessionAt;
+        }
         if (['Completed', 'Resolved'].includes(newStatus)) update.remotePassword = '';
         const updated = await SupportRequest.findByIdAndUpdate(ticketId, { $set: update }, { new: true });
-        if (current.status !== newStatus && updated.email) {
+        if ((current.status !== newStatus || newStatus === 'Visit Confirmed' || newStatus === 'Session Confirmed') && updated.email) {
             await sendCustomerEmail(updated.email, `Your IT Elements request is now ${newStatus}`, [
                 `Hello ${updated.name || 'there'}, the status of your ${isOnsite ? 'on-site enquiry' : 'support ticket'} is now ${newStatus}.`,
-                isOnsite && newStatus === 'Visit Confirmed' ? 'Your visit is now confirmed. Please contact us if you need to discuss the appointment.' : 'Sign in to your client dashboard to follow your request.'
+                isOnsite && newStatus === 'Visit Confirmed' ? `Your visit is confirmed for ${updated.confirmedVisitAt.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}. Call-out fee: R${Number(updated.callOutFee || 0).toFixed(2)}. Please sign in to your client dashboard for these details.` : !isOnsite && newStatus === 'Session Confirmed' ? `Your remote support session is confirmed for ${updated.confirmedVisitAt.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}. Sign in to your client dashboard to view the appointment.` : 'Sign in to your client dashboard to follow your request.'
             ]);
         }
         res.json({ success: true });
