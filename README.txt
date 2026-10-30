@@ -106,4 +106,9 @@ The client portal separates online AnyDesk/TeamViewer support from an on-site vi
 
 In-app notifications
 --------------------
-New remote and on-site requests notify the Admin console; customer and admin ticket messages and status changes notify the other party. Notifications are stored in MongoDB and appear in each signed-in portal on all devices. The optional desktop alert permission works while that portal page is open. When the site is closed, email notifications require RESEND_API_KEY, a verified sender, and SUPPORT_NOTIFICATION_EMAIL. Browser alerts are not background push notifications and will not arrive after the browser is closed.
+New remote and on-site requests notify the Admin console; customer and admin ticket messages and status changes notify the other party. Notifications are stored in MongoDB and appear in each signed-in portal on all devices. The compact bell opens a notification panel only when clicked; the panel closes after selecting an update or pressing Close. Optional desktop alerts work while the portal page is open. When the site is closed, email notifications require RESEND_API_KEY, a verified sender, and SUPPORT_NOTIFICATION_EMAIL. Browser alerts are not background push notifications and will not arrive after the browser is closed.
+
+
+Visual theme
+------------
+All public pages and portals load public/theme.css for a consistent light design with readable dark text, IT Elements red actions, blue links, grey surfaces, rounded cards, and a modern system font stack. Keep this file in public/ when uploading the website.

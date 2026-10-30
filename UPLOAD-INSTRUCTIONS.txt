@@ -6,4 +6,4 @@ IT ELEMENTS WEBSITE — UPLOAD GUIDE
 4. The ZIP includes package.json. Keep any package-lock.json already in your repository; Render can update dependencies when it runs npm install. The start command is `npm start` (or `node server.js`).
 5. Your Render page showed Auto-Deploy disabled. After committing the GitHub upload, open the web service in Render and choose Manual Deploy > Deploy latest commit.
 
-Included: server.js, package.json, .env.example, .gitignore, README.txt, all current views, and the public assets. Notifications are included in the server, admin page, and client dashboard.
+Included: server.js, package.json, .env.example, .gitignore, README.txt, all current views, and the public assets, including the shared light theme at public/theme.css. Notifications are included in the server, admin page, and client dashboard.
