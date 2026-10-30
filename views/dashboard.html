@@ -70,6 +70,24 @@
         .conversation-message { padding:8px 10px; border-radius:6px; background:#17191d; }
         .conversation-message strong { color:#fff; font-size:11px; }.conversation-message time { color:#777; font-size:10px; margin-left:8px; }.conversation-message p { white-space:pre-wrap; overflow-wrap:anywhere; color:#cbd2dc; font-size:12px; margin:5px 0 0; }
         .conversation-form { display:grid; gap:7px; }.conversation-form textarea { width:100%; min-height:66px; padding:9px; resize:vertical; border:1px solid #343a42; border-radius:5px; background:#11151b; color:#eee; font:inherit; font-size:12px; }.conversation-form button { justify-self:start; padding:8px 12px; border:0; border-radius:5px; background:#d93025; color:white; font-weight:700; cursor:pointer; }.conversation-form button:disabled { opacity:.6; cursor:wait; }.conversation-error { color:#ff8585; font-size:11px; margin:0; }
+        .request-section-intro { color:#9299a3; font-size:13px; line-height:1.6; margin:-6px 0 16px; }
+        .request-choice-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; align-items:start; }
+        .request-choice { min-width:0; padding:18px; border:1px solid #30343a; border-radius:8px; background:#111214; }
+        .remote-choice { border-top:3px solid #4da6ff; }.onsite-choice { border-top:3px solid #ff5555; }
+        .request-choice-heading { display:flex; align-items:center; gap:10px; }
+        .request-icon { width:38px; height:38px; display:grid; place-items:center; flex:none; border-radius:9px; background:#20242a; font-size:20px; }
+        .request-kicker { margin:0 0 3px; color:#9ba6b5; font-size:10px; font-weight:800; letter-spacing:.8px; }
+        .request-choice h3 { margin:0; color:#fff; font-size:17px; line-height:1.3; }
+        .request-description { min-height:60px; margin:10px 0 16px; color:#9299a3; font-size:12px; line-height:1.6; }
+        .dashboard-request-form { display:grid; grid-template-columns:minmax(0,1fr); gap:0 12px; }
+        .onsite-dashboard-form { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .dashboard-request-form .full-field { grid-column:1/-1; }
+        .dashboard-request-form .submit-btn { width:100%; min-height:44px; }
+        .form-help { display:block; color:#858b94; font-size:11px; line-height:1.5; margin-top:5px; }
+        .request-hours { color:#828890; font-size:11px; line-height:1.5; margin:14px 0 0; }
+        @media(max-width:1050px) { .request-choice-grid { grid-template-columns:minmax(0,1fr); } .request-description { min-height:0; } }
+        @media(max-width:560px) { .request-choice { padding:14px; }.onsite-dashboard-form { grid-template-columns:minmax(0,1fr); }.dashboard-request-form .full-field { grid-column:auto; } }
+
         @media(max-width:650px) { .visit-item { grid-template-columns:1fr 1fr; } }
         @media(max-width:900px) { .plan-box { width:calc(50% - 10px); } }
         @media(max-width:560px) { body { padding:12px; } .header { align-items:flex-start; flex-direction:column; } .header-actions { gap:10px 14px; } .quick-stats { grid-template-columns:1fr 1fr; }.quick-stat:last-child { grid-column:1 / -1; }.plan-box { width:100%; min-width:0; } .plans-wrapper { display:grid; grid-template-columns:1fr; gap:12px; } .ticket-card { padding:16px; margin-bottom:18px; } .soft-box { flex-direction:column; } .section-title { font-size:15px; } .subscription-summary { gap:14px 20px; padding:15px; } }
@@ -127,20 +145,45 @@
         </article>
     </section>
 
-    <section class="ticket-card" id="ticket-request">
-        <h2 style="color:#ff3333;">🚨 Engineering Queue Incident Dispatch</h2>
-        <p style="font-size:11px;color:#777;margin-top:-5px;margin-bottom:20px;">Submit your issue and our team will arrange a secure remote support session.</p>
-        <form action="/support" method="POST">
-            <div class="form-group"><label for="ticket-name">Client name</label><input id="ticket-name" type="text" name="name" class="form-control" required placeholder="Enter full name"></div>
-            <div class="form-group"><label for="ticket-email">Email address</label><input id="ticket-email" type="email" name="email" class="form-control" autocomplete="email" required placeholder="you@example.com"></div>
-            <div class="form-group"><label for="ticket-phone">Phone number</label><input id="ticket-phone" type="tel" name="phone" class="form-control" autocomplete="tel" placeholder="Optional contact number"></div>
-            <div class="form-group"><label for="ticket-remote-id">AnyDesk / TeamViewer ID</label><input id="ticket-remote-id" type="text" name="remoteId" class="form-control" autocomplete="off" autocapitalize="off" required placeholder="Enter the ID shown in your remote support app"></div>
-            <div class="form-group"><label for="ticket-preferred-date">Preferred support date (optional)</label><input id="ticket-preferred-date" type="date" name="preferredDate" class="form-control"></div>
-            <div class="form-group"><label for="ticket-preferred-time">Preferred support time (optional)</label><input id="ticket-preferred-time" type="time" name="preferredTime" class="form-control"><small style="display:block;color:#777;margin-top:6px;">We’ll contact you to confirm a remote session time.</small></div>
-            <div class="form-group"><label for="ticket-remote-password">Temporary remote session password (optional)</label><div class="password-wrap"><input id="ticket-remote-password" type="password" name="remotePassword" class="form-control" autocomplete="new-password" placeholder="Only provide when support asks for it"><button class="password-toggle" type="button" data-password-target="ticket-remote-password" aria-pressed="false">Show</button></div><small style="display:block;color:#777;margin-top:6px;">Use Show to check what you typed. Share this only when an engineer is ready to connect.</small></div>
-            <div class="form-group"><label for="ticket-issue">Describe the issue</label><textarea id="ticket-issue" name="issue" class="form-control" required placeholder="Describe the computer problem..."></textarea></div>
-            <button type="submit" class="submit-btn">Submit Support Ticket</button>
-        </form>
+    <section class="ticket-card request-section" id="ticket-request">
+        <h2>Choose the support you need</h2>
+        <p class="request-section-intro">These are two different services. Use the left form for help over the internet, or the right form if you want us to assess an in-person visit.</p>
+        <p id="request-message" class="notice" role="status" aria-live="polite"></p>
+        <div class="request-choice-grid">
+            <article class="request-choice remote-choice">
+                <div class="request-choice-heading"><span class="request-icon">💻</span><div><p class="request-kicker">ONLINE · REMOTE</p><h3>AnyDesk or TeamViewer support</h3></div></div>
+                <p class="request-description">For troubleshooting over the internet. Enter your AnyDesk or TeamViewer ID so an engineer can connect after arranging a session.</p>
+                <form id="support-ticket-form" action="/support" method="POST" class="dashboard-request-form">
+                    <input type="hidden" name="requestType" value="remote"><input type="hidden" name="returnToDashboard" value="1">
+                    <div class="form-group"><label for="ticket-name">Client name</label><input id="ticket-name" type="text" name="name" class="form-control" required placeholder="Enter your name"></div>
+                    <div class="form-group"><label for="ticket-email">Email address</label><input id="ticket-email" type="email" name="email" class="form-control" autocomplete="email" required placeholder="you@example.com"></div>
+                    <div class="form-group"><label for="ticket-phone">Phone number</label><input id="ticket-phone" type="tel" name="phone" class="form-control" autocomplete="tel" placeholder="Optional contact number"></div>
+                    <div class="form-group"><label for="ticket-remote-id">AnyDesk / TeamViewer ID</label><input id="ticket-remote-id" type="text" name="remoteId" class="form-control" autocomplete="off" autocapitalize="off" required placeholder="ID shown in your remote support app"></div>
+                    <div class="form-group"><label for="ticket-preferred-date">Preferred support date (optional)</label><input id="ticket-preferred-date" type="date" name="preferredDate" class="form-control"></div>
+                    <div class="form-group"><label for="ticket-preferred-time">Preferred support time (optional)</label><input id="ticket-preferred-time" type="time" name="preferredTime" class="form-control"><small class="form-help">We’ll contact you to confirm a session time.</small></div>
+                    <div class="form-group full-field"><label for="ticket-remote-password">Temporary remote session password (optional)</label><div class="password-wrap"><input id="ticket-remote-password" type="password" name="remotePassword" class="form-control" autocomplete="new-password" placeholder="Only provide when support asks for it"><button class="password-toggle" type="button" data-password-target="ticket-remote-password" aria-pressed="false">Show</button></div><small class="form-help">Share this only when an engineer is ready to connect.</small></div>
+                    <div class="form-group full-field"><label for="ticket-issue">Describe the issue</label><textarea id="ticket-issue" name="issue" class="form-control" required placeholder="Describe the computer problem..."></textarea></div>
+                    <button type="submit" class="submit-btn">Send online support ticket</button>
+                </form>
+            </article>
+            <article class="request-choice onsite-choice">
+                <div class="request-choice-heading"><span class="request-icon">📍</span><div><p class="request-kicker">IN-PERSON · ON-SITE</p><h3>Request a visit to your location</h3></div></div>
+                <p class="request-description">For help that may need an in-person visit. This starts as an enquiry; we’ll check your area and contact you to agree availability and any cost before confirming.</p>
+                <form id="dashboard-onsite-form" action="/support" method="POST" class="dashboard-request-form onsite-dashboard-form">
+                    <input type="hidden" name="requestType" value="onsite"><input type="hidden" name="returnToDashboard" value="1"><input type="hidden" name="remoteId" value=""><input type="hidden" name="remotePassword" value=""><input type="hidden" name="issue" id="onsite-dashboard-issue">
+                    <div class="form-group"><label for="onsite-dashboard-name">Your name</label><input id="onsite-dashboard-name" name="name" autocomplete="name" required maxlength="100" placeholder="Enter your name"></div>
+                    <div class="form-group"><label for="onsite-dashboard-email">Email address</label><input id="onsite-dashboard-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com"></div>
+                    <div class="form-group"><label for="onsite-dashboard-phone">Phone number</label><input id="onsite-dashboard-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" placeholder="Your contact number"></div>
+                    <div class="form-group"><label for="onsite-dashboard-area">Town or area</label><input id="onsite-dashboard-area" name="area" autocomplete="address-level2" required maxlength="120" placeholder="e.g. Pretoria East"></div>
+                    <div class="form-group full-field"><label for="onsite-dashboard-service">What needs attention?</label><select id="onsite-dashboard-service" name="serviceType" required><option value="">Choose a service</option><option>Computer setup or troubleshooting</option><option>Wi-Fi or small-office network</option><option>Printer or accessories</option><option>Hardware assessment</option><option>Workplace technology</option><option>Other</option></select></div>
+                    <div class="form-group"><label for="onsite-dashboard-date">Preferred date</label><input id="onsite-dashboard-date" name="preferredDate" type="date"></div>
+                    <div class="form-group"><label for="onsite-dashboard-time">Preferred time</label><input id="onsite-dashboard-time" name="preferredTime" type="time"></div>
+                    <div class="form-group full-field"><label for="onsite-dashboard-details">Describe what you need</label><textarea id="onsite-dashboard-details" name="details" required maxlength="3000" placeholder="What is happening, and which device or equipment needs attention?"></textarea><small class="form-help">Do not include account passwords, payment details, or remote-session passwords.</small></div>
+                    <button type="submit" class="submit-btn">Send on-site visit request</button>
+                </form>
+            </article>
+        </div>
+        <p class="request-hours">Support hours: Monday to Friday, 08:00–17:00 South African time (SAST). An on-site request is not confirmed until we agree the visit with you.</p>
     </section>
 
     <section class="ticket-card" id="onsite-history">
@@ -180,6 +223,11 @@
     const ticketName = document.getElementById('ticket-name');
     const ticketEmail = document.getElementById('ticket-email');
     const ticketPhone = document.getElementById('ticket-phone');
+    const onsiteName = document.getElementById('onsite-dashboard-name');
+    const onsiteEmail = document.getElementById('onsite-dashboard-email');
+    const onsitePhone = document.getElementById('onsite-dashboard-phone');
+    const onsiteForm = document.getElementById('dashboard-onsite-form');
+    const requestMessage = document.getElementById('request-message');
     const totalTicketCount = document.getElementById('ticket-total');
     const openTicketCount = document.getElementById('ticket-open-count');
     const resolvedTicketCount = document.getElementById('ticket-resolved-count');
@@ -187,6 +235,14 @@
     const returnedFromYoco = query.get('payment') === 'returned';
     const checkoutReference = query.get('ref');
     const selectedPlanId = query.get('plan');
+
+    if (query.get('request') === 'remote-sent') {
+        requestMessage.textContent = 'Your online support ticket was sent. Track its status in Your Active Support Tickets below.';
+        requestMessage.className = 'notice success';
+    } else if (query.get('request') === 'onsite-sent') {
+        requestMessage.textContent = 'Your on-site visit request was sent. It will appear below while we review your area and arrange the next steps.';
+        requestMessage.className = 'notice success';
+    }
 
     if (query.get('payment') === 'cancelled') {
         statusMessage.textContent = 'Checkout was cancelled. Your plan has not changed.';
@@ -293,6 +349,20 @@
         details.append(thread, form); container.appendChild(details);
     }
 
+    onsiteForm.addEventListener('submit', function () {
+        const form = this;
+        const summary = [
+            'ON-SITE SUPPORT ENQUIRY',
+            'Phone: ' + form.phone.value.trim(),
+            'Area: ' + form.area.value.trim(),
+            'Service requested: ' + form.serviceType.value,
+            'Preferred date: ' + (form.preferredDate.value || 'Flexible'),
+            'Preferred time: ' + (form.preferredTime.value || 'Flexible'),
+            '', form.details.value.trim()
+        ].join('\n');
+        document.getElementById('onsite-dashboard-issue').value = summary;
+    });
+
     async function loadProfile() {
         const params = checkoutReference ? '?reference=' + encodeURIComponent(checkoutReference) : '';
         const response = await fetch('/api/client/profile-data' + params, { headers: { Accept: 'application/json' } });
@@ -307,6 +377,9 @@
         ticketName.value = user.fullName || '';
         ticketEmail.value = user.email || '';
         ticketPhone.value = user.phone || '';
+        onsiteName.value = user.fullName || '';
+        onsiteEmail.value = user.email || '';
+        onsitePhone.value = user.phone || '';
         currentPlan.textContent = user.subscriptionTier || 'No active plan';
         planStatus.textContent = user.subscriptionStatus || 'Inactive';
         planStatus.className = 'summary-value ' + (user.subscriptionStatus === 'Active' ? 'active' : '');
