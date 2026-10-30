@@ -93,19 +93,25 @@
         @media(max-width:560px) { body { padding:12px; } .header { align-items:flex-start; flex-direction:column; } .header-actions { gap:10px 14px; } .quick-stats { grid-template-columns:1fr 1fr; }.quick-stat:last-child { grid-column:1 / -1; }.plan-box { width:100%; min-width:0; } .plans-wrapper { display:grid; grid-template-columns:1fr; gap:12px; } .ticket-card { padding:16px; margin-bottom:18px; } .soft-box { flex-direction:column; } .section-title { font-size:15px; } .subscription-summary { gap:14px 20px; padding:15px; } }
         @media(max-width:560px) { .table-logs { min-width:0; table-layout:fixed; font-size:11px; }.table-logs th,.table-logs td { padding:8px 5px; overflow-wrap:anywhere; }.quick-stat { padding:13px; }.quick-stat-value { font-size:20px; } }
 
-        .notification-center { background:#10141a; border:1px solid #29313a; border-radius:9px; padding:14px; margin:0 0 20px; }
-        .notification-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:9px; }
+        .notification-widget { position:fixed; right:20px; bottom:22px; z-index:1000; }
+        .notification-toggle { position:relative; width:50px; height:50px; display:grid; place-items:center; border:1px solid #ff635a; border-radius:50%; background:#17191e; color:#fff; box-shadow:0 5px 18px #0009; cursor:pointer; font-size:20px; }
+        .notification-toggle:hover { background:#25202a; }
+        .notification-count { position:absolute; top:-5px; right:-5px; min-width:20px; height:20px; padding:0 5px; display:grid; place-items:center; border-radius:12px; background:#ff3b30; color:#fff; border:2px solid #060709; font-size:10px; line-height:1; font-weight:800; }
+        .notification-center { position:absolute; right:0; bottom:calc(100% + 11px); display:flex; flex-direction:column; width:min(390px,calc(100vw - 24px)); max-height:min(62vh,520px); overflow:hidden; background:#10141a; border:1px solid #36404c; border-radius:10px; padding:14px; box-shadow:0 12px 34px #000b; }
+        .notification-center[hidden] { display:none !important; }
+        .notification-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; }
         .notification-head h2 { margin:0; color:#fff; font-size:14px; }
-        .notification-tools { display:flex; align-items:center; gap:8px; }
-        .notification-count { color:#ff8585; font-size:12px; font-weight:700; }
+        .notification-tools { display:flex; align-items:center; gap:7px; }
         .notification-button { border:1px solid #465364; border-radius:5px; background:#11151b; color:#c5d2e0; padding:7px 9px; cursor:pointer; font-size:11px; font-weight:700; }
-        .notification-list { display:grid; gap:7px; }
+        .notification-button:hover { border-color:#ff635a; }
+        .notification-list { display:grid; gap:7px; overflow:auto; min-height:0; }
         .notification-item { width:100%; text-align:left; border:1px solid #242d38; border-radius:6px; background:#0c1015; color:#c5ceda; padding:10px; cursor:pointer; }
         .notification-item.unread { border-left:3px solid #ff3b30; background:#151419; }
         .notification-item strong { display:block; color:#fff; font-size:12px; margin-bottom:3px; }
         .notification-item span { display:block; color:#aab4c2; font-size:11px; line-height:1.45; }
         .notification-item time { color:#718096; font-size:10px; display:block; margin-top:5px; }
         .notification-empty { color:#718096; font-size:12px; padding:8px 2px; }
+        @media(max-width:520px) { .notification-widget { right:14px; bottom:16px; }.notification-center { max-height:65vh; } }
 
     </style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
@@ -116,10 +122,13 @@
         <h1><img src="/assets/itel-support-icon.png?v=3" alt="" width="32" height="32"> IT Elements Client Portal</h1>
         <nav class="header-actions" aria-label="Client navigation"><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="#ticket-request">Request help</a><a href="/client/logout" class="logout-link">Log out</a></nav>
     </header>
-    <section class="notification-center" aria-label="Client notifications">
-        <div class="notification-head"><h2>🔔 Updates to your requests</h2><div class="notification-tools"><span id="notification-count" class="notification-count">0 unread</span><button class="notification-button" id="notification-permission" type="button">Enable desktop alerts</button></div></div>
-        <div class="notification-list" id="notification-list"><div class="notification-empty">Loading updates…</div></div>
-    </section>
+    <div class="notification-widget" id="notification-widget">
+        <button class="notification-toggle" id="notification-toggle" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notification-panel"><span aria-hidden="true">🔔</span><span id="notification-count" class="notification-count">0</span></button>
+        <section class="notification-center" id="notification-panel" aria-label="Client notifications" hidden>
+            <div class="notification-head"><h2>Request updates</h2><div class="notification-tools"><button class="notification-button" id="notification-permission" type="button">Enable desktop alerts</button><button class="notification-button" id="notification-close" type="button" aria-label="Close notifications">Close</button></div></div>
+            <div class="notification-list" id="notification-list"><div class="notification-empty">Loading notifications…</div></div>
+        </section>
+    </div>
     <h2 class="welcome" id="welcome-title">Welcome to your support portal</h2>
     <p class="welcome-subtitle">Manage your plan, submit a support request, and follow your ticket progress here.</p>
     <section class="quick-stats" aria-label="Your support overview">
@@ -386,6 +395,27 @@
     const notificationList = document.getElementById('notification-list');
     const notificationCount = document.getElementById('notification-count');
     const notificationPermissionButton = document.getElementById('notification-permission');
+    const notificationToggle = document.getElementById('notification-toggle');
+    const notificationPanel = document.getElementById('notification-panel');
+    const notificationWidget = document.getElementById('notification-widget');
+    const notificationClose = document.getElementById('notification-close');
+    function closeNotificationPanel() {
+        notificationPanel.hidden = true;
+        notificationToggle.setAttribute('aria-expanded', 'false');
+    }
+    notificationToggle.addEventListener('click', () => {
+        const opening = notificationPanel.hidden;
+        notificationPanel.hidden = !opening;
+        notificationToggle.setAttribute('aria-expanded', String(opening));
+        if (opening) loadNotifications();
+    });
+    notificationClose.addEventListener('click', closeNotificationPanel);
+    document.addEventListener('click', event => {
+        if (!notificationWidget.contains(event.target)) closeNotificationPanel();
+    });
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') closeNotificationPanel();
+    });
     let knownNotificationIds = new Set();
     let firstNotificationLoad = true;
     function formatNotificationDate(value) {
@@ -399,7 +429,9 @@
             if (!response.ok) throw new Error('Could not load request updates.');
             const result = await response.json();
             const items = Array.isArray(result.notifications) ? result.notifications : [];
-            notificationCount.textContent = `${items.filter(item => !item.read).length} unread`;
+            const unreadCount = items.filter(item => !item.read).length;
+            notificationCount.textContent = String(unreadCount);
+            notificationToggle.setAttribute('aria-label', `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`);
             notificationList.replaceChildren();
             if (!items.length) { const empty = document.createElement('div'); empty.className = 'notification-empty'; empty.textContent = 'No updates yet. Ticket replies and status changes will appear here.'; notificationList.appendChild(empty); }
             for (const item of items) {
@@ -419,6 +451,7 @@
         if (!button) return;
         await fetch(`/api/notifications/${encodeURIComponent(button.dataset.notificationId)}/read`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
         await loadNotifications();
+        closeNotificationPanel();
         const target = button.dataset.requestType === 'onsite' ? document.getElementById('onsite-history') : document.getElementById('ticket-history');
         target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
