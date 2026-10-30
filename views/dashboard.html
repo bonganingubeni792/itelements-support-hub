@@ -60,6 +60,10 @@
         .visit-item { display:grid; grid-template-columns:1fr 1fr 1.5fr auto; gap:12px; align-items:start; padding:14px; border:1px solid #30343a; border-radius:7px; background:#111214; }
         .visit-item strong { display:block; color:#ccc; font-size:10px; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
         .visit-item span { color:#ddd; font-size:13px; overflow-wrap:anywhere; }
+        .visit-status { display:inline-flex; width:fit-content; align-items:center; padding:5px 10px; border:1px solid #69501c; border-radius:999px; background:#302711; color:#ffd166!important; font-size:12px!important; font-weight:800; }
+        .visit-status.contacted,.visit-status.scheduled { border-color:#245b86; background:#12283a; color:#91caff!important; }
+        .visit-status.paused { border-color:#785223; background:#352514; color:#ffc16b!important; }
+        .visit-status.finished { border-color:#286c3d; background:#142b1b; color:#8be28b!important; }
         .conversation { margin-top:10px; padding:9px; border:1px solid #30343a; border-radius:6px; background:#0d0e10; }
         .conversation summary { color:#ff7777; font-size:12px; font-weight:700; cursor:pointer; }
         .conversation-thread { display:grid; gap:8px; max-height:260px; overflow:auto; margin:10px 0; }
@@ -71,6 +75,7 @@
         @media(max-width:560px) { body { padding:12px; } .header { align-items:flex-start; flex-direction:column; } .header-actions { gap:10px 14px; } .quick-stats { grid-template-columns:1fr 1fr; }.quick-stat:last-child { grid-column:1 / -1; }.plan-box { width:100%; min-width:0; } .plans-wrapper { display:grid; grid-template-columns:1fr; gap:12px; } .ticket-card { padding:16px; margin-bottom:18px; } .soft-box { flex-direction:column; } .section-title { font-size:15px; } .subscription-summary { gap:14px 20px; padding:15px; } }
         @media(max-width:560px) { .table-logs { min-width:0; table-layout:fixed; font-size:11px; }.table-logs th,.table-logs td { padding:8px 5px; overflow-wrap:anywhere; }.quick-stat { padding:13px; }.quick-stat-value { font-size:20px; } }
     </style>
+    <link rel="stylesheet" href="/assets/responsive.css?v=1">
 </head>
 <body>
 <main class="page">
@@ -205,11 +210,22 @@
                     ['Area / requested time', `${request.area || 'Area not listed'} · ${request.preferredDate || 'Flexible'} ${request.preferredTime || ''}`],
                     ['Service', request.serviceType || 'On-site assessment'],
                     ['Request details', request.issue || 'Details not provided'],
-                    ['Status', request.status || 'Open'],
-                    ...(request.confirmedVisitAt ? [['Confirmed appointment', `${new Date(request.confirmedVisitAt).toLocaleString('en-ZA')} · Call-out fee R${Number(request.callOutFee || 0).toFixed(2)}`]] : [])
+                    ['Request status', request.status || 'Open'],
+                    ...(request.confirmedVisitAt ? [['Confirmed appointment', `${new Date(request.confirmedVisitAt).toLocaleString('en-ZA')} · Call-out fee R${Number(request.callOutFee || 0).toFixed(2)}`]] : []),
+                    ...(request.date ? [['Request sent', new Date(request.date).toLocaleString('en-ZA')]] : [])
                 ]) {
                     const item = document.createElement('div'); const title = document.createElement('strong'); title.textContent = label;
-                    const text = document.createElement('span'); text.textContent = value; item.append(title, text); card.appendChild(item);
+                    if (label === 'Request status') {
+                        const status = String(value || 'Open');
+                        const normalized = status.toLowerCase();
+                        const badge = document.createElement('span');
+                        badge.className = 'visit-status ' + (['completed', 'resolved'].includes(normalized) ? 'finished' : normalized === 'on hold' ? 'paused' : normalized.includes('confirmed') ? 'scheduled' : normalized === 'contacted' ? 'contacted' : 'open');
+                        badge.textContent = ['completed', 'resolved'].includes(normalized) ? 'Finished' : status;
+                        item.append(title, badge);
+                    } else {
+                        const valueText = document.createElement('span'); valueText.textContent = value; item.append(title, valueText);
+                    }
+                    card.appendChild(item);
                 }
                 renderConversation(card, request);
                 onsiteRows.appendChild(card);
