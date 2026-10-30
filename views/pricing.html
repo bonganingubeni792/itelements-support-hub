@@ -9,10 +9,11 @@
         * { box-sizing:border-box; }
         body { background:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',sans-serif; margin:0; }
         .navbar { background:#141414; border-bottom:2px solid #222; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; gap:16px; }
-        .nav-brand { font-size:20px; font-weight:bold; color:#ff3333; text-transform:uppercase; letter-spacing:1px; text-decoration:none; }
+        .nav-brand { display:flex; align-items:center; gap:9px; font-size:20px; font-weight:bold; color:#ff3333; text-transform:uppercase; letter-spacing:1px; text-decoration:none; }
+        .brand-icon { width:32px; height:32px; object-fit:cover; border-radius:50%; flex:none; }
         .nav-links { display:flex; flex-wrap:wrap; gap:10px 20px; }
-        .nav-links a { color:#b3b3b3; text-decoration:none; font-size:14px; }
-        .nav-links a:hover { color:#ff3333; }
+        .nav-links a { color:#b3b3b3; text-decoration:none; font-size:13px; padding:8px 10px; border:1px solid transparent; border-radius:6px; transition:all .2s; }
+        .nav-links a:hover,.nav-links a:focus-visible { color:#fff; background:#202020; border-color:#353535; }
         .container { width:min(100%,1500px); margin:0 auto; padding:48px 20px; text-align:center; }
         h1 { color:#fff; font-size:clamp(27px,4vw,36px); margin:0 0 10px; }
         .subtitle { color:#999; font-size:15px; max-width:680px; margin:0 auto 42px; line-height:1.6; }
@@ -36,8 +37,8 @@
 </head>
 <body>
     <nav class="navbar" aria-label="Main navigation">
-        <a class="nav-brand" href="/">IT Elements</a>
-        <div class="nav-links"><a href="/">Home</a><a href="/services">Services</a><a href="/pricing">Plans</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="/support">Request help</a><a href="/dashboard">Portal</a><a href="/client/login">Sign in</a></div>
+        <a class="nav-brand" href="/"><img class="brand-icon" src="/assets/itel-support-icon.png" alt="" width="32" height="32">IT Elements.support</a>
+        <div class="nav-links"><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="/support">Request help</a><a href="/dashboard">Portal</a><a href="/client/login">Sign in</a></div>
     </nav>
     <main class="container">
         <h1>Predictable Flat-Rate Coverage</h1>
