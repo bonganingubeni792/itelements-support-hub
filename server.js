@@ -138,6 +138,58 @@ async function sendPasswordResetEmail(to, resetUrl) {
     }
 }
 
+function escapeHtml(value) {
+    return String(value || '').replace(/[&<>\"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+}
+
+async function sendCustomerEmail(to, subject, paragraphs) {
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.SUPPORT_EMAIL_FROM || process.env.RESET_EMAIL_FROM;
+    if (!to || !apiKey || !from) {
+        console.info('Customer email skipped: recipient or Resend sender settings are not configured.');
+        return false;
+    }
+    const html = paragraphs.map(text => `<p>${escapeHtml(text)}</p>`).join('');
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ from, to: [to], subject, html })
+        });
+        if (!response.ok) {
+            console.error('Customer email provider error:', response.status, await response.text());
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('Customer email delivery failed:', error.message);
+        return false;
+    }
+}
+
+function credentialEncryptionKey() {
+    if (!process.env.SESSION_SECRET) throw new Error('Set a stable SESSION_SECRET before storing remote access passwords.');
+    return crypto.createHash('sha256').update(`IT Elements support credential encryption:${process.env.SESSION_SECRET}`).digest();
+}
+
+function encryptSessionPassword(value) {
+    if (!value) return '';
+    if (String(value).startsWith('enc:v1:')) return String(value);
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv('aes-256-gcm', credentialEncryptionKey(), iv);
+    const encrypted = Buffer.concat([cipher.update(String(value), 'utf8'), cipher.final()]);
+    return `enc:v1:${iv.toString('hex')}:${cipher.getAuthTag().toString('hex')}:${encrypted.toString('hex')}`;
+}
+
+function decryptSessionPassword(value) {
+    if (!value || !String(value).startsWith('enc:v1:')) return value || '';
+    const [, version, ivHex, tagHex, encryptedHex] = String(value).split(':');
+    if (version !== 'v1' || !ivHex || !tagHex || !encryptedHex) throw new Error('Stored remote access credential is invalid.');
+    const decipher = crypto.createDecipheriv('aes-256-gcm', credentialEncryptionKey(), Buffer.from(ivHex, 'hex'));
+    decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
+    return Buffer.concat([decipher.update(Buffer.from(encryptedHex, 'hex')), decipher.final()]).toString('utf8');
+}
+
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     name: String,
     email: String,
@@ -149,9 +201,19 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     remoteId: String,
     remotePassword: String,
     issue: String,
-    status: { type: String, default: 'Open' },
+    status: { type: String, enum: ['Open', 'Contacted', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'], default: 'Open' },
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
+
+const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
+    name: { type: String, required: true, maxlength: 100 },
+    email: { type: String, default: '' },
+    rating: { type: Number, required: true, min: 1, max: 5 },
+    message: { type: String, required: true, maxlength: 1200 },
+    consent: { type: Boolean, required: true, default: false },
+    status: { type: String, enum: ['Pending', 'Published', 'Hidden'], default: 'Pending' },
+    date: { type: Date, default: Date.now }
+}, { collection: 'customerreviews' }));
 
 app.use(cors());
 app.use((req, res, next) => {
@@ -224,6 +286,11 @@ app.post('/webhooks/yoco', express.raw({ type: 'application/json', limit: '100kb
         await YocoCheckout.updateOne({ checkoutId, status: 'pending' }, {
             $set: { status: 'paid', eventId: event.id || null, paidAt, expiresAt }
         });
+        await sendCustomerEmail(purchase.userEmail, 'Your IT Elements plan payment is confirmed', [
+            `Yoco confirmed your payment for ${purchase.planName}.`,
+            `Your 30-day support plan is active until ${expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
+            'You can sign in to your IT Elements dashboard to view your plan and request support.'
+        ]);
         return res.sendStatus(200);
     } catch (err) {
         console.error('Yoco webhook processing error:', err.message);
@@ -524,6 +591,14 @@ app.post('/support', async (req, res) => {
             status: 'Open'
         });
         await request.save();
+        await sendCustomerEmail(normalizedEmail, isOnsiteEnquiry ? 'We received your on-site support enquiry' : 'We received your support request', isOnsiteEnquiry ? [
+            `Hello ${request.name || 'there'}, we received your request for ${request.serviceType || 'on-site support'} in ${request.area || 'your area'}.`,
+            'This is an enquiry, not a confirmed appointment. We will review availability and discuss any call-out or service cost before booking.',
+            'You can follow this request in your client dashboard when you use the email address linked to your account.'
+        ] : [
+            `Hello ${request.name || 'there'}, your support request has been received and is marked Open.`,
+            'We will review the issue and follow up. Share any temporary remote session password only when an engineer is ready to connect.'
+        ]);
         if (isOnsiteEnquiry) return res.redirect('/onsite-support?sent=1');
         res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
     } catch (err) { res.status(500).send('Database sync error.'); }
@@ -545,19 +620,90 @@ app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
 });
 
 app.get('/api/tickets', checkAdminAuth, async (req, res) => {
-    try { res.json(await SupportRequest.find().sort({ date: -1 }).lean()); } catch (err) { res.status(500).json({ error: true }); }
+    try {
+        const tickets = await SupportRequest.find().sort({ date: -1 }).lean();
+        for (const ticket of tickets) {
+            if (ticket.remotePassword && !String(ticket.remotePassword).startsWith('enc:v1:')) {
+                const encrypted = encryptSessionPassword(ticket.remotePassword);
+                await SupportRequest.updateOne({ _id: ticket._id }, { $set: { remotePassword: encrypted } });
+                ticket.remotePassword = encrypted;
+            }
+            ticket.remotePassword = decryptSessionPassword(ticket.remotePassword);
+        }
+        res.json(tickets);
+    } catch (err) {
+        console.error('Admin ticket load error:', err.message);
+        res.status(500).json({ error: true, message: 'Could not load tickets or decrypt a stored session password. Check that SESSION_SECRET has not changed.' });
+    }
 });
 
 app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
     const { ticketId, newStatus } = req.body;
-    if (!mongoose.isValidObjectId(ticketId) || !['Open', 'On Hold', 'Resolved'].includes(newStatus)) {
-        return res.status(400).json({ success: false, message: 'Invalid ticket or status.' });
-    }
+    if (!mongoose.isValidObjectId(ticketId)) return res.status(400).json({ success: false, message: 'Invalid ticket.' });
     try {
-        const updated = await SupportRequest.findByIdAndUpdate(ticketId, { status: newStatus }, { new: true });
-        if (!updated) return res.status(404).json({ success: false, message: 'Ticket not found.' });
+        const current = await SupportRequest.findById(ticketId);
+        if (!current) return res.status(404).json({ success: false, message: 'Ticket not found.' });
+        const isOnsite = current.requestType === 'onsite' || String(current.issue || '').startsWith('ON-SITE SUPPORT ENQUIRY');
+        const allowedStatuses = isOnsite ? ['Open', 'Contacted', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'] : ['Open', 'On Hold', 'Resolved'];
+        if (!allowedStatuses.includes(newStatus)) return res.status(400).json({ success: false, message: 'That status is not available for this request.' });
+        const update = { status: newStatus };
+        if (['Completed', 'Resolved'].includes(newStatus)) update.remotePassword = '';
+        const updated = await SupportRequest.findByIdAndUpdate(ticketId, { $set: update }, { new: true });
+        if (current.status !== newStatus && updated.email) {
+            await sendCustomerEmail(updated.email, `Your IT Elements request is now ${newStatus}`, [
+                `Hello ${updated.name || 'there'}, the status of your ${isOnsite ? 'on-site enquiry' : 'support ticket'} is now ${newStatus}.`,
+                isOnsite && newStatus === 'Visit Confirmed' ? 'Your visit is now confirmed. Please contact us if you need to discuss the appointment.' : 'Sign in to your client dashboard to follow your request.'
+            ]);
+        }
         res.json({ success: true });
     } catch (err) { res.status(500).json({ success: false, message: 'Could not update ticket status.' }); }
+});
+
+app.get('/api/reviews', async (req, res) => {
+    try {
+        const reviews = await CustomerReview.find({ status: 'Published', consent: true }, { email: 0, consent: 0, status: 0 }).sort({ date: -1 }).limit(12).lean();
+        res.json({ reviews });
+    } catch (err) { res.status(500).json({ reviews: [] }); }
+});
+
+const reviewSubmissionBuckets = new Map();
+app.post('/api/reviews', async (req, res) => {
+    const bucketKey = req.ip || req.socket.remoteAddress || 'unknown';
+    const now = Date.now();
+    const bucket = reviewSubmissionBuckets.get(bucketKey);
+    if (bucket && now - bucket.startedAt < 60 * 60 * 1000 && bucket.count >= 3) {
+        return res.status(429).json({ success: false, message: 'Please wait before submitting more feedback.' });
+    }
+    if (!bucket || now - bucket.startedAt >= 60 * 60 * 1000) reviewSubmissionBuckets.set(bucketKey, { startedAt: now, count: 1 });
+    else bucket.count += 1;
+
+    const name = String(req.body.name || '').trim();
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const message = String(req.body.message || '').trim();
+    const rating = Number(req.body.rating);
+    if (name.length < 2 || name.length > 100 || message.length < 10 || message.length > 1200 || !Number.isInteger(rating) || rating < 1 || rating > 5 || req.body.consent !== true) {
+        return res.status(400).json({ success: false, message: 'Add your name, a 1–5 rating, feedback of at least 10 characters, and permission to publish it.' });
+    }
+    try {
+        await CustomerReview.create({ name, email, rating, message, consent: true, status: 'Pending' });
+        await sendCustomerEmail(email, 'Thank you for your feedback', ['Thank you for sharing feedback with IT Elements. Your review is awaiting approval and will only appear publicly after it is reviewed.']);
+        res.json({ success: true, message: 'Thank you. Your feedback has been sent for review and will not be published until approved.' });
+    } catch (err) { res.status(500).json({ success: false, message: 'Could not save your feedback. Please try again.' }); }
+});
+
+app.get('/api/admin/reviews', checkAdminAuth, async (req, res) => {
+    try { res.json(await CustomerReview.find().sort({ date: -1 }).lean()); }
+    catch (err) { res.status(500).json({ error: true, message: 'Could not load customer feedback.' }); }
+});
+
+app.post('/api/admin/reviews/update-status', checkAdminAuth, async (req, res) => {
+    const { reviewId, status } = req.body;
+    if (!mongoose.isValidObjectId(reviewId) || !['Published', 'Hidden'].includes(status)) return res.status(400).json({ success: false, message: 'Invalid review or status.' });
+    try {
+        const review = await CustomerReview.findByIdAndUpdate(reviewId, { status }, { new: true });
+        if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: 'Could not update the review.' }); }
 });
 
 app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
@@ -577,7 +723,7 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
         ]);
         const activeSubscribers = users.filter(user => user.subscriptionStatus === 'Active');
         const inactiveUsers = users.filter(user => user.subscriptionStatus !== 'Active');
-        const activeTickets = tickets.filter(ticket => ticket.status !== 'Resolved').length;
+        const activeTickets = tickets.filter(ticket => !['Resolved', 'Completed'].includes(ticket.status)).length;
         const confirmedPlanRevenue = revenueRows.length ? revenueRows[0].cents / 100 : 0;
         res.json({
             users,
