@@ -609,7 +609,11 @@ app.post('/support', async (req, res) => {
             `Hello ${request.name || 'there'}, your support request has been received and is marked Open.`,
             'We will review the issue and follow up. Share any temporary remote session password only when an engineer is ready to connect.'
         ]);
-        if (isOnsiteEnquiry) return res.redirect('/onsite-support?sent=1');
+        if (isOnsiteEnquiry) {
+            if (req.body.returnToDashboard === '1' && req.session.isUser) return res.redirect('/dashboard?request=onsite-sent#onsite-history');
+            return res.redirect('/onsite-support?sent=1');
+        }
+        if (req.body.returnToDashboard === '1' && req.session.isUser) return res.redirect('/dashboard?request=remote-sent#ticket-history');
         res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
     } catch (err) { res.status(500).send('Database sync error.'); }
 });
