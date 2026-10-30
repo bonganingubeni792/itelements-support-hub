@@ -261,6 +261,7 @@ app.use('/assets', express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => res.sendFile(path.join(viewsPath, 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(viewsPath, 'pricing.html')));
 app.get('/services', (req, res) => res.sendFile(path.join(viewsPath, 'services.html')));
+app.get('/onsite-support', (req, res) => res.sendFile(path.join(viewsPath, 'onsite-support.html')));
 app.get('/about', (req, res) => res.sendFile(path.join(viewsPath, 'about.html')));
 app.get('/faq', (req, res) => res.sendFile(path.join(viewsPath, 'faq.html')));
 app.get('/contact', (req, res) => res.sendFile(path.join(viewsPath, 'contact.html')));
@@ -501,8 +502,10 @@ app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearC
 
 app.post('/support', async (req, res) => {
     try {
-        const { name, email, remoteId, remotePassword, issue } = req.body;
+        const { name, email, remoteId, remotePassword, issue, requestType } = req.body;
+        const isOnsiteEnquiry = requestType === 'onsite';
         await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : (req.session.userEmail || ''), remoteId, remotePassword, issue, status: 'Open' }).save();
+        if (isOnsiteEnquiry) return res.redirect('/onsite-support?sent=1');
         res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
     } catch (err) { res.status(500).send('Database sync error.'); }
 });
