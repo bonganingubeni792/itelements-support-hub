@@ -59,6 +59,11 @@
         .review-item { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:start; padding:14px; border:1px solid #29313a; border-radius:7px; background:#11151b; }
         .review-item h3 { color:#fff; margin:0 0 4px; font-size:14px; }.review-item p { color:#aab4c2; font-size:13px; margin:4px 0; overflow-wrap:anywhere; }
         .review-actions { display:flex; flex-wrap:wrap; gap:6px; }
+        .ticket-conversation { margin-top:8px; padding:8px; border:1px solid #29313a; border-radius:6px; background:#0d1015; }
+        .ticket-conversation summary { color:#ff8585; font-size:11px; font-weight:700; cursor:pointer; }
+        .ticket-thread { display:grid; gap:7px; max-height:240px; overflow:auto; margin:8px 0; }
+        .ticket-message { padding:8px; border-radius:5px; background:#171b22; }.ticket-message strong { color:#fff; font-size:11px; }.ticket-message time { color:#718096; font-size:10px; margin-left:7px; }.ticket-message p { color:#c5ceda; font-size:12px; margin:4px 0 0; white-space:pre-wrap; overflow-wrap:anywhere; }
+        .ticket-reply-form { display:grid; gap:6px; }.ticket-reply-form textarea { width:100%; min-height:60px; padding:8px; border:1px solid #303844; border-radius:5px; background:#11151b; color:#eee; font:inherit; font-size:12px; }.ticket-reply-form button { justify-self:start; padding:7px 10px; border:1px solid #ff635a; border-radius:4px; color:#ff8585; background:#11151b; font-weight:700; cursor:pointer; }.ticket-reply-error { color:#ff8078; font-size:11px; margin:0; }
         .loading-text,.empty-text,.error-text { text-align:center; padding:24px; color:#718096; font-style:italic; font-size:13px; }
         .error-text { color:#ff8078; }
         .note { color:#718096; font-size:12px; margin:0 0 12px; }
@@ -246,6 +251,7 @@
         row.appendChild(makeCell('', ticket.issue || 'No issue description'));
         const issueCell = row.children[3];
         if (ticket.confirmedVisitAt) { const appointment = document.createElement('small'); appointment.style.cssText = 'display:block;color:#ff8585;margin-top:5px;'; appointment.textContent = `${ticket.requestType === 'onsite' ? 'Visit' : 'Session'}: ${new Date(ticket.confirmedVisitAt).toLocaleString('en-ZA')}${ticket.requestType === 'onsite' ? ` · Fee R${Number(ticket.callOutFee || 0).toFixed(2)}` : ''}`; issueCell.appendChild(appointment); }
+        appendTicketConversation(issueCell, ticket);
 
         const statusCell = document.createElement('div');
         statusCell.className = 'cell';
@@ -285,6 +291,35 @@
         }
         row.appendChild(actions);
         return row;
+    }
+
+    function appendTicketConversation(container, ticket) {
+        const details = document.createElement('details'); details.className = 'ticket-conversation';
+        const summary = document.createElement('summary'); summary.textContent = `Conversation (${Array.isArray(ticket.messages) ? ticket.messages.length : 0})`; details.appendChild(summary);
+        const thread = document.createElement('div'); thread.className = 'ticket-thread';
+        for (const message of (Array.isArray(ticket.messages) ? ticket.messages : [])) {
+            const item = document.createElement('article'); item.className = 'ticket-message';
+            const heading = document.createElement('strong'); heading.textContent = message.name || (message.sender === 'admin' ? 'IT Elements Support' : 'Customer');
+            const time = document.createElement('time'); time.dateTime = message.date || ''; time.textContent = message.date ? new Date(message.date).toLocaleString() : '';
+            const body = document.createElement('p'); body.textContent = message.body || '';
+            item.append(heading, time, body); thread.appendChild(item);
+        }
+        if (!thread.children.length) { const empty = document.createElement('p'); empty.className = 'note'; empty.textContent = 'No replies yet.'; thread.appendChild(empty); }
+        const form = document.createElement('form'); form.className = 'ticket-reply-form';
+        const textarea = document.createElement('textarea'); textarea.required = true; textarea.minLength = 2; textarea.maxLength = 2000; textarea.placeholder = 'Reply to the customer (no passwords or payment details)…';
+        const error = document.createElement('p'); error.className = 'ticket-reply-error'; error.setAttribute('role', 'status');
+        const button = document.createElement('button'); button.type = 'submit'; button.textContent = 'Send customer reply';
+        form.append(textarea, error, button);
+        form.addEventListener('submit', async event => {
+            event.preventDefault(); button.disabled = true; error.textContent = '';
+            try {
+                const response = await fetch(`/api/admin/tickets/${encodeURIComponent(ticket._id)}/messages`, { method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify({ message:textarea.value }) });
+                const result = await response.json();
+                if (!response.ok || !result.success) throw new Error(result.message || 'Could not send the reply.');
+                ticket.messages = result.messages; appendTicketConversation(container, ticket); details.remove();
+            } catch (err) { error.textContent = err.message || 'Could not send the reply.'; button.disabled = false; }
+        });
+        details.append(thread, form); container.appendChild(details);
     }
 
     function renderTickets() {
