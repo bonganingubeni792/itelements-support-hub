@@ -459,6 +459,133 @@ input, select, textarea, .form-control, .form-input,
   background: #fff !important;
 }
 
+/* Brand color and display typography polish. */
+:root {
+  --brand-green: #16804a;
+  --brand-green-dark: #11643a;
+  --green-tint: #e4f3ea;
+}
+body {
+  font-family: "Aptos", "Segoe UI", Arial, sans-serif !important;
+  color: #101828 !important;
+}
+h1, h2, h3, h4, .card-title, .plan-name, .nav-brand, .brand {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: -.025em !important;
+  color: #101828 !important;
+}
+h1, .home-hero h1 {
+  text-shadow: 0 1px 0 rgba(255,255,255,.45);
+}
+.home-hero h1::after {
+  content: "";
+  display: block;
+  width: min(120px, 24vw);
+  height: 5px;
+  margin: 14px auto 0;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--brand-red) 0 38%, var(--brand-blue) 38% 70%, var(--brand-green) 70%);
+}
+.feature-card:nth-child(3), .service-card:nth-child(3n), .step-card:nth-child(3n),
+.status-card:nth-child(3n), .quick-stat:nth-child(3n) {
+  border-top: 4px solid var(--brand-green) !important;
+}
+.feature-card:nth-child(3) .feature-icon {
+  color: var(--brand-green) !important;
+  background: var(--green-tint) !important;
+  border-color: #a6d7b8 !important;
+}
+.hero-kicker, .step-number, .eyebrow, .request-kicker {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: .08em !important;
+}
+.status-val.active-node, .quick-stat-value.green, .badge-resolved,
+.badge-active, .btn-resolve, .btn-confirmed, .btn-contacted {
+  color: var(--brand-green-dark) !important;
+}
+.badge-resolved, .badge-active, .btn-resolve, .btn-confirmed, .btn-contacted {
+  background: var(--green-tint) !important;
+  border-color: #a6d7b8 !important;
+}
+.status-card.active, .notice.success, .feedback-status.success,
+.form-message.visible, .success-message {
+  color: #105c35 !important;
+  background: var(--green-tint) !important;
+  border-color: #a6d7b8 !important;
+}
+.nav-brand span:first-of-type, .brand span:first-of-type { color: var(--brand-red) !important; }
+.brand-support { color: #101828 !important; }
+.pay-trigger-btn, .submit, .submit-btn, .subscribe-btn, .pay-btn,
+.logout-btn, .hero-button, .onsite-promo-link {
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif !important;
+  font-weight: 800 !important;
+  letter-spacing: .025em !important;
+}
+.pay-trigger-btn:focus-visible, .submit:focus-visible, .submit-btn:focus-visible,
+.subscribe-btn:focus-visible, .pay-btn:focus-visible, .hero-button:focus-visible {
+  outline: 3px solid var(--brand-blue) !important;
+  outline-offset: 3px !important;
+}
+
+/* Client dashboard on-site visit history: fix the dark card and tiny labels. */
+.visit-item {
+  background: #d3d8df !important;
+  border: 1px solid #aeb6c1 !important;
+  border-radius: 12px !important;
+  color: #101828 !important;
+  box-shadow: 0 5px 14px rgba(16,24,40,.08) !important;
+}
+.visit-item strong {
+  color: #123c68 !important;
+  font-size: .9rem !important;
+  line-height: 1.4 !important;
+  letter-spacing: .035em !important;
+}
+.visit-item span:not(.visit-status) {
+  color: #182230 !important;
+  font-size: 1rem !important;
+  line-height: 1.6 !important;
+}
+.visit-status {
+  color: #7a4b00 !important;
+  background: #fff3c4 !important;
+  border: 1px solid #e8c65a !important;
+  font-size: .95rem !important;
+}
+.visit-status.contacted, .visit-status.scheduled {
+  color: #124b8a !important;
+  background: #e2efff !important;
+  border-color: #9bbce8 !important;
+}
+.visit-status.paused {
+  color: #7a4200 !important;
+  background: #fff0d6 !important;
+  border-color: #e6bb75 !important;
+}
+.visit-status.finished {
+  color: #105c35 !important;
+  background: #e4f3ea !important;
+  border-color: #91cba5 !important;
+}
+.visit-item .conversation {
+  color: #123c68 !important;
+  background: #e8edf4 !important;
+  border-color: #aebbd0 !important;
+}
+.visit-item .conversation summary {
+  color: #123c68 !important;
+  font-size: .95rem !important;
+}
+.visit-item .conversation-message {
+  background: #f0f2f5 !important;
+}
+@media (max-width: 650px) {
+  .visit-item { grid-template-columns: minmax(0,1fr) !important; gap: 13px !important; }
+  .visit-item strong { font-size: .95rem !important; }
+}
+
 /* Accessible reading defaults: larger type, strong contrast, and clear focus. */
 html { font-size: 17px !important; }
 body { color: #101828 !important; line-height: 1.7 !important; }
