@@ -11,7 +11,7 @@ Keep the existing folder structure. Replace or add these files from this package
 - Add views/forgot-password.html and views/reset-password.html if they are missing.
 - Add views/services.html, views/about.html, views/faq.html, and views/contact.html.
 - Add views/onsite-support.html for the on-site service page and enquiry form.
-- Add public/itel-support-icon.png. The server exposes this folder at /assets/.
+- Add public/itel-support-icon.png. The small circular logo is shown beside the brand in the site header; the image URL has a version query to refresh browser cache. The server exposes this folder at /assets/.
 - The new pages and navigation links are served by the updated server.js routes.
 - Keep package.json and package-lock.json from your working repository. Do not replace them with package.txt.
 - Keep your existing Render environment variables; update only those listed below where applicable. Never paste secrets into GitHub or share them in screenshots.
@@ -63,7 +63,7 @@ The home page displays Monday to Friday, 08:00–17:00 South African Standard Ti
 
 Public information pages
 ------------------------
-The public site now includes Services, On-site Support, About, FAQ, and Contact pages, linked from the site navigation. The on-site enquiry form records requests in the support queue for admin follow-up; it does not confirm an appointment or promise coverage. Confirm location, availability, and any call-out or service cost before booking. The pages describe support options, payment behavior, contact details, support hours, and safe handling of remote session credentials.
+The public site now includes Services, On-site Support, About, FAQ, and Contact pages, linked from the site navigation. The Services page explains remote, plan, incident, and in-person help options. The on-site enquiry form records structured requests in the admin queue and links them to a customer portal by the email address entered; it does not confirm an appointment or promise coverage. Confirm location, availability, and any call-out or service cost before booking. Customers can follow their submitted on-site enquiries in their dashboard when they use the same email address as their account. The pages describe support options, payment behavior, contact details, support hours, and safe handling of remote session credentials.
 
 Plan behavior
 -------------
@@ -75,7 +75,7 @@ This code requires Node.js 18 or newer and the existing dependencies express, mo
 
 Admin console
 -------------
-The admin page now reads live ticket, subscriber, and confirmed Yoco plan-payment data from the protected server APIs. It includes search/status filtering, automatic refresh, ticket status actions, subscriber expiry, and reveal/copy controls for remote IDs and session keys. The confirmed revenue card sums only Yoco plan payments saved as paid; it does not include hourly incident payments.
+The admin page reads live ticket, on-site enquiry, subscriber, and confirmed Yoco plan-payment data from the protected server APIs. It includes search/status filtering, automatic refresh, configurable 5/10/20/30/all row limits for active and resolved tickets, Hold/Unhold/Resolve/Reopen actions, subscriber expiry, and reveal/copy controls for remote IDs and session keys. On-site requests appear in a dedicated queue with area, preferred date, service, issue, and tap-to-email/call links. The confirmed revenue card sums only Yoco plan payments saved as paid; it does not include hourly incident payments.
 
 Password reset
 --------------
@@ -86,3 +86,4 @@ The reset email uses Resend's HTTPS email API; no additional Node package is nee
 Registration form
 -----------------
 The registration form posts to /client/register, matching the server route. It checks the password confirmation in the browser and the server enforces the same 12-character minimum and validates name, phone, and email. New passwords are hashed with scrypt. The name-field example is “IT Elements Support” as requested.
+
