@@ -72,6 +72,21 @@
         @media(max-width:850px) { body { padding:15px; }.stats-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }.dashboard-card { padding:16px; } }
         @media(max-width:900px) { .onsite-request { grid-template-columns:repeat(2,minmax(0,1fr)); } }
         @media(max-width:520px) { .header-bar { align-items:flex-start; flex-direction:column; }.stats-grid { grid-template-columns:1fr 1fr; gap:9px; }.stat-card { padding:15px; }.stat-value { font-size:21px; }.onsite-request { grid-template-columns:1fr; }.visit-confirm-form { grid-template-columns:1fr; }.review-item { grid-template-columns:1fr; } }
+
+        .notification-center { background:#10141a; border:1px solid #29313a; border-radius:9px; padding:14px; margin:0 0 20px; }
+        .notification-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:9px; }
+        .notification-head h2 { margin:0; color:#fff; font-size:14px; }
+        .notification-tools { display:flex; align-items:center; gap:8px; }
+        .notification-count { color:#ff8585; font-size:12px; font-weight:700; }
+        .notification-button { border:1px solid #465364; border-radius:5px; background:#11151b; color:#c5d2e0; padding:7px 9px; cursor:pointer; font-size:11px; font-weight:700; }
+        .notification-list { display:grid; gap:7px; }
+        .notification-item { width:100%; text-align:left; border:1px solid #242d38; border-radius:6px; background:#0c1015; color:#c5ceda; padding:10px; cursor:pointer; }
+        .notification-item.unread { border-left:3px solid #ff3b30; background:#151419; }
+        .notification-item strong { display:block; color:#fff; font-size:12px; margin-bottom:3px; }
+        .notification-item span { display:block; color:#aab4c2; font-size:11px; line-height:1.45; }
+        .notification-item time { color:#718096; font-size:10px; display:block; margin-top:5px; }
+        .notification-empty { color:#718096; font-size:12px; padding:8px 2px; }
+
     </style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
 </head>
@@ -81,6 +96,10 @@
         <h1>🔴 IT Elements Administration Console</h1>
         <a href="/client/logout" class="logout-btn">Log Out 🔐</a>
     </header>
+    <section class="notification-center" aria-label="Admin notifications">
+        <div class="notification-head"><h2>🔔 Notification inbox</h2><div class="notification-tools"><span id="notification-count" class="notification-count">0 unread</span><button class="notification-button" id="notification-permission" type="button">Enable desktop alerts</button></div></div>
+        <div class="notification-list" id="notification-list"><div class="notification-empty">Loading notifications…</div></div>
+    </section>
 
     <section class="stats-grid" aria-label="Business overview">
         <article class="stat-card tickets"><div class="stat-label">Active Support Tickets</div><div class="stat-value" id="stat-active-tickets">—</div></article>
@@ -509,6 +528,68 @@
     ticketPageSize.addEventListener('change', renderTickets);
     historyPageSize.addEventListener('change', renderTickets);
     document.getElementById('refresh-button').addEventListener('click', loadAdminData);
+
+    const notificationList = document.getElementById('notification-list');
+    const notificationCount = document.getElementById('notification-count');
+    const notificationPermissionButton = document.getElementById('notification-permission');
+    let knownNotificationIds = new Set();
+    let firstNotificationLoad = true;
+
+    function formatNotificationDate(value) {
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? '' : date.toLocaleString();
+    }
+
+    async function loadNotifications() {
+        try {
+            const response = await fetch('/api/notifications', { headers: { Accept: 'application/json' } });
+            if (response.redirected || response.status === 401) return window.location.assign('/client/login');
+            if (!response.ok) throw new Error('Could not load notifications.');
+            const result = await response.json();
+            const items = Array.isArray(result.notifications) ? result.notifications : [];
+            const unread = items.filter(item => !item.read);
+            notificationCount.textContent = `${unread.length} unread`;
+            notificationList.replaceChildren();
+            if (!items.length) {
+                const empty = document.createElement('div'); empty.className = 'notification-empty'; empty.textContent = 'You’re all caught up. New tickets and customer messages will appear here.'; notificationList.appendChild(empty);
+            }
+            for (const item of items) {
+                if (!firstNotificationLoad && !knownNotificationIds.has(item.id) && !item.read && 'Notification' in window && Notification.permission === 'granted') {
+                    new Notification(item.title, { body: `${item.actorName}: ${item.body}`, tag: item.id });
+                }
+                knownNotificationIds.add(item.id);
+                const button = document.createElement('button');
+                button.type = 'button'; button.className = `notification-item${item.read ? '' : ' unread'}`; button.dataset.notificationId = item.id; button.dataset.ticketId = item.ticketId;
+                const title = document.createElement('strong'); title.textContent = item.title;
+                const body = document.createElement('span'); body.textContent = `${item.actorName}: ${item.body}`;
+                const time = document.createElement('time'); time.dateTime = item.createdAt; time.textContent = formatNotificationDate(item.createdAt);
+                button.append(title, body, time); notificationList.appendChild(button);
+            }
+            firstNotificationLoad = false;
+        } catch (error) {
+            notificationList.replaceChildren(); const message = document.createElement('div'); message.className = 'notification-empty'; message.textContent = error.message; notificationList.appendChild(message);
+        }
+    }
+
+    notificationList.addEventListener('click', async event => {
+        const button = event.target.closest('[data-notification-id]');
+        if (!button) return;
+        await fetch(`/api/notifications/${encodeURIComponent(button.dataset.notificationId)}/read`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        await loadNotifications();
+        document.getElementById('priority-queue-body')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        loadAdminData();
+    });
+
+    notificationPermissionButton.addEventListener('click', async () => {
+        if (!('Notification' in window)) { announce('This browser does not support desktop notifications.'); return; }
+        const permission = await Notification.requestPermission();
+        notificationPermissionButton.textContent = permission === 'granted' ? 'Desktop alerts enabled' : 'Enable desktop alerts';
+        announce(permission === 'granted' ? 'Desktop alerts are enabled while this page is open.' : 'Desktop notification permission was not granted.');
+    });
+    if ('Notification' in window && Notification.permission === 'granted') notificationPermissionButton.textContent = 'Desktop alerts enabled';
+    loadNotifications();
+    setInterval(loadNotifications, 20000);
+
     loadAdminData();
     setInterval(loadAdminData, 30000);
 })();

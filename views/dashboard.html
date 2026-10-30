@@ -92,6 +92,21 @@
         @media(max-width:900px) { .plan-box { width:calc(50% - 10px); } }
         @media(max-width:560px) { body { padding:12px; } .header { align-items:flex-start; flex-direction:column; } .header-actions { gap:10px 14px; } .quick-stats { grid-template-columns:1fr 1fr; }.quick-stat:last-child { grid-column:1 / -1; }.plan-box { width:100%; min-width:0; } .plans-wrapper { display:grid; grid-template-columns:1fr; gap:12px; } .ticket-card { padding:16px; margin-bottom:18px; } .soft-box { flex-direction:column; } .section-title { font-size:15px; } .subscription-summary { gap:14px 20px; padding:15px; } }
         @media(max-width:560px) { .table-logs { min-width:0; table-layout:fixed; font-size:11px; }.table-logs th,.table-logs td { padding:8px 5px; overflow-wrap:anywhere; }.quick-stat { padding:13px; }.quick-stat-value { font-size:20px; } }
+
+        .notification-center { background:#10141a; border:1px solid #29313a; border-radius:9px; padding:14px; margin:0 0 20px; }
+        .notification-head { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:9px; }
+        .notification-head h2 { margin:0; color:#fff; font-size:14px; }
+        .notification-tools { display:flex; align-items:center; gap:8px; }
+        .notification-count { color:#ff8585; font-size:12px; font-weight:700; }
+        .notification-button { border:1px solid #465364; border-radius:5px; background:#11151b; color:#c5d2e0; padding:7px 9px; cursor:pointer; font-size:11px; font-weight:700; }
+        .notification-list { display:grid; gap:7px; }
+        .notification-item { width:100%; text-align:left; border:1px solid #242d38; border-radius:6px; background:#0c1015; color:#c5ceda; padding:10px; cursor:pointer; }
+        .notification-item.unread { border-left:3px solid #ff3b30; background:#151419; }
+        .notification-item strong { display:block; color:#fff; font-size:12px; margin-bottom:3px; }
+        .notification-item span { display:block; color:#aab4c2; font-size:11px; line-height:1.45; }
+        .notification-item time { color:#718096; font-size:10px; display:block; margin-top:5px; }
+        .notification-empty { color:#718096; font-size:12px; padding:8px 2px; }
+
     </style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
 </head>
@@ -101,6 +116,10 @@
         <h1><img src="/assets/itel-support-icon.png?v=3" alt="" width="32" height="32"> IT Elements Client Portal</h1>
         <nav class="header-actions" aria-label="Client navigation"><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="#ticket-request">Request help</a><a href="/client/logout" class="logout-link">Log out</a></nav>
     </header>
+    <section class="notification-center" aria-label="Client notifications">
+        <div class="notification-head"><h2>🔔 Updates to your requests</h2><div class="notification-tools"><span id="notification-count" class="notification-count">0 unread</span><button class="notification-button" id="notification-permission" type="button">Enable desktop alerts</button></div></div>
+        <div class="notification-list" id="notification-list"><div class="notification-empty">Loading updates…</div></div>
+    </section>
     <h2 class="welcome" id="welcome-title">Welcome to your support portal</h2>
     <p class="welcome-subtitle">Manage your plan, submit a support request, and follow your ticket progress here.</p>
     <section class="quick-stats" aria-label="Your support overview">
@@ -362,6 +381,56 @@
         ].join('\n');
         document.getElementById('onsite-dashboard-issue').value = summary;
     });
+
+
+    const notificationList = document.getElementById('notification-list');
+    const notificationCount = document.getElementById('notification-count');
+    const notificationPermissionButton = document.getElementById('notification-permission');
+    let knownNotificationIds = new Set();
+    let firstNotificationLoad = true;
+    function formatNotificationDate(value) {
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? '' : date.toLocaleString();
+    }
+    async function loadNotifications() {
+        try {
+            const response = await fetch('/api/notifications', { headers: { Accept: 'application/json' } });
+            if (response.redirected || response.status === 401) return window.location.assign('/client/login');
+            if (!response.ok) throw new Error('Could not load request updates.');
+            const result = await response.json();
+            const items = Array.isArray(result.notifications) ? result.notifications : [];
+            notificationCount.textContent = `${items.filter(item => !item.read).length} unread`;
+            notificationList.replaceChildren();
+            if (!items.length) { const empty = document.createElement('div'); empty.className = 'notification-empty'; empty.textContent = 'No updates yet. Ticket replies and status changes will appear here.'; notificationList.appendChild(empty); }
+            for (const item of items) {
+                if (!firstNotificationLoad && !knownNotificationIds.has(item.id) && !item.read && 'Notification' in window && Notification.permission === 'granted') new Notification(item.title, { body: `${item.actorName}: ${item.body}`, tag: item.id });
+                knownNotificationIds.add(item.id);
+                const button = document.createElement('button'); button.type = 'button'; button.className = `notification-item${item.read ? '' : ' unread'}`; button.dataset.notificationId = item.id; button.dataset.requestType = item.requestType || '';
+                const title = document.createElement('strong'); title.textContent = item.title;
+                const body = document.createElement('span'); body.textContent = `${item.actorName}: ${item.body}`;
+                const time = document.createElement('time'); time.dateTime = item.createdAt; time.textContent = formatNotificationDate(item.createdAt);
+                button.append(title, body, time); notificationList.appendChild(button);
+            }
+            firstNotificationLoad = false;
+        } catch (error) { notificationList.replaceChildren(); const message = document.createElement('div'); message.className = 'notification-empty'; message.textContent = error.message; notificationList.appendChild(message); }
+    }
+    notificationList.addEventListener('click', async event => {
+        const button = event.target.closest('[data-notification-id]');
+        if (!button) return;
+        await fetch(`/api/notifications/${encodeURIComponent(button.dataset.notificationId)}/read`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
+        await loadNotifications();
+        const target = button.dataset.requestType === 'onsite' ? document.getElementById('onsite-history') : document.getElementById('ticket-history');
+        target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    notificationPermissionButton.addEventListener('click', async () => {
+        if (!('Notification' in window)) { alert('This browser does not support desktop notifications.'); return; }
+        const permission = await Notification.requestPermission();
+        notificationPermissionButton.textContent = permission === 'granted' ? 'Desktop alerts enabled' : 'Enable desktop alerts';
+        alert(permission === 'granted' ? 'Desktop alerts are enabled while this page is open.' : 'Desktop notification permission was not granted.');
+    });
+    if ('Notification' in window && Notification.permission === 'granted') notificationPermissionButton.textContent = 'Desktop alerts enabled';
+    loadNotifications();
+    setInterval(loadNotifications, 20000);
 
     async function loadProfile() {
         const params = checkoutReference ? '?reference=' + encodeURIComponent(checkoutReference) : '';
