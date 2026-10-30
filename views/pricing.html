@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0d0d0d">
+    <title>IT Elements - Subscription Plans</title>
+    <style>
+        * { box-sizing:border-box; }
+        body { background:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',sans-serif; margin:0; }
+        .navbar { background:#141414; border-bottom:2px solid #222; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+        .nav-brand { display:flex; align-items:center; gap:9px; font-size:20px; font-weight:bold; color:#ff3333; text-transform:uppercase; letter-spacing:1px; text-decoration:none; }
+        .brand-icon { width:46px; height:46px; object-fit:cover; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 2px rgba(255,255,255,.15); background:#fff; flex:none; }
+        .nav-links { display:flex; flex-wrap:wrap; gap:10px 20px; }
+        .nav-links a { color:#b3b3b3; text-decoration:none; font-size:13px; padding:8px 10px; border:1px solid transparent; border-radius:6px; transition:all .2s; }
+        .nav-links a:hover,.nav-links a:focus-visible { color:#fff; background:#202020; border-color:#353535; }
+        .container { width:min(100%,1500px); margin:0 auto; padding:48px 20px; text-align:center; }
+        h1 { color:#fff; font-size:clamp(27px,4vw,36px); margin:0 0 10px; }
+        .subtitle { color:#999; font-size:15px; max-width:680px; margin:0 auto 42px; line-height:1.6; }
+        .pricing-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; align-items:stretch; }
+        .pricing-card { background:#141414; border:1px solid #292929; border-radius:8px; padding:26px 22px; display:flex; flex-direction:column; text-align:left; position:relative; }
+        .pricing-card.popular { border:2px solid #ff3333; }
+        .popular-badge { position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:#ff3333; color:#fff; padding:4px 13px; font-size:11px; font-weight:bold; border-radius:20px; text-transform:uppercase; white-space:nowrap; }
+        .plan-name { font-size:20px; font-weight:bold; color:#fff; }
+        .plan-target { font-size:13px; color:#858585; margin:8px 0 18px; min-height:40px; line-height:1.5; }
+        .plan-price { font-size:29px; color:#ff4545; font-weight:bold; padding-bottom:15px; border-bottom:1px solid #292929; }
+        .plan-price span { font-size:13px; color:#888; font-weight:normal; }
+        .features-list { list-style:none; padding:0; margin:16px 0 24px; font-size:13px; color:#c4c4c4; line-height:1.6; flex:1; }
+        .features-list li { padding:7px 0 7px 19px; position:relative; }
+        .features-list li::before { content:'✓'; color:#ff4545; font-weight:bold; position:absolute; left:0; }
+        .subscribe-btn { display:block; background:#ff3333; color:#fff; border:0; padding:13px 10px; width:100%; border-radius:4px; cursor:pointer; font-weight:bold; text-transform:uppercase; font-size:12px; text-align:center; letter-spacing:.4px; text-decoration:none; }
+        .subscribe-btn:hover { background:#cc0000; }
+        .checkout-note { color:#777; font-size:12px; line-height:1.6; margin:24px auto 0; max-width:650px; }
+        @media(max-width:900px) { .pricing-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+        @media(max-width:560px) { .navbar { align-items:flex-start; flex-direction:column; }.container { padding:36px 16px; }.pricing-grid { grid-template-columns:1fr; gap:22px; }.plan-target { min-height:0; } }
+    .brand-support{color:#fff!important}</style>
+</head>
+<body>
+    <nav class="navbar" aria-label="Main navigation">
+        <a class="nav-brand" href="/"><img class="brand-icon" src="/assets/itel-support-icon.png?v=3" alt="" width="32" height="32"><span>IT Elements.</span><span class="brand-support">support</span></a>
+        <div class="nav-links"><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="/support">Request help</a><a href="/dashboard">Portal</a><a href="/client/login">Sign in</a></div>
+    </nav>
+    <main class="container">
+        <h1>Predictable Flat-Rate Coverage</h1>
+        <p class="subtitle">Choose a support plan for your home office or business. Sign in or create an account, then complete payment securely through Yoco.</p>
+        <section class="pricing-grid" aria-label="Support plans">
+            <article class="pricing-card">
+                <div class="plan-name">Basic Support</div><div class="plan-target">For a single home-office setup.</div>
+                <div class="plan-price">R299<span> / 30 days</span></div>
+                <ul class="features-list"><li>2 support tickets per 30 days</li><li>Malware and virus cleanup support</li></ul>
+                <a class="subscribe-btn" href="/subscribe/basic">Choose Basic</a>
+            </article>
+            <article class="pricing-card popular">
+                <span class="popular-badge">Most popular</span>
+                <div class="plan-name">Standard Tier</div><div class="plan-target">For professionals who need dependable help.</div>
+                <div class="plan-price">R599<span> / 30 days</span></div>
+                <ul class="features-list"><li>Remote support access</li><li>Priority response target: 4 business hours</li></ul>
+                <a class="subscribe-btn" href="/subscribe/standard">Choose Standard</a>
+            </article>
+            <article class="pricing-card">
+                <div class="plan-name">Business Growth</div><div class="plan-target">For small office networks and growing teams.</div>
+                <div class="plan-price">R2,499<span> / 30 days</span></div>
+                <ul class="features-list"><li>Coverage for up to 10 devices</li><li>Priority response target: 2 business hours</li></ul>
+                <a class="subscribe-btn" href="/subscribe/business">Choose Business</a>
+            </article>
+            <article class="pricing-card">
+                <div class="plan-name">Corporate SLA</div><div class="plan-target">For organizations needing broader device coverage.</div>
+                <div class="plan-price">R4,999<span> / 30 days</span></div>
+                <ul class="features-list"><li>Coverage for up to 25 devices</li><li>Priority support for your organization</li></ul>
+                <a class="subscribe-btn" href="/subscribe/corporate">Choose Corporate</a>
+            </article>
+        </section>
+        <p class="checkout-note">Plans are paid in advance for 30 days and renewed manually. Your plan is activated after Yoco confirms payment.</p>
+    </main>
+</body>
+</html>
