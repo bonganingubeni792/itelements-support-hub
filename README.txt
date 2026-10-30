@@ -12,6 +12,7 @@ Keep the existing folder structure. Replace or add these files from this package
 - Add views/services.html, views/about.html, views/faq.html, and views/contact.html.
 - Add views/onsite-support.html for the on-site service page and enquiry form.
 - Add public/itel-support-icon.png. The small circular logo is shown beside the brand in the site header; the image URL has a version query to refresh browser cache. The server exposes this folder at /assets/.
+- Add public/responsive.css. This shared stylesheet keeps all pages usable across phone, laptop, and desktop widths.
 - The new pages and navigation links are served by the updated server.js routes.
 - Keep package.json and package-lock.json from your working repository. Do not replace them with package.txt.
 - Keep your existing Render environment variables; update only those listed below where applicable. Never paste secrets into GitHub or share them in screenshots.
