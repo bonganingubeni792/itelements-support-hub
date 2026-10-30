@@ -59,6 +59,7 @@
         @media (max-width:560px) { body { padding:12px; } .feature-grid,.how-it-works { grid-template-columns:1fr; gap:12px; }.feature-card:last-child,.how-it-works .step-card:last-child { grid-column:auto; } .main-card,.incident-box { padding:26px 16px; }.onsite-promo { grid-template-columns:1fr; }.onsite-promo-link { justify-self:stretch; }.feedback-section { grid-template-columns:1fr; } }
     .brand-support{color:#fff!important}</style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
+    <link rel="stylesheet" href="/assets/theme.css?v=1">
 </head>
 <body>
     <nav class="navbar" aria-label="Main navigation">
@@ -77,22 +78,30 @@
     </nav>
 
     <main class="container">
-        <section class="main-card">
+        <section class="main-card home-hero">
+            <span class="hero-kicker">IT support for homes &amp; businesses</span>
             <h1 style="margin-top:0;color:#fff;font-size:32px;">On-Demand Subscription IT Support</h1>
-            <p style="color:#888;font-size:15px;max-width:700px;margin:0 auto;line-height:1.6;">Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
+            <p style="color:#888;font-size:15px;max-width:700px;margin:0 auto;line-height:1.6;">Choose a support plan, request remote help, or ask about an in-person visit. IT Elements supports customers across South Africa.</p>
+            <div class="hero-actions">
+                <a class="hero-button" href="/pricing">Explore support plans <span aria-hidden="true">→</span></a>
+                <a class="hero-button secondary" href="/support">Request technical help</a>
+            </div>
         </section>
         <div class="support-hours" role="note">🕒 Support hours: <strong>Monday to Friday, 08:00–17:00 South African time (SAST)</strong></div>
 
         <section class="feature-grid" aria-label="Customer options">
             <a href="/pricing" class="feature-card">
+                <span class="feature-icon" aria-hidden="true">✦</span>
                 <h2 class="feature-title">Subscription Plans</h2>
                 <p class="feature-desc">Choose a predictable flat monthly rate package built for your device network needs.</p>
             </a>
             <a href="/support" class="feature-card">
+                <span class="feature-icon" aria-hidden="true">⌘</span>
                 <h2 class="feature-title">Submit Support Ticket</h2>
                 <p class="feature-desc">Experiencing hardware slow downs or virus logs? Open a ticket and drop your remote connection key code.</p>
             </a>
             <a href="/client/login" class="feature-card">
+                <span class="feature-icon" aria-hidden="true">◉</span>
                 <h2 class="feature-title">Customer Access Hub</h2>
                 <p class="feature-desc">Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</p>
             </a>
