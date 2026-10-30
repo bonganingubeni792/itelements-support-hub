@@ -315,6 +315,83 @@ input[type="checkbox"], input[type="radio"] { accent-color: var(--brand-blue); }
 }
 .conversation-form button { color: #fff !important; }
 
+/* Bolder campaign-style treatment inspired by the supplied hosting advert. */
+:root {
+  --page-gray: #e4e7ec;
+  --surface-gray: #f2f4f7;
+  --brand-navy: #123c68;
+}
+html, body { background-color: var(--page-gray) !important; }
+body {
+  background-image: radial-gradient(ellipse at 7% 0%, rgba(23,92,211,.07), transparent 30%),
+                    radial-gradient(ellipse at 95% 18%, rgba(217,45,32,.055), transparent 27%) !important;
+}
+.navbar, .nav, .header, .header-bar {
+  background: rgba(255,255,255,.98) !important;
+  border-color: #d0d5dd !important;
+  box-shadow: 0 10px 28px rgba(16,24,40,.09) !important;
+}
+.main-card.home-hero {
+  position: relative;
+  overflow: hidden;
+  border-top: 5px solid var(--brand-blue) !important;
+  background: linear-gradient(120deg,#fff 0%,#fff 70%,#eaf2ff 100%) !important;
+  box-shadow: 0 16px 34px rgba(16,24,40,.09) !important;
+}
+.home-hero h1 { color: #101828 !important; font-size: clamp(2rem,4.2vw,3rem) !important; }
+.home-hero > p { color: #344054 !important; font-size: 1.08rem !important; }
+.hero-kicker { color: var(--brand-blue) !important; background: #eff6ff !important; border-color: #b2ccff !important; }
+.feature-card, .service, .card, .step-card, .status-card, .pricing-card,
+.plan-box, .dashboard-card, .ticket-card, .feedback-section, .onsite-request {
+  border: 1px solid #d0d5dd !important;
+  box-shadow: 0 9px 22px rgba(16,24,40,.065) !important;
+}
+.feature-card { border-top: 4px solid var(--brand-blue) !important; }
+.feature-card:nth-child(2) { border-top-color: var(--brand-red) !important; }
+.feature-card:nth-child(3) { border-top-color: #16804a !important; }
+.feature-icon { color: var(--brand-blue) !important; background: #eaf2ff !important; border-color: #c7d7fe !important; }
+.feature-card:nth-child(2) .feature-icon { color: var(--brand-red) !important; background: #fff1f0 !important; border-color: #fecdca !important; }
+.feature-card:nth-child(3) .feature-icon { color: #16804a !important; background: #ecfdf3 !important; border-color: #abefc6 !important; }
+.pricing-card { overflow: hidden; border-radius: 16px !important; }
+.pricing-card.popular { border: 2px solid var(--brand-blue) !important; transform: translateY(-4px); }
+.pricing-card .plan-name { color: #101828 !important; font-size: 1.25rem !important; }
+.pricing-card .plan-price {
+  margin: 12px -8px 0 !important;
+  padding: 13px 12px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  color: #fff !important;
+  background: var(--brand-navy) !important;
+  font-size: 1.9rem !important;
+  text-align: center !important;
+}
+.pricing-card .plan-price span { color: #e4e7ec !important; font-size: .9rem !important; }
+.features-list li::before { color: var(--brand-blue) !important; }
+.pricing-card.popular .popular-badge { background: var(--brand-red) !important; }
+.status-card:nth-child(odd), .quick-stat:nth-child(odd) { background: #f2f4f7 !important; }
+.status-card:nth-child(even), .quick-stat:nth-child(even) { background: #fff !important; }
+.incident-box { border-width: 2px !important; border-color: var(--brand-red) !important; }
+.price-display { color: var(--brand-red) !important; font-size: clamp(2rem,4vw,2.6rem) !important; }
+.onsite-promo { border-left: 5px solid var(--brand-blue) !important; }
+.support-hours { color: #123c68 !important; background: #eaf2ff !important; border-left-color: var(--brand-blue) !important; }
+.support-hours strong { color: #123c68 !important; }
+.step-number, .eyebrow, .request-kicker { color: var(--brand-red) !important; }
+.action-btn, .copy-btn, .refresh-btn, .btn.secondary {
+  color: var(--brand-blue) !important; background: #eff6ff !important; border-color: #b2ccff !important;
+}
+
+/* Use readable blue links; reserve red for primary actions and brand marks. */
+a:not(.hero-button):not(.onsite-promo-link):not(.btn):not(.subscribe-btn):not(.pay-btn):not(.pay-trigger-btn):not(.nav-brand):not(.brand):not(.whatsapp-floating-bubble):not(.inline-dl-link):not(.nav-links a):not(.links a):not(.header-actions a) {
+  color: #175cd3 !important;
+  font-weight: 650 !important;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: .2em;
+}
+a:not(.hero-button):not(.onsite-promo-link):not(.btn):not(.subscribe-btn):not(.pay-btn):not(.pay-trigger-btn):not(.nav-brand):not(.brand):not(.whatsapp-floating-bubble):not(.inline-dl-link):not(.nav-links a):not(.links a):not(.header-actions a):hover {
+  color: #123c68 !important;
+}
+.footer-details a, .footer a { color: #175cd3 !important; font-weight: 700 !important; }
+
 /* Accessible reading defaults: larger type, strong contrast, and clear focus. */
 html { font-size: 17px !important; }
 body { color: #101828 !important; line-height: 1.7 !important; }
