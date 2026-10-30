@@ -60,6 +60,12 @@
         .visit-item { display:grid; grid-template-columns:1fr 1fr 1.5fr auto; gap:12px; align-items:start; padding:14px; border:1px solid #30343a; border-radius:7px; background:#111214; }
         .visit-item strong { display:block; color:#ccc; font-size:10px; text-transform:uppercase; letter-spacing:.4px; margin-bottom:4px; }
         .visit-item span { color:#ddd; font-size:13px; overflow-wrap:anywhere; }
+        .conversation { margin-top:10px; padding:9px; border:1px solid #30343a; border-radius:6px; background:#0d0e10; }
+        .conversation summary { color:#ff7777; font-size:12px; font-weight:700; cursor:pointer; }
+        .conversation-thread { display:grid; gap:8px; max-height:260px; overflow:auto; margin:10px 0; }
+        .conversation-message { padding:8px 10px; border-radius:6px; background:#17191d; }
+        .conversation-message strong { color:#fff; font-size:11px; }.conversation-message time { color:#777; font-size:10px; margin-left:8px; }.conversation-message p { white-space:pre-wrap; overflow-wrap:anywhere; color:#cbd2dc; font-size:12px; margin:5px 0 0; }
+        .conversation-form { display:grid; gap:7px; }.conversation-form textarea { width:100%; min-height:66px; padding:9px; resize:vertical; border:1px solid #343a42; border-radius:5px; background:#11151b; color:#eee; font:inherit; font-size:12px; }.conversation-form button { justify-self:start; padding:8px 12px; border:0; border-radius:5px; background:#d93025; color:white; font-weight:700; cursor:pointer; }.conversation-form button:disabled { opacity:.6; cursor:wait; }.conversation-error { color:#ff8585; font-size:11px; margin:0; }
         @media(max-width:650px) { .visit-item { grid-template-columns:1fr 1fr; } }
         @media(max-width:900px) { .plan-box { width:calc(50% - 10px); } }
         @media(max-width:560px) { body { padding:12px; } .header { align-items:flex-start; flex-direction:column; } .header-actions { gap:10px 14px; } .quick-stats { grid-template-columns:1fr 1fr; }.quick-stat:last-child { grid-column:1 / -1; }.plan-box { width:100%; min-width:0; } .plans-wrapper { display:grid; grid-template-columns:1fr; gap:12px; } .ticket-card { padding:16px; margin-bottom:18px; } .soft-box { flex-direction:column; } .section-title { font-size:15px; } .subscription-summary { gap:14px 20px; padding:15px; } }
@@ -205,6 +211,7 @@
                     const item = document.createElement('div'); const title = document.createElement('strong'); title.textContent = label;
                     const text = document.createElement('span'); text.textContent = value; item.append(title, text); card.appendChild(item);
                 }
+                renderConversation(card, request);
                 onsiteRows.appendChild(card);
             }
         }
@@ -228,6 +235,7 @@
             const issueCell = row.insertCell();
             issueCell.textContent = ticket.issue || '—';
             if (ticket.confirmedVisitAt) { const appointment = document.createElement('small'); appointment.style.cssText = 'display:block;color:#ff7777;margin-top:5px;'; appointment.textContent = `Session confirmed: ${new Date(ticket.confirmedVisitAt).toLocaleString('en-ZA')}`; issueCell.appendChild(appointment); }
+            renderConversation(issueCell, ticket);
             const statusCell = row.insertCell();
             const badge = document.createElement('span');
             const normalizedStatus = String(ticket.status || 'Open').toLowerCase();
@@ -235,6 +243,38 @@
             badge.textContent = ticket.status || 'Open';
             statusCell.appendChild(badge);
         }
+    }
+
+    function renderConversation(container, ticket) {
+        const wasOpen = Array.from(container.children).some(child => child.classList && child.classList.contains('conversation') && child.open);
+        container.querySelectorAll(':scope > .conversation').forEach(existing => existing.remove());
+        const details = document.createElement('details'); details.className = 'conversation';
+        details.open = wasOpen;
+        const summary = document.createElement('summary'); summary.textContent = `Conversation (${Array.isArray(ticket.messages) ? ticket.messages.length : 0})`; details.appendChild(summary);
+        const thread = document.createElement('div'); thread.className = 'conversation-thread';
+        for (const message of (Array.isArray(ticket.messages) ? ticket.messages : [])) {
+            const item = document.createElement('article'); item.className = 'conversation-message';
+            const heading = document.createElement('strong'); heading.textContent = message.name || (message.sender === 'admin' ? 'IT Elements Support' : 'Customer');
+            const time = document.createElement('time'); time.dateTime = message.date || ''; time.textContent = message.date ? new Date(message.date).toLocaleString() : '';
+            const body = document.createElement('p'); body.textContent = message.body || '';
+            item.append(heading, time, body); thread.appendChild(item);
+        }
+        if (!thread.children.length) { const empty = document.createElement('p'); empty.className = 'notice'; empty.textContent = 'No replies yet. Send a message to continue this request.'; thread.appendChild(empty); }
+        const form = document.createElement('form'); form.className = 'conversation-form';
+        const textarea = document.createElement('textarea'); textarea.required = true; textarea.minLength = 2; textarea.maxLength = 2000; textarea.placeholder = 'Write a reply (do not include passwords or payment details)…';
+        const error = document.createElement('p'); error.className = 'conversation-error'; error.setAttribute('role', 'status');
+        const button = document.createElement('button'); button.type = 'submit'; button.textContent = 'Send reply';
+        form.append(textarea, error, button);
+        form.addEventListener('submit', async event => {
+            event.preventDefault(); button.disabled = true; error.textContent = '';
+            try {
+                const response = await fetch(`/api/client/tickets/${encodeURIComponent(ticket._id)}/messages`, { method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify({ message:textarea.value }) });
+                const result = await response.json();
+                if (!response.ok || !result.success) throw new Error(result.message || 'Could not send your reply.');
+                ticket.messages = result.messages; renderConversation(container, ticket);
+            } catch (err) { error.textContent = err.message || 'Could not send your reply.'; button.disabled = false; }
+        });
+        details.append(thread, form); container.appendChild(details);
     }
 
     async function loadProfile() {
