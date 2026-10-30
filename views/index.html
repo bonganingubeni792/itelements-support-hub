@@ -108,24 +108,6 @@
             <a class="onsite-promo-link" href="/onsite-support">Explore on-site support →</a>
         </section>
 
-        <section class="feedback-section" aria-labelledby="feedback-title">
-            <div>
-                <span class="step-number">Customer feedback</span>
-                <h2 id="feedback-title">Help us improve our support</h2>
-                <p class="feedback-copy">If IT Elements has helped you, share an honest review. Reviews are checked before publication. We only publish your name and comment if you give permission below.</p>
-                <div id="public-reviews" class="feedback-list" aria-live="polite"><p class="feedback-copy">Loading customer feedback…</p></div>
-            </div>
-            <form id="feedback-form" class="feedback-form">
-                <label for="feedback-name">Your name</label><input id="feedback-name" name="name" required maxlength="100" autocomplete="name">
-                <label for="feedback-email">Email address (optional, for confirmation only)</label><input id="feedback-email" name="email" type="email" maxlength="254" autocomplete="email">
-                <label for="feedback-rating">Your rating</label><select id="feedback-rating" name="rating" required><option value="">Choose a rating</option><option value="5">★★★★★ Excellent</option><option value="4">★★★★ Very good</option><option value="3">★★★ Good</option><option value="2">★★ Needs improvement</option><option value="1">★ Poor</option></select>
-                <label for="feedback-message">Your feedback</label><textarea id="feedback-message" name="message" required minlength="10" maxlength="1200" placeholder="What went well, and what could be better?"></textarea>
-                <label class="consent-row"><input id="feedback-consent" name="consent" type="checkbox" required><span>I agree that IT Elements may publish this review with the name I entered. I understand it will be reviewed before it appears publicly.</span></label>
-                <button class="pay-trigger-btn" type="submit">Send feedback</button>
-                <p id="feedback-status" class="feedback-status" role="status" aria-live="polite"></p>
-            </form>
-        </section>
-
         <section class="incident-box" aria-labelledby="incident-heading">
             <h2 id="incident-heading" style="margin-top:0;color:#fff;font-size:24px;">Need a Quick Incident Fix?</h2>
             <p style="color:#888;font-size:14px;margin-bottom:25px;">Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
@@ -147,6 +129,24 @@
             <div class="price-display" id="dynamic-price-tag" aria-live="polite">R 350</div>
             <button type="button" id="yoco-checkout-trigger" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
             <p id="checkout-message" class="checkout-message" role="status" aria-live="polite"></p>
+        </section>
+
+        <section class="feedback-section" aria-labelledby="feedback-title">
+            <div>
+                <span class="step-number">Customer feedback</span>
+                <h2 id="feedback-title">Help us improve our support</h2>
+                <p class="feedback-copy">If IT Elements has helped you, share an honest review. Reviews are checked before publication. We only publish your name and comment if you give permission below.</p>
+                <div id="public-reviews" class="feedback-list" aria-live="polite"><p class="feedback-copy">Loading customer feedback…</p></div>
+            </div>
+            <form id="feedback-form" class="feedback-form">
+                <label for="feedback-name">Your name</label><input id="feedback-name" name="name" required maxlength="100" autocomplete="name">
+                <label for="feedback-email">Email address (optional, for confirmation only)</label><input id="feedback-email" name="email" type="email" maxlength="254" autocomplete="email">
+                <label for="feedback-rating">Your rating</label><select id="feedback-rating" name="rating" required><option value="">Choose a rating</option><option value="5">★★★★★ Excellent</option><option value="4">★★★★ Very good</option><option value="3">★★★ Good</option><option value="2">★★ Needs improvement</option><option value="1">★ Poor</option></select>
+                <label for="feedback-message">Your feedback</label><textarea id="feedback-message" name="message" required minlength="10" maxlength="1200" placeholder="What went well, and what could be better?"></textarea>
+                <label class="consent-row"><input id="feedback-consent" name="consent" type="checkbox" required><span>I agree that IT Elements may publish this review with the name I entered. I understand it will be reviewed before it appears publicly.</span></label>
+                <button class="pay-trigger-btn" type="submit">Send feedback</button>
+                <p id="feedback-status" class="feedback-status" role="status" aria-live="polite"></p>
+            </form>
         </section>
 
         <section class="main-card">
