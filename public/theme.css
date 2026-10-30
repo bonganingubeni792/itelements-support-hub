@@ -202,3 +202,100 @@ button, .btn, .submit, .submit-btn, .subscribe-btn, .pay-btn, .pay-trigger-btn,
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; }
 }
+
+/* Contrast and surface normalization: older page styles contain dark gradients
+   and inline background declarations, so reset complete backgrounds here. */
+:root {
+  --page-gray: #eef1f5;
+  --surface-gray: #f5f7fa;
+  --blue-soft: #eff6ff;
+  --green-soft: #ecfdf3;
+}
+html, body { background-color: var(--page-gray) !important; }
+body {
+  background-image: radial-gradient(ellipse at 8% -12%, rgba(217,45,32,.055), transparent 35%) !important;
+}
+.main-card, .incident-box, .feature-card, .status-card, .pricing-card, .plan-box,
+.ticket-card, .dashboard-card, .card, .box, .panel, .hero, .register-container,
+.login-box, .faq-item, .step-card, .service, .service-card, .request-card,
+.request-choice, .soft-item, .contact, .review-item, .onsite-request,
+.subscription-summary, .stat-card, .quick-stat, .onsite-promo,
+.feedback-section, .feedback-list, .review-card, .form-panel {
+  color: var(--ink) !important;
+  background: var(--surface) !important;
+  border-color: var(--line) !important;
+}
+.main-card, .hero, .home-hero {
+  background: linear-gradient(135deg, #fff 0%, #fff 72%, #f1f6ff 100%) !important;
+}
+.incident-box, .onsite-promo {
+  background: linear-gradient(135deg, #fff 0%, #fff8f7 65%, #f1f6ff 100%) !important;
+}
+.feature-card, .status-card, .pricing-card, .plan-box, .ticket-card,
+.dashboard-card, .card, .box, .panel, .faq-item, .step-card, .service,
+.service-card, .request-card, .request-choice, .soft-item, .contact,
+.onsite-request, .subscription-summary, .stat-card, .quick-stat,
+.feedback-section, .review-card, .form-panel {
+  background: #fff !important;
+}
+.feedback-list, .feedback-form, .feedback-form label, .consent-row,
+.review-card, .review-card p { color: #344054 !important; }
+.feedback-form label { font-size: 13px !important; }
+.review-card { border: 1px solid #dfe4ea !important; box-shadow: 0 4px 12px rgba(16,24,40,.045) !important; }
+.review-card strong { color: #182230 !important; }
+.review-stars { color: #b54708 !important; }
+.notice, .notice-box, .support-hours {
+  color: #1849a9 !important;
+  background: var(--blue-soft) !important;
+  border-color: #b2ccff !important;
+}
+.notice strong, .support-hours strong { color: #1849a9 !important; }
+.service h2, .card h2, .step-card h2, .feedback-section h2,
+.dashboard-card h2, .ticket-card h2 { color: #182230 !important; }
+.service p, .card p, .step-card p, .feedback-copy, .feature-desc,
+.plan-term, .muted { color: #475467 !important; }
+.stat-value, .quick-stat-value, .summary-value { color: var(--brand-red) !important; }
+.quick-stat-value.green, .status-val.active-node, .badge-resolved,
+.badge-active { color: #16804a !important; }
+.quick-stat-value.yellow, .badge-onhold, .badge-expired { color: #946200 !important; }
+.status-val { color: var(--brand-blue) !important; }
+.status-badge, .badge-open, .badge-onhold, .badge-resolved,
+.badge-confirmed, .badge-contacted, .badge-active, .badge-expired {
+  background-color: #f2f4f7 !important;
+  border-color: #d0d5dd !important;
+}
+.badge-open { color: #b42318 !important; background-color: #fef3f2 !important; border-color: #fecdca !important; }
+.badge-onhold, .badge-expired { color: #946200 !important; background-color: #fffaeb !important; border-color: #fedf89 !important; }
+.badge-resolved, .badge-active { color: #16804a !important; background-color: var(--green-soft) !important; border-color: #abefc6 !important; }
+.badge-confirmed, .badge-contacted { color: #175cd3 !important; background-color: var(--blue-soft) !important; border-color: #b2ccff !important; }
+.data-row, .subscriber-row, .table-logs tbody, .table-logs tr { background: #fff !important; }
+.table-header, .subscriber-header, th { background: #eef1f5 !important; color: #344054 !important; }
+input[type="checkbox"], input[type="radio"] { accent-color: var(--brand-blue); }
+.feedback-form input, .feedback-form select, .feedback-form textarea {
+  color: #182230 !important; background: #fff !important; border-color: #cfd6df !important;
+}
+.feedback-form input:focus, .feedback-form select:focus, .feedback-form textarea:focus {
+  border-color: var(--brand-blue) !important; box-shadow: 0 0 0 3px rgba(23,92,211,.14) !important;
+}
+.action-btn, .copy-btn, .refresh-btn, .btn.secondary {
+  color: var(--brand-blue) !important; background: var(--blue-soft) !important; border-color: #b2ccff !important;
+}
+.btn-hold, .btn-onhold { color: #946200 !important; background: #fffaeb !important; border-color: #fedf89 !important; }
+.btn-resolve, .btn-confirm, .btn-contacted { color: #16804a !important; background: var(--green-soft) !important; border-color: #abefc6 !important; }
+.btn-reopen { color: var(--brand-red) !important; background: #fef3f2 !important; border-color: #fecdca !important; }
+.notification-center { background: #fff !important; color: var(--ink) !important; }
+.notification-item { background: #f8f9fb !important; color: #344054 !important; }
+.notification-item.unread { background: #eff6ff !important; }
+
+@media (max-width: 760px) {
+  .feedback-section { grid-template-columns: minmax(0, 1fr) !important; }
+  .feedback-form { min-width: 0 !important; }
+  .feedback-section > *, .form-panel > * { min-width: 0 !important; }
+  .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 480px) {
+  body { padding-left: 12px !important; padding-right: 12px !important; }
+  .stats-grid, .quick-stats { grid-template-columns: minmax(0, 1fr) !important; }
+  .feedback-section, .dashboard-card, .ticket-card, .panel { padding: 18px !important; }
+  .data-row { overflow-wrap: anywhere; }
+}
