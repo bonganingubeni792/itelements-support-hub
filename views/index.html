@@ -9,6 +9,7 @@
         body { background-color:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',Tahoma,sans-serif; margin:0; padding:20px; text-align:center; }
         .navbar { background-color:#141414; border-bottom:2px solid #222; padding:15px 24px; display:flex; justify-content:space-between; align-items:center; width:min(100%,1500px); margin:0 auto 25px; border-radius:6px; }
         .nav-brand { font-size:20px; font-weight:bold; color:#ff3333; letter-spacing:1px; text-decoration:none; }
+        .brand-logo { display:block; width:168px; height:134px; object-fit:contain; border-radius:8px; background:#0d0d0d; }
         .nav-links a { color:#b3b3b3; text-decoration:none; font-size:14px; margin-left:20px; }
         .nav-links a:hover,.nav-links a:focus-visible { color:#ff3333; }
         .container { width:min(100%,1500px); margin:0 auto; }
@@ -36,10 +37,13 @@
         .whatsapp-floating-bubble:hover { transform:scale(1.1); }
         .footer-details { color:#888; font-size:13px; line-height:1.8; border-top:1px solid #222; padding-top:20px; margin-top:40px; }
         .footer-details a { color:inherit; }
+        .support-hours { width:min(100%,1500px); margin:0 auto 22px; padding:14px 18px; border:1px solid #303030; border-left:4px solid #ff3333; border-radius:6px; background:#141414; color:#d1d1d1; font-size:14px; text-align:center; line-height:1.5; }
+        .support-hours strong { color:#fff; }
         .checkout-message { color:#bbb; font-size:13px; min-height:20px; margin:12px auto 0; }
         .checkout-message.error { color:#ff7777; }
         .checkout-message.success { color:#8be28b; }
         .how-it-works { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin:0 0 25px; text-align:left; }
+        .home-logo { display:flex; justify-content:center; margin:0 auto 18px; }
         .step-card { padding:20px; border:1px solid #252525; border-radius:6px; background:#111; }.step-number { color:#ff4545; font-size:12px; font-weight:800; letter-spacing:.7px; text-transform:uppercase; }.step-card h2 { color:#fff; font-size:16px; margin:9px 0; }.step-card p { color:#929292; font-size:13px; line-height:1.6; margin:0; }
         @media (max-width:900px) { .feature-grid,.how-it-works { grid-template-columns:repeat(2,minmax(0,1fr)); }.feature-card:last-child,.how-it-works .step-card:last-child { grid-column:1 / -1; } }
         @media (max-width:700px) { .navbar { align-items:flex-start; gap:12px; flex-direction:column; } .nav-links { display:flex; flex-wrap:wrap; gap:10px 16px; } .nav-links a { margin-left:0; } }
@@ -51,17 +55,23 @@
         <a class="nav-brand" href="/">IT Elements.support</a>
         <div class="nav-links">
             <a href="/">Home</a>
+            <a href="/services">Services</a>
             <a href="/pricing">Plans</a>
             <a href="/support">Request Help</a>
+            <a href="/about">About</a>
+            <a href="/faq">FAQ</a>
+            <a href="/contact">Contact</a>
             <a href="/dashboard">Client Portal</a>
         </div>
     </nav>
 
     <main class="container">
         <section class="main-card">
+            <div class="home-logo"><img class="brand-logo" src="/assets/itel-support-logo-cropped.png" alt="IT Elements Support logo" width="168" height="134"></div>
             <h1 style="margin-top:0;color:#fff;font-size:32px;">On-Demand Subscription IT Support</h1>
             <p style="color:#888;font-size:15px;max-width:700px;margin:0 auto;line-height:1.6;">Secure, professional remote computer fixing pipelines across South Africa. Provide your access key, and we fix it instantly.</p>
         </section>
+        <div class="support-hours" role="note">🕒 Support hours: <strong>Monday to Friday, 08:00–17:00 South African time (SAST)</strong></div>
 
         <section class="feature-grid" aria-label="Customer options">
             <a href="/pricing" class="feature-card">
