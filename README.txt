@@ -87,3 +87,27 @@ Registration form
 -----------------
 The registration form posts to /client/register, matching the server route. It checks the password confirmation in the browser and the server enforces the same 12-character minimum and validates name, phone, and email. New passwords are hashed with scrypt. The name-field example is “IT Elements Support” as requested.
 
+
+Customer email updates and feedback
+-----------------------------------
+After a customer submits a support or on-site request, the site sends an acknowledgement when Resend is configured. When you update a request status in Admin, the customer receives an email with the new status. A successful plan payment confirmed by Yoco also triggers a plan confirmation email. The optional SUPPORT_EMAIL_FROM sender overrides RESET_EMAIL_FROM for these messages; both must use a sender identity verified with Resend. The home page accepts customer feedback, but new reviews are Pending and do not appear until an admin approves them. Only reviews with explicit publishing consent are shown publicly.
+
+On-site request workflow
+------------------------
+On-site requests appear in their own Admin section and in the customer dashboard. Move requests through Open, Contacted, Visit Confirmed, and Completed (or On Hold / Resolved). A submitted enquiry is not a confirmed appointment: contact the customer to agree coverage, date, and any call-out/service charge before setting Visit Confirmed.
+
+Remote session password protection
+----------------------------------
+Remote session passwords are encrypted in MongoDB and are cleared when a request is marked Completed or Resolved. Admin may reveal/copy a password only while a request is open. Keep SESSION_SECRET unchanged after this version first encrypts existing saved passwords; changing it makes previously encrypted passwords unreadable. The customer dashboard API never returns remote session passwords.
+Appointment booking flow
+------------------------
+On the On-site Support page, customers can request a preferred date and time. This is only a request, not a booking. In Admin, contact the customer, check area coverage, then enter the agreed future visit date/time and call-out fee (enter 0 when no fee applies) and select Confirm visit. The customer receives an email with the confirmed appointment and fee, and the same details appear in their dashboard. If the appointment changes, confirm the new date/time and fee again to email the update. The customer must use the same email address as their account to see the request in the dashboard.
+Remote support session booking
+-----------------------------
+The client dashboard remote ticket form includes optional preferred date and time. These are requests only. Admin can mark a ticket Contacted, then use Confirm session and enter the agreed future date/time. The server saves the confirmation and emails the customer; the confirmed session time appears with the ticket in the dashboard. On-site bookings use the separate date/time and call-out fee flow described above.
+Ticket conversation replies
+---------------------------
+Customers signed in to the client portal can open a Conversation on any of their remote tickets or on-site enquiries and send a reply (maximum 2,000 characters). Admin can open the same thread on the ticket row and respond. Customer access is restricted to tickets matching the account email; Admin replies require an admin session. Conversation history is stored with the ticket and capped to the latest 100 messages. Email notifications do not include message text; they direct users back to the portal. Do not send account passwords, card details, or temporary remote passwords in conversation messages.
+New ticket-reply notifications
+-----------------------------
+Customer and Admin replies are stored on the ticket. With the existing Resend API key and verified sender, the site emails the customer when Admin replies and sends an Admin notification when a customer replies. Notification messages do not quote the conversation text. By default, customer-reply notices go to bongani@itelements.co.za; set SUPPORT_NOTIFICATION_EMAIL in Render if you want another inbox. No additional package is required.
