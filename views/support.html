@@ -11,7 +11,22 @@
         .navbar { width:min(100%,1500px); margin:0 auto 34px; padding:15px 24px; display:flex; justify-content:space-between; align-items:center; gap:16px; background:#141414; border-bottom:2px solid #222; border-radius:6px; }
         .brand { color:#ff3939; text-decoration:none; font-size:19px; font-weight:800; letter-spacing:.5px; }
         .links { display:flex; flex-wrap:wrap; gap:10px 20px; }.links a { color:#bbb; text-decoration:none; font-size:13px; padding:8px 10px; border:1px solid transparent; border-radius:6px; transition:all .2s; }.links a:hover,.links a:focus-visible { color:#fff; background:#202020; border-color:#353535; }
-        main { width:100%; max-width:900px; margin:0 auto; padding:30px; background:#141414; border:1px solid #262626; border-radius:8px; }
+        main { width:100%; max-width:1500px; margin:0 auto; padding:clamp(18px,3vw,34px); background:#141414; border:1px solid #262626; border-radius:8px; }
+        .request-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:start; }
+        .request-card { min-width:0; padding:20px; border:1px solid #30343a; border-radius:8px; background:#111214; }
+        .remote-card { border-top:3px solid #4da6ff; }.onsite-card { border-top:3px solid #ff5555; }
+        .choice-heading { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+        .choice-icon { width:38px; height:38px; display:grid; place-items:center; flex:none; border-radius:9px; background:#20242a; font-size:20px; }
+        .choice-kicker { margin:0 0 3px; color:#9ba6b5; font-size:10px; font-weight:800; letter-spacing:.8px; }
+        .request-card h2 { margin:0; color:#fff; font-size:18px; line-height:1.3; }
+        .choice-description { min-height:58px; margin:10px 0 16px; color:#929292; font-size:13px; line-height:1.6; }
+        .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 12px; }
+        .remote-form { grid-template-columns:minmax(0,1fr); }
+        .field.full { grid-column:1/-1; }
+        .onsite-form { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .request-card .submit { grid-column:1/-1; min-height:44px; }
+        select { width:100%; padding:12px; border:1px solid #363636; border-radius:4px; background:#0d0d0d; color:#fff; font:inherit; font-size:14px; }
+        .hours-note { margin:14px 0 0; color:#858585; font-size:12px; line-height:1.55; }
         h1 { margin:0 0 10px; color:#fff; font-size:27px; }.intro { margin:0 0 25px; color:#929292; font-size:14px; line-height:1.6; }
         .notice { padding:12px 14px; margin-bottom:20px; border:1px solid #343434; border-radius:5px; color:#bfc7d1; background:#101216; font-size:13px; line-height:1.5; }
         .field { margin:0 0 17px; }.field label { display:block; margin-bottom:7px; color:#aaa; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; }
@@ -19,7 +34,8 @@
         input:focus,textarea:focus { outline:2px solid #ff3939; outline-offset:1px; }.help { color:#737373; font-size:11px; margin:6px 0 0; }.submit { width:100%; border:0; border-radius:4px; padding:13px; color:white; background:#ff3333; font-weight:800; text-transform:uppercase; cursor:pointer; }.submit:hover { background:#cc0000; }
         .password-wrap { position:relative; }.password-wrap input { padding-right:78px; }
         .password-toggle { position:absolute; right:8px; top:50%; transform:translateY(-50%); border:0; background:transparent; color:#c1c1c1; padding:8px; font-size:12px; font-weight:700; cursor:pointer; }.password-toggle:hover { color:#ff5555; }
-        @media(max-width:560px) { body { padding:12px; }.navbar { align-items:flex-start; flex-direction:column; }.links { gap:10px 15px; }main { padding:22px 17px; } }
+        @media(max-width:900px) { .request-options { grid-template-columns:minmax(0,1fr); }.choice-description { min-height:0; } }
+        @media(max-width:560px) { body { padding:12px; }.navbar { align-items:flex-start; flex-direction:column; }.links { gap:10px 15px; }main { padding:18px 14px; }.request-card { padding:15px; }.form-grid { grid-template-columns:minmax(0,1fr); }.field.full,.request-card .submit { grid-column:auto; } }
     .brand-support{color:#fff!important}</style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
 </head>
@@ -29,19 +45,54 @@
         <div class="links"><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="/dashboard">Client Portal</a></div>
     </nav>
     <main>
-        <h1>Request technical support</h1>
-        <p class="intro">Tell us what is happening and include your AnyDesk or TeamViewer ID. Send a session password only when you are ready for a support session.</p>
-        <div class="notice"><strong>Safety:</strong> Only share remote access details with an IT Elements engineer you are currently speaking with. Never send your account password or payment card details here.</div>
-        <form action="/support" method="post">
-            <div class="field"><label for="name">Your name</label><input id="name" name="name" autocomplete="name" minlength="2" maxlength="100" required></div>
-            <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
-            <div class="field"><label for="remoteId">AnyDesk / TeamViewer ID</label><input id="remoteId" name="remoteId" maxlength="100" autocomplete="off" required><p class="help">Enter the connection ID shown in your remote support app.</p></div>
-            <div class="field"><label for="remotePassword">Temporary session password (if required)</label><div class="password-wrap"><input id="remotePassword" name="remotePassword" type="password" maxlength="200" autocomplete="new-password"><button class="password-toggle" type="button" data-password-target="remotePassword" aria-pressed="false">Show</button></div><p class="help">Optional. Provide it only when an engineer is ready to connect. Use Show to check what you typed.</p></div>
-            <div class="field"><label for="issue">Describe the problem</label><textarea id="issue" name="issue" rows="6" maxlength="5000" required placeholder="What happened, when it started, and any error message you see"></textarea></div>
-            <button class="submit" type="submit">Submit support request</button>
-        </form>
+        <h1>Request support</h1>
+        <p class="intro">Choose the type of help you need. Online remote support and an in-person visit are handled as separate requests.</p>
+        <div class="request-options">
+            <section class="request-card remote-card" aria-labelledby="remote-title">
+                <div class="choice-heading"><span class="choice-icon" aria-hidden="true">💻</span><div><p class="choice-kicker">ONLINE · REMOTE</p><h2 id="remote-title">AnyDesk or TeamViewer support</h2></div></div>
+                <p class="choice-description">For troubleshooting over the internet. Enter the connection ID shown in your remote support app. We’ll contact you to arrange a session.</p>
+                <form action="/support" method="post" class="form-grid remote-form">
+                    <input type="hidden" name="requestType" value="remote">
+                    <div class="field"><label for="remote-name">Your name</label><input id="remote-name" name="name" autocomplete="name" minlength="2" maxlength="100" required></div>
+                    <div class="field"><label for="remote-email">Email address</label><input id="remote-email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
+                    <div class="field full"><label for="remote-id">AnyDesk / TeamViewer ID</label><input id="remote-id" name="remoteId" maxlength="100" autocomplete="off" required><p class="help">Enter the connection ID shown in your remote support app.</p></div>
+                    <div class="field full"><label for="remote-password">Temporary session password (if required)</label><div class="password-wrap"><input id="remote-password" name="remotePassword" type="password" maxlength="200" autocomplete="new-password"><button class="password-toggle" type="button" data-password-target="remote-password" aria-pressed="false">Show</button></div><p class="help">Optional. Provide it only when an engineer is ready to connect.</p></div>
+                    <div class="field full"><label for="remote-issue">Describe the problem</label><textarea id="remote-issue" name="issue" rows="5" maxlength="5000" required placeholder="What happened, when it started, and any error message you see"></textarea></div>
+                    <button class="submit" type="submit">Submit online support ticket</button>
+                </form>
+            </section>
+            <section class="request-card onsite-card" aria-labelledby="onsite-title">
+                <div class="choice-heading"><span class="choice-icon" aria-hidden="true">📍</span><div><p class="choice-kicker">IN-PERSON · ON-SITE</p><h2 id="onsite-title">Request a visit to your location</h2></div></div>
+                <p class="choice-description">For support that may need an in-person visit. This is an enquiry, not a confirmed appointment. We’ll check your area, availability, and any costs with you first.</p>
+                <form id="support-onsite-form" action="/support" method="post" class="form-grid onsite-form">
+                    <input type="hidden" name="requestType" value="onsite"><input type="hidden" name="remoteId" value=""><input type="hidden" name="remotePassword" value=""><input type="hidden" name="issue" id="support-onsite-issue">
+                    <div class="field"><label for="onsite-name">Your name</label><input id="onsite-name" name="name" autocomplete="name" required maxlength="100"></div>
+                    <div class="field"><label for="onsite-email">Email address</label><input id="onsite-email" name="email" type="email" autocomplete="email" required maxlength="254"></div>
+                    <div class="field"><label for="onsite-phone">Phone number</label><input id="onsite-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30"></div>
+                    <div class="field"><label for="onsite-area">Town or area</label><input id="onsite-area" name="area" autocomplete="address-level2" required maxlength="120" placeholder="e.g. Pretoria East"></div>
+                    <div class="field full"><label for="onsite-service">What needs attention?</label><select id="onsite-service" name="serviceType" required><option value="">Choose a service</option><option>Computer setup or troubleshooting</option><option>Wi-Fi or small-office network</option><option>Printer or accessories</option><option>Hardware assessment</option><option>Workplace technology</option><option>Other</option></select></div>
+                    <div class="field"><label for="onsite-date">Preferred date</label><input id="onsite-date" name="preferredDate" type="date"></div>
+                    <div class="field"><label for="onsite-time">Preferred time</label><input id="onsite-time" name="preferredTime" type="time"></div>
+                    <div class="field full"><label for="onsite-details">Describe what you need</label><textarea id="onsite-details" name="details" rows="5" required maxlength="3000" placeholder="What is happening, and which device or equipment needs attention?"></textarea><p class="help">Do not include account passwords, payment details, or remote-session passwords.</p></div>
+                    <button class="submit" type="submit">Send on-site visit enquiry</button>
+                </form>
+            </section>
+        </div>
+        <p class="hours-note"><strong>Support hours:</strong> Monday to Friday, 08:00–17:00 South African time (SAST). We’ll contact you before confirming an on-site visit or any call-out fee.</p>
     </main>
     <script>
+        document.getElementById('support-onsite-form').addEventListener('submit', function () {
+            const form = this;
+            document.getElementById('support-onsite-issue').value = [
+                'ON-SITE SUPPORT ENQUIRY',
+                'Phone: ' + form.phone.value.trim(),
+                'Area: ' + form.area.value.trim(),
+                'Service requested: ' + form.serviceType.value,
+                'Preferred date: ' + (form.preferredDate.value || 'Flexible'),
+                'Preferred time: ' + (form.preferredTime.value || 'Flexible'),
+                '', form.details.value.trim()
+            ].join('\n');
+        });
         document.querySelectorAll('[data-password-target]').forEach(button => {
             button.addEventListener('click', () => {
                 const input = document.getElementById(button.dataset.passwordTarget);
