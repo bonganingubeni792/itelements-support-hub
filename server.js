@@ -256,9 +256,14 @@ function checkUserAuth(req, res, next) {
 app.get('/admin.html', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
 app.get('/dashboard.html', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
 app.use(express.static(viewsPath, { index: false }));
+app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => res.sendFile(path.join(viewsPath, 'index.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(viewsPath, 'pricing.html')));
+app.get('/services', (req, res) => res.sendFile(path.join(viewsPath, 'services.html')));
+app.get('/about', (req, res) => res.sendFile(path.join(viewsPath, 'about.html')));
+app.get('/faq', (req, res) => res.sendFile(path.join(viewsPath, 'faq.html')));
+app.get('/contact', (req, res) => res.sendFile(path.join(viewsPath, 'contact.html')));
 app.get('/subscribe/:planId', (req, res) => {
     const planId = String(req.params.planId || '');
     if (!SLA_PLANS[planId]) return res.status(404).send('Plan not found.');
