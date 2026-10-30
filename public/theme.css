@@ -392,6 +392,73 @@ a:not(.hero-button):not(.onsite-promo-link):not(.btn):not(.subscribe-btn):not(.p
 }
 .footer-details a, .footer a { color: #175cd3 !important; font-weight: 700 !important; }
 
+/* Site-wide grey canvas and grey content panels (avoid large white/black slabs). */
+:root {
+  --page-gray: #c2c7cf;
+  --surface: #dfe3e8;
+  --surface-soft: #d3d8df;
+}
+html, body {
+  background: #c2c7cf !important;
+  background-image: none !important;
+  color: #101828 !important;
+}
+body > main, body main, main.page, main.container {
+  color: #101828 !important;
+  background: #d3d8df !important;
+  border-color: #bcc2ca !important;
+}
+.navbar, .nav, .header, .header-bar {
+  background: #f0f2f4 !important;
+  border-color: #bfc5cd !important;
+}
+.main-card, .ticket-card, .dashboard-card, .panel, .hero, .login-box,
+.register-container, .request-section, .feedback-section, .form-panel,
+.subscription-summary, .onsite-request, .contact, .box {
+  background: #dfe3e8 !important;
+  border-color: #c1c7cf !important;
+  color: #101828 !important;
+}
+.feature-card, .service, .service-card, .card, .step-card, .pricing-card,
+.plan-box, .status-card, .quick-stat, .stat-card, .request-card,
+.request-choice, .value, .values .value, .review-card, .soft-item,
+.faq-item, .contact-card {
+  background: #d3d8df !important;
+  border-color: #bfc5cd !important;
+  color: #101828 !important;
+}
+.request-card h2, .request-card h3, .request-section h2,
+.request-section h3, .main-card h1, .main-card h2, .main-card h3,
+.ticket-card h1, .ticket-card h2, .ticket-card h3,
+.dashboard-card h1, .dashboard-card h2, .dashboard-card h3 {
+  color: #101828 !important;
+}
+.request-card p, .request-card label, .request-card .help,
+.request-section p, .request-section label, .request-section .help,
+.request-section .request-description { color: #344054 !important; }
+.notice, .support-hours, .hours {
+  background: #d5e2f3 !important;
+  color: #123c68 !important;
+  border-color: #9bb8df !important;
+}
+.nav-links a:hover, .nav-links a:focus-visible, .nav-links a[aria-current="page"],
+.links a:hover, .links a:focus-visible, .links a[aria-current="page"] {
+  color: #123c68 !important;
+  background: #dbe5f2 !important;
+  border-color: #a9bfdf !important;
+}
+.links a:last-child, .nav-links a:last-child {
+  color: #fff !important;
+  background: var(--brand-red) !important;
+  border-color: var(--brand-red) !important;
+}
+.pricing-card .plan-price { background: var(--brand-navy) !important; color: #fff !important; }
+input, select, textarea, .form-control, .form-input,
+.feedback-form input, .feedback-form select, .feedback-form textarea {
+  color: #101828 !important;
+  background: #fff !important;
+}
+
 /* Accessible reading defaults: larger type, strong contrast, and clear focus. */
 html { font-size: 17px !important; }
 body { color: #101828 !important; line-height: 1.7 !important; }
