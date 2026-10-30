@@ -214,6 +214,32 @@ const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
+const SiteNotification = mongoose.model('SiteNotification', new mongoose.Schema({
+    recipientRole: { type: String, enum: ['admin', 'customer'], required: true, index: true },
+    recipientEmail: { type: String, default: '', lowercase: true, trim: true, index: true },
+    ticketId: { type: mongoose.Schema.Types.ObjectId, ref: 'SupportRequest', required: true, index: true },
+    requestType: { type: String, enum: ['remote', 'onsite'], default: 'remote' },
+    actorName: { type: String, required: true, maxlength: 100 },
+    title: { type: String, required: true, maxlength: 140 },
+    body: { type: String, required: true, maxlength: 240 },
+    createdAt: { type: Date, default: Date.now, index: true },
+    readAt: { type: Date, default: null }
+}, { collection: 'sitenotifications' }));
+
+async function createSiteNotification({ role, email = '', ticket, actor, title, body }) {
+    if (!ticket || !ticket._id || (role === 'customer' && !email)) return;
+    await SiteNotification.create({
+        recipientRole: role,
+        recipientEmail: role === 'customer' ? String(email).toLowerCase().trim() : '',
+        ticketId: ticket._id,
+        requestType: ticket.requestType === 'onsite' ? 'onsite' : 'remote',
+        actorName: String(actor || 'IT Elements Support').slice(0, 100),
+        title: String(title || 'Request update').slice(0, 140),
+        body: String(body || 'There is an update to your request.').slice(0, 240)
+    });
+}
+
+
 const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
     name: { type: String, required: true, maxlength: 100 },
     email: { type: String, default: '' },
@@ -581,6 +607,42 @@ app.post('/api/auth/reset-password', async (req, res) => {
 app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
 app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
 
+app.get('/api/notifications', (req, res, next) => {
+    if (req.session && req.session.isAdmin) return next();
+    return checkUserAuth(req, res, next);
+}, async (req, res) => {
+    try {
+        const filter = req.session.isAdmin
+            ? { recipientRole: 'admin' }
+            : { recipientRole: 'customer', recipientEmail: String(req.session.userEmail || '').toLowerCase() };
+        const notifications = await SiteNotification.find(filter).sort({ createdAt: -1 }).limit(40).lean();
+        res.json({ notifications: notifications.map(item => ({
+            id: String(item._id), ticketId: String(item.ticketId), actorName: item.actorName,
+            title: item.title, body: item.body, createdAt: item.createdAt,
+            read: Boolean(item.readAt), requestType: item.requestType || ''
+        })) });
+    } catch (err) {
+        console.error('Notification load failed:', err.message);
+        res.status(500).json({ message: 'Could not load notifications.' });
+    }
+});
+
+app.post('/api/notifications/:notificationId/read', (req, res, next) => {
+    if (req.session && req.session.isAdmin) return next();
+    return checkUserAuth(req, res, next);
+}, async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.notificationId)) return res.status(400).json({ success: false });
+    try {
+        const filter = req.session.isAdmin
+            ? { _id: req.params.notificationId, recipientRole: 'admin' }
+            : { _id: req.params.notificationId, recipientRole: 'customer', recipientEmail: String(req.session.userEmail || '').toLowerCase() };
+        await SiteNotification.updateOne(filter, { $set: { readAt: new Date() } });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Could not update notification.' });
+    }
+});
+
 app.post('/support', async (req, res) => {
     try {
         const { name, email, phone, area, serviceType, preferredDate, preferredTime, details, remoteId, remotePassword, issue, requestType } = req.body;
@@ -601,6 +663,12 @@ app.post('/support', async (req, res) => {
             status: 'Open'
         });
         await request.save();
+        const requestLabel = isOnsiteEnquiry ? 'on-site visit enquiry' : 'remote support ticket';
+        await createSiteNotification({ role: 'admin', ticket: request, actor: request.name || 'Customer', title: `New ${requestLabel}`, body: `${request.name || 'A customer'} submitted a ${requestLabel}.` });
+        await sendCustomerEmail(process.env.SUPPORT_NOTIFICATION_EMAIL || 'bongani@itelements.co.za', `New ${requestLabel} from ${request.name || 'customer'}`, [
+            `${request.name || 'A customer'} submitted a ${requestLabel}.`,
+            `Email: ${normalizedEmail || 'not provided'}. Sign in to the Admin console to review it.`
+        ]);
         await sendCustomerEmail(normalizedEmail, isOnsiteEnquiry ? 'We received your on-site support enquiry' : 'We received your support request', isOnsiteEnquiry ? [
             `Hello ${request.name || 'there'}, we received your request for ${request.serviceType || 'on-site support'} in ${request.area || 'your area'}.`,
             'This is an enquiry, not a confirmed appointment. We will review availability and discuss any call-out or service cost before booking.',
@@ -645,6 +713,7 @@ app.post('/api/client/tickets/:ticketId/messages', checkUserAuth, async (req, re
             { new: true }
         );
         if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found for your account.' });
+        await createSiteNotification({ role: 'admin', ticket, actor: ticket.name || 'Customer', title: `New message on ${ticket.requestType === 'onsite' ? 'on-site enquiry' : 'support ticket'}`, body: `${ticket.name || 'A customer'} sent a new message. Sign in to read it.` });
         await sendCustomerEmail(process.env.SUPPORT_NOTIFICATION_EMAIL || 'bongani@itelements.co.za', `New customer reply on ticket ${ticket._id}`, [
             `${ticket.name || 'Customer'} (${ticket.email}) replied to a support request.`,
             'A new message is waiting in the Admin console. For privacy, the message text is not included in this email.'
@@ -686,6 +755,7 @@ app.post('/api/admin/tickets/:ticketId/messages', checkAdminAuth, async (req, re
             { new: true }
         );
         if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found.' });
+        await createSiteNotification({ role: 'customer', email: ticket.email, ticket, actor: 'IT Elements Support', title: 'New reply from IT Elements Support', body: 'Your support team sent a new message. Sign in to read it.' });
         await sendCustomerEmail(ticket.email, 'New reply from IT Elements Support', [
             `IT Elements Support replied to your ${ticket.requestType === 'onsite' ? 'on-site enquiry' : 'support ticket'}.`,
             'Sign in to your client dashboard to see the reply and continue the conversation. For privacy, the message text is not included in this email.'
@@ -726,6 +796,7 @@ app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
         if (['Completed', 'Resolved'].includes(newStatus)) update.remotePassword = '';
         const updated = await SupportRequest.findByIdAndUpdate(ticketId, { $set: update }, { new: true });
         if ((current.status !== newStatus || newStatus === 'Visit Confirmed' || newStatus === 'Session Confirmed') && updated.email) {
+            await createSiteNotification({ role: 'customer', email: updated.email, ticket: updated, actor: 'IT Elements Support', title: `Request status: ${newStatus}`, body: `Your ${isOnsite ? 'on-site enquiry' : 'support ticket'} is now ${newStatus}.` });
             await sendCustomerEmail(updated.email, `Your IT Elements request is now ${newStatus}`, [
                 `Hello ${updated.name || 'there'}, the status of your ${isOnsite ? 'on-site enquiry' : 'support ticket'} is now ${newStatus}.`,
                 isOnsite && newStatus === 'Visit Confirmed' ? `Your visit is confirmed for ${updated.confirmedVisitAt.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}. Call-out fee: R${Number(updated.callOutFee || 0).toFixed(2)}. Please sign in to your client dashboard for these details.` : !isOnsite && newStatus === 'Session Confirmed' ? `Your remote support session is confirmed for ${updated.confirmedVisitAt.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}. Sign in to your client dashboard to view the appointment.` : 'Sign in to your client dashboard to follow your request.'

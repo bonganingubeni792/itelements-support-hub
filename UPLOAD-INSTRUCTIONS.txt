@@ -1,0 +1,9 @@
+IT ELEMENTS WEBSITE — UPLOAD GUIDE
+
+1. Extract this ZIP on your computer. Open the extracted ITElements-Support-Hub-Updated folder.
+2. Upload the files and folders inside it to the ROOT of your existing GitHub repository. Keep the views and public folders as folders. Do not upload the enclosing folder as a nested folder.
+3. Keep your existing Render Environment variables. Do not upload a real .env file or put secrets in GitHub. The included .env.example contains placeholders only.
+4. The ZIP includes package.json. Keep any package-lock.json already in your repository; Render can update dependencies when it runs npm install. The start command is `npm start` (or `node server.js`).
+5. Your Render page showed Auto-Deploy disabled. After committing the GitHub upload, open the web service in Render and choose Manual Deploy > Deploy latest commit.
+
+Included: server.js, package.json, .env.example, .gitignore, README.txt, all current views, and the public assets. Notifications are included in the server, admin page, and client dashboard.

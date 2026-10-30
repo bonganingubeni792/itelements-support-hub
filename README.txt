@@ -1,21 +1,9 @@
 IT Elements website: current file set
 ====================================
 
-Files to replace/add in the GitHub repository
-----------------------------------------------
-Keep the existing folder structure. Replace or add these files from this package:
-- Replace server.js with this server.js.
-- In views/, replace admin.html, client-login.html, dashboard.html, index.html, and register.html.
-- In views/, replace pricing.html with the supplied current pricing.html.
-- Add or replace views/support.html with the supplied current support.html.
-- Add views/forgot-password.html and views/reset-password.html if they are missing.
-- Add views/services.html, views/about.html, views/faq.html, and views/contact.html.
-- Add views/onsite-support.html for the on-site service page and enquiry form.
-- Add public/itel-support-icon.png. The small circular logo is shown beside the brand in the site header; the image URL has a version query to refresh browser cache. The server exposes this folder at /assets/.
-- Add public/responsive.css. This shared stylesheet keeps all pages usable across phone, laptop, and desktop widths.
-- The new pages and navigation links are served by the updated server.js routes.
-- Keep package.json and package-lock.json from your working repository. Do not replace them with package.txt.
-- Keep your existing Render environment variables; update only those listed below where applicable. Never paste secrets into GitHub or share them in screenshots.
+Complete website package
+-------------------------
+This ZIP contains server.js, package.json, .env.example, .gitignore, README.txt, all current views, and all current public assets. Upload the contents into the root of your existing GitHub repository while keeping the views/ and public/ folder structure. Keep your existing Render environment variables; never upload a real .env file or paste secrets into GitHub.
 
 Important flow
 --------------
@@ -25,11 +13,9 @@ Important flow
 - Yoco confirms the payment with the signed webhook before the plan becomes Active.
 - Plans are one-time 30-day payments with manual renewal; they are not automatic recurring subscriptions.
 
-Files to review before deleting from the old repository
---------------------------------------------------------
-The screenshots show old-looking files such as billing.html, billing.txt, login.html, package.txt, and yoco-sdk.js. Do not delete them solely from their names. First search all repository files for references to each filename and check whether a page or script still uses it. Keep package.json, package-lock.json, server.js, and any assets under public/. The current server uses hosted Yoco Checkout and does not need a browser Yoco SDK script, but remove yoco-sdk.js only after confirming no HTML includes it.
-
-The current deliverable does not include the source contents for billing.html, billing.txt, login.html, yoco-sdk.js, or files under public/, so those cannot be safely reconciled or deleted from screenshots alone.
+Legacy files
+------------
+This complete package does not include legacy billing.html, billing.txt, login.html, package.txt, or yoco-sdk.js files. Leave any such existing repository files in place unless you have confirmed they are unused; they are not needed by the current server routes.
 
 Render environment variables
 ----------------------------
@@ -72,7 +58,7 @@ The server accepts only the four plan IDs and fixed prices in the dashboard. Aft
 
 Yoco Checkout API payments are one-time payments; Yoco's gateway does not automatically renew recurring subscriptions. These plans therefore require manual renewal every 30 days. The R299, R599, R2,499, and R4,999 prices are charged once per selected 30-day period.
 
-This code requires Node.js 18 or newer and the existing dependencies express, mongoose, express-session, and cors. Register a test webhook and use Yoco test card details while testing.
+This package requires Node.js 18 or newer. Its package.json includes express, mongoose, express-session, and cors. Register a test webhook and use Yoco test card details while testing.
 
 Admin console
 -------------
@@ -112,3 +98,12 @@ Customers signed in to the client portal can open a Conversation on any of their
 New ticket-reply notifications
 -----------------------------
 Customer and Admin replies are stored on the ticket. With the existing Resend API key and verified sender, the site emails the customer when Admin replies and sends an Admin notification when a customer replies. Notification messages do not quote the conversation text. By default, customer-reply notices go to bongani@itelements.co.za; set SUPPORT_NOTIFICATION_EMAIL in Render if you want another inbox. No additional package is required.
+
+Dashboard request choices
+--------------------------
+The client portal separates online AnyDesk/TeamViewer support from an on-site visit enquiry. The two forms create remote and onsite requests respectively and return the customer to the matching status history after submission. On-site requests remain enquiries until Admin confirms the visit date, time, and any call-out fee.
+
+
+In-app notifications
+--------------------
+New remote and on-site requests notify the Admin console; customer and admin ticket messages and status changes notify the other party. Notifications are stored in MongoDB and appear in each signed-in portal on all devices. The optional desktop alert permission works while that portal page is open. When the site is closed, email notifications require RESEND_API_KEY, a verified sender, and SUPPORT_NOTIFICATION_EMAIL. Browser alerts are not background push notifications and will not arrive after the browser is closed.
