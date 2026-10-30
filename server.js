@@ -141,6 +141,11 @@ async function sendPasswordResetEmail(to, resetUrl) {
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
     name: String,
     email: String,
+    phone: String,
+    requestType: { type: String, enum: ['remote', 'onsite'], default: 'remote' },
+    area: String,
+    serviceType: String,
+    preferredDate: String,
     remoteId: String,
     remotePassword: String,
     issue: String,
@@ -502,9 +507,23 @@ app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearC
 
 app.post('/support', async (req, res) => {
     try {
-        const { name, email, remoteId, remotePassword, issue, requestType } = req.body;
+        const { name, email, phone, area, serviceType, preferredDate, details, remoteId, remotePassword, issue, requestType } = req.body;
         const isOnsiteEnquiry = requestType === 'onsite';
-        await new SupportRequest({ name, email: email ? email.toLowerCase().trim() : (req.session.userEmail || ''), remoteId, remotePassword, issue, status: 'Open' }).save();
+        const normalizedEmail = email ? String(email).toLowerCase().trim() : (req.session.userEmail || '');
+        const request = new SupportRequest({
+            name: String(name || '').trim(),
+            email: normalizedEmail,
+            phone: String(phone || '').trim(),
+            requestType: isOnsiteEnquiry ? 'onsite' : 'remote',
+            area: isOnsiteEnquiry ? String(area || '').trim() : '',
+            serviceType: isOnsiteEnquiry ? String(serviceType || '').trim() : '',
+            preferredDate: isOnsiteEnquiry ? String(preferredDate || '').trim() : '',
+            remoteId: String(remoteId || '').trim(),
+            remotePassword: String(remotePassword || ''),
+            issue: isOnsiteEnquiry ? String(details || issue || '').trim() : String(issue || '').trim(),
+            status: 'Open'
+        });
+        await request.save();
         if (isOnsiteEnquiry) return res.redirect('/onsite-support?sent=1');
         res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
     } catch (err) { res.status(500).send('Database sync error.'); }
