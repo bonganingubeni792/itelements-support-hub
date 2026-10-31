@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0d0d0d">
+    <meta name="theme-color" content="#d9dde3">
     <title>IT Elements - On-Demand Remote Support</title>
     <style>
         body { background-color:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',Tahoma,sans-serif; margin:0; padding:20px; text-align:center; }
@@ -59,7 +59,7 @@
         @media (max-width:560px) { body { padding:12px; } .feature-grid,.how-it-works { grid-template-columns:1fr; gap:12px; }.feature-card:last-child,.how-it-works .step-card:last-child { grid-column:auto; } .main-card,.incident-box { padding:26px 16px; }.onsite-promo { grid-template-columns:1fr; }.onsite-promo-link { justify-self:stretch; }.feedback-section { grid-template-columns:1fr; } }
     .brand-support{color:#fff!important}</style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
-    <link rel="stylesheet" href="/assets/theme.css?v=9">
+    <link rel="stylesheet" href="/assets/theme.css?v=11">
 </head>
 <body>
     <nav class="navbar" aria-label="Main navigation">
@@ -78,45 +78,54 @@
     </nav>
 
     <main class="container">
-        <section class="main-card home-hero">
-            <span class="hero-kicker">IT support for homes &amp; businesses</span>
-            <h1 style="margin-top:0;color:#fff;font-size:32px;">On-Demand Subscription IT Support</h1>
-            <p style="color:#888;font-size:15px;max-width:700px;margin:0 auto;line-height:1.6;">Choose a support plan, request remote help, or ask about an in-person visit. IT Elements supports customers across South Africa.</p>
-            <div class="hero-actions">
-                <a class="hero-button" href="/pricing">Explore support plans <span aria-hidden="true">→</span></a>
-                <a class="hero-button secondary" href="/support">Request technical help</a>
+        <section class="home-brand-hero" aria-labelledby="home-title">
+            <div class="home-hero-copy">
+                <span class="hero-kicker">IT support for homes &amp; businesses</span>
+                <h1 id="home-title">Computer giving you <em>problems?</em></h1>
+                <p>Get clear, practical IT support for your computer, software, or small-office network. Choose remote assistance, a support plan, or ask about an in-person visit.</p>
+                <div class="hero-actions">
+                    <a class="hero-button" href="/support">Get support now <span aria-hidden="true">→</span></a>
+                    <a class="hero-button secondary" href="/pricing">View support plans</a>
+                </div>
+                <div class="hero-proof"><span>✓ Remote support</span><span>✓ Yoco hosted checkout</span><span>✓ South African support</span></div>
             </div>
+            <div class="hero-device" aria-hidden="true"><div class="device-screen"><span class="screen-dots">● ● ●</span><div class="warning-symbol">!</div><strong>Need a hand?</strong><span>Support that starts with a clear next step.</span></div><div class="device-base"></div><div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div></div>
         </section>
         <div class="support-hours" role="note">🕒 Support hours: <strong>Monday to Friday, 08:00–17:00 South African time (SAST)</strong></div>
 
-        <section class="feature-grid" aria-label="Customer options">
-            <a href="/pricing" class="feature-card">
-                <span class="feature-icon" aria-hidden="true">✦</span>
-                <h2 class="feature-title">Subscription Plans</h2>
-                <p class="feature-desc">Choose a predictable flat monthly rate package built for your device network needs.</p>
-            </a>
-            <a href="/support" class="feature-card">
-                <span class="feature-icon" aria-hidden="true">⌘</span>
-                <h2 class="feature-title">Submit Support Ticket</h2>
-                <p class="feature-desc">Experiencing hardware slow downs or virus logs? Open a ticket and drop your remote connection key code.</p>
-            </a>
-            <a href="/client/login" class="feature-card">
-                <span class="feature-icon" aria-hidden="true">◉</span>
-                <h2 class="feature-title">Customer Access Hub</h2>
-                <p class="feature-desc">Secure portal area to self-diagnose system crashes and check active subscription billing profiles.</p>
-            </a>
+        <section class="home-showcase services-showcase" aria-labelledby="home-services-title">
+            <div class="showcase-heading"><span class="section-kicker">IT ELEMENTS SUPPORT</span><h2 id="home-services-title">Our IT support services</h2><p>Helpful options for home users and small businesses across South Africa.</p></div>
+            <div class="home-service-grid">
+                <article class="home-service"><span>▣</span><h3>Remote troubleshooting</h3><p>Get help with common computer, software, and performance issues.</p></article>
+                <article class="home-service"><span>⚙</span><h3>Software &amp; system help</h3><p>Ask about setup, configuration, updates, and everyday technical problems.</p></article>
+                <article class="home-service"><span>⌁</span><h3>Virus and malware support</h3><p>Request guidance when you suspect unwanted software or unusual device behaviour.</p></article>
+                <article class="home-service"><span>⌁</span><h3>Wi-Fi and networks</h3><p>Get help investigating connectivity and small-office network problems.</p></article>
+                <article class="home-service"><span>▤</span><h3>Printer &amp; device setup</h3><p>Help connecting printers, accessories, and everyday computer equipment.</p></article>
+                <article class="home-service"><span>⌂</span><h3>In-person visit enquiries</h3><p>Tell us your area and request an assessment for hands-on support.</p></article>
+            </div><a class="text-link" href="/services">Explore all services <span aria-hidden="true">→</span></a>
         </section>
 
-        <section class="how-it-works" aria-label="How IT Elements support works">
-            <article class="step-card"><span class="step-number">Step 1</span><h2>Choose how to get help</h2><p>Pick a support plan or send a one-time support request.</p></article>
-            <article class="step-card"><span class="step-number">Step 2</span><h2>Share the issue</h2><p>Tell us what is wrong. Share remote access details only when an engineer is ready to connect.</p></article>
-            <article class="step-card"><span class="step-number">Step 3</span><h2>Track your request</h2><p>Sign in to see your plan and follow the status of your support tickets.</p></article>
+        <section class="home-showcase plans-showcase" aria-labelledby="home-plans-title">
+            <div class="showcase-heading"><span class="section-kicker">SIMPLE 30-DAY PLANS</span><h2 id="home-plans-title">Flexible support plans</h2><p>Choose a plan that fits your needs. Plans are paid in advance and renewed manually.</p></div>
+            <div class="home-plan-grid">
+                <article class="home-plan"><span class="home-plan-name">Basic Support</span><p>For a single home-office setup.</p><strong>R299 <small>/ 30 days</small></strong><ul><li>2 support tickets per 30 days</li><li>Malware and virus cleanup support</li></ul><a href="/subscribe/basic">Get started <span>→</span></a></article>
+                <article class="home-plan featured-plan"><span class="home-plan-name">Standard Tier</span><p>For professionals who need dependable help.</p><strong>R599 <small>/ 30 days</small></strong><ul><li>Remote support access</li><li>4 business hour priority response target</li></ul><a href="/subscribe/standard">Get started <span>→</span></a></article>
+                <article class="home-plan"><span class="home-plan-name">Business Growth</span><p>For growing small-office networks.</p><strong>R2,499 <small>/ 30 days</small></strong><ul><li>Up to 10 devices</li><li>2 business hour priority response target</li></ul><a href="/subscribe/business">Get started <span>→</span></a></article>
+                <article class="home-plan"><span class="home-plan-name">Corporate SLA</span><p>For wider business device coverage.</p><strong>R4,999 <small>/ 30 days</small></strong><ul><li>Up to 25 devices</li><li>Priority support for your organization</li></ul><a href="/subscribe/corporate">Get started <span>→</span></a></article>
+            </div><p class="plans-footnote">Yoco securely processes your payment. Your plan is activated after payment confirmation.</p>
         </section>
 
-        <section class="onsite-promo" aria-labelledby="onsite-title">
-            <div><span class="step-number">On-site support</span><h2 id="onsite-title">When the problem needs hands-on attention</h2><p>Tell us where you are and what needs fixing. We’ll discuss whether an in-person visit is suitable and confirm availability and any call-out cost before you book.</p></div>
-            <a class="onsite-promo-link" href="/onsite-support">Explore on-site support →</a>
+        <section class="home-showcase portal-showcase" aria-labelledby="home-portal-title">
+            <div class="portal-copy"><span class="section-kicker">YOUR SUPPORT, IN ONE PLACE</span><h2 id="home-portal-title">A client portal that keeps you in the loop</h2><p>Sign in to follow ticket progress, read replies, check your plan status, and send a message about an existing request.</p><a class="hero-button" href="/client/login">Open client portal <span aria-hidden="true">→</span></a></div>
+            <div class="portal-preview" aria-hidden="true"><div class="preview-top"><span>IT ELEMENTS · CLIENT PORTAL</span><span class="preview-avatar">IE</span></div><div class="preview-welcome">Welcome to your support hub</div><div class="preview-stats"><div><small>OPEN TICKETS</small><b>Track updates</b></div><div><small>YOUR PLAN</small><b>View status</b></div><div><small>MESSAGES</small><b>Stay in touch</b></div></div><div class="preview-ticket"><span class="preview-status"></span><div><b>Support request</b><small>Follow the latest update</small></div><span class="preview-arrow">›</span></div></div>
         </section>
+
+        <section class="home-showcase trust-showcase" aria-labelledby="home-trust-title">
+            <div class="showcase-heading"><span class="section-kicker">WHY CHOOSE IT ELEMENTS?</span><h2 id="home-trust-title">Support designed to feel straightforward</h2><p>Clear options, secure payments, and a place to follow what happens next.</p></div>
+            <div class="trust-grid"><article><span>◷</span><h3>Clear support hours</h3><p>Monday to Friday, 08:00–17:00 SAST.</p></article><article><span>◎</span><h3>Secure checkout</h3><p>Card payments are completed on Yoco’s hosted checkout.</p></article><article><span>▤</span><h3>Flexible support</h3><p>Choose a 30-day plan or a one-time incident session.</p></article><article><span>⌂</span><h3>Remote or in-person</h3><p>Request remote help or enquire about a visit to your location.</p></article><article><span>◉</span><h3>Ticket updates</h3><p>Follow ticket status and messages through your client portal.</p></article><article><span>✓</span><h3>Clear next steps</h3><p>We’ll discuss visit availability and costs before confirming.</p></article></div>
+        </section>
+
+        <section class="onsite-promo" aria-labelledby="onsite-title"><div><span class="step-number">ON-SITE SUPPORT</span><h2 id="onsite-title">Some problems need hands-on attention.</h2><p>Tell us where you are and what needs fixing. We’ll review your area, availability, and any call-out costs before confirming a visit.</p></div><a class="onsite-promo-link" href="/onsite-support">Request an on-site assessment →</a></section>
 
         <section class="incident-box" aria-labelledby="incident-heading">
             <h2 id="incident-heading" style="margin-top:0;color:#fff;font-size:24px;">Need a Quick Incident Fix?</h2>
