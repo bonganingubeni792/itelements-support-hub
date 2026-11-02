@@ -4,6 +4,7 @@ const path = require('path');
 const session = require('express-session');
 const cors = require('cors');
 const crypto = require('crypto');
+const dns = require('dns').promises;
 const { randomUUID } = crypto;
 const fs = require('fs');
 const scryptAsync = require('util').promisify(crypto.scrypt);
@@ -38,18 +39,12 @@ const SLA_PLANS = {
     corporate: { name: 'Corporate SLA', amount: 499900 }
 };
 
-function paystackModeForSecret(secretKey) {
-    if (typeof secretKey !== 'string') return null;
-    if (secretKey.startsWith('sk_test_')) return 'test';
-    if (secretKey.startsWith('sk_live_')) return 'live';
-    return null;
-}
-
-function yocoModeForSecret(secretKey) {
-    if (typeof secretKey !== 'string') return null;
-    if (secretKey.startsWith('sk_test_')) return 'test';
-    if (secretKey.startsWith('sk_live_')) return 'live';
-    return null;
+function payfastConfig() {
+    const merchantId = String(process.env.PAYFAST_MERCHANT_ID || '').trim();
+    const merchantKey = String(process.env.PAYFAST_MERCHANT_KEY || '').trim();
+    const mode = String(process.env.PAYFAST_MODE || 'live').toLowerCase();
+    if (!merchantId || !merchantKey || !['live', 'test'].includes(mode)) return null;
+    return { merchantId, merchantKey, mode, endpoint: mode === 'test' ? 'https://sandbox.payfast.co.za/eng/process' : 'https://www.payfast.co.za/eng/process', validateUrl: mode === 'test' ? 'https://sandbox.payfast.co.za/eng/query/validate' : 'https://www.payfast.co.za/eng/query/validate' };
 }
 
 if (dbURI) {
@@ -71,36 +66,21 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     subscriptionExpiresAt: { type: Date, default: null }
 }, { collection: 'useraccounts' }));
 
-const PaystackPurchase = mongoose.model('PaystackPurchase', new mongoose.Schema({
-    reference: { type: String, required: true, unique: true },
-    userEmail: { type: String, default: '' },
+const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
+    paymentId: { type: String, required: true, unique: true },
+    userEmail: { type: String, default: '', lowercase: true, trim: true },
     purchaseType: { type: String, enum: ['plan', 'quickfix'], required: true },
     planId: { type: String, default: '' },
     planName: { type: String, default: '' },
     durationOption: { type: String, default: '' },
     amount: { type: Number, required: true },
-    mode: { type: String, enum: ['test', 'live'], default: 'test' },
-    status: { type: String, default: 'pending' },
+    mode: { type: String, enum: ['test', 'live'], default: 'live' },
+    status: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' },
+    pfPaymentId: { type: String, default: '' },
     paidAt: { type: Date, default: null },
     expiresAt: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
-}, { collection: 'paystackpurchases' }));
-
-const YocoPurchase = mongoose.model('YocoPurchase', new mongoose.Schema({
-    publicId: { type: String, required: true, unique: true },
-    checkoutId: { type: String, default: undefined, unique: true, sparse: true },
-    userEmail: { type: String, default: '' },
-    purchaseType: { type: String, enum: ['plan', 'quickfix'], required: true },
-    planId: { type: String, default: '' },
-    planName: { type: String, default: '' },
-    durationOption: { type: String, default: '' },
-    amount: { type: Number, required: true },
-    mode: { type: String, enum: ['test', 'live'], default: 'test' },
-    status: { type: String, default: 'pending' },
-    paidAt: { type: Date, default: null },
-    expiresAt: { type: Date, default: null },
-    createdAt: { type: Date, default: Date.now }
-}, { collection: 'yocopurchases' }));
+}, { collection: 'payfastpurchases' }));
 
 const PasswordReset = mongoose.model('PasswordReset', new mongoose.Schema({
     email: { type: String, required: true, index: true },
@@ -281,145 +261,69 @@ const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'customerreviews' }));
 
-const BusinessDocument = mongoose.model('BusinessDocument', new mongoose.Schema({
-    documentNumber: { type: String, required: true, unique: true },
-    type: { type: String, enum: ['Invoice', 'Quote'], required: true },
-    customerName: { type: String, required: true, maxlength: 100 },
-    customerEmail: { type: String, required: true, lowercase: true, trim: true, maxlength: 254 },
-    title: { type: String, required: true, maxlength: 140 },
-    description: { type: String, required: true, maxlength: 3000 },
-    amountCents: { type: Number, required: true, min: 1 },
-    dueDate: { type: Date, default: null },
-    status: { type: String, enum: ['Sent', 'Paid', 'Overdue', 'Cancelled', 'Accepted', 'Declined', 'Expired'], default: 'Sent' },
-    emailSent: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
-}, { collection: 'businessdocuments' }));
-
 app.use(cors());
 app.use((req, res, next) => {
     res.setHeader('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https://*.whatsapp.com; connect-src 'self'");
     next();
 });
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false, limit: '100kb', verify(req, res, buffer) { if (req.path === '/webhooks/payfast') req.payfastRawBody = Buffer.from(buffer); } }));
 
-async function verifyPaystackTransaction(reference) {
-    const secretKey = process.env.PAYSTACK_SECRET_KEY;
-    if (!paystackModeForSecret(secretKey)) throw new Error('Paystack secret key is not configured.');
-    const response = await fetch(`https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`, {
-        headers: { Authorization: `Bearer ${secretKey}`, Accept: 'application/json' }
-    });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok || !result.status || !result.data) throw new Error('Paystack could not verify this transaction.');
-    return result.data;
+function payfastEncode(value) {
+    return encodeURIComponent(String(value).trim())
+        .replace(/[!'()*]/g, character => '%' + character.charCodeAt(0).toString(16).toUpperCase())
+        .replace(/%[0-9a-f]{2}/gi, escape => escape.toUpperCase())
+        .replace(/%20/g, '+');
 }
 
-async function applyVerifiedPaystackPayment(reference, transaction) {
-    const purchase = await PaystackPurchase.findOne({ reference });
-    if (!purchase || purchase.status === 'paid') return purchase;
-    if (transaction.status !== 'success' || transaction.currency !== 'ZAR' || Number(transaction.amount) !== purchase.amount || transaction.reference !== purchase.reference) {
-        if (transaction.status && transaction.status !== 'success') {
-            await PaystackPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: { status: 'failed' } });
-        }
-        return purchase;
-    }
-
-    const paidAt = transaction.paid_at ? new Date(transaction.paid_at) : new Date();
-    const update = { status: 'paid', paidAt };
-    if (purchase.purchaseType === 'plan') {
-        const expiresAt = new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000);
-        update.expiresAt = expiresAt;
-        await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, { $set: {
-            subscriptionTier: purchase.planName,
-            subscriptionStatus: 'Active',
-            subscriptionPaidAt: paidAt,
-            subscriptionExpiresAt: expiresAt
-        } });
-    }
-    const result = await PaystackPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: update });
-    if (purchase.purchaseType === 'plan' && result.modifiedCount) {
-        await sendCustomerEmail(purchase.userEmail, 'Your IT Elements plan payment is confirmed', [
-            `Paystack confirmed your payment for ${purchase.planName}.`,
-            `Your 30-day support plan is active until ${update.expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
-            'Sign in to your IT Elements dashboard to view your plan and request support.'
-        ]);
-    }
-    return purchase;
+function payfastSignature(fields, passphrase = '') {
+    const pairs = Object.entries(fields)
+        .filter(([key, value]) => key !== 'signature' && value !== undefined && value !== null && String(value).trim() !== '')
+        .map(([key, value]) => `${key}=${payfastEncode(value)}`);
+    if (passphrase) pairs.push(`passphrase=${payfastEncode(passphrase)}`);
+    return crypto.createHash('md5').update(pairs.join('&')).digest('hex');
 }
 
-// Paystack signs the exact request body with the account's secret API key.
-// Verify the HMAC before accepting a charge.success event.
-app.post('/webhooks/paystack', express.raw({ type: 'application/json', limit: '100kb' }), async (req, res) => {
-    const secretKey = process.env.PAYSTACK_SECRET_KEY;
-    if (!paystackModeForSecret(secretKey)) return res.status(503).send('Paystack secret key is not configured.');
-    try {
-        const signature = req.get('x-paystack-signature') || '';
-        const expected = crypto.createHmac('sha512', secretKey).update(req.body).digest('hex');
-        const suppliedBuffer = Buffer.from(signature, 'hex');
-        const expectedBuffer = Buffer.from(expected, 'hex');
-        if (suppliedBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(suppliedBuffer, expectedBuffer)) {
-            return res.status(401).send('Invalid webhook signature.');
-        }
-        const event = JSON.parse(req.body.toString('utf8'));
-        if (event.event !== 'charge.success' || !event.data || !event.data.reference) return res.sendStatus(200);
-        const verified = await verifyPaystackTransaction(String(event.data.reference));
-        await applyVerifiedPaystackPayment(String(event.data.reference), verified);
-        return res.sendStatus(200);
-    } catch (err) {
-        console.error('Paystack webhook error:', err.message);
-        return res.sendStatus(500);
-    }
-});
-
-function verifyYocoWebhook(req) {
-    const secret = process.env.YOCO_WEBHOOK_SECRET || '';
-    if (!secret.startsWith('whsec_')) return false;
-    const id = req.get('webhook-id') || '';
-    const timestamp = req.get('webhook-timestamp') || '';
-    const signatures = req.get('webhook-signature') || '';
-    const timestampNumber = Number(timestamp);
-    if (!id || !timestamp || !signatures || !Number.isFinite(timestampNumber)) return false;
-    const timestampMs = timestampNumber > 1e12 ? timestampNumber : timestampNumber * 1000;
-    if (Math.abs(Date.now() - timestampMs) > 3 * 60 * 1000) return false;
-    let secretBytes;
-    try { secretBytes = Buffer.from(secret.slice('whsec_'.length), 'base64'); } catch { return false; }
-    if (!secretBytes.length) return false;
-    const signedContent = `${id}.${timestamp}.${req.body.toString('utf8')}`;
-    const expected = crypto.createHmac('sha256', secretBytes).update(signedContent).digest();
-    return signatures.split(/\s+/).some(entry => {
-        const value = entry.replace(/^v\d+,/, '');
-        let supplied;
-        try { supplied = Buffer.from(value, 'base64'); } catch { return false; }
-        return supplied.length === expected.length && crypto.timingSafeEqual(supplied, expected);
-    });
+function safeSignatureEqual(provided, expected) {
+    const left = Buffer.from(String(provided || '').toLowerCase(), 'hex');
+    const right = Buffer.from(String(expected || '').toLowerCase(), 'hex');
+    return left.length === right.length && left.length > 0 && crypto.timingSafeEqual(left, right);
 }
 
-async function applyVerifiedYocoPayment(event) {
-    const payment = event && event.payload;
-    const checkoutId = payment && payment.metadata && String(payment.metadata.checkoutId || '');
-    if (!checkoutId) return null;
-    const purchase = await YocoPurchase.findOne({ checkoutId });
-    if (!purchase || purchase.status === 'paid') return purchase;
-    if (event.type !== 'payment.succeeded' || payment.status !== 'succeeded' || payment.currency !== 'ZAR' || Number(payment.amount) !== purchase.amount || payment.mode !== yocoModeForSecret(process.env.YOCO_SECRET_KEY)) {
-        if (event.type === 'payment.failed') await YocoPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: { status: 'failed' } });
-        return purchase;
+async function payfastSourceIsValid(ip) {
+    const normalizedIp = String(ip || '').replace(/^::ffff:/, '');
+    const hosts = ['www.payfast.co.za', 'w1w.payfast.co.za', 'w2w.payfast.co.za'];
+    if (payfastConfig()?.mode === 'test') hosts.push('sandbox.payfast.co.za');
+    for (const host of hosts) {
+        try {
+            const addresses = await dns.lookup(host, { all: true });
+            if (addresses.some(address => address.address.replace(/^::ffff:/, '') === normalizedIp)) return true;
+        } catch (_) { /* try the remaining PayFast addresses */ }
     }
-    const paidAt = payment.createdDate ? new Date(payment.createdDate) : new Date();
-    const update = { status: 'paid', paidAt };
+    return false;
+}
+
+async function markPayFastPurchasePaid(fields) {
+    const config = payfastConfig();
+    const purchase = await PayFastPurchase.findOne({ paymentId: String(fields.m_payment_id || '') });
+    if (!config || !purchase || purchase.status === 'paid' || purchase.mode !== config.mode) return purchase;
+    const paidAmount = Math.round(Number(fields.amount_gross) * 100);
+    if (fields.payment_status !== 'COMPLETE' || String(fields.merchant_id) !== config.merchantId || paidAmount !== purchase.amount) return purchase;
+
+    const paidAt = new Date();
+    const update = { status: 'paid', paidAt, pfPaymentId: String(fields.pf_payment_id || '') };
     if (purchase.purchaseType === 'plan') {
         update.expiresAt = new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000);
-    }
-    const result = await YocoPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: update });
-    if (!result.modifiedCount) return purchase;
-    if (purchase.purchaseType === 'plan') {
         await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, { $set: {
             subscriptionTier: purchase.planName,
             subscriptionStatus: 'Active',
             subscriptionPaidAt: paidAt,
             subscriptionExpiresAt: update.expiresAt
         } });
+    }
+    const saved = await PayFastPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: update });
+    if (purchase.purchaseType === 'plan' && saved.modifiedCount) {
         await sendCustomerEmail(purchase.userEmail, 'Your IT Elements plan payment is confirmed', [
-            `Yoco confirmed your payment for ${purchase.planName}.`,
+            `PayFast confirmed your payment for ${purchase.planName}.`,
             `Your 30-day support plan is active until ${update.expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
             'Sign in to your IT Elements dashboard to view your plan and request support.'
         ]);
@@ -427,15 +331,33 @@ async function applyVerifiedYocoPayment(event) {
     return purchase;
 }
 
-app.post('/webhooks/yoco', express.raw({ type: 'application/json', limit: '100kb' }), async (req, res) => {
-    if (!yocoModeForSecret(process.env.YOCO_SECRET_KEY) || !verifyYocoWebhook(req)) return res.status(401).send('Invalid Yoco webhook signature or configuration.');
+app.post('/webhooks/payfast', async (req, res) => {
+    const config = payfastConfig();
+    if (!config) return res.status(503).send('PayFast merchant settings are not configured.');
     try {
-        const event = JSON.parse(req.body.toString('utf8'));
-        if (!['payment.succeeded', 'payment.failed'].includes(event.type)) return res.sendStatus(200);
-        await applyVerifiedYocoPayment(event);
+        const raw = Buffer.isBuffer(req.payfastRawBody) ? req.payfastRawBody.toString('utf8') : '';
+        const pairs = raw.split('&').filter(Boolean).map(part => {
+            const separator = part.indexOf('=');
+            const decode = value => decodeURIComponent(String(value || '').replace(/\+/g, ' '));
+            return [decode(separator < 0 ? part : part.slice(0, separator)), decode(separator < 0 ? '' : part.slice(separator + 1))];
+        });
+        const fields = Object.fromEntries(pairs);
+        if (!fields.signature || !safeSignatureEqual(fields.signature, payfastSignature(Object.fromEntries(pairs), process.env.PAYFAST_PASSPHRASE || ''))) return res.status(401).send('Invalid PayFast signature.');
+        if (String(fields.merchant_id || '') !== config.merchantId) return res.status(400).send('Merchant ID mismatch.');
+        if (process.env.PAYFAST_VERIFY_SOURCE !== 'false' && !(await payfastSourceIsValid(req.ip))) return res.status(403).send('Unrecognized PayFast source address.');
+
+        const validationResponse = await fetch(config.validateUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: raw,
+            signal: AbortSignal.timeout(10000)
+        });
+        const validation = (await validationResponse.text()).trim();
+        if (!validationResponse.ok || validation !== 'VALID') return res.status(400).send('PayFast notification could not be validated.');
+        await markPayFastPurchasePaid(fields);
         return res.sendStatus(200);
-    } catch (err) {
-        console.error('Yoco webhook error:', err.message);
+    } catch (error) {
+        console.error('PayFast notification error:', error.message);
         return res.sendStatus(500);
     }
 });
@@ -473,7 +395,6 @@ app.use(express.static(viewsPath, { index: false }));
 app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => res.sendFile(path.join(viewsPath, 'index.html')));
-app.get('/business-tools', (req, res) => res.sendFile(path.join(viewsPath, 'business-tools.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(viewsPath, 'pricing.html')));
 app.get('/services', (req, res) => res.sendFile(path.join(viewsPath, 'services.html')));
 app.get('/onsite-support', (req, res) => res.sendFile(path.join(viewsPath, 'onsite-support.html')));
@@ -496,155 +417,56 @@ app.get('/register', (req, res) => res.sendFile(path.join(viewsPath, 'register.h
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
 
-async function createPaystackCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
-    const secretKey = process.env.PAYSTACK_SECRET_KEY;
-    if (!paystackModeForSecret(secretKey)) throw Object.assign(new Error('Add a valid Paystack live or test secret key to the server environment.'), { statusCode: 503 });
-    const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
-    const reference = `ite-${randomUUID()}`;
-    const mode = paystackModeForSecret(process.env.PAYSTACK_SECRET_KEY);
-    if (!mode) throw Object.assign(new Error('Paystack is not configured with a valid secret key.'), { statusCode: 503 });
-    const purchase = await PaystackPurchase.create({ reference, userEmail: email, purchaseType, planId, planName, durationOption, amount, mode });
-    try {
-        const response = await fetch('https://api.paystack.co/transaction/initialize', {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json', Accept: 'application/json' },
-            body: JSON.stringify({
-                email,
-                amount: String(amount),
-                currency: 'ZAR',
-                reference,
-                callback_url: `${publicBaseUrl}/payment/paystack/callback`,
-                metadata: { purchaseType, planId, durationOption }
-            })
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok || !result.status || !result.data || typeof result.data.authorization_url !== 'string' || !result.data.authorization_url.startsWith('https://')) {
-            console.error('Paystack initialize error:', response.status, result.message || 'No authorization URL returned');
-            await PaystackPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: { status: 'failed' } });
-            throw Object.assign(new Error(result.message || 'Paystack could not start checkout. Check the server logs.'), { statusCode: 502 });
-        }
-        return result.data.authorization_url;
-    } catch (err) {
-        if (purchase.status === 'pending') await PaystackPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: { status: 'failed' } }).catch(() => {});
-        throw err;
-    }
+async function createPayFastCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
+    const config = payfastConfig();
+    if (!config) throw Object.assign(new Error('Add PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY in the server environment.'), { statusCode: 503 });
+    const publicBaseUrl = String(process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
+    if (!publicBaseUrl.startsWith('https://')) throw Object.assign(new Error('Set PUBLIC_BASE_URL to your deployed HTTPS website address.'), { statusCode: 503 });
+    const paymentId = `ite-${randomUUID()}`;
+    const purchase = await PayFastPurchase.create({ paymentId, userEmail: email, purchaseType, planId, planName, durationOption, amount, mode: config.mode });
+    const returnPath = purchaseType === 'plan' ? '/dashboard' : '/';
+    const fields = {
+        merchant_id: config.merchantId,
+        merchant_key: config.merchantKey,
+        return_url: `${publicBaseUrl}${returnPath}?payment=returned&${purchaseType === 'plan' ? 'payfastId' : 'paymentId'}=${encodeURIComponent(paymentId)}`,
+        cancel_url: `${publicBaseUrl}${returnPath}?payment=cancelled`,
+        notify_url: `${publicBaseUrl}/webhooks/payfast`,
+        email_address: email,
+        m_payment_id: paymentId,
+        amount: (amount / 100).toFixed(2),
+        item_name: purchaseType === 'plan' ? `IT Elements ${planName} 30-day support plan` : `IT Elements ${QUICK_FIX_OPTIONS[durationOption]?.label || 'remote support session'}`,
+        item_description: purchaseType === 'plan' ? 'One-time payment for 30 days of support; renew manually.' : 'One-time remote support session.'
+    };
+    fields.signature = payfastSignature(fields, process.env.PAYFAST_PASSPHRASE || '');
+    return { action: config.endpoint, fields, paymentId };
 }
 
-async function createYocoCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
-    const secretKey = process.env.YOCO_SECRET_KEY;
-    if (!yocoModeForSecret(secretKey)) throw Object.assign(new Error('Add a valid Yoco secret key in the server environment.'), { statusCode: 503 });
-    const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
-    const mode = yocoModeForSecret(process.env.YOCO_SECRET_KEY);
-    if (!mode) throw Object.assign(new Error('Yoco is not configured with a valid secret key.'), { statusCode: 503 });
-    const purchase = await YocoPurchase.create({ publicId: randomUUID(), userEmail: email, purchaseType, planId, planName, durationOption, amount, mode });
-    const returnUrl = purchaseType === 'plan'
-        ? `${publicBaseUrl}/dashboard?payment=yoco-returned&purchase=${encodeURIComponent(purchase.publicId)}`
-        : `${publicBaseUrl}/?payment=yoco-returned&purchase=${encodeURIComponent(purchase.publicId)}`;
-    try {
-        const response = await fetch('https://payments.yoco.com/api/checkouts', {
-            method: 'POST',
-            headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json', Accept: 'application/json', 'Idempotency-Key': purchase.publicId },
-            body: JSON.stringify({
-                amount,
-                currency: 'ZAR',
-                successUrl: returnUrl,
-                cancelUrl: `${returnUrl}&result=cancelled`,
-                failureUrl: `${returnUrl}&result=failed`,
-                clientReferenceId: purchase.publicId,
-                metadata: { purchaseId: purchase.publicId, purchaseType, planId, durationOption }
-            })
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok || !result.id || !result.redirectUrl || !result.redirectUrl.startsWith('https://') || Number(result.amount) !== amount || result.currency !== 'ZAR' || result.processingMode !== yocoModeForSecret(secretKey)) {
-            console.error('Yoco checkout error:', response.status, result.message || 'Invalid checkout response');
-            await YocoPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: { status: 'failed' } });
-            throw Object.assign(new Error('Yoco could not start checkout. Check the server logs.'), { statusCode: 502 });
-        }
-        await YocoPurchase.updateOne({ _id: purchase._id }, { $set: { checkoutId: result.id } });
-        return result.redirectUrl;
-    } catch (err) {
-        if (purchase.status === 'pending') await YocoPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: { status: 'failed' } }).catch(() => {});
-        throw err;
-    }
-}
-
-app.post('/api/payment/yoco-quickfix', async (req, res) => {
-    const durationOption = String(req.body.durationOption || '');
-    const quickFix = QUICK_FIX_OPTIONS[durationOption];
-    const email = String(req.body.email || '').trim().toLowerCase();
-    if (!quickFix) return res.status(400).json({ success: false, message: 'Choose one of the available quick-fix sessions.' });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Enter a valid email address for your receipt.' });
-    try { return res.json({ success: true, redirectUrl: await createYocoCheckout({ email, amount: quickFix.amount, purchaseType: 'quickfix', durationOption }) }); }
-    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.statusCode === 503 ? err.message : 'Could not start Yoco checkout. Please try again.' }); }
-});
-
-app.post('/api/payment/yoco-plan-checkout', checkUserAuth, async (req, res) => {
-    const userEmail = String(req.session.userEmail || '').toLowerCase();
-    const planId = String(req.body.planId || '');
-    const plan = SLA_PLANS[planId];
-    if (!userEmail) return res.status(403).json({ success: false, message: 'Sign in with a customer account before choosing a plan.' });
-    if (!plan) return res.status(400).json({ success: false, message: 'Choose one of the available support plans.' });
-    try { return res.json({ success: true, redirectUrl: await createYocoCheckout({ email: userEmail, amount: plan.amount, purchaseType: 'plan', planId, planName: plan.name }) }); }
-    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.statusCode === 503 ? err.message : 'Could not start Yoco checkout. Please try again.' }); }
-});
-
-app.get('/api/payment/yoco-status', async (req, res) => {
-    const publicId = String(req.query.purchase || '');
-    if (!/^[a-f0-9-]{36}$/i.test(publicId)) return res.status(400).json({ success: false });
-    const purchase = await YocoPurchase.findOne({ publicId }, { userEmail: 0, __v: 0 });
-    if (!purchase) return res.status(404).json({ success: false });
-    res.json({ success: true, checkout: purchase });
-});
-
-app.post('/api/payment/paystack-quickfix', async (req, res) => {
+app.post('/api/payment/payfast-quickfix', async (req, res) => {
     const durationOption = String(req.body.durationOption || '');
     const quickFix = QUICK_FIX_OPTIONS[durationOption];
     const email = String(req.body.email || '').trim().toLowerCase();
     if (!quickFix) return res.status(400).json({ success: false, message: 'Choose one of the available quick-fix sessions.' });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Enter a valid email address for your payment receipt.' });
-    try {
-        const redirectUrl = await createPaystackCheckout({ email, amount: quickFix.amount, purchaseType: 'quickfix', durationOption });
-        return res.json({ success: true, redirectUrl });
-    } catch (err) {
-        return res.status(err.statusCode || 502).json({ success: false, message: err.statusCode === 503 ? err.message : 'Could not start Paystack checkout. Please try again.' });
-    }
+    try { return res.json({ success: true, ...(await createPayFastCheckout({ email, amount: quickFix.amount, purchaseType: 'quickfix', durationOption })) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout. Please try again.' }); }
 });
 
-// Plans are one-time 30-day purchases. Prices and account email are determined
-// on the server, not by values supplied by the browser.
-app.post('/api/payment/paystack-plan-checkout', checkUserAuth, async (req, res) => {
+app.post('/api/payment/payfast-plan-checkout', checkUserAuth, async (req, res) => {
     const userEmail = String(req.session.userEmail || '').toLowerCase();
     const planId = String(req.body.planId || '');
     const plan = SLA_PLANS[planId];
     if (!userEmail) return res.status(403).json({ success: false, message: 'Sign in with a customer account before choosing a plan.' });
     if (!plan) return res.status(400).json({ success: false, message: 'Choose one of the available support plans.' });
-    try {
-        const redirectUrl = await createPaystackCheckout({ email: userEmail, amount: plan.amount, purchaseType: 'plan', planId, planName: plan.name });
-        return res.json({ success: true, redirectUrl });
-    } catch (err) {
-        return res.status(err.statusCode || 502).json({ success: false, message: err.statusCode === 503 ? err.message : 'Could not start Paystack checkout. Please try again.' });
-    }
+    try { return res.json({ success: true, ...(await createPayFastCheckout({ email: userEmail, amount: plan.amount, purchaseType: 'plan', planId, planName: plan.name })) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout. Please try again.' }); }
 });
 
-app.get('/payment/paystack/callback', async (req, res) => {
-    const reference = String(req.query.reference || '');
-    if (!reference || reference.length > 100) return res.redirect('/?payment=failed');
-    try {
-        const purchase = await PaystackPurchase.findOne({ reference });
-        if (!purchase) return res.redirect('/?payment=failed');
-        const transaction = await verifyPaystackTransaction(reference);
-        await applyVerifiedPaystackPayment(reference, transaction);
-        const updated = await PaystackPurchase.findOne({ reference });
-        if (purchase.purchaseType === 'plan') {
-            return res.redirect(`/dashboard?payment=returned&ref=${encodeURIComponent(reference)}${updated.status === 'paid' ? '&result=success' : ''}`);
-        }
-        return res.redirect(`/?payment=${updated.status === 'paid' ? 'success' : updated.status === 'failed' ? 'failed' : 'returned'}`);
-    } catch (err) {
-        console.error('Paystack callback verification error:', err.message);
-        const purchase = await PaystackPurchase.findOne({ reference });
-        if (purchase && purchase.purchaseType === 'plan') return res.redirect(`/dashboard?payment=returned&ref=${encodeURIComponent(reference)}`);
-        return res.redirect('/?payment=returned');
-    }
+app.get('/api/payment/payfast-status', async (req, res) => {
+    const paymentId = String(req.query.paymentId || '');
+    if (!/^ite-[a-f0-9-]{36}$/i.test(paymentId)) return res.status(400).json({ success: false });
+    const purchase = await PayFastPurchase.findOne({ paymentId }, { userEmail: 0, __v: 0 });
+    if (!purchase) return res.status(404).json({ success: false });
+    res.json({ success: true, checkout: purchase });
 });
 
 app.post('/client/register', async (req, res) => {
@@ -846,46 +668,11 @@ app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
             await UserAccount.updateOne({ _id: user._id }, { $set: { subscriptionStatus: 'Expired' } });
         }
         const tickets = await SupportRequest.find({ email: req.session.userEmail }, { remotePassword: 0 }).sort({ date: -1 });
-        const checkout = req.query.reference
-            ? await PaystackPurchase.findOne({ reference: String(req.query.reference), userEmail: req.session.userEmail }, { userEmail: 0, __v: 0 })
-            : req.query.purchase
-                ? await YocoPurchase.findOne({ publicId: String(req.query.purchase), userEmail: req.session.userEmail }, { userEmail: 0, __v: 0 })
-                : null;
+        const checkout = req.query.payfastId
+            ? await PayFastPurchase.findOne({ paymentId: String(req.query.payfastId), userEmail: req.session.userEmail }, { userEmail: 0, __v: 0 })
+            : null;
         res.json({ user, tickets, checkout });
     } catch (err) { res.status(500).json({ error: true }); }
-});
-
-app.get('/api/client/business-documents', checkUserAuth, async (req, res) => {
-    try {
-        const documents = await BusinessDocument.find({ customerEmail: String(req.session.userEmail || '').toLowerCase() }).sort({ createdAt: -1 }).lean();
-        res.json(documents.map(({ __v, ...document }) => document));
-    } catch (err) {
-        console.error('Client invoice list error:', err.message);
-        res.status(500).json({ message: 'Could not load your quotes and invoices.' });
-    }
-});
-
-app.post('/api/client/business-documents/:documentId/respond', checkUserAuth, async (req, res) => {
-    const { response } = req.body || {};
-    if (!mongoose.isValidObjectId(req.params.documentId) || !['Accepted', 'Declined'].includes(response)) {
-        return res.status(400).json({ success: false, message: 'Choose accept or decline for a valid quote.' });
-    }
-    try {
-        const document = await BusinessDocument.findOneAndUpdate(
-            { _id: req.params.documentId, customerEmail: String(req.session.userEmail || '').toLowerCase(), type: 'Quote', status: 'Sent' },
-            { $set: { status: response, updatedAt: new Date() } },
-            { new: true }
-        ).lean();
-        if (!document) return res.status(404).json({ success: false, message: 'This quote is no longer awaiting your response.' });
-        await sendCustomerEmail(process.env.SUPPORT_NOTIFICATION_EMAIL || 'bongani@itelements.co.za', `Quote ${document.documentNumber} ${response.toLowerCase()}`, [
-            `${document.customerName} (${document.customerEmail}) ${response.toLowerCase()} quote ${document.documentNumber}.`,
-            `Quote: ${document.title} · R ${(document.amountCents / 100).toFixed(2)}`
-        ]);
-        res.json({ success: true });
-    } catch (err) {
-        console.error('Quote response error:', err.message);
-        res.status(500).json({ success: false, message: 'Could not save your quote response.' });
-    }
 });
 
 app.post('/api/client/tickets/:ticketId/messages', checkUserAuth, async (req, res) => {
@@ -1025,78 +812,6 @@ app.post('/api/reviews', async (req, res) => {
     } catch (err) { res.status(500).json({ success: false, message: 'Could not save your feedback. Please try again.' }); }
 });
 
-app.get('/api/admin/business-documents', checkAdminAuth, async (req, res) => {
-    try {
-        const documents = await BusinessDocument.find().sort({ createdAt: -1 }).limit(300).lean();
-        res.json(documents.map(({ __v, ...document }) => document));
-    } catch (err) {
-        console.error('Admin invoice list error:', err.message);
-        res.status(500).json({ message: 'Could not load quotes and invoices.' });
-    }
-});
-
-app.post('/api/admin/business-documents', checkAdminAuth, async (req, res) => {
-    const type = req.body.type === 'Quote' ? 'Quote' : req.body.type === 'Invoice' ? 'Invoice' : '';
-    const customerEmail = String(req.body.customerEmail || '').trim().toLowerCase();
-    const title = String(req.body.title || '').trim();
-    const description = String(req.body.description || '').trim();
-    const amount = Number(req.body.amount);
-    const dueDateValue = String(req.body.dueDate || '').trim();
-    if (!type || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) || title.length < 2 || title.length > 140 || description.length < 2 || description.length > 3000 || !Number.isFinite(amount) || amount <= 0 || amount > 10000000) {
-        return res.status(400).json({ success: false, message: 'Enter a valid customer email, title, description, and amount up to R10,000,000.' });
-    }
-    let dueDate = null;
-    if (dueDateValue) {
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDateValue) || Number.isNaN(Date.parse(`${dueDateValue}T12:00:00Z`))) return res.status(400).json({ success: false, message: 'Enter a valid due date.' });
-        dueDate = new Date(`${dueDateValue}T12:00:00Z`);
-    }
-    try {
-        const customer = await UserAccount.findOne({ email: customerEmail }, { password: 0 }).lean();
-        if (!customer) return res.status(404).json({ success: false, message: 'No registered customer account uses that email address.' });
-        const documentNumber = `ITE-${new Date().getFullYear()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
-        const document = await BusinessDocument.create({
-            documentNumber, type, customerName: customer.fullName, customerEmail,
-            title, description, amountCents: Math.round(amount * 100), dueDate, status: 'Sent'
-        });
-        const emailSent = await sendCustomerEmail(customerEmail, `IT Elements ${type.toLowerCase()} ${documentNumber}`, [
-            `Hello ${customer.fullName},`,
-            `A new ${type.toLowerCase()} is available in your IT Elements client portal.`,
-            `${documentNumber} · ${title} · R ${(document.amountCents / 100).toFixed(2)}${dueDate ? ` · Due ${dueDate.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}` : ''}`,
-            description,
-            'Sign in at https://www.itelements.help/client/login to review it.'
-        ]);
-        document.emailSent = emailSent;
-        await document.save();
-        res.status(201).json({ success: true, emailSent, document: document.toObject() });
-    } catch (err) {
-        console.error('Admin document creation error:', err.message);
-        res.status(500).json({ success: false, message: 'Could not create this quote or invoice.' });
-    }
-});
-
-app.post('/api/admin/business-documents/:documentId/status', checkAdminAuth, async (req, res) => {
-    const nextStatus = String(req.body.status || '');
-    if (!mongoose.isValidObjectId(req.params.documentId)) return res.status(400).json({ success: false, message: 'Invalid document.' });
-    try {
-        const document = await BusinessDocument.findById(req.params.documentId);
-        if (!document) return res.status(404).json({ success: false, message: 'Document not found.' });
-        const allowed = document.type === 'Invoice' ? ['Sent', 'Paid', 'Overdue', 'Cancelled'] : ['Sent', 'Accepted', 'Declined', 'Expired', 'Cancelled'];
-        if (!allowed.includes(nextStatus)) return res.status(400).json({ success: false, message: 'That status does not apply to this document.' });
-        document.status = nextStatus;
-        document.updatedAt = new Date();
-        await document.save();
-        await sendCustomerEmail(document.customerEmail, `${document.type} ${document.documentNumber} updated`, [
-            `${document.type} ${document.documentNumber} is now marked ${nextStatus.toLowerCase()}.`,
-            `${document.title} · R ${(document.amountCents / 100).toFixed(2)}`,
-            'Sign in to your IT Elements client portal to review the latest status.'
-        ]);
-        res.json({ success: true });
-    } catch (err) {
-        console.error('Admin document status update error:', err.message);
-        res.status(500).json({ success: false, message: 'Could not update this document.' });
-    }
-});
-
 app.get('/api/admin/reviews', checkAdminAuth, async (req, res) => {
     try { res.json(await CustomerReview.find().sort({ date: -1 }).lean()); }
     catch (err) { res.status(500).json({ error: true, message: 'Could not load customer feedback.' }); }
@@ -1137,14 +852,10 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
             { subscriptionStatus: 'Active', subscriptionExpiresAt: { $lte: now } },
             { $set: { subscriptionStatus: 'Expired' } }
         );
-        const [users, tickets, paystackRevenueRows, yocoRevenueRows] = await Promise.all([
+        const [users, tickets, payfastRevenueRows] = await Promise.all([
             UserAccount.find({}, { password: 0 }).sort({ fullName: 1 }).lean(),
             SupportRequest.find({}, { remotePassword: 0 }).lean(),
-            PaystackPurchase.aggregate([
-                { $match: { status: 'paid', mode: 'live', purchaseType: 'plan' } },
-                { $group: { _id: null, cents: { $sum: '$amount' }, count: { $sum: 1 } } }
-            ]),
-            YocoPurchase.aggregate([
+            PayFastPurchase.aggregate([
                 { $match: { status: 'paid', mode: 'live', purchaseType: 'plan' } },
                 { $group: { _id: null, cents: { $sum: '$amount' }, count: { $sum: 1 } } }
             ])
@@ -1152,8 +863,8 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
         const activeSubscribers = users.filter(user => user.subscriptionStatus === 'Active');
         const inactiveUsers = users.filter(user => user.subscriptionStatus !== 'Active');
         const activeTickets = tickets.filter(ticket => !['Resolved', 'Completed'].includes(ticket.status)).length;
-        const confirmedPlanRevenue = ((paystackRevenueRows[0]?.cents || 0) + (yocoRevenueRows[0]?.cents || 0)) / 100;
-        const confirmedPaymentCount = (paystackRevenueRows[0]?.count || 0) + (yocoRevenueRows[0]?.count || 0);
+        const confirmedPlanRevenue = (payfastRevenueRows[0]?.cents || 0) / 100;
+        const confirmedPaymentCount = payfastRevenueRows[0]?.count || 0;
         res.json({
             users,
             activeSubscribers,

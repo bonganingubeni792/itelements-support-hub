@@ -1,49 +1,11 @@
-IT ELEMENTS WEBSITE — PAYMENT UPDATE AND RENDER GUIDE
+IT Elements Support Hub — PayFast deployment
 
-WHAT THIS UPDATE DOES
----------------------
-Customers can pay for quick-fix sessions and 30-day plans through either Yoco or Paystack hosted checkout. The server keeps each provider's secret key private and only records a payment as paid after provider verification. Plan purchases activate for 30 days after confirmation. Renewals remain manual.
+1. Extract this ZIP to a new folder.
+2. Upload the contents inside the extracted folder to the ROOT of your GitHub repository (the folder that contains server.js and package.json). Do not upload the outer wrapper folder as an extra nested level.
+3. Commit the files and deploy the latest commit on Render.
+4. In Render > your web service > Environment, add PAYFAST_MERCHANT_ID, PAYFAST_MERCHANT_KEY, and PAYFAST_MODE. Set PAYFAST_MODE=test with sandbox credentials before test payments; set it to live only when ready to charge real customers. Add PAYFAST_PASSPHRASE only if configured in your PayFast account.
+5. Keep existing MONGODB_URI, SESSION_SECRET, ADMIN_PASSWORD, PUBLIC_BASE_URL, and email variables. Remove the old PAYSTACK_SECRET_KEY, YOCO_SECRET_KEY, and YOCO_WEBHOOK_SECRET after this version is deployed.
+6. Use https://www.itelements.help as PUBLIC_BASE_URL. PayFast ITN endpoint: https://www.itelements.help/webhooks/payfast.
+7. Do not paste merchant secrets into GitHub, HTML, or chat. A merchant key was visible in a screenshot shared in this conversation; regenerate it before live use and set the new value in Render.
 
-The homepage offers six remote session choices: 30 minutes R200, 1 hour R350, 2 hours R700, 3 hours R1,050, 4 hours R1,400, and 5 hours R1,750. Each session card describes what the time is intended for. Both Yoco and Paystack remain available.
-
-1. DOWNLOAD AND UPLOAD THE WEBSITE PACKAGE
--------------------------------------------
-Extract this ZIP. Upload the files and folders inside it to the ROOT of the existing GitHub repository, replacing the matching files. Keep views and public as folders. Do not upload a real .env file or any provider secret to GitHub.
-
-2. SET RENDER ENVIRONMENT VARIABLES
------------------------------------
-Open Render > your web service > Environment. Keep your existing MONGODB_URI, SESSION_SECRET, ADMIN_PASSWORD, Resend variables, and PUBLIC_BASE_URL. Set or add these three variables:
-
-PAYSTACK_SECRET_KEY = your Paystack LIVE Secret Key (starts with sk_live_)
-YOCO_SECRET_KEY = your Yoco LIVE Secret Key (starts with sk_live_)
-YOCO_WEBHOOK_SECRET = the secret generated when you registered the Yoco LIVE webhook (starts with whsec_)
-
-The Yoco public key (pk_live_...) is not needed for this server-hosted checkout. Do not paste any key into a webpage or send it in chat. Paystack does not require a separate webhook secret: it signs events using PAYSTACK_SECRET_KEY.
-
-If you only want to test before taking real payments, use each provider's TEST secret key (starts with sk_test_) and configure test-mode webhooks. Do not use a live key for test card transactions: live checkouts can charge real money.
-
-3. CONFIGURE PAYSTACK LIVE WEBHOOK
-----------------------------------
-In Paystack Dashboard, switch to LIVE mode, open Settings > API Keys & Webhooks, and set the Live Webhook URL to:
-https://www.itelements.help/webhooks/paystack
-
-Save it. Use the live Paystack secret key in PAYSTACK_SECRET_KEY. There is no separate Paystack webhook signing key.
-
-4. CONFIGURE YOCO LIVE WEBHOOK
-------------------------------
-In Yoco, register or edit the LIVE webhook subscription. Its URL must be:
-https://www.itelements.help/webhooks/yoco
-
-Subscribe to Payment notification events (payment.succeeded and payment.failed). Save the one-time webhook secret in Render as YOCO_WEBHOOK_SECRET. The webhook must be in LIVE mode and use the matching live Yoco secret key. If you cannot view the webhook secret again, rotate/regenerate the webhook secret in Yoco and replace the Render value.
-
-5. SAVE AND DEPLOY
-------------------
-Save the Render environment changes. Upload/commit the package to GitHub. Your service currently has Auto-Deploy disabled, so open Render > your service > Manual Deploy > Deploy latest commit. Wait for the deploy to finish.
-
-6. VERIFY SETUP
----------------
-Open the public website and confirm all six quick-fix choices and both Yoco and Paystack buttons appear. Sign in to the client portal to see both providers on each plan. In the admin subscriber list, use “Reset test plan” on a test account if needed; confirm the prompt. This resets the account to None (Unpaid) / Inactive and keeps payment history. The revenue summary counts only verified live-mode plan payments, so test payments and legacy records without a recorded mode are excluded. A Yoco return page may say it is waiting briefly while the signed webhook arrives; it must not call the payment successful until verification has completed.
-
-LIVE PAYMENTS ARE REAL CHARGES. Before advertising the links, confirm that both dashboards show LIVE mode and that the three Render values are the matching LIVE secrets. Keep secrets out of screenshots and GitHub. If a secret was exposed publicly, rotate it in the provider dashboard.
-
-Other existing Render settings: keep MONGODB_URI, SESSION_SECRET, ADMIN_PASSWORD, email settings, and PUBLIC_BASE_URL. Render supplies PORT automatically. The full variable-name template is in .env.example; its values are placeholders only.
+Plan purchases and quick-fix purchases activate only after server-side PayFast ITN verification. Plans last 30 days and renew manually.
