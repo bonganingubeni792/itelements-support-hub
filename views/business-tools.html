@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#d9dde3">
+  <title>Free Quote & Invoice Maker | IT Elements Support</title>
+  <link rel="stylesheet" href="/assets/responsive.css?v=1">
+  <link rel="stylesheet" href="/assets/theme.css?v=13">
+  <style>
+    :root{--ink:#15243a;--muted:#53647d;--line:#cbd3df;--blue:#1758bb;--red:#df2d22;--surface:#fff;--soft:#f2f5f9;--green:#138347}
+    *{box-sizing:border-box}body{margin:0;padding:16px;background:#d9dde3;color:var(--ink);font:16px/1.55 "Segoe UI",Arial,sans-serif}
+    .nav{width:min(100%,1500px);margin:0 auto 20px;padding:12px 18px;border:1px solid var(--line);border-radius:12px;background:#fff;display:flex;justify-content:space-between;align-items:center;gap:16px;box-shadow:0 8px 24px #1c2b4210}
+    .brand{display:flex;align-items:center;gap:8px;color:var(--red);font-size:18px;font-weight:800;text-decoration:none;white-space:nowrap}.brand img{border-radius:50%;object-fit:cover}.brand-support{color:var(--ink)}
+    .links{display:flex;align-items:center;justify-content:flex-end;gap:3px;flex-wrap:wrap}.links a{padding:8px 9px;border-radius:7px;color:#34445c;text-decoration:none;font-size:13px;font-weight:650}.links a:hover,.links a[aria-current=page]{background:#edf3fc;color:var(--blue)}
+    main{width:min(100%,1320px);margin:auto}.hero,.panel,.tool-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 28px #1829430b}.hero{padding:clamp(22px,4vw,48px);margin-bottom:18px;background:radial-gradient(ellipse at 95% 5%,#e7efff 0,transparent 37%),linear-gradient(115deg,#fff,#fff8f7)}
+    .eyebrow{color:var(--red);font-weight:850;letter-spacing:.12em;text-transform:uppercase;font-size:12px}.hero h1{font-size:clamp(30px,4vw,48px);line-height:1.1;margin:10px 0;color:#121e30;letter-spacing:-.035em}.hero p{max-width:780px;color:var(--muted);margin:0;font-size:17px}.hero-tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}.tag{border-radius:999px;background:#eef4ff;color:#174b91;padding:6px 11px;font-size:12px;font-weight:750}
+    .workbench{display:grid;grid-template-columns:minmax(300px,.92fr) minmax(0,1.08fr);gap:18px;align-items:start}.panel{padding:clamp(17px,2.5vw,28px)}.panel h2{font-size:21px;margin:0 0 5px;color:#142238}.hint{margin:0 0 18px;color:var(--muted);font-size:13px}
+    .field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:grid;gap:5px;margin-bottom:12px}.field.wide{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:#31415a}.field input,.field select,.field textarea{width:100%;min-width:0;border:1px solid #bdc8d7;border-radius:7px;padding:10px 11px;background:#fff;color:#16243a;font:inherit;font-size:14px}.field textarea{min-height:75px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{outline:3px solid #1758bb24;border-color:var(--blue)}
+    .doc-switch{display:flex;gap:8px;margin:0 0 15px}.doc-switch button,.secondary-btn{border:1px solid #b9c5d5;background:#fff;color:#223752;border-radius:7px;padding:9px 13px;font:inherit;font-size:13px;font-weight:800;cursor:pointer}.doc-switch button[aria-pressed=true]{background:#eaf1ff;border-color:#2766c4;color:#174e9a}.line-head,.line-row{display:grid;grid-template-columns:minmax(0,1fr) 76px 112px 86px 34px;gap:7px;align-items:center}.line-head{padding:0 3px 7px;color:#61718a;font-size:10px;font-weight:800;text-transform:uppercase}.line-row{margin-bottom:8px}.line-row input{min-width:0;width:100%;padding:9px 8px;border:1px solid #c5cfdd;border-radius:6px;color:#16243a;background:#fff;font:inherit;font-size:13px}.line-row .remove{height:35px;width:34px;border:1px solid #e1b9b9;border-radius:6px;background:#fff3f2;color:#b72b23;font-weight:900;cursor:pointer}.line-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.toggle-row{display:flex;align-items:center;gap:9px;color:#30435f;font-size:13px;font-weight:700;margin:10px 0}.toggle-row input{width:17px;height:17px;accent-color:var(--blue)}
+    .btn{border:0;border-radius:8px;background:var(--red);color:#fff;padding:12px 16px;font:inherit;font-size:14px;font-weight:850;cursor:pointer;box-shadow:0 5px 12px #df2d2225}.btn:hover{background:#bd2119}.btn.blue{background:var(--blue)}.btn.blue:hover{background:#104797}.btn:focus-visible,.secondary-btn:focus-visible{outline:3px solid #1758bb55;outline-offset:2px}.form-note{color:#586a83;font-size:12px;line-height:1.5}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+    .preview-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.preview-top h2{margin:0}.preview{min-height:690px;padding:clamp(22px,4vw,45px);border:1px solid #cfd6e1;border-radius:10px;background:#fff;box-shadow:0 8px 24px #1120390c}.preview-brand{display:flex;justify-content:space-between;gap:12px;border-bottom:3px solid var(--red);padding-bottom:16px}.preview-brand h2{margin:0;color:#17243a;font-size:22px}.preview-brand .doc-word{color:var(--blue);font-size:26px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}.preview-number{margin-top:8px;color:#586a82;font-size:13px}.preview-parties{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin:27px 0}.preview-parties h3{margin:0 0 7px;color:#6a7890;font-size:11px;text-transform:uppercase;letter-spacing:.08em}.preview-parties p{margin:0;white-space:pre-line;overflow-wrap:anywhere}.preview table{width:100%;border-collapse:collapse;font-size:13px}.preview th{background:#edf1f6;text-align:left;color:#33455e;font-size:11px;text-transform:uppercase}.preview th,.preview td{padding:10px 8px;border-bottom:1px solid #dce2eb}.preview th:last-child,.preview td:last-child{text-align:right}.preview-summary{width:min(100%,280px);margin:22px 0 0 auto}.sum-row{display:flex;justify-content:space-between;padding:5px 0;color:#43546d}.sum-row.total{margin-top:6px;border-top:2px solid var(--ink);padding-top:11px;color:#12223a;font-size:19px;font-weight:900}.preview-note{margin-top:38px;padding-top:14px;border-top:1px solid #dce2eb;color:#596b84;font-size:12px;white-space:pre-line}.disclaimer{margin:16px 0 0;padding:12px 14px;border-left:4px solid #e1a52a;border-radius:6px;background:#fff8e7;color:#654c18;font-size:12px}.footer{text-align:center;color:#52627a;padding:24px 8px;font-size:13px}
+    @media(max-width:900px){.workbench{grid-template-columns:1fr}.preview{min-height:560px}}
+    @media(max-width:620px){body{padding:10px}.nav{align-items:flex-start;flex-direction:column}.links{justify-content:flex-start}.links a{font-size:12px;padding:7px}.field-grid{grid-template-columns:1fr}.field.wide{grid-column:auto}.line-head,.line-row{grid-template-columns:minmax(90px,1fr) 52px 76px 30px;gap:5px}.line-head span:nth-child(4),.line-row input:nth-child(4){display:none}.preview{padding:17px;min-height:520px}.preview-brand h2{font-size:17px}.preview-brand .doc-word{font-size:21px}.preview-parties{gap:13px}.preview table{font-size:11px}.preview th,.preview td{padding:8px 5px}.hero p{font-size:15px}}
+    @media print{body{padding:0;background:#fff}.nav,.hero,.editor,.preview-top,.disclaimer,.footer{display:none!important}.workbench{display:block}.panel.preview-panel{padding:0;border:0;box-shadow:none}.preview{border:0;box-shadow:none;border-radius:0;padding:16mm;min-height:0}.preview-brand,.preview th,.preview td,.preview-note{print-color-adjust:exact;-webkit-print-color-adjust:exact}@page{size:A4;margin:0}}
+  </style>
+</head>
+<body>
+  <nav class="nav" aria-label="Main navigation">
+    <a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="" width="34" height="34"><span>IT Elements.</span><span class="brand-support">support</span></a>
+    <div class="links"><a href="/business-tools" aria-current="page">Business tools</a><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="/client/login">Client portal</a></div>
+  </nav>
+  <main>
+    <section class="hero"><span class="eyebrow">Small business toolkit · South Africa</span><h1>Make a clear quote or invoice in minutes.</h1><p>Add your business and customer details, list the work, and see the total update as you type. Print the finished document or choose “Save as PDF” in your print dialog.</p><div class="hero-tags"><span class="tag">ZAR totals</span><span class="tag">Quotes and invoices</span><span class="tag">Works on phones and computers</span><span class="tag">Your draft stays in this browser</span></div></section>
+    <section class="workbench" aria-label="Quote and invoice maker">
+      <div class="panel editor">
+        <h2>Document details</h2><p class="hint">Complete the fields and review the printable version beside them.</p>
+        <div class="doc-switch" role="group" aria-label="Document type"><button type="button" id="type-quote" aria-pressed="true">Create a quote</button><button type="button" id="type-invoice" aria-pressed="false">Create an invoice</button></div>
+        <div class="field-grid">
+          <div class="field"><label for="businessName">Your business name</label><input id="businessName" placeholder="e.g. Example Trading"></div>
+          <div class="field"><label for="businessEmail">Business email</label><input id="businessEmail" type="email" placeholder="you@business.co.za"></div>
+          <div class="field wide"><label for="businessAddress">Business address and contact details</label><textarea id="businessAddress" placeholder="Street, town, phone number"></textarea></div>
+          <div class="field"><label for="customerName">Customer name / business</label><input id="customerName" placeholder="Customer or company name"></div>
+          <div class="field"><label for="customerEmail">Customer email</label><input id="customerEmail" type="email" placeholder="customer@example.co.za"></div>
+          <div class="field wide"><label for="customerAddress">Customer address (optional)</label><textarea id="customerAddress" placeholder="Customer address"></textarea></div>
+          <div class="field"><label for="docNumber">Document number</label><input id="docNumber"></div>
+          <div class="field"><label for="issueDate">Issue date</label><input id="issueDate" type="date"></div>
+          <div class="field"><label for="dueDate" id="dueLabel">Quote valid until</label><input id="dueDate" type="date"></div>
+          <div class="field"><label for="reference">Reference / project</label><input id="reference" placeholder="Optional"></div>
+        </div>
+        <h2 style="margin-top:12px">Items and services</h2><p class="hint">Enter a short description, quantity and unit price in rand.</p>
+        <div class="line-head" aria-hidden="true"><span>Description</span><span>Qty</span><span>Rate (R)</span><span>Line total</span><span></span></div>
+        <div id="items"></div>
+        <div class="line-actions"><button class="secondary-btn" id="add-item" type="button">＋ Add item</button></div>
+        <div class="field-grid">
+          <div class="field"><label for="discount">Discount (R, optional)</label><input id="discount" type="number" min="0" step="0.01" value="0"></div>
+          <div class="field"><label for="vatRate">VAT rate (%)</label><select id="vatRate"><option value="0">No VAT</option><option value="15">15% VAT</option><option value="custom">Custom rate</option></select></div>
+          <div class="field" id="custom-vat-wrap" hidden><label for="customVat">Custom VAT (%)</label><input id="customVat" type="number" min="0" max="100" step="0.01" value="15"></div>
+          <div class="field wide"><label for="notes">Notes / payment terms</label><textarea id="notes" placeholder="e.g. Payment due within 7 days. Add your payment details if you want them printed."></textarea></div>
+        </div>
+        <p class="form-note">Draft details are saved in this browser only. Avoid using a shared computer. This tool helps format your document; confirm the tax and invoice requirements that apply to your business before issuing it.</p>
+        <div class="actions"><button class="btn blue" id="print-doc" type="button">Print / Save as PDF</button><button class="secondary-btn" id="clear-doc" type="button">Clear this draft</button></div>
+        <p id="save-status" class="form-note" aria-live="polite"></p>
+      </div>
+      <div class="panel preview-panel"><div class="preview-top"><h2>Live preview</h2><span class="tag">R · South Africa</span></div>
+        <article class="preview" id="preview" aria-label="Printable document preview">
+          <div class="preview-brand"><div><h2 id="p-business">Your business name</h2><div class="preview-number" id="p-business-contact">Add your business details</div></div><div style="text-align:right"><div class="doc-word" id="p-type">QUOTE</div><div class="preview-number"><span id="p-number"></span></div></div></div>
+          <div class="preview-parties"><div><h3>Prepared for</h3><p id="p-customer">Customer name</p><p id="p-customer-address"></p><p id="p-customer-email"></p></div><div><h3>Dates & reference</h3><p><strong>Issued:</strong> <span id="p-issued"></span></p><p><strong id="p-due-label">Valid until:</strong> <span id="p-due"></span></p><p><strong>Reference:</strong> <span id="p-reference">—</span></p></div></div>
+          <table><thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody id="p-items"></tbody></table>
+          <div class="preview-summary"><div class="sum-row"><span>Subtotal</span><strong id="p-subtotal">R 0.00</strong></div><div class="sum-row"><span>Discount</span><strong id="p-discount">− R 0.00</strong></div><div class="sum-row"><span id="p-vat-label">VAT</span><strong id="p-vat">R 0.00</strong></div><div class="sum-row total"><span>Total due</span><strong id="p-total">R 0.00</strong></div></div>
+          <div class="preview-note" id="p-notes">Thank you for your business.</div>
+        </article>
+        <div class="disclaimer"><strong>Before sending:</strong> Check names, dates, figures, VAT registration and any legally required invoice information. The maker does not file tax returns, confirm VAT status, or process the customer's payment.</div>
+      </div>
+    </section>
+    <footer class="footer">IT Elements Support · South Africa · <a href="/contact">Contact us</a></footer>
+  </main>
+  <script>
+    (function(){
+      const fields=['businessName','businessEmail','businessAddress','customerName','customerEmail','customerAddress','docNumber','issueDate','dueDate','reference','discount','vatRate','customVat','notes'];
+      const form={}; fields.forEach(id=>form[id]=document.getElementById(id));
+      const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
+      let kind='quote'; let itemIndex=0; const storageKey='itelements.businessToolsDraft.v1';
+      const dateValue=d=>{const date=new Date(d);return Number.isNaN(date.valueOf())?'':date.toLocaleDateString('en-ZA')};
+      function addItem(desc='',qty=1,rate=''){
+        itemIndex++;const row=document.createElement('div');row.className='line-row';
+        const description=document.createElement('input');description.placeholder='Work or product';description.setAttribute('aria-label','Item description');description.value=desc;
+        const quantity=document.createElement('input');quantity.type='number';quantity.min='0';quantity.step='0.01';quantity.value=qty;quantity.setAttribute('aria-label','Quantity');
+        const price=document.createElement('input');price.type='number';price.min='0';price.step='0.01';price.placeholder='0.00';price.value=rate;price.setAttribute('aria-label','Unit rate in rand');
+        const total=document.createElement('span');total.textContent='R 0.00';total.style.cssText='font-size:12px;text-align:right;color:#4e6078';
+        const remove=document.createElement('button');remove.type='button';remove.className='remove';remove.textContent='×';remove.setAttribute('aria-label','Remove item');remove.addEventListener('click',()=>{row.remove();update()});
+        [description,quantity,price].forEach(input=>input.addEventListener('input',update));row.append(description,quantity,price,total,remove);row.dataset.line='1';row._price=price;row._qty=quantity;row._desc=description;row._total=total;document.getElementById('items').append(row);update();
+      }
+      function currentVatRate(){return form.vatRate.value==='custom'?Math.max(0,Number(form.customVat.value)||0):Number(form.vatRate.value)||0}
+      function update(){
+        document.getElementById('p-type').textContent=kind==='quote'?'QUOTE':'INVOICE';document.getElementById('dueLabel').textContent=kind==='quote'?'Quote valid until':'Payment due date';document.getElementById('p-due-label').textContent=kind==='quote'?'Valid until:':'Due date:';
+        document.getElementById('p-business').textContent=form.businessName.value.trim()||'Your business name';document.getElementById('p-business-contact').textContent=[form.businessAddress.value.trim(),form.businessEmail.value.trim()].filter(Boolean).join(' · ')||'Add your business details';document.getElementById('p-customer').textContent=form.customerName.value.trim()||'Customer name';document.getElementById('p-customer-address').textContent=form.customerAddress.value.trim();document.getElementById('p-customer-email').textContent=form.customerEmail.value.trim();document.getElementById('p-number').textContent=form.docNumber.value?'No. '+form.docNumber.value:'';document.getElementById('p-issued').textContent=dateValue(form.issueDate.value)||'—';document.getElementById('p-due').textContent=dateValue(form.dueDate.value)||'—';document.getElementById('p-reference').textContent=form.reference.value.trim()||'—';
+        const body=document.getElementById('p-items');body.textContent='';let subtotal=0;document.querySelectorAll('.line-row').forEach(row=>{const qty=Math.max(0,Number(row._qty.value)||0),rate=Math.max(0,Number(row._price.value)||0),line=qty*rate;subtotal+=line;row._total.textContent=money(line);const tr=document.createElement('tr');[row._desc.value||'Item or service',String(qty),money(rate),money(line)].forEach(text=>{const td=document.createElement('td');td.textContent=text;tr.append(td)});body.append(tr)});
+        if(!body.children.length){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=4;td.textContent='Add an item or service to begin.';td.style.color='#728098';tr.append(td);body.append(tr)}
+        const discount=Math.min(subtotal,Math.max(0,Number(form.discount.value)||0));const taxable=Math.max(0,subtotal-discount),vat=taxable*currentVatRate()/100,total=taxable+vat;document.getElementById('p-subtotal').textContent=money(subtotal);document.getElementById('p-discount').textContent='− '+money(discount);document.getElementById('p-vat').textContent=money(vat);document.getElementById('p-total').textContent=money(total);document.getElementById('p-vat-label').textContent=currentVatRate()?`VAT (${currentVatRate()}%)`:'VAT (not added)';document.getElementById('p-notes').textContent=form.notes.value.trim()||'Thank you for your business.';
+        saveDraft();
+      }
+      function saveDraft(){try{const data={kind,fields:Object.fromEntries(fields.map(id=>[id,form[id].value])),items:[...document.querySelectorAll('.line-row')].map(row=>({description:row._desc.value,qty:row._qty.value,rate:row._price.value}))};localStorage.setItem(storageKey,JSON.stringify(data));document.getElementById('save-status').textContent='Draft saved on this browser.'}catch{document.getElementById('save-status').textContent='Browser storage is unavailable. Your current draft may not be saved.'}}
+      function loadDraft(){try{const data=JSON.parse(localStorage.getItem(storageKey)||'null');if(data){kind=data.kind==='invoice'?'invoice':'quote';fields.forEach(id=>{if(data.fields&&data.fields[id]!==undefined)form[id].value=data.fields[id]});document.getElementById('items').textContent='';(data.items||[]).forEach(item=>addItem(item.description,item.qty,item.rate));}}catch{} if(!form.issueDate.value)form.issueDate.value=new Date().toISOString().slice(0,10);if(!form.docNumber.value)form.docNumber.value=(kind==='quote'?'Q-':'I-')+new Date().toISOString().slice(0,10).replaceAll('-','')+'-001';setKind(kind);if(!document.querySelector('.line-row'))addItem();update()}
+      function setKind(next){kind=next;document.getElementById('type-quote').setAttribute('aria-pressed',String(kind==='quote'));document.getElementById('type-invoice').setAttribute('aria-pressed',String(kind==='invoice'));if(!form.docNumber.value||/^[QI]-\d{8}-001$/.test(form.docNumber.value))form.docNumber.value=(kind==='quote'?'Q-':'I-')+new Date().toISOString().slice(0,10).replaceAll('-','')+'-001';update()}
+      fields.forEach(id=>{form[id].addEventListener('input',update);form[id].addEventListener('change',update)});
+      form.vatRate.addEventListener('change',()=>{document.getElementById('custom-vat-wrap').hidden=form.vatRate.value!=='custom';update()});
+      document.getElementById('type-quote').addEventListener('click',()=>setKind('quote'));document.getElementById('type-invoice').addEventListener('click',()=>setKind('invoice'));document.getElementById('add-item').addEventListener('click',()=>addItem());document.getElementById('print-doc').addEventListener('click',()=>window.print());
+      document.getElementById('clear-doc').addEventListener('click',()=>{if(!window.confirm('Clear the saved quote or invoice draft on this browser?'))return;localStorage.removeItem(storageKey);fields.forEach(id=>form[id].value='');form.discount.value='0';form.vatRate.value='0';document.getElementById('custom-vat-wrap').hidden=true;document.getElementById('items').textContent='';form.issueDate.value=new Date().toISOString().slice(0,10);form.docNumber.value='';kind='quote';setKind('quote');addItem();});
+      loadDraft();
+    })();
+  </script>
+</body>
+</html>
