@@ -22,7 +22,11 @@ if (fs.existsSync(envPath)) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
-const PRICE_PER_HOUR_CENTS = 35000;
+const QUICK_FIX_OPTIONS = Object.freeze({
+    '30min': { amount: 20000, label: '30-minute quick fix' },
+    '1hour': { amount: 35000, label: '1-hour support session' },
+    '2hours': { amount: 70000, label: '2-hour support session' }
+});
 const viewsPath = path.join(__dirname, 'views');
 const SLA_PLANS = {
     basic: { name: 'Basic Support', amount: 29900 },
@@ -389,17 +393,16 @@ app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(viewsP
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
 
 // Yoco Checkout API: create a hosted checkout on the server. The browser never
-// receives the secret key, and the amount is calculated here from allowed hours.
+// receives the secret key, and session amounts are mapped from this allowlist.
 app.post('/api/payment/yoco-checkout', async (req, res) => {
     const secretKey = process.env.YOCO_SECRET_KEY;
     if (!yocoModeForSecret(secretKey)) {
         return res.status(503).json({ success: false, message: 'Set a valid Yoco TEST or LIVE secret key in the server environment.' });
     }
 
-    const hours = Number(req.body.hours);
-    if (!Number.isInteger(hours) || hours < 1 || hours > 5) {
-        return res.status(400).json({ success: false, message: 'Choose a support duration from 1 to 5 hours.' });
-    }
+    const durationOption = String(req.body.durationOption || '');
+    const quickFix = QUICK_FIX_OPTIONS[durationOption];
+    if (!quickFix) return res.status(400).json({ success: false, message: 'Choose one of the available quick-fix sessions.' });
 
     try {
         const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
@@ -411,12 +414,12 @@ app.post('/api/payment/yoco-checkout', async (req, res) => {
                 'Idempotency-Key': randomUUID()
             },
             body: JSON.stringify({
-                amount: PRICE_PER_HOUR_CENTS * hours,
+                amount: quickFix.amount,
                 currency: 'ZAR',
                 successUrl: `${publicBaseUrl}/?payment=returned`,
                 cancelUrl: `${publicBaseUrl}/?payment=cancelled`,
                 failureUrl: `${publicBaseUrl}/?payment=failed`,
-                metadata: { product: 'remote-support', hours: String(hours) }
+                metadata: { product: 'remote-support', duration: durationOption, description: quickFix.label }
             })
         });
 
