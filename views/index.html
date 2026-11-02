@@ -109,15 +109,27 @@
             <div class="quick-fix-options" role="radiogroup" aria-label="Choose a remote support session">
                 <button type="button" class="quick-fix-option" data-duration="30min" aria-pressed="false">
                     <span class="quick-option-icon" aria-hidden="true">⚡</span><span class="quick-option-name">Quick fix</span>
-                    <strong>30 minutes</strong><span class="quick-option-price">R200</span><span class="quick-option-select">Choose this session</span>
+                    <strong>30 minutes</strong><span class="quick-option-price">R200</span><span class="quick-option-description">One small issue, basic checks, simple settings, or quick software guidance.</span><span class="quick-option-select">Choose this session</span>
                 </button>
                 <button type="button" class="quick-fix-option is-selected" data-duration="1hour" aria-pressed="true">
                     <span class="quick-option-icon" aria-hidden="true">⌚</span><span class="quick-option-name">Focused support</span>
-                    <strong>1 hour</strong><span class="quick-option-price">R350</span><span class="quick-option-select">Selected</span>
+                    <strong>1 hour</strong><span class="quick-option-price">R350</span><span class="quick-option-description">Focused help with one computer issue, setup, updates, or performance troubleshooting.</span><span class="quick-option-select">Selected</span>
                 </button>
                 <button type="button" class="quick-fix-option" data-duration="2hours" aria-pressed="false">
                     <span class="quick-option-icon" aria-hidden="true">🛠</span><span class="quick-option-name">Extended support</span>
-                    <strong>2 hours</strong><span class="quick-option-price">R700</span><span class="quick-option-select">Choose this session</span>
+                    <strong>2 hours</strong><span class="quick-option-price">R700</span><span class="quick-option-description">More time for deeper troubleshooting, connectivity, printer, or software problems.</span><span class="quick-option-select">Choose this session</span>
+                </button>
+                <button type="button" class="quick-fix-option" data-duration="3hours" aria-pressed="false">
+                    <span class="quick-option-icon" aria-hidden="true">🧰</span><span class="quick-option-name">In-depth support</span>
+                    <strong>3 hours</strong><span class="quick-option-price">R1,050</span><span class="quick-option-description">Extended diagnosis and troubleshooting for a complex computer or network issue.</span><span class="quick-option-select">Choose this session</span>
+                </button>
+                <button type="button" class="quick-fix-option" data-duration="4hours" aria-pressed="false">
+                    <span class="quick-option-icon" aria-hidden="true">🖥</span><span class="quick-option-name">Multi-device help</span>
+                    <strong>4 hours</strong><span class="quick-option-price">R1,400</span><span class="quick-option-description">Time for multiple devices, Wi-Fi, printer setup, and small-office equipment.</span><span class="quick-option-select">Choose this session</span>
+                </button>
+                <button type="button" class="quick-fix-option" data-duration="5hours" aria-pressed="false">
+                    <span class="quick-option-icon" aria-hidden="true">🏢</span><span class="quick-option-name">Full support session</span>
+                    <strong>5 hours</strong><span class="quick-option-price">R1,750</span><span class="quick-option-description">A longer session for multi-device setup, system configuration, and network troubleshooting.</span><span class="quick-option-select">Choose this session</span>
                 </button>
             </div>
 
@@ -212,7 +224,7 @@
 
     <script>
         (function () {
-            const quickFixPrices = { '30min': 200, '1hour': 350, '2hours': 700 };
+            const quickFixPrices = { '30min': 200, '1hour': 350, '2hours': 700, '3hours': 1050, '4hours': 1400, '5hours': 1750 };
             const quickFixOptions = document.querySelectorAll('.quick-fix-option');
             const priceTag = document.getElementById('dynamic-price-tag');
             const payButtons = document.querySelectorAll('.quickfix-pay-btn');
@@ -230,8 +242,9 @@
                         item.querySelector('.quick-option-select').textContent = isSelected ? 'Selected' : 'Choose this session';
                     });
                     const selectedPrice = quickFixPrices[selectedDuration];
-                    priceTag.textContent = 'R ' + selectedPrice;
-                    payButtons.forEach(button => button.textContent = 'PAY R' + selectedPrice + ' VIA ' + button.dataset.provider.toUpperCase() + ' 💳');
+                    const formattedPrice = new Intl.NumberFormat('en-ZA').format(selectedPrice);
+                    priceTag.textContent = 'R ' + formattedPrice;
+                    payButtons.forEach(button => button.textContent = 'PAY R' + formattedPrice + ' VIA ' + button.dataset.provider.toUpperCase() + ' 💳');
                     checkoutMessage.textContent = '';
                     checkoutMessage.classList.remove('error');
                 });

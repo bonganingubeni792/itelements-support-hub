@@ -43,6 +43,7 @@
         .copy-btn { color:#b9c7d9; border:1px solid #465364; }.copy-btn:hover,.action-btn:hover,.refresh-btn:hover { filter:brightness(1.25); }
         .credential-value { color:#748196; font-family:Consolas,monospace; }
         .subscriber-header,.subscriber-row { min-width:760px; display:grid; grid-template-columns:1.1fr 1.5fr .9fr 1.2fr 1fr; align-items:center; gap:12px; }
+        .subscriber-header.has-actions,.subscriber-row.has-actions { min-width:900px; grid-template-columns:1.1fr 1.5fr .9fr 1.2fr 1fr auto; }
         .subscriber-header { background:#161a22; padding:12px; border-radius:6px; font-weight:bold; font-size:10px; color:#a0aec0; text-transform:uppercase; }
         .subscriber-row { padding:13px 12px; border-bottom:1px solid #1a202c; font-size:13px; }
         .onsite-list { display:grid; gap:12px; }
@@ -142,7 +143,7 @@
     <section class="dashboard-card">
         <h2 class="card-title green">👑 Active Paid SLA Subscribers</h2>
         <div class="table-scroll">
-            <div class="subscriber-header"><div>Client</div><div>Email</div><div>Phone</div><div>Plan</div><div>Paid through / status</div></div>
+            <div class="subscriber-header has-actions"><div>Client</div><div>Email</div><div>Phone</div><div>Plan</div><div>Paid through / status</div><div>Admin action</div></div>
             <div id="active-subscribers-body"><div class="loading-text">Loading subscribers…</div></div>
         </div>
     </section>
@@ -450,9 +451,43 @@
             row.appendChild(makeCell('', user.subscriptionTier || 'None'));
             const expiry = user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt).toLocaleDateString() : '—';
             row.appendChild(makeCell(active ? 'badge-active' : 'badge-expired', `${user.subscriptionStatus || 'Inactive'}${active ? ` · until ${expiry}` : ''}`));
+            if (active) {
+                row.classList.add('has-actions');
+                const actionCell = document.createElement('div');
+                actionCell.className = 'cell';
+                const resetButton = document.createElement('button');
+                resetButton.type = 'button';
+                resetButton.className = 'action-btn btn-reopen reset-plan-btn';
+                resetButton.dataset.userId = user._id;
+                resetButton.textContent = 'Reset test plan';
+                resetButton.setAttribute('aria-label', `Reset test plan for ${user.fullName || user.email}`);
+                actionCell.appendChild(resetButton);
+                row.appendChild(actionCell);
+            }
             container.appendChild(row);
         }
     }
+
+    activeSubBody.addEventListener('click', async event => {
+        const button = event.target.closest('.reset-plan-btn');
+        if (!button) return;
+        if (!window.confirm('Reset this account to None (Unpaid) / Inactive? This will not delete payment history.')) return;
+        button.disabled = true;
+        try {
+            const response = await fetch('/api/admin/subscriptions/reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+                body: JSON.stringify({ userId: button.dataset.userId })
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.message || 'Could not reset this plan.');
+            announce('Account plan reset to None (Unpaid) / Inactive. Payment history was kept.');
+            await loadAdminData();
+        } catch (error) {
+            announce(error.message || 'Could not reset this plan.');
+            button.disabled = false;
+        }
+    });
 
     async function updateTicketStatus(ticketId, newStatus, button, extra = {}) {
         button.disabled = true;
