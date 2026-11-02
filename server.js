@@ -270,7 +270,8 @@ app.use(express.urlencoded({ extended: false, limit: '100kb', verify(req, res, b
 
 function payfastEncode(value) {
     return encodeURIComponent(String(value).trim())
-        .replace(/[!'()*]/g, character => '%' + character.charCodeAt(0).toString(16).toUpperCase())
+        // Match PHP urlencode() used in PayFast's hosted-checkout signature example.
+        .replace(/[!'()*~]/g, character => '%' + character.charCodeAt(0).toString(16).toUpperCase())
         .replace(/%[0-9a-f]{2}/gi, escape => escape.toUpperCase())
         .replace(/%20/g, '+');
 }

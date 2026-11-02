@@ -23,6 +23,14 @@ https://www.itelements.help/webhooks/payfast
 
 The notify URL is included in each hosted checkout. If PayFast asks you to set a URL in its merchant settings, use the same URL and enable ITN. Use PAYFAST_MODE=test and the PayFast sandbox merchant credentials to test first; switch to live credentials and PAYFAST_MODE=live only for real charges. The live PayFast process and ITN validation endpoints are selected automatically by mode.
 
+CHECKOUT SIGNATURE TROUBLESHOOTING
+---------------------------------
+If PayFast displays “Generated signature does not match submitted signature,” first check Render Environment:
+* PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY must both come from the same PayFast mode (test or live).
+* PAYFAST_PASSPHRASE must exactly match the passphrase configured in PayFast. If you did not configure a passphrase there, remove PAYFAST_PASSPHRASE from Render or leave it empty.
+* Do not add quotes, spaces, labels, or the passphrase in the Merchant Key field. After changing Environment values, save and redeploy the web service.
+The hosted checkout signature uses the ordered, non-empty checkout fields and PayFast-compatible URL encoding. A signature error can still result from mismatched merchant credentials or passphrase in the provider and Render settings.
+
 IMPORTANT KEY SAFETY
 --------------------
 The PayFast Merchant Key was visible in a screenshot shared in this conversation. For safety, regenerate/replace it in PayFast before accepting real payments, then store the new key only in Render Environment. If you configured a PayFast passphrase, keep it private and rotate it too if it was exposed.
