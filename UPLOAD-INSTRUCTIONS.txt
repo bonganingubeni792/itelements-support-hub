@@ -3,7 +3,7 @@ IT Elements Support Hub — PayFast deployment
 1. Extract this ZIP to a new folder.
 2. Upload the contents inside the extracted folder to the ROOT of your GitHub repository (the folder that contains server.js and package.json). Do not upload the outer wrapper folder as an extra nested level.
 3. Commit the files and deploy the latest commit on Render.
-4. In Render > your web service > Environment, add PAYFAST_MERCHANT_ID, PAYFAST_MERCHANT_KEY, and PAYFAST_MODE. Set PAYFAST_MODE=test with sandbox credentials before test payments; set it to live only when ready to charge real customers. Add PAYFAST_PASSPHRASE only if configured in your PayFast account.
+4. In Render > your web service > Environment, add PAYFAST_MERCHANT_ID, PAYFAST_MERCHANT_KEY, and PAYFAST_MODE. The Merchant ID must be 8 digits and the Merchant Key must be exactly 13 characters; do not put the PayFast passphrase in the Merchant Key field. Set PAYFAST_MODE=test with sandbox credentials before test payments; set it to live only when ready to charge real customers. Add PAYFAST_PASSPHRASE only if configured in your PayFast account.
 5. Keep existing MONGODB_URI, SESSION_SECRET, ADMIN_PASSWORD, PUBLIC_BASE_URL, and email variables. Remove the old PAYSTACK_SECRET_KEY, YOCO_SECRET_KEY, and YOCO_WEBHOOK_SECRET after this version is deployed.
 6. Use https://www.itelements.help as PUBLIC_BASE_URL. PayFast ITN endpoint: https://www.itelements.help/webhooks/payfast.
 7. Do not paste merchant secrets into GitHub, HTML, or chat. A merchant key was visible in a screenshot shared in this conversation; regenerate it before live use and set the new value in Render.

@@ -43,7 +43,7 @@ function payfastConfig() {
     const merchantId = String(process.env.PAYFAST_MERCHANT_ID || '').trim();
     const merchantKey = String(process.env.PAYFAST_MERCHANT_KEY || '').trim();
     const mode = String(process.env.PAYFAST_MODE || 'live').toLowerCase();
-    if (!merchantId || !merchantKey || !['live', 'test'].includes(mode)) return null;
+    if (!/^\d{8}$/.test(merchantId) || merchantKey.length !== 13 || !['live', 'test'].includes(mode)) return null;
     return { merchantId, merchantKey, mode, endpoint: mode === 'test' ? 'https://sandbox.payfast.co.za/eng/process' : 'https://www.payfast.co.za/eng/process', validateUrl: mode === 'test' ? 'https://sandbox.payfast.co.za/eng/query/validate' : 'https://www.payfast.co.za/eng/query/validate' };
 }
 
@@ -419,7 +419,7 @@ app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath
 
 async function createPayFastCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
     const config = payfastConfig();
-    if (!config) throw Object.assign(new Error('Add PAYFAST_MERCHANT_ID and PAYFAST_MERCHANT_KEY in the server environment.'), { statusCode: 503 });
+    if (!config) throw Object.assign(new Error('Check the PayFast Render settings: PAYFAST_MERCHANT_ID must be the 8-digit Merchant ID and PAYFAST_MERCHANT_KEY must be the 13-character Merchant Key. Do not enter your passphrase as the Merchant Key.'), { statusCode: 503 });
     const publicBaseUrl = String(process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
     if (!publicBaseUrl.startsWith('https://')) throw Object.assign(new Error('Set PUBLIC_BASE_URL to your deployed HTTPS website address.'), { statusCode: 503 });
     const paymentId = `ite-${randomUUID()}`;

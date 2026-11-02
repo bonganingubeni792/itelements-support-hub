@@ -11,8 +11,8 @@ RENDER ENVIRONMENT VARIABLES
 ----------------------------
 On the Render web service, open Environment and add:
 
-PAYFAST_MERCHANT_ID = your PayFast Merchant ID
-PAYFAST_MERCHANT_KEY = your PayFast Merchant Key
+PAYFAST_MERCHANT_ID = your 8-digit PayFast Merchant ID
+PAYFAST_MERCHANT_KEY = your 13-character PayFast Merchant Key (not the passphrase)
 PAYFAST_MODE = live
 PAYFAST_PASSPHRASE = only if you set one in PayFast
 
