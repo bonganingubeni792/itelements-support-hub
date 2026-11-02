@@ -97,6 +97,40 @@
     </style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
     <link rel="stylesheet" href="/assets/theme.css?v=13">
+    <style>
+        /* Helpdesk workspace layout: presentation only; existing data/actions stay in place. */
+        body { background:#e9edf3 !important; color:#172436 !important; padding:18px !important; }
+        .page { width:min(1600px,100%) !important; max-width:none !important; margin:0 auto !important; display:grid; grid-template-columns:245px minmax(0,1fr); gap:18px; align-items:start; }
+        .header-bar { grid-column:1/-1; grid-row:1; margin:0 !important; padding:15px 20px !important; border:1px solid #d7deea !important; border-radius:14px; background:#fff; box-shadow:0 8px 24px #1c2a3a12; }
+        .header-bar h1 { color:#172436 !important; text-transform:none !important; margin:0; }
+        .logout-btn { background:#df2c25 !important; }
+        .dashboard-sidebar { grid-column:1; grid-row:2; position:sticky; top:16px; display:flex; flex-direction:column; gap:5px; padding:14px 10px; min-height:calc(100vh - 145px); background:#fff; border:1px solid #d7deea; border-radius:14px; box-shadow:0 8px 24px #1c2a3a10; }
+        .sidebar-brand { padding:8px 11px 14px; margin-bottom:7px; border-bottom:1px solid #e3e8ef; color:#172436; font-weight:900; font-size:16px; }
+        .sidebar-brand span { display:block; margin-top:3px; font-size:11px; font-weight:600; color:#65758b; }
+        .sidebar-link { display:flex; align-items:center; gap:10px; min-height:42px; padding:9px 11px; border-radius:8px; color:#33445a !important; font-size:13px; font-weight:700; text-decoration:none !important; transition:background .15s,color .15s; }
+        .sidebar-link:hover,.sidebar-link:focus-visible { background:#edf4ff; color:#155eef !important; outline:none; }
+        .sidebar-link .side-icon { width:22px; text-align:center; font-size:16px; }
+        .workspace-content { grid-column:2; min-width:0; }
+        .stats-grid { gap:13px !important; margin:0 0 18px !important; }
+        .stat-card,.dashboard-card { background:#fff !important; border-color:#d7deea !important; border-radius:12px !important; box-shadow:0 7px 22px #1c2a3a0b; }
+        .stat-label { color:#56667c !important; }
+        .stat-value { color:#172436 !important; }
+        .card-title { color:#172436 !important; }
+        .note,.list-size { color:#52647a !important; }
+        .table-header,.subscriber-header { background:#eef2f7 !important; color:#35465b !important; border-color:#d7deea !important; }
+        .data-row,.subscriber-row { color:#25364b; border-color:#e2e7ee !important; }
+        .onsite-request,.review-item { background:#f7f9fc !important; border-color:#d7deea !important; }
+        .onsite-request h3,.review-item h3 { color:#172436 !important; }
+        .onsite-request p,.review-item p { color:#455870 !important; }
+        .toolbar input,.toolbar select,.list-size select { background:#fff !important; color:#172436 !important; border-color:#c7d1df !important; }
+        .notification-center { background:#fff !important; border-color:#d7deea !important; box-shadow:0 14px 36px #192a4030 !important; }
+        .notification-head h2,.notification-item strong { color:#172436 !important; }
+        .notification-item { background:#f6f8fb !important; border-color:#d7deea !important; }
+        .notification-item span { color:#455870 !important; }
+        .notification-item time,.notification-empty { color:#63748a !important; }
+        @media(max-width:900px) { .page { grid-template-columns:1fr; gap:12px; }.header-bar { grid-column:1; grid-row:1; }.dashboard-sidebar { grid-column:1; grid-row:2; position:static; min-height:0; flex-direction:row; overflow-x:auto; align-items:center; padding:8px; }.sidebar-brand { display:none; }.sidebar-link { flex:0 0 auto; min-height:38px; }.workspace-content { grid-column:1; grid-row:3; } }
+        @media(max-width:560px) { body { padding:9px !important; }.header-bar { padding:13px !important; }.dashboard-sidebar { gap:3px; }.sidebar-link { padding:8px; font-size:12px; }.stats-grid { gap:8px !important; }.stat-card { padding:13px !important; }.dashboard-card { padding:14px !important; } }
+    </style>
 </head>
 <body>
 <main class="page">
@@ -112,14 +146,26 @@
         </section>
     </div>
 
-    <section class="stats-grid" aria-label="Business overview">
+    <aside class="dashboard-sidebar" aria-label="Admin dashboard navigation">
+        <div class="sidebar-brand">IT Elements<span>Administration workspace</span></div>
+        <a class="sidebar-link" href="#admin-overview"><span class="side-icon">▦</span>Overview</a>
+        <a class="sidebar-link" href="#tickets"><span class="side-icon">🎫</span>Support tickets</a>
+        <a class="sidebar-link" href="#visits"><span class="side-icon">📍</span>On-site enquiries</a>
+        <a class="sidebar-link" href="#active-subs"><span class="side-icon">👑</span>Paid subscribers</a>
+        <a class="sidebar-link" href="#inactive-subs"><span class="side-icon">◉</span>Inactive accounts</a>
+        <a class="sidebar-link" href="#history"><span class="side-icon">✓</span>Resolved history</a>
+        <a class="sidebar-link" href="#reviews"><span class="side-icon">★</span>Customer feedback</a>
+        <a class="sidebar-link" href="/client/logout"><span class="side-icon">↪</span>Log out</a>
+    </aside>
+    <div class="workspace-content">
+    <section class="stats-grid" id="admin-overview" aria-label="Business overview">
         <article class="stat-card tickets"><div class="stat-label">Active Support Tickets</div><div class="stat-value" id="stat-active-tickets">—</div></article>
         <article class="stat-card subs"><div class="stat-label">Active Paid Subscribers</div><div class="stat-value" id="stat-active-subs">—</div></article>
         <article class="stat-card canceled"><div class="stat-label">Inactive Accounts</div><div class="stat-value" id="stat-inactive-subs">—</div></article>
         <article class="stat-card rev"><div class="stat-label">Confirmed Plan Payments (ZAR)</div><div class="stat-value" id="stat-total-revenue">—</div></article>
     </section>
 
-    <section class="dashboard-card">
+    <section class="dashboard-card" id="tickets">
         <h2 class="card-title">🔴 Priority Engineering Escalation Queue</h2>
         <p class="note">Connection IDs and session keys are sensitive. Reveal only when needed; copy buttons do not show the value.</p>
         <div class="toolbar">
@@ -134,13 +180,13 @@
         </div>
     </section>
 
-    <section class="dashboard-card">
+    <section class="dashboard-card" id="visits">
         <h2 class="card-title">📍 On-site visit enquiries</h2>
         <p class="note">Review the requested area and preferred time. Enter the agreed appointment and call-out fee below; “Confirm visit” emails the customer and updates their dashboard.</p>
         <div id="onsite-requests-body" class="onsite-list"><div class="loading-text">Loading on-site enquiries…</div></div>
     </section>
 
-    <section class="dashboard-card">
+    <section class="dashboard-card" id="active-subs">
         <h2 class="card-title green">👑 Active Paid SLA Subscribers</h2>
         <div class="table-scroll">
             <div class="subscriber-header has-actions"><div>Client</div><div>Email</div><div>Phone</div><div>Plan</div><div>Paid through / status</div><div>Admin action</div></div>
@@ -148,7 +194,7 @@
         </div>
     </section>
 
-    <section class="dashboard-card">
+    <section class="dashboard-card" id="inactive-subs">
         <h2 class="card-title yellow">🚫 Canceled / Inactive Users</h2>
         <div class="table-scroll">
             <div class="subscriber-header"><div>Client</div><div>Email</div><div>Phone</div><div>Plan</div><div>Status</div></div>
@@ -156,7 +202,7 @@
         </div>
     </section>
 
-    <section class="dashboard-card">
+    <section class="dashboard-card" id="history">
         <h2 class="card-title gray">⏳ Job Resolution History</h2>
         <div class="table-scroll">
             <div class="table-header"><div>Client</div><div>AnyDesk / TeamViewer ID</div><div>Session key</div><div>Closed issue</div><div>Status</div><div style="text-align:right;">Actions</div></div>
@@ -165,11 +211,12 @@
         </div>
     </section>
 
-    <section class="dashboard-card">
+    <section class="dashboard-card" id="reviews">
         <h2 class="card-title green">⭐ Customer feedback review</h2>
         <p class="note">Only publish feedback where the customer agreed to public display. Published reviews appear on the home page.</p>
         <div id="customer-reviews-body" class="review-list"><div class="loading-text">Loading customer feedback…</div></div>
     </section>
+    </div>
 </main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
