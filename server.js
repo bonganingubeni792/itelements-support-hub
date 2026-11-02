@@ -42,6 +42,13 @@ function paystackModeForSecret(secretKey) {
     return null;
 }
 
+function yocoModeForSecret(secretKey) {
+    if (typeof secretKey !== 'string') return null;
+    if (secretKey.startsWith('sk_test_')) return 'test';
+    if (secretKey.startsWith('sk_live_')) return 'live';
+    return null;
+}
+
 if (dbURI) {
     mongoose.connect(dbURI)
         .then(() => console.log('📁 Database connection established successfully'))
@@ -74,6 +81,21 @@ const PaystackPurchase = mongoose.model('PaystackPurchase', new mongoose.Schema(
     expiresAt: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
 }, { collection: 'paystackpurchases' }));
+
+const YocoPurchase = mongoose.model('YocoPurchase', new mongoose.Schema({
+    publicId: { type: String, required: true, unique: true },
+    checkoutId: { type: String, default: undefined, unique: true, sparse: true },
+    userEmail: { type: String, default: '' },
+    purchaseType: { type: String, enum: ['plan', 'quickfix'], required: true },
+    planId: { type: String, default: '' },
+    planName: { type: String, default: '' },
+    durationOption: { type: String, default: '' },
+    amount: { type: Number, required: true },
+    status: { type: String, default: 'pending' },
+    paidAt: { type: Date, default: null },
+    expiresAt: { type: Date, default: null },
+    createdAt: { type: Date, default: Date.now }
+}, { collection: 'yocopurchases' }));
 
 const PasswordReset = mongoose.model('PasswordReset', new mongoose.Schema({
     email: { type: String, required: true, index: true },
@@ -329,6 +351,75 @@ app.post('/webhooks/paystack', express.raw({ type: 'application/json', limit: '1
     }
 });
 
+function verifyYocoWebhook(req) {
+    const secret = process.env.YOCO_WEBHOOK_SECRET || '';
+    if (!secret.startsWith('whsec_')) return false;
+    const id = req.get('webhook-id') || '';
+    const timestamp = req.get('webhook-timestamp') || '';
+    const signatures = req.get('webhook-signature') || '';
+    const timestampNumber = Number(timestamp);
+    if (!id || !timestamp || !signatures || !Number.isFinite(timestampNumber)) return false;
+    const timestampMs = timestampNumber > 1e12 ? timestampNumber : timestampNumber * 1000;
+    if (Math.abs(Date.now() - timestampMs) > 3 * 60 * 1000) return false;
+    let secretBytes;
+    try { secretBytes = Buffer.from(secret.slice('whsec_'.length), 'base64'); } catch { return false; }
+    if (!secretBytes.length) return false;
+    const signedContent = `${id}.${timestamp}.${req.body.toString('utf8')}`;
+    const expected = crypto.createHmac('sha256', secretBytes).update(signedContent).digest();
+    return signatures.split(/\s+/).some(entry => {
+        const value = entry.replace(/^v\d+,/, '');
+        let supplied;
+        try { supplied = Buffer.from(value, 'base64'); } catch { return false; }
+        return supplied.length === expected.length && crypto.timingSafeEqual(supplied, expected);
+    });
+}
+
+async function applyVerifiedYocoPayment(event) {
+    const payment = event && event.payload;
+    const checkoutId = payment && payment.metadata && String(payment.metadata.checkoutId || '');
+    if (!checkoutId) return null;
+    const purchase = await YocoPurchase.findOne({ checkoutId });
+    if (!purchase || purchase.status === 'paid') return purchase;
+    if (event.type !== 'payment.succeeded' || payment.status !== 'succeeded' || payment.currency !== 'ZAR' || Number(payment.amount) !== purchase.amount || payment.mode !== yocoModeForSecret(process.env.YOCO_SECRET_KEY)) {
+        if (event.type === 'payment.failed') await YocoPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: { status: 'failed' } });
+        return purchase;
+    }
+    const paidAt = payment.createdDate ? new Date(payment.createdDate) : new Date();
+    const update = { status: 'paid', paidAt };
+    if (purchase.purchaseType === 'plan') {
+        update.expiresAt = new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000);
+    }
+    const result = await YocoPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: update });
+    if (!result.modifiedCount) return purchase;
+    if (purchase.purchaseType === 'plan') {
+        await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, { $set: {
+            subscriptionTier: purchase.planName,
+            subscriptionStatus: 'Active',
+            subscriptionPaidAt: paidAt,
+            subscriptionExpiresAt: update.expiresAt
+        } });
+        await sendCustomerEmail(purchase.userEmail, 'Your IT Elements plan payment is confirmed', [
+            `Yoco confirmed your payment for ${purchase.planName}.`,
+            `Your 30-day support plan is active until ${update.expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
+            'Sign in to your IT Elements dashboard to view your plan and request support.'
+        ]);
+    }
+    return purchase;
+}
+
+app.post('/webhooks/yoco', express.raw({ type: 'application/json', limit: '100kb' }), async (req, res) => {
+    if (!yocoModeForSecret(process.env.YOCO_SECRET_KEY) || !verifyYocoWebhook(req)) return res.status(401).send('Invalid Yoco webhook signature or configuration.');
+    try {
+        const event = JSON.parse(req.body.toString('utf8'));
+        if (!['payment.succeeded', 'payment.failed'].includes(event.type)) return res.sendStatus(200);
+        await applyVerifiedYocoPayment(event);
+        return res.sendStatus(200);
+    } catch (err) {
+        console.error('Yoco webhook error:', err.message);
+        return res.sendStatus(500);
+    }
+});
+
 app.use(express.json({ limit: '20kb' }));
 if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
     throw new Error('SESSION_SECRET must be set in production.');
@@ -386,7 +477,7 @@ app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath
 
 async function createPaystackCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
     const secretKey = process.env.PAYSTACK_SECRET_KEY;
-    if (!paystackModeForSecret(secretKey)) throw Object.assign(new Error('Add your Paystack TEST secret key to the server environment.'), { statusCode: 503 });
+    if (!paystackModeForSecret(secretKey)) throw Object.assign(new Error('Add a valid Paystack live or test secret key to the server environment.'), { statusCode: 503 });
     const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
     const reference = `ite-${randomUUID()}`;
     const purchase = await PaystackPurchase.create({ reference, userEmail: email, purchaseType, planId, planName, durationOption, amount });
@@ -416,12 +507,76 @@ async function createPaystackCheckout({ email, amount, purchaseType, planId = ''
     }
 }
 
+async function createYocoCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
+    const secretKey = process.env.YOCO_SECRET_KEY;
+    if (!yocoModeForSecret(secretKey)) throw Object.assign(new Error('Add a valid Yoco secret key in the server environment.'), { statusCode: 503 });
+    const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+    const purchase = await YocoPurchase.create({ publicId: randomUUID(), userEmail: email, purchaseType, planId, planName, durationOption, amount });
+    const returnUrl = purchaseType === 'plan'
+        ? `${publicBaseUrl}/dashboard?payment=yoco-returned&purchase=${encodeURIComponent(purchase.publicId)}`
+        : `${publicBaseUrl}/?payment=yoco-returned&purchase=${encodeURIComponent(purchase.publicId)}`;
+    try {
+        const response = await fetch('https://payments.yoco.com/api/checkouts', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${secretKey}`, 'Content-Type': 'application/json', Accept: 'application/json', 'Idempotency-Key': purchase.publicId },
+            body: JSON.stringify({
+                amount,
+                currency: 'ZAR',
+                successUrl: returnUrl,
+                cancelUrl: `${returnUrl}&result=cancelled`,
+                failureUrl: `${returnUrl}&result=failed`,
+                clientReferenceId: purchase.publicId,
+                metadata: { purchaseId: purchase.publicId, purchaseType, planId, durationOption }
+            })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || !result.id || !result.redirectUrl || !result.redirectUrl.startsWith('https://') || Number(result.amount) !== amount || result.currency !== 'ZAR' || result.processingMode !== yocoModeForSecret(secretKey)) {
+            console.error('Yoco checkout error:', response.status, result.message || 'Invalid checkout response');
+            await YocoPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: { status: 'failed' } });
+            throw Object.assign(new Error('Yoco could not start checkout. Check the server logs.'), { statusCode: 502 });
+        }
+        await YocoPurchase.updateOne({ _id: purchase._id }, { $set: { checkoutId: result.id } });
+        return result.redirectUrl;
+    } catch (err) {
+        if (purchase.status === 'pending') await YocoPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: { status: 'failed' } }).catch(() => {});
+        throw err;
+    }
+}
+
+app.post('/api/payment/yoco-quickfix', async (req, res) => {
+    const durationOption = String(req.body.durationOption || '');
+    const quickFix = QUICK_FIX_OPTIONS[durationOption];
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (!quickFix) return res.status(400).json({ success: false, message: 'Choose one of the available quick-fix sessions.' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Enter a valid email address for your receipt.' });
+    try { return res.json({ success: true, redirectUrl: await createYocoCheckout({ email, amount: quickFix.amount, purchaseType: 'quickfix', durationOption }) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.statusCode === 503 ? err.message : 'Could not start Yoco checkout. Please try again.' }); }
+});
+
+app.post('/api/payment/yoco-plan-checkout', checkUserAuth, async (req, res) => {
+    const userEmail = String(req.session.userEmail || '').toLowerCase();
+    const planId = String(req.body.planId || '');
+    const plan = SLA_PLANS[planId];
+    if (!userEmail) return res.status(403).json({ success: false, message: 'Sign in with a customer account before choosing a plan.' });
+    if (!plan) return res.status(400).json({ success: false, message: 'Choose one of the available support plans.' });
+    try { return res.json({ success: true, redirectUrl: await createYocoCheckout({ email: userEmail, amount: plan.amount, purchaseType: 'plan', planId, planName: plan.name }) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.statusCode === 503 ? err.message : 'Could not start Yoco checkout. Please try again.' }); }
+});
+
+app.get('/api/payment/yoco-status', async (req, res) => {
+    const publicId = String(req.query.purchase || '');
+    if (!/^[a-f0-9-]{36}$/i.test(publicId)) return res.status(400).json({ success: false });
+    const purchase = await YocoPurchase.findOne({ publicId }, { userEmail: 0, __v: 0 });
+    if (!purchase) return res.status(404).json({ success: false });
+    res.json({ success: true, checkout: purchase });
+});
+
 app.post('/api/payment/paystack-quickfix', async (req, res) => {
     const durationOption = String(req.body.durationOption || '');
     const quickFix = QUICK_FIX_OPTIONS[durationOption];
     const email = String(req.body.email || '').trim().toLowerCase();
     if (!quickFix) return res.status(400).json({ success: false, message: 'Choose one of the available quick-fix sessions.' });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Enter a valid email address for your Paystack receipt.' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Enter a valid email address for your payment receipt.' });
     try {
         const redirectUrl = await createPaystackCheckout({ email, amount: quickFix.amount, purchaseType: 'quickfix', durationOption });
         return res.json({ success: true, redirectUrl });
@@ -668,7 +823,9 @@ app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
         const tickets = await SupportRequest.find({ email: req.session.userEmail }, { remotePassword: 0 }).sort({ date: -1 });
         const checkout = req.query.reference
             ? await PaystackPurchase.findOne({ reference: String(req.query.reference), userEmail: req.session.userEmail }, { userEmail: 0, __v: 0 })
-            : null;
+            : req.query.purchase
+                ? await YocoPurchase.findOne({ publicId: String(req.query.purchase), userEmail: req.session.userEmail }, { userEmail: 0, __v: 0 })
+                : null;
         res.json({ user, tickets, checkout });
     } catch (err) { res.status(500).json({ error: true }); }
 });
@@ -832,10 +989,14 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
             { subscriptionStatus: 'Active', subscriptionExpiresAt: { $lte: now } },
             { $set: { subscriptionStatus: 'Expired' } }
         );
-        const [users, tickets, revenueRows] = await Promise.all([
+        const [users, tickets, paystackRevenueRows, yocoRevenueRows] = await Promise.all([
             UserAccount.find({}, { password: 0 }).sort({ fullName: 1 }).lean(),
             SupportRequest.find({}, { remotePassword: 0 }).lean(),
             PaystackPurchase.aggregate([
+                { $match: { status: 'paid' } },
+                { $group: { _id: null, cents: { $sum: '$amount' }, count: { $sum: 1 } } }
+            ]),
+            YocoPurchase.aggregate([
                 { $match: { status: 'paid' } },
                 { $group: { _id: null, cents: { $sum: '$amount' }, count: { $sum: 1 } } }
             ])
@@ -843,7 +1004,8 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
         const activeSubscribers = users.filter(user => user.subscriptionStatus === 'Active');
         const inactiveUsers = users.filter(user => user.subscriptionStatus !== 'Active');
         const activeTickets = tickets.filter(ticket => !['Resolved', 'Completed'].includes(ticket.status)).length;
-        const confirmedPlanRevenue = revenueRows.length ? revenueRows[0].cents / 100 : 0;
+        const confirmedPlanRevenue = ((paystackRevenueRows[0]?.cents || 0) + (yocoRevenueRows[0]?.cents || 0)) / 100;
+        const confirmedPaymentCount = (paystackRevenueRows[0]?.count || 0) + (yocoRevenueRows[0]?.count || 0);
         res.json({
             users,
             activeSubscribers,
@@ -853,7 +1015,7 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
                 activeSubscribers: activeSubscribers.length,
                 inactiveUsers: inactiveUsers.length,
                 confirmedPlanRevenue,
-                confirmedPlanPayments: revenueRows.length ? revenueRows[0].count : 0
+                confirmedPlanPayments: confirmedPaymentCount
             }
         });
     } catch (err) {
