@@ -281,6 +281,21 @@ const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'customerreviews' }));
 
+const BusinessDocument = mongoose.model('BusinessDocument', new mongoose.Schema({
+    documentNumber: { type: String, required: true, unique: true },
+    type: { type: String, enum: ['Invoice', 'Quote'], required: true },
+    customerName: { type: String, required: true, maxlength: 100 },
+    customerEmail: { type: String, required: true, lowercase: true, trim: true, maxlength: 254 },
+    title: { type: String, required: true, maxlength: 140 },
+    description: { type: String, required: true, maxlength: 3000 },
+    amountCents: { type: Number, required: true, min: 1 },
+    dueDate: { type: Date, default: null },
+    status: { type: String, enum: ['Sent', 'Paid', 'Overdue', 'Cancelled', 'Accepted', 'Declined', 'Expired'], default: 'Sent' },
+    emailSent: { type: Boolean, default: false },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+}, { collection: 'businessdocuments' }));
+
 app.use(cors());
 app.use((req, res, next) => {
     res.setHeader('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https://*.whatsapp.com; connect-src 'self'");
@@ -839,6 +854,39 @@ app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
     } catch (err) { res.status(500).json({ error: true }); }
 });
 
+app.get('/api/client/business-documents', checkUserAuth, async (req, res) => {
+    try {
+        const documents = await BusinessDocument.find({ customerEmail: String(req.session.userEmail || '').toLowerCase() }).sort({ createdAt: -1 }).lean();
+        res.json(documents.map(({ __v, ...document }) => document));
+    } catch (err) {
+        console.error('Client invoice list error:', err.message);
+        res.status(500).json({ message: 'Could not load your quotes and invoices.' });
+    }
+});
+
+app.post('/api/client/business-documents/:documentId/respond', checkUserAuth, async (req, res) => {
+    const { response } = req.body || {};
+    if (!mongoose.isValidObjectId(req.params.documentId) || !['Accepted', 'Declined'].includes(response)) {
+        return res.status(400).json({ success: false, message: 'Choose accept or decline for a valid quote.' });
+    }
+    try {
+        const document = await BusinessDocument.findOneAndUpdate(
+            { _id: req.params.documentId, customerEmail: String(req.session.userEmail || '').toLowerCase(), type: 'Quote', status: 'Sent' },
+            { $set: { status: response, updatedAt: new Date() } },
+            { new: true }
+        ).lean();
+        if (!document) return res.status(404).json({ success: false, message: 'This quote is no longer awaiting your response.' });
+        await sendCustomerEmail(process.env.SUPPORT_NOTIFICATION_EMAIL || 'bongani@itelements.co.za', `Quote ${document.documentNumber} ${response.toLowerCase()}`, [
+            `${document.customerName} (${document.customerEmail}) ${response.toLowerCase()} quote ${document.documentNumber}.`,
+            `Quote: ${document.title} · R ${(document.amountCents / 100).toFixed(2)}`
+        ]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Quote response error:', err.message);
+        res.status(500).json({ success: false, message: 'Could not save your quote response.' });
+    }
+});
+
 app.post('/api/client/tickets/:ticketId/messages', checkUserAuth, async (req, res) => {
     const ticketId = req.params.ticketId;
     const body = String(req.body.message || '').trim();
@@ -974,6 +1022,78 @@ app.post('/api/reviews', async (req, res) => {
         await sendCustomerEmail(email, 'Thank you for your feedback', ['Thank you for sharing feedback with IT Elements. Your review is awaiting approval and will only appear publicly after it is reviewed.']);
         res.json({ success: true, message: 'Thank you. Your feedback has been sent for review and will not be published until approved.' });
     } catch (err) { res.status(500).json({ success: false, message: 'Could not save your feedback. Please try again.' }); }
+});
+
+app.get('/api/admin/business-documents', checkAdminAuth, async (req, res) => {
+    try {
+        const documents = await BusinessDocument.find().sort({ createdAt: -1 }).limit(300).lean();
+        res.json(documents.map(({ __v, ...document }) => document));
+    } catch (err) {
+        console.error('Admin invoice list error:', err.message);
+        res.status(500).json({ message: 'Could not load quotes and invoices.' });
+    }
+});
+
+app.post('/api/admin/business-documents', checkAdminAuth, async (req, res) => {
+    const type = req.body.type === 'Quote' ? 'Quote' : req.body.type === 'Invoice' ? 'Invoice' : '';
+    const customerEmail = String(req.body.customerEmail || '').trim().toLowerCase();
+    const title = String(req.body.title || '').trim();
+    const description = String(req.body.description || '').trim();
+    const amount = Number(req.body.amount);
+    const dueDateValue = String(req.body.dueDate || '').trim();
+    if (!type || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail) || title.length < 2 || title.length > 140 || description.length < 2 || description.length > 3000 || !Number.isFinite(amount) || amount <= 0 || amount > 10000000) {
+        return res.status(400).json({ success: false, message: 'Enter a valid customer email, title, description, and amount up to R10,000,000.' });
+    }
+    let dueDate = null;
+    if (dueDateValue) {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDateValue) || Number.isNaN(Date.parse(`${dueDateValue}T12:00:00Z`))) return res.status(400).json({ success: false, message: 'Enter a valid due date.' });
+        dueDate = new Date(`${dueDateValue}T12:00:00Z`);
+    }
+    try {
+        const customer = await UserAccount.findOne({ email: customerEmail }, { password: 0 }).lean();
+        if (!customer) return res.status(404).json({ success: false, message: 'No registered customer account uses that email address.' });
+        const documentNumber = `ITE-${new Date().getFullYear()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+        const document = await BusinessDocument.create({
+            documentNumber, type, customerName: customer.fullName, customerEmail,
+            title, description, amountCents: Math.round(amount * 100), dueDate, status: 'Sent'
+        });
+        const emailSent = await sendCustomerEmail(customerEmail, `IT Elements ${type.toLowerCase()} ${documentNumber}`, [
+            `Hello ${customer.fullName},`,
+            `A new ${type.toLowerCase()} is available in your IT Elements client portal.`,
+            `${documentNumber} · ${title} · R ${(document.amountCents / 100).toFixed(2)}${dueDate ? ` · Due ${dueDate.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}` : ''}`,
+            description,
+            'Sign in at https://www.itelements.help/client/login to review it.'
+        ]);
+        document.emailSent = emailSent;
+        await document.save();
+        res.status(201).json({ success: true, emailSent, document: document.toObject() });
+    } catch (err) {
+        console.error('Admin document creation error:', err.message);
+        res.status(500).json({ success: false, message: 'Could not create this quote or invoice.' });
+    }
+});
+
+app.post('/api/admin/business-documents/:documentId/status', checkAdminAuth, async (req, res) => {
+    const nextStatus = String(req.body.status || '');
+    if (!mongoose.isValidObjectId(req.params.documentId)) return res.status(400).json({ success: false, message: 'Invalid document.' });
+    try {
+        const document = await BusinessDocument.findById(req.params.documentId);
+        if (!document) return res.status(404).json({ success: false, message: 'Document not found.' });
+        const allowed = document.type === 'Invoice' ? ['Sent', 'Paid', 'Overdue', 'Cancelled'] : ['Sent', 'Accepted', 'Declined', 'Expired', 'Cancelled'];
+        if (!allowed.includes(nextStatus)) return res.status(400).json({ success: false, message: 'That status does not apply to this document.' });
+        document.status = nextStatus;
+        document.updatedAt = new Date();
+        await document.save();
+        await sendCustomerEmail(document.customerEmail, `${document.type} ${document.documentNumber} updated`, [
+            `${document.type} ${document.documentNumber} is now marked ${nextStatus.toLowerCase()}.`,
+            `${document.title} · R ${(document.amountCents / 100).toFixed(2)}`,
+            'Sign in to your IT Elements client portal to review the latest status.'
+        ]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Admin document status update error:', err.message);
+        res.status(500).json({ success: false, message: 'Could not update this document.' });
+    }
 });
 
 app.get('/api/admin/reviews', checkAdminAuth, async (req, res) => {
