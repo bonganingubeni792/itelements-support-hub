@@ -87,7 +87,7 @@
                     <a class="hero-button" href="/support">Get support now <span aria-hidden="true">→</span></a>
                     <a class="hero-button secondary" href="/pricing">View support plans</a>
                 </div>
-                <div class="hero-proof"><span>✓ Remote support</span><span>✓ Paystack hosted checkout</span><span>✓ South African support</span></div>
+                <div class="hero-proof"><span>✓ Remote support</span><span>✓ Secure Yoco & Paystack checkout</span><span>✓ South African support</span></div>
             </div>
             <div class="hero-device" aria-hidden="true"><div class="device-screen"><span class="screen-dots">● ● ●</span><div class="warning-symbol">!</div><strong>Need a hand?</strong><span>Support that starts with a clear next step.</span></div><div class="device-base"></div><div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div></div>
         </section>
@@ -97,7 +97,7 @@
                 <div>
                     <span class="section-kicker">ONE-TIME REMOTE HELP</span>
                     <h2 id="incident-heading">Need a quick incident fix?</h2>
-                    <p>Choose the session length that suits you. Pay securely through Paystack; no subscription is required.</p>
+                    <p>Choose the session length that suits you, then pay securely with Yoco or Paystack. No subscription is required.</p>
                 </div>
             </div>
 
@@ -125,7 +125,10 @@
                 <label class="quickfix-email-label" for="quickfix-email">Email address for your payment receipt</label>
                 <input id="quickfix-email" class="form-control" type="email" autocomplete="email" placeholder="you@example.com" required>
                 <p class="price-display" id="dynamic-price-tag" aria-live="polite">R 350</p>
-                <button type="button" id="paystack-checkout-trigger" class="pay-trigger-btn">PAY R350 VIA PAYSTACK 💳</button>
+                <div class="quick-payment-options" aria-label="Choose a payment provider">
+                    <button type="button" class="pay-trigger-btn quickfix-pay-btn" data-provider="yoco">PAY R350 VIA YOCO 💳</button>
+                    <button type="button" class="pay-trigger-btn quickfix-pay-btn paystack-option" data-provider="paystack">PAY R350 VIA PAYSTACK 💳</button>
+                </div>
                 <p id="checkout-message" class="checkout-message" role="status" aria-live="polite"></p>
             </div>
         </section>
@@ -150,7 +153,7 @@
                 <article class="home-plan featured-plan"><span class="home-plan-name">Standard Tier</span><p>For professionals who need dependable help.</p><strong>R599 <small>/ 30 days</small></strong><ul><li>Remote support access</li><li>4 business hour priority response target</li></ul><a href="/subscribe/standard">Get started <span>→</span></a></article>
                 <article class="home-plan"><span class="home-plan-name">Business Growth</span><p>For growing small-office networks.</p><strong>R2,499 <small>/ 30 days</small></strong><ul><li>Up to 10 devices</li><li>2 business hour priority response target</li></ul><a href="/subscribe/business">Get started <span>→</span></a></article>
                 <article class="home-plan"><span class="home-plan-name">Corporate SLA</span><p>For wider business device coverage.</p><strong>R4,999 <small>/ 30 days</small></strong><ul><li>Up to 25 devices</li><li>Priority support for your organization</li></ul><a href="/subscribe/corporate">Get started <span>→</span></a></article>
-            </div><p class="plans-footnote">Paystack securely processes your payment. Your plan is activated after payment confirmation.</p>
+            </div><p class="plans-footnote">Pay securely with Yoco or Paystack after sign-in. Your plan is activated only after payment confirmation.</p>
         </section>
 
         <section class="home-showcase portal-showcase" aria-labelledby="home-portal-title">
@@ -189,8 +192,8 @@
             <div class="status-grid">
                 <div class="status-card"><div>On-Duty Engineers</div><div class="status-val active-node">Contact us</div></div>
                 <div class="status-card"><div>Average Connection Latency</div><div class="status-val">Depends on connection</div></div>
-                <div class="status-card"><div>Secure Gate Encryption</div><div class="status-val">Paystack hosted checkout</div></div>
-                <div class="status-card"><div>Payment Checkout</div><div class="status-val">Hosted by Paystack</div></div>
+                <div class="status-card"><div>Secure Gate Encryption</div><div class="status-val">Verified payment webhooks</div></div>
+                <div class="status-card"><div>Payment Checkout</div><div class="status-val">Yoco or Paystack hosted</div></div>
             </div>
         </section>
 
@@ -212,7 +215,7 @@
             const quickFixPrices = { '30min': 200, '1hour': 350, '2hours': 700 };
             const quickFixOptions = document.querySelectorAll('.quick-fix-option');
             const priceTag = document.getElementById('dynamic-price-tag');
-            const payButton = document.getElementById('paystack-checkout-trigger');
+            const payButtons = document.querySelectorAll('.quickfix-pay-btn');
             const checkoutMessage = document.getElementById('checkout-message');
             let selectedDuration = '1hour';
             const params = new URLSearchParams(window.location.search);
@@ -228,7 +231,7 @@
                     });
                     const selectedPrice = quickFixPrices[selectedDuration];
                     priceTag.textContent = 'R ' + selectedPrice;
-                    payButton.textContent = 'PAY R' + selectedPrice + ' VIA PAYSTACK 💳';
+                    payButtons.forEach(button => button.textContent = 'PAY R' + selectedPrice + ' VIA ' + button.dataset.provider.toUpperCase() + ' 💳');
                     checkoutMessage.textContent = '';
                     checkoutMessage.classList.remove('error');
                 });
@@ -273,33 +276,53 @@
                 checkoutMessage.classList.add('error');
             }
 
-            payButton.addEventListener('click', async function () {
+            if (params.get('payment') === 'yoco-returned' && params.get('purchase')) {
+                const purchaseId = params.get('purchase');
+                checkoutMessage.textContent = 'Yoco returned you to the site. Waiting for secure payment confirmation…';
+                const checkYocoPayment = async () => {
+                    const deadline = Date.now() + 60000;
+                    while (Date.now() < deadline) {
+                        try {
+                            const response = await fetch('/api/payment/yoco-status?purchase=' + encodeURIComponent(purchaseId));
+                            const result = await response.json();
+                            if (result.checkout?.status === 'paid') { checkoutMessage.textContent = 'Yoco confirmed your payment. Thank you. Our team will follow up about your support session.'; checkoutMessage.classList.add('success'); return; }
+                            if (result.checkout?.status === 'failed') { checkoutMessage.textContent = 'Yoco reported that payment did not complete. You can try again.'; checkoutMessage.classList.add('error'); return; }
+                        } catch (_) { /* keep checking until the webhook arrives */ }
+                        await new Promise(resolve => setTimeout(resolve, 3000));
+                    }
+                    checkoutMessage.textContent = 'Payment is still awaiting Yoco confirmation. Refresh this page shortly if needed.';
+                };
+                checkYocoPayment();
+            }
+
+            payButtons.forEach(payButton => payButton.addEventListener('click', async function () {
                 payButton.disabled = true;
                 checkoutMessage.className = 'checkout-message';
                 const emailInput = document.getElementById('quickfix-email');
                 if (!emailInput.reportValidity()) { payButton.disabled = false; return; }
-                checkoutMessage.textContent = 'Connecting securely to Paystack…';
+                const provider = payButton.dataset.provider;
+                checkoutMessage.textContent = 'Connecting securely to ' + (provider === 'yoco' ? 'Yoco' : 'Paystack') + '…';
 
                 try {
-                    const response = await fetch('/api/payment/paystack-quickfix', {
+                    const response = await fetch('/api/payment/' + provider + '-quickfix', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ durationOption: selectedDuration, email: emailInput.value.trim() })
                     });
                     const result = await response.json();
                     if (!response.ok || !result.success) {
-                        throw new Error(result.message || 'Could not start Paystack checkout.');
+                        throw new Error(result.message || 'Could not start ' + provider + ' checkout.');
                     }
                     if (typeof result.redirectUrl !== 'string' || !result.redirectUrl.startsWith('https://')) {
-                        throw new Error('Paystack did not return a valid secure checkout link.');
+                        throw new Error(provider + ' did not return a valid secure checkout link.');
                     }
                     window.location.assign(result.redirectUrl);
                 } catch (error) {
-                    checkoutMessage.textContent = error.message || 'Unable to connect to Paystack. Please try again.';
+                    checkoutMessage.textContent = error.message || 'Unable to connect to ' + provider + '. Please try again.';
                     checkoutMessage.classList.add('error');
                     payButton.disabled = false;
                 }
-            });
+            }));
         }());
     </script>
 </body>
