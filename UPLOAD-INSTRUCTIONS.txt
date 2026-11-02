@@ -4,6 +4,8 @@ WHAT THIS UPDATE DOES
 ---------------------
 Customers can pay for quick-fix sessions and 30-day plans through either Yoco or Paystack hosted checkout. The server keeps each provider's secret key private and only records a payment as paid after provider verification. Plan purchases activate for 30 days after confirmation. Renewals remain manual.
 
+The homepage offers six remote session choices: 30 minutes R200, 1 hour R350, 2 hours R700, 3 hours R1,050, 4 hours R1,400, and 5 hours R1,750. Each session card describes what the time is intended for. Both Yoco and Paystack remain available.
+
 1. DOWNLOAD AND UPLOAD THE WEBSITE PACKAGE
 -------------------------------------------
 Extract this ZIP. Upload the files and folders inside it to the ROOT of the existing GitHub repository, replacing the matching files. Keep views and public as folders. Do not upload a real .env file or any provider secret to GitHub.
@@ -40,7 +42,7 @@ Save the Render environment changes. Upload/commit the package to GitHub. Your s
 
 6. VERIFY SETUP
 ---------------
-Open the public website and confirm the quick-fix area displays both Yoco and Paystack buttons. Sign in to the client portal to see both providers on each plan. A Yoco return page may say it is waiting briefly while the signed webhook arrives; it must not call the payment successful until verification has completed.
+Open the public website and confirm all six quick-fix choices and both Yoco and Paystack buttons appear. Sign in to the client portal to see both providers on each plan. In the admin subscriber list, use “Reset test plan” on a test account if needed; confirm the prompt. This resets the account to None (Unpaid) / Inactive and keeps payment history. The revenue summary counts only verified live-mode plan payments, so test payments and legacy records without a recorded mode are excluded. A Yoco return page may say it is waiting briefly while the signed webhook arrives; it must not call the payment successful until verification has completed.
 
 LIVE PAYMENTS ARE REAL CHARGES. Before advertising the links, confirm that both dashboards show LIVE mode and that the three Render values are the matching LIVE secrets. Keep secrets out of screenshots and GitHub. If a secret was exposed publicly, rotate it in the provider dashboard.
 

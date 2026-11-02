@@ -5,7 +5,9 @@ PAYMENT FLOW
 ------------
 Customers can choose Yoco or Paystack for one-time quick-fix sessions and 30-day plans. The server creates each hosted checkout. Paystack callbacks are verified against Paystack's transaction API and signed webhooks. Yoco payments are confirmed only from signature-verified, fresh Yoco payment webhooks. A verified plan payment activates the customer's account for 30 days. Plans renew manually; this integration does not create recurring charges.
 
-Quick-fix prices: R200 for 30 minutes, R350 for 1 hour, and R700 for 2 hours. Plan prices: R299, R599, R2,499, and R4,999 for 30 days.
+Quick-fix choices: 30 minutes (R200), 1 hour (R350), 2 hours (R700), 3 hours (R1,050), 4 hours (R1,400), and 5 hours (R1,750). Each card describes the intended support scope. Customers can choose either Yoco or Paystack. Plan prices: R299, R599, R2,499, and R4,999 for 30 days.
+
+The admin subscriber list includes a confirmed “Reset test plan” action. It returns the selected account to None (Unpaid) / Inactive but keeps payment records. The revenue summary counts only verified live-mode plan payments; test-mode and older unclassified records are excluded.
 
 RENDER ENVIRONMENT
 ------------------

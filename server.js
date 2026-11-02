@@ -25,7 +25,10 @@ const dbURI = process.env.MONGODB_URI;
 const QUICK_FIX_OPTIONS = Object.freeze({
     '30min': { amount: 20000, label: '30-minute quick fix' },
     '1hour': { amount: 35000, label: '1-hour support session' },
-    '2hours': { amount: 70000, label: '2-hour support session' }
+    '2hours': { amount: 70000, label: '2-hour support session' },
+    '3hours': { amount: 105000, label: '3-hour support session' },
+    '4hours': { amount: 140000, label: '4-hour support session' },
+    '5hours': { amount: 175000, label: '5-hour support session' }
 });
 const viewsPath = path.join(__dirname, 'views');
 const SLA_PLANS = {
@@ -76,6 +79,7 @@ const PaystackPurchase = mongoose.model('PaystackPurchase', new mongoose.Schema(
     planName: { type: String, default: '' },
     durationOption: { type: String, default: '' },
     amount: { type: Number, required: true },
+    mode: { type: String, enum: ['test', 'live'], default: 'test' },
     status: { type: String, default: 'pending' },
     paidAt: { type: Date, default: null },
     expiresAt: { type: Date, default: null },
@@ -91,6 +95,7 @@ const YocoPurchase = mongoose.model('YocoPurchase', new mongoose.Schema({
     planName: { type: String, default: '' },
     durationOption: { type: String, default: '' },
     amount: { type: Number, required: true },
+    mode: { type: String, enum: ['test', 'live'], default: 'test' },
     status: { type: String, default: 'pending' },
     paidAt: { type: Date, default: null },
     expiresAt: { type: Date, default: null },
@@ -480,7 +485,9 @@ async function createPaystackCheckout({ email, amount, purchaseType, planId = ''
     if (!paystackModeForSecret(secretKey)) throw Object.assign(new Error('Add a valid Paystack live or test secret key to the server environment.'), { statusCode: 503 });
     const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
     const reference = `ite-${randomUUID()}`;
-    const purchase = await PaystackPurchase.create({ reference, userEmail: email, purchaseType, planId, planName, durationOption, amount });
+    const mode = paystackModeForSecret(process.env.PAYSTACK_SECRET_KEY);
+    if (!mode) throw Object.assign(new Error('Paystack is not configured with a valid secret key.'), { statusCode: 503 });
+    const purchase = await PaystackPurchase.create({ reference, userEmail: email, purchaseType, planId, planName, durationOption, amount, mode });
     try {
         const response = await fetch('https://api.paystack.co/transaction/initialize', {
             method: 'POST',
@@ -511,7 +518,9 @@ async function createYocoCheckout({ email, amount, purchaseType, planId = '', pl
     const secretKey = process.env.YOCO_SECRET_KEY;
     if (!yocoModeForSecret(secretKey)) throw Object.assign(new Error('Add a valid Yoco secret key in the server environment.'), { statusCode: 503 });
     const publicBaseUrl = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
-    const purchase = await YocoPurchase.create({ publicId: randomUUID(), userEmail: email, purchaseType, planId, planName, durationOption, amount });
+    const mode = yocoModeForSecret(process.env.YOCO_SECRET_KEY);
+    if (!mode) throw Object.assign(new Error('Yoco is not configured with a valid secret key.'), { statusCode: 503 });
+    const purchase = await YocoPurchase.create({ publicId: randomUUID(), userEmail: email, purchaseType, planId, planName, durationOption, amount, mode });
     const returnUrl = purchaseType === 'plan'
         ? `${publicBaseUrl}/dashboard?payment=yoco-returned&purchase=${encodeURIComponent(purchase.publicId)}`
         : `${publicBaseUrl}/?payment=yoco-returned&purchase=${encodeURIComponent(purchase.publicId)}`;
@@ -982,6 +991,24 @@ app.post('/api/admin/reviews/update-status', checkAdminAuth, async (req, res) =>
     } catch (err) { res.status(500).json({ success: false, message: 'Could not update the review.' }); }
 });
 
+app.post('/api/admin/subscriptions/reset', checkAdminAuth, async (req, res) => {
+    const userId = String(req.body.userId || '');
+    if (!mongoose.isValidObjectId(userId)) return res.status(400).json({ success: false, message: 'Choose a valid customer account.' });
+    try {
+        const user = await UserAccount.findByIdAndUpdate(userId, { $set: {
+            subscriptionTier: 'None (Unpaid)',
+            subscriptionStatus: 'Inactive',
+            subscriptionPaidAt: null,
+            subscriptionExpiresAt: null
+        } }, { new: true, projection: { password: 0 } });
+        if (!user) return res.status(404).json({ success: false, message: 'Customer account not found.' });
+        return res.json({ success: true });
+    } catch (err) {
+        console.error('Admin subscription reset error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not reset this customer plan.' });
+    }
+});
+
 app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
     try {
         const now = new Date();
@@ -993,11 +1020,11 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
             UserAccount.find({}, { password: 0 }).sort({ fullName: 1 }).lean(),
             SupportRequest.find({}, { remotePassword: 0 }).lean(),
             PaystackPurchase.aggregate([
-                { $match: { status: 'paid' } },
+                { $match: { status: 'paid', mode: 'live', purchaseType: 'plan' } },
                 { $group: { _id: null, cents: { $sum: '$amount' }, count: { $sum: 1 } } }
             ]),
             YocoPurchase.aggregate([
-                { $match: { status: 'paid' } },
+                { $match: { status: 'paid', mode: 'live', purchaseType: 'plan' } },
                 { $group: { _id: null, cents: { $sum: '$amount' }, count: { $sum: 1 } } }
             ])
         ]);
