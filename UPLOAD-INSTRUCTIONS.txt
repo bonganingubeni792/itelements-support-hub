@@ -1,9 +1,11 @@
 IT ELEMENTS WEBSITE — UPLOAD GUIDE
 
-1. Extract this ZIP on your computer. Open the extracted ITElements-Support-Hub-Updated folder.
+1. Extract this ZIP on your computer. The extracted folder contains server.js, package.json, views, and public at its top level.
 2. Upload the files and folders inside it to the ROOT of your existing GitHub repository. Keep the views and public folders as folders. Do not upload the enclosing folder as a nested folder.
-3. Keep your existing Render Environment variables. Do not upload a real .env file or put secrets in GitHub. The included .env.example contains placeholders only.
+3. In Render > your web service > Environment, add PAYSTACK_SECRET_KEY with your Paystack TEST secret key (starts with sk_test_). Remove the old YOCO_SECRET_KEY and YOCO_WEBHOOK_SECRET entries. Keep MONGODB_URI, SESSION_SECRET, ADMIN_PASSWORD, your Resend variables, and PUBLIC_BASE_URL unchanged. Never upload a real .env file or put secrets in GitHub; .env.example contains placeholders only.
 4. The ZIP includes package.json. Keep any package-lock.json already in your repository; Render can update dependencies when it runs npm install. The start command is `npm start` (or `node server.js`).
-5. Your Render page showed Auto-Deploy disabled. After committing the GitHub upload, open the web service in Render and choose Manual Deploy > Deploy latest commit.
+5. In Paystack Test Mode > Settings > API Keys & Webhooks, set Test Webhook URL to https://www.itelements.help/webhooks/paystack and save it. No separate webhook secret is needed; Paystack signs events with the same PAYSTACK_SECRET_KEY.
+6. Your Render page showed Auto-Deploy disabled. After committing the GitHub upload, open the web service in Render and choose Manual Deploy > Deploy latest commit. Wait for the deploy to finish before testing.
+7. Test checkout with Paystack's own Test Mode card details. Test payments do not move real money. Keep the sk_test_ key until you deliberately choose to accept live payments.
 
 Included: server.js, package.json, .env.example, .gitignore, README.txt, all current views, and the public assets, including the shared light theme at public/theme.css. Notifications are included in the server, admin page, and client dashboard.
