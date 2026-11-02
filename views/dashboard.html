@@ -111,6 +111,19 @@
         .notification-item span { display:block; color:#aab4c2; font-size:11px; line-height:1.45; }
         .notification-item time { color:#718096; font-size:10px; display:block; margin-top:5px; }
         .notification-empty { color:#718096; font-size:12px; padding:8px 2px; }
+        .client-documents { display:grid; gap:12px; margin:0 0 28px; }
+        .client-document { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:start; padding:18px; border:1px solid #d7deea; border-radius:12px; background:#fff; box-shadow:0 7px 22px #1c2a3a0b; }
+        .client-document h3 { margin:0 0 7px; color:#172436; font-size:16px; }
+        .client-document p { margin:5px 0; color:#455870; line-height:1.55; overflow-wrap:anywhere; }
+        .client-document-meta { color:#65758b !important; font-size:13px; }
+        .client-document-status { display:inline-flex; margin-top:8px; padding:5px 10px; border-radius:999px; background:#eef2f7; color:#26384f; font-size:12px; font-weight:800; }
+        .client-document-status.paid,.client-document-status.accepted { background:#e8f8ef; color:#13743b; }
+        .client-document-status.overdue,.client-document-status.declined { background:#fff0ef; color:#b42318; }
+        .client-document-actions { display:flex; flex-wrap:wrap; gap:8px; }
+        .client-document-actions button { min-height:40px; padding:9px 13px; border:1px solid #1769e8; border-radius:7px; background:#1769e8; color:#fff; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+        .client-document-actions button.secondary { background:#fff; color:#33445a; border-color:#bdc9d8; }
+        .client-document-actions button:disabled { opacity:.6; cursor:wait; }
+        @media(max-width:560px) { .client-document { grid-template-columns:1fr; padding:14px; }.client-document-actions button { flex:1; } }
         @media(max-width:520px) { .notification-widget { right:14px; bottom:16px; }.notification-center { max-height:65vh; } }
 
     </style>
@@ -172,6 +185,7 @@
         <div class="sidebar-brand">IT Elements<span>Client support workspace</span></div>
         <a class="sidebar-link" href="#client-overview"><span class="side-icon">▦</span>Overview</a>
         <a class="sidebar-link" href="#plans"><span class="side-icon">💳</span>Plans & payments</a>
+        <a class="sidebar-link" href="#client-documents"><span class="side-icon">🧾</span>Quotes & invoices</a>
         <a class="sidebar-link" href="#ticket-request"><span class="side-icon">＋</span>Request support</a>
         <a class="sidebar-link" href="#remote-ticket-history"><span class="side-icon">🎫</span>Remote tickets</a>
         <a class="sidebar-link" href="#onsite-history"><span class="side-icon">📍</span>On-site visits</a>
@@ -221,6 +235,12 @@
             <div class="plan-term">One-time payment; renew manually.</div>
             <div class="plan-payment-buttons"><button class="pay-btn" data-provider="yoco" data-plan-id="corporate">Pay with Yoco 💳</button><button class="pay-btn paystack-option" data-provider="paystack" data-plan-id="corporate">Pay with Paystack 💳</button></div>
         </article>
+    </section>
+
+    <section class="ticket-card" id="client-documents" aria-labelledby="client-documents-title">
+        <h2 id="client-documents-title">🧾 Your quotes & invoices</h2>
+        <p class="section-note">View service documents sent by IT Elements. You can accept or decline a quote here. Invoice payment status updates after we confirm your payment.</p>
+        <div id="client-documents-list" class="client-documents" aria-live="polite"><p class="notice">Loading your quotes and invoices…</p></div>
     </section>
 
     <section class="ticket-card request-section" id="ticket-request">
@@ -310,6 +330,7 @@
     const totalTicketCount = document.getElementById('ticket-total');
     const openTicketCount = document.getElementById('ticket-open-count');
     const resolvedTicketCount = document.getElementById('ticket-resolved-count');
+    const clientDocumentsList = document.getElementById('client-documents-list');
     const query = new URLSearchParams(window.location.search);
     const returnedFromGateway = ['returned', 'yoco-returned'].includes(query.get('payment'));
     const checkoutReference = query.get('ref');
@@ -329,6 +350,57 @@
     } else if (query.get('payment') === 'failed') {
         statusMessage.textContent = 'Payment could not be completed. Your plan has not changed.';
         statusMessage.className = 'notice error';
+    }
+
+    function renderBusinessDocuments(documents) {
+        clientDocumentsList.replaceChildren();
+        if (!Array.isArray(documents) || documents.length === 0) {
+            const empty = document.createElement('p'); empty.className = 'notice'; empty.textContent = 'No quotes or invoices have been sent to your account yet.'; clientDocumentsList.appendChild(empty); return;
+        }
+        for (const documentData of documents) {
+            const card = document.createElement('article'); card.className = 'client-document';
+            const details = document.createElement('div');
+            const title = document.createElement('h3'); title.textContent = `${documentData.type}: ${documentData.title}`;
+            const number = document.createElement('p'); number.className = 'client-document-meta'; number.textContent = `${documentData.documentNumber} · Issued ${documentData.createdAt ? new Date(documentData.createdAt).toLocaleDateString('en-ZA') : 'date unavailable'}`;
+            const description = document.createElement('p'); description.textContent = documentData.description || '';
+            const amount = document.createElement('p');
+            const amountLabel = document.createElement('strong'); amountLabel.textContent = 'Amount: ';
+            const amountValue = document.createElement('span'); amountValue.textContent = new Intl.NumberFormat('en-ZA', { style:'currency', currency:'ZAR' }).format((Number(documentData.amountCents) || 0) / 100);
+            amount.append(amountLabel, amountValue);
+            const status = document.createElement('span'); status.className = `client-document-status ${String(documentData.status || '').toLowerCase()}`; status.textContent = `${documentData.status || 'Sent'}${documentData.dueDate ? ` · Due ${new Date(documentData.dueDate).toLocaleDateString('en-ZA')}` : ''}`;
+            details.append(title, number, description, amount, status);
+            const actions = document.createElement('div'); actions.className = 'client-document-actions';
+            if (documentData.type === 'Quote' && documentData.status === 'Sent') {
+                for (const choice of [{ response:'Accepted', label:'Accept quote' }, { response:'Declined', label:'Decline' }]) {
+                    const button = document.createElement('button'); button.type = 'button'; button.textContent = choice.label;
+                    if (choice.response === 'Declined') button.classList.add('secondary');
+                    button.addEventListener('click', async () => {
+                        if (choice.response === 'Declined' && !window.confirm('Decline this quote?')) return;
+                        button.disabled = true;
+                        try {
+                            const response = await fetch(`/api/client/business-documents/${encodeURIComponent(documentData._id)}/respond`, { method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify({ response:choice.response }) });
+                            const result = await response.json();
+                            if (!response.ok || !result.success) throw new Error(result.message || 'Could not update this quote.');
+                            await loadBusinessDocuments();
+                        } catch (error) { window.alert(error.message || 'Could not update this quote.'); button.disabled = false; }
+                    });
+                    actions.appendChild(button);
+                }
+            }
+            card.append(details, actions); clientDocumentsList.appendChild(card);
+        }
+    }
+
+    async function loadBusinessDocuments() {
+        try {
+            const response = await fetch('/api/client/business-documents', { headers:{ Accept:'application/json' } });
+            if (response.status === 401 || response.redirected) return window.location.assign('/client/login');
+            if (!response.ok) throw new Error('Could not load your quotes and invoices.');
+            renderBusinessDocuments(await response.json());
+        } catch (error) {
+            clientDocumentsList.replaceChildren();
+            const message = document.createElement('p'); message.className = 'notice error'; message.textContent = error.message || 'Could not load your quotes and invoices.'; clientDocumentsList.appendChild(message);
+        }
     }
 
     function renderTickets(tickets) {
@@ -539,6 +611,7 @@
         planStatus.className = 'summary-value ' + (user.subscriptionStatus === 'Active' ? 'active' : '');
         planExpiry.textContent = user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt).toLocaleDateString() : '—';
         renderTickets(data.tickets);
+        await loadBusinessDocuments();
         return data;
     }
 
