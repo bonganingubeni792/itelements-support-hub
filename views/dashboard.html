@@ -139,7 +139,7 @@
     </section>
 
     <h2 class="section-title">👑 SLA Package Activation Matrix</h2>
-    <p class="section-note">Choose a 30-day support plan. Payment is securely completed on Yoco.</p>
+    <p class="section-note">Choose a 30-day support plan. Payment is securely completed on Paystack.</p>
     <section class="subscription-summary" aria-live="polite">
         <div><div class="summary-label">Current plan</div><div class="summary-value" id="current-plan">Loading…</div></div>
         <div><div class="summary-label">Plan status</div><div class="summary-value" id="plan-status">Loading…</div></div>
@@ -152,25 +152,25 @@
             <div class="plan-name">Basic Support</div>
             <div class="plan-price">R299<span style="font-size:12px;color:#777;"> / 30 days</span></div>
             <div class="plan-term">One-time payment; renew manually.</div>
-            <button class="pay-btn" data-plan-id="basic">Pay with Yoco 💳</button>
+            <button class="pay-btn" data-plan-id="basic">Pay with Paystack 💳</button>
         </article>
         <article class="plan-box">
             <div class="plan-name">Standard Tier</div>
             <div class="plan-price">R599<span style="font-size:12px;color:#777;"> / 30 days</span></div>
             <div class="plan-term">One-time payment; renew manually.</div>
-            <button class="pay-btn" data-plan-id="standard">Pay with Yoco 💳</button>
+            <button class="pay-btn" data-plan-id="standard">Pay with Paystack 💳</button>
         </article>
         <article class="plan-box">
             <div class="plan-name">Business Growth</div>
             <div class="plan-price">R2,499<span style="font-size:12px;color:#777;"> / 30 days</span></div>
             <div class="plan-term">One-time payment; renew manually.</div>
-            <button class="pay-btn" data-plan-id="business">Pay with Yoco 💳</button>
+            <button class="pay-btn" data-plan-id="business">Pay with Paystack 💳</button>
         </article>
         <article class="plan-box">
             <div class="plan-name">Corporate SLA</div>
             <div class="plan-price">R4,999<span style="font-size:12px;color:#777;"> / 30 days</span></div>
             <div class="plan-term">One-time payment; renew manually.</div>
-            <button class="pay-btn" data-plan-id="corporate">Pay with Yoco 💳</button>
+            <button class="pay-btn" data-plan-id="corporate">Pay with Paystack 💳</button>
         </article>
     </section>
 
@@ -261,7 +261,7 @@
     const openTicketCount = document.getElementById('ticket-open-count');
     const resolvedTicketCount = document.getElementById('ticket-resolved-count');
     const query = new URLSearchParams(window.location.search);
-    const returnedFromYoco = query.get('payment') === 'returned';
+    const returnedFromPaystack = query.get('payment') === 'returned';
     const checkoutReference = query.get('ref');
     const selectedPlanId = query.get('plan');
 
@@ -276,7 +276,7 @@
     if (query.get('payment') === 'cancelled') {
         statusMessage.textContent = 'Checkout was cancelled. Your plan has not changed.';
     } else if (query.get('payment') === 'failed') {
-        statusMessage.textContent = 'Yoco could not complete the payment. Your plan has not changed.';
+        statusMessage.textContent = 'Paystack could not complete the payment. Your plan has not changed.';
         statusMessage.className = 'notice error';
     }
 
@@ -494,36 +494,36 @@
     function showReturnedPaymentState(data) {
         const checkout = data && data.checkout;
         if (checkout && checkout.status === 'paid') {
-            statusMessage.textContent = `Yoco confirmed payment. ${checkout.planName} is active on your dashboard until ${new Date(checkout.expiresAt).toLocaleDateString()}.`;
+            statusMessage.textContent = `Paystack confirmed payment. ${checkout.planName} is active on your dashboard until ${new Date(checkout.expiresAt).toLocaleDateString()}.`;
             statusMessage.className = 'notice success';
             return 'paid';
         }
         if (checkout && checkout.status === 'failed') {
-            statusMessage.textContent = 'Yoco reported that payment did not complete. You can try again.';
+            statusMessage.textContent = 'Paystack reported that payment did not complete. You can try again.';
             statusMessage.className = 'notice error';
             return 'failed';
         }
-        statusMessage.textContent = 'Yoco returned you to the dashboard. Waiting for Yoco to securely confirm payment…';
+        statusMessage.textContent = 'Paystack returned you to the dashboard. Waiting for secure payment confirmation…';
         statusMessage.className = 'notice';
         return 'pending';
     }
 
     async function startPlanCheckout(button) {
         button.disabled = true;
-        statusMessage.textContent = 'Connecting securely to Yoco…';
+        statusMessage.textContent = 'Connecting securely to Paystack…';
         statusMessage.className = 'notice';
         try {
-            const response = await fetch('/api/payment/yoco-plan-checkout', {
+            const response = await fetch('/api/payment/paystack-plan-checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                 body: JSON.stringify({ planId: button.dataset.planId })
             });
             const result = await response.json();
-            if (!response.ok || !result.success) throw new Error(result.message || 'Could not start Yoco checkout.');
-            if (typeof result.redirectUrl !== 'string' || !result.redirectUrl.startsWith('https://')) throw new Error('Yoco returned an invalid checkout link.');
+            if (!response.ok || !result.success) throw new Error(result.message || 'Could not start Paystack checkout.');
+            if (typeof result.redirectUrl !== 'string' || !result.redirectUrl.startsWith('https://')) throw new Error('Paystack returned an invalid checkout link.');
             window.location.assign(result.redirectUrl);
         } catch (error) {
-            statusMessage.textContent = error.message || 'Could not connect to Yoco. Please try again.';
+            statusMessage.textContent = error.message || 'Could not connect to Paystack. Please try again.';
             statusMessage.className = 'notice error';
             button.disabled = false;
         }
@@ -553,7 +553,7 @@
                     return;
                 }
             }
-            if (!returnedFromYoco) return;
+            if (!returnedFromPaystack) return;
             let state = showReturnedPaymentState(data);
             if (state !== 'pending' || !checkoutReference) return;
             const timeoutAt = Date.now() + 60000;
@@ -564,7 +564,7 @@
                 state = showReturnedPaymentState(data);
                 if (state !== 'pending') return;
             }
-            statusMessage.textContent = 'Payment is still awaiting Yoco confirmation. Refresh this page shortly; the plan will activate when confirmation arrives.';
+            statusMessage.textContent = 'Payment is still awaiting Paystack confirmation. Refresh this page shortly; the plan will activate when confirmation arrives.';
         } catch (error) {
             statusMessage.textContent = error.message;
             statusMessage.className = 'notice error';
