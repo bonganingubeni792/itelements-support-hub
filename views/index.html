@@ -106,40 +106,38 @@
                 <a href="https://www.teamviewer.com/en/download/" target="_blank" rel="noopener noreferrer" class="inline-dl-link">🔒 Download TeamViewer</a>
             </div>
 
-            <div class="quick-fix-options" role="radiogroup" aria-label="Choose a remote support session">
-                <button type="button" class="quick-fix-option" data-duration="30min" aria-pressed="false">
+            <div class="quick-fix-options" aria-label="Remote support session options">
+                <article class="quick-fix-option" data-duration="30min">
                     <span class="quick-option-icon" aria-hidden="true">⚡</span><span class="quick-option-name">Quick fix</span>
-                    <strong>30 minutes</strong><span class="quick-option-price">R200</span><span class="quick-option-description">One small issue, basic checks, simple settings, or quick software guidance.</span><span class="quick-option-select">Choose this session</span>
-                </button>
-                <button type="button" class="quick-fix-option is-selected" data-duration="1hour" aria-pressed="true">
+                    <strong>30 minutes</strong><span class="quick-option-price">R200</span><span class="quick-option-description">One small issue, basic checks, simple settings, or quick software guidance.</span><span class="quick-option-select">Choose this session</span><button type="button" class="quickfix-card-pay" data-duration="30min">Pay</button>
+                </article>
+                <article class="quick-fix-option is-selected" data-duration="1hour">
                     <span class="quick-option-icon" aria-hidden="true">⌚</span><span class="quick-option-name">Focused support</span>
-                    <strong>1 hour</strong><span class="quick-option-price">R350</span><span class="quick-option-description">Focused help with one computer issue, setup, updates, or performance troubleshooting.</span><span class="quick-option-select">Selected</span>
-                </button>
-                <button type="button" class="quick-fix-option" data-duration="2hours" aria-pressed="false">
+                    <strong>1 hour</strong><span class="quick-option-price">R350</span><span class="quick-option-description">Focused help with one computer issue, setup, updates, or performance troubleshooting.</span><span class="quick-option-select">Selected</span><button type="button" class="quickfix-card-pay" data-duration="1hour">Pay</button>
+                </article>
+                <article class="quick-fix-option" data-duration="2hours">
                     <span class="quick-option-icon" aria-hidden="true">🛠</span><span class="quick-option-name">Extended support</span>
-                    <strong>2 hours</strong><span class="quick-option-price">R700</span><span class="quick-option-description">More time for deeper troubleshooting, connectivity, printer, or software problems.</span><span class="quick-option-select">Choose this session</span>
-                </button>
-                <button type="button" class="quick-fix-option" data-duration="3hours" aria-pressed="false">
+                    <strong>2 hours</strong><span class="quick-option-price">R700</span><span class="quick-option-description">More time for deeper troubleshooting, connectivity, printer, or software problems.</span><span class="quick-option-select">Choose this session</span><button type="button" class="quickfix-card-pay" data-duration="2hours">Pay</button>
+                </article>
+                <article class="quick-fix-option" data-duration="3hours">
                     <span class="quick-option-icon" aria-hidden="true">🧰</span><span class="quick-option-name">In-depth support</span>
-                    <strong>3 hours</strong><span class="quick-option-price">R1,050</span><span class="quick-option-description">Extended diagnosis and troubleshooting for a complex computer or network issue.</span><span class="quick-option-select">Choose this session</span>
-                </button>
-                <button type="button" class="quick-fix-option" data-duration="4hours" aria-pressed="false">
+                    <strong>3 hours</strong><span class="quick-option-price">R1,050</span><span class="quick-option-description">Extended diagnosis and troubleshooting for a complex computer or network issue.</span><span class="quick-option-select">Choose this session</span><button type="button" class="quickfix-card-pay" data-duration="3hours">Pay</button>
+                </article>
+                <article class="quick-fix-option" data-duration="4hours">
                     <span class="quick-option-icon" aria-hidden="true">🖥</span><span class="quick-option-name">Multi-device help</span>
-                    <strong>4 hours</strong><span class="quick-option-price">R1,400</span><span class="quick-option-description">Time for multiple devices, Wi-Fi, printer setup, and small-office equipment.</span><span class="quick-option-select">Choose this session</span>
-                </button>
-                <button type="button" class="quick-fix-option" data-duration="5hours" aria-pressed="false">
+                    <strong>4 hours</strong><span class="quick-option-price">R1,400</span><span class="quick-option-description">Time for multiple devices, Wi-Fi, printer setup, and small-office equipment.</span><span class="quick-option-select">Choose this session</span><button type="button" class="quickfix-card-pay" data-duration="4hours">Pay</button>
+                </article>
+                <article class="quick-fix-option" data-duration="5hours">
                     <span class="quick-option-icon" aria-hidden="true">🏢</span><span class="quick-option-name">Full support session</span>
-                    <strong>5 hours</strong><span class="quick-option-price">R1,750</span><span class="quick-option-description">A longer session for multi-device setup, system configuration, and network troubleshooting.</span><span class="quick-option-select">Choose this session</span>
-                </button>
+                    <strong>5 hours</strong><span class="quick-option-price">R1,750</span><span class="quick-option-description">A longer session for multi-device setup, system configuration, and network troubleshooting.</span><span class="quick-option-select">Choose this session</span><button type="button" class="quickfix-card-pay" data-duration="5hours">Pay</button>
+                </article>
             </div>
 
             <div class="quick-fix-checkout">
                 <label class="quickfix-email-label" for="quickfix-email">Email address for your payment receipt</label>
                 <input id="quickfix-email" class="form-control" type="email" autocomplete="email" placeholder="you@example.com" required>
                 <p class="price-display" id="dynamic-price-tag" aria-live="polite">R 350</p>
-                <div class="quick-payment-options" aria-label="Pay securely with PayFast">
-                    <button type="button" class="pay-trigger-btn quickfix-pay-btn">PAY R350 VIA PAYFAST 💳</button>
-                </div>
+                <p class="quickfix-payment-note">Choose a session above and tap its Pay button. Secure payment is handled on the payment provider’s checkout.</p>
                 <p id="checkout-message" class="checkout-message" role="status" aria-live="polite"></p>
             </div>
         </section>
@@ -226,7 +224,7 @@
             const quickFixPrices = { '30min': 200, '1hour': 350, '2hours': 700, '3hours': 1050, '4hours': 1400, '5hours': 1750 };
             const quickFixOptions = document.querySelectorAll('.quick-fix-option');
             const priceTag = document.getElementById('dynamic-price-tag');
-            const payButtons = document.querySelectorAll('.quickfix-pay-btn');
+            const payButtons = document.querySelectorAll('.quickfix-card-pay');
             const checkoutMessage = document.getElementById('checkout-message');
             let selectedDuration = '1hour';
             const params = new URLSearchParams(window.location.search);
@@ -237,13 +235,11 @@
                     quickFixOptions.forEach(function (item) {
                         const isSelected = item === option;
                         item.classList.toggle('is-selected', isSelected);
-                        item.setAttribute('aria-pressed', String(isSelected));
                         item.querySelector('.quick-option-select').textContent = isSelected ? 'Selected' : 'Choose this session';
                     });
                     const selectedPrice = quickFixPrices[selectedDuration];
                     const formattedPrice = new Intl.NumberFormat('en-ZA').format(selectedPrice);
                     priceTag.textContent = 'R ' + formattedPrice;
-                    payButtons.forEach(button => button.textContent = 'PAY R' + formattedPrice + ' VIA PAYFAST 💳');
                     checkoutMessage.textContent = '';
                     checkoutMessage.classList.remove('error');
                 });
@@ -309,11 +305,14 @@
             }
 
             payButtons.forEach(payButton => payButton.addEventListener('click', async function () {
+                selectedDuration = payButton.dataset.duration;
+                const selectedOption = document.querySelector('.quick-fix-option[data-duration="' + selectedDuration + '"]');
+                if (selectedOption) selectedOption.click();
                 payButton.disabled = true;
                 checkoutMessage.className = 'checkout-message';
                 const emailInput = document.getElementById('quickfix-email');
                 if (!emailInput.reportValidity()) { payButton.disabled = false; return; }
-                checkoutMessage.textContent = 'Connecting securely to PayFast…';
+                    checkoutMessage.textContent = 'Connecting securely to checkout…';
                 try {
                     const response = await fetch('/api/payment/payfast-quickfix', {
                         method: 'POST',
