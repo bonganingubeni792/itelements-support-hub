@@ -473,6 +473,7 @@ app.use(express.static(viewsPath, { index: false }));
 app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => res.sendFile(path.join(viewsPath, 'index.html')));
+app.get('/business-tools', (req, res) => res.sendFile(path.join(viewsPath, 'business-tools.html')));
 app.get('/pricing', (req, res) => res.sendFile(path.join(viewsPath, 'pricing.html')));
 app.get('/services', (req, res) => res.sendFile(path.join(viewsPath, 'services.html')));
 app.get('/onsite-support', (req, res) => res.sendFile(path.join(viewsPath, 'onsite-support.html')));

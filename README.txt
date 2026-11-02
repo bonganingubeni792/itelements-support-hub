@@ -36,6 +36,10 @@ Upload the ZIP contents to the repository root, then deploy the latest commit fr
 
 The app also includes public pages, client/admin portals, support and on-site request flows, notifications, verified payment records, password-reset email flow, and required assets.
 
+BUSINESS TOOLS
+--------------
+The public Business tools page (/business-tools) contains a self-service quote and invoice maker. Drafts are saved in the visitor's browser and documents can be printed or saved as PDF. It does not send invoices, verify tax/VAT status, store drafts on the server, or collect the visitor's payments. Review applicable invoice and VAT requirements before issuing documents.
+
 OFFICIAL PAYMENT DOCUMENTATION
 ------------------------------
 Paystack API keys: https://paystack.com/docs/developer-tools/api-keys/
