@@ -111,68 +111,17 @@
         .notification-item span { display:block; color:#aab4c2; font-size:11px; line-height:1.45; }
         .notification-item time { color:#718096; font-size:10px; display:block; margin-top:5px; }
         .notification-empty { color:#718096; font-size:12px; padding:8px 2px; }
-        .client-documents { display:grid; gap:12px; margin:0 0 28px; }
-        .client-document { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:14px; align-items:start; padding:18px; border:1px solid #d7deea; border-radius:12px; background:#fff; box-shadow:0 7px 22px #1c2a3a0b; }
-        .client-document h3 { margin:0 0 7px; color:#172436; font-size:16px; }
-        .client-document p { margin:5px 0; color:#455870; line-height:1.55; overflow-wrap:anywhere; }
-        .client-document-meta { color:#65758b !important; font-size:13px; }
-        .client-document-status { display:inline-flex; margin-top:8px; padding:5px 10px; border-radius:999px; background:#eef2f7; color:#26384f; font-size:12px; font-weight:800; }
-        .client-document-status.paid,.client-document-status.accepted { background:#e8f8ef; color:#13743b; }
-        .client-document-status.overdue,.client-document-status.declined { background:#fff0ef; color:#b42318; }
-        .client-document-actions { display:flex; flex-wrap:wrap; gap:8px; }
-        .client-document-actions button { min-height:40px; padding:9px 13px; border:1px solid #1769e8; border-radius:7px; background:#1769e8; color:#fff; font-family:inherit; font-size:13px; font-weight:700; cursor:pointer; }
-        .client-document-actions button.secondary { background:#fff; color:#33445a; border-color:#bdc9d8; }
-        .client-document-actions button:disabled { opacity:.6; cursor:wait; }
-        @media(max-width:560px) { .client-document { grid-template-columns:1fr; padding:14px; }.client-document-actions button { flex:1; } }
         @media(max-width:520px) { .notification-widget { right:14px; bottom:16px; }.notification-center { max-height:65vh; } }
 
     </style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
     <link rel="stylesheet" href="/assets/theme.css?v=13">
-    <style>
-        /* Helpdesk client workspace: keeps every existing payment, form and conversation feature. */
-        :root { color-scheme:light; }
-        body { background:#e9edf3 !important; color:#172436 !important; padding:18px !important; }
-        .page { width:min(1600px,100%) !important; max-width:none !important; margin:0 auto !important; display:grid; grid-template-columns:245px minmax(0,1fr); gap:18px; align-items:start; }
-        .header { grid-column:1/-1; grid-row:1; margin:0 !important; padding:13px 18px !important; border:1px solid #d7deea !important; border-radius:14px; background:#fff; box-shadow:0 8px 24px #1c2a3a12; }
-        .header h1 { color:#172436 !important; }
-        .header-actions a { color:#33445a !important; }.header-actions a:hover,.header-actions a:focus-visible { color:#155eef !important; background:#edf4ff !important; border-color:#c8dcff !important; }
-        .dashboard-sidebar { grid-column:1; grid-row:2; position:sticky; top:16px; display:flex; flex-direction:column; gap:5px; padding:14px 10px; min-height:calc(100vh - 145px); background:#fff; border:1px solid #d7deea; border-radius:14px; box-shadow:0 8px 24px #1c2a3a10; }
-        .sidebar-brand { padding:8px 11px 14px; margin-bottom:7px; border-bottom:1px solid #e3e8ef; color:#172436; font-weight:900; font-size:16px; }
-        .sidebar-brand span { display:block; margin-top:3px; font-size:11px; font-weight:600; color:#65758b; }
-        .sidebar-link { display:flex; align-items:center; gap:10px; min-height:42px; padding:9px 11px; border-radius:8px; color:#33445a !important; font-size:13px; font-weight:700; text-decoration:none !important; transition:background .15s,color .15s; }
-        .sidebar-link:hover,.sidebar-link:focus-visible { background:#edf4ff; color:#155eef !important; outline:none; }
-        .sidebar-link .side-icon { width:22px; text-align:center; font-size:16px; }
-        .workspace-content { grid-column:2; min-width:0; }
-        .welcome { color:#172436 !important; font-size:clamp(23px,3vw,32px) !important; }
-        .welcome-subtitle,.section-note,.request-section-intro,.request-description,.request-hours,.form-help { color:#52647a !important; }
-        .quick-stat,.subscription-summary,.plan-box,.ticket-card,.request-choice,.soft-item { background:#fff !important; border-color:#d7deea !important; border-radius:12px !important; box-shadow:0 7px 22px #1c2a3a0b; }
-        .quick-stat-label,.summary-label,.plan-term,.form-group label { color:#52647a !important; }
-        .quick-stat-value,.summary-value,.ticket-card h2,.section-title,.request-choice h3,.soft-item strong { color:#172436 !important; }
-        .quick-stat-value.green { color:#138343 !important; }.quick-stat-value.yellow { color:#9b6900 !important; }
-        .section-title { border-color:#d7deea !important; }
-        .plan-box { border-top:3px solid #1769e8 !important; padding:20px !important; }
-        .plan-box:nth-child(2) { border-color:#de3028 !important; }
-        .plan-name { color:#26384f !important; }.plan-price { color:#d52d26 !important; }
-        .pay-btn { background:#d93025 !important; }.pay-btn:hover { background:#b8201a !important; }
-        .form-control,.dashboard-request-form select,.dashboard-request-form textarea { background:#fff !important; color:#172436 !important; border-color:#bdc9d8 !important; }
-        .form-control::placeholder,.dashboard-request-form textarea::placeholder { color:#66768a !important; opacity:1; }
-        .request-choice { background:#f9fbfd !important; }.remote-choice { border-top-color:#1769e8 !important; }.onsite-choice { border-top-color:#d93025 !important; }
-        .request-kicker { color:#52647a !important; }.remote-choice .request-kicker { color:#155eef !important; }.onsite-choice .request-kicker { color:#c72b25 !important; }
-        .table-logs th { background:#eef2f7 !important; color:#33445a !important; }.table-logs td { color:#26384f !important; border-color:#dfe5ed !important; }
-        .visit-item { background:#f8fafc !important; border-color:#d7deea !important; }.visit-item strong { color:#52647a !important; }.visit-item span { color:#26384f !important; }
-        .conversation { background:#f3f6fa !important; border-color:#d7deea !important; }.conversation-message { background:#fff !important; }.conversation-message strong { color:#172436 !important; }.conversation-message p { color:#33445a !important; }
-        .conversation-form textarea { background:#fff !important; color:#172436 !important; border-color:#bdc9d8 !important; }
-        .notification-center { background:#fff !important; border-color:#d7deea !important; box-shadow:0 14px 36px #192a4030 !important; }.notification-head h2,.notification-item strong { color:#172436 !important; }.notification-item { background:#f6f8fb !important; border-color:#d7deea !important; }.notification-item span { color:#455870 !important; }.notification-item time,.notification-empty { color:#63748a !important; }
-        @media(max-width:900px) { .page { grid-template-columns:1fr; gap:12px; }.header { grid-column:1; grid-row:1; }.dashboard-sidebar { grid-column:1; grid-row:2; position:static; min-height:0; flex-direction:row; overflow-x:auto; align-items:center; padding:8px; }.sidebar-brand { display:none; }.sidebar-link { flex:0 0 auto; min-height:38px; }.workspace-content { grid-column:1; grid-row:3; } }
-        @media(max-width:560px) { body { padding:9px !important; }.header { padding:12px !important; }.header-actions { gap:5px !important; }.header-actions a { font-size:12px !important; padding:6px !important; }.dashboard-sidebar { gap:3px; }.sidebar-link { padding:8px; font-size:12px; }.quick-stats { gap:8px !important; }.quick-stat { padding:13px !important; }.ticket-card { padding:14px !important; } }
-    </style>
 </head>
 <body>
 <main class="page">
     <header class="header">
         <h1><img src="/assets/itel-support-icon.png?v=3" alt="" width="32" height="32"> IT Elements Client Portal</h1>
-        <nav class="header-actions" aria-label="Client navigation"><a href="/business-tools">Business tools</a><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="#ticket-request">Request help</a><a href="/client/logout" class="logout-link">Log out</a></nav>
+        <nav class="header-actions" aria-label="Client navigation"><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="#ticket-request">Request help</a><a href="/client/logout" class="logout-link">Log out</a></nav>
     </header>
     <div class="notification-widget" id="notification-widget">
         <button class="notification-toggle" id="notification-toggle" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notification-panel"><span aria-hidden="true">🔔</span><span id="notification-count" class="notification-count">0</span></button>
@@ -181,28 +130,16 @@
             <div class="notification-list" id="notification-list"><div class="notification-empty">Loading notifications…</div></div>
         </section>
     </div>
-    <aside class="dashboard-sidebar" aria-label="Client portal navigation">
-        <div class="sidebar-brand">IT Elements<span>Client support workspace</span></div>
-        <a class="sidebar-link" href="#client-overview"><span class="side-icon">▦</span>Overview</a>
-        <a class="sidebar-link" href="#plans"><span class="side-icon">💳</span>Plans & payments</a>
-        <a class="sidebar-link" href="#client-documents"><span class="side-icon">🧾</span>Quotes & invoices</a>
-        <a class="sidebar-link" href="#ticket-request"><span class="side-icon">＋</span>Request support</a>
-        <a class="sidebar-link" href="#remote-ticket-history"><span class="side-icon">🎫</span>Remote tickets</a>
-        <a class="sidebar-link" href="#onsite-history"><span class="side-icon">📍</span>On-site visits</a>
-        <a class="sidebar-link" href="#downloads"><span class="side-icon">↓</span>Downloads</a>
-        <a class="sidebar-link" href="/client/logout"><span class="side-icon">↪</span>Log out</a>
-    </aside>
-    <div class="workspace-content">
     <h2 class="welcome" id="welcome-title">Welcome to your support portal</h2>
     <p class="welcome-subtitle">Manage your plan, submit a support request, and follow your ticket progress here.</p>
-    <section class="quick-stats" id="client-overview" aria-label="Your support overview">
+    <section class="quick-stats" aria-label="Your support overview">
         <article class="quick-stat"><span class="quick-stat-label">Support requests</span><strong class="quick-stat-value" id="ticket-total">—</strong></article>
         <article class="quick-stat"><span class="quick-stat-label">Needs attention</span><strong class="quick-stat-value yellow" id="ticket-open-count">—</strong></article>
         <article class="quick-stat"><span class="quick-stat-label">Resolved</span><strong class="quick-stat-value green" id="ticket-resolved-count">—</strong></article>
     </section>
 
-    <h2 class="section-title" id="plans">👑 SLA Package Activation Matrix</h2>
-    <p class="section-note">Choose a 30-day support plan and pay securely using Yoco or Paystack.</p>
+    <h2 class="section-title">👑 SLA Package Activation Matrix</h2>
+    <p class="section-note">Choose a 30-day support plan and pay securely using PayFast.</p>
     <section class="subscription-summary" aria-live="polite">
         <div><div class="summary-label">Current plan</div><div class="summary-value" id="current-plan">Loading…</div></div>
         <div><div class="summary-label">Plan status</div><div class="summary-value" id="plan-status">Loading…</div></div>
@@ -215,32 +152,26 @@
             <div class="plan-name">Basic Support</div>
             <div class="plan-price">R299<span style="font-size:12px;color:#777;"> / 30 days</span></div>
             <div class="plan-term">One-time payment; renew manually.</div>
-            <div class="plan-payment-buttons"><button class="pay-btn" data-provider="yoco" data-plan-id="basic">Pay with Yoco 💳</button><button class="pay-btn paystack-option" data-provider="paystack" data-plan-id="basic">Pay with Paystack 💳</button></div>
+            <div class="plan-payment-buttons"><button class="pay-btn" data-plan-id="basic">Pay with PayFast 💳</button></div>
         </article>
         <article class="plan-box">
             <div class="plan-name">Standard Tier</div>
             <div class="plan-price">R599<span style="font-size:12px;color:#777;"> / 30 days</span></div>
             <div class="plan-term">One-time payment; renew manually.</div>
-            <div class="plan-payment-buttons"><button class="pay-btn" data-provider="yoco" data-plan-id="standard">Pay with Yoco 💳</button><button class="pay-btn paystack-option" data-provider="paystack" data-plan-id="standard">Pay with Paystack 💳</button></div>
+            <div class="plan-payment-buttons"><button class="pay-btn" data-plan-id="standard">Pay with PayFast 💳</button></div>
         </article>
         <article class="plan-box">
             <div class="plan-name">Business Growth</div>
             <div class="plan-price">R2,499<span style="font-size:12px;color:#777;"> / 30 days</span></div>
             <div class="plan-term">One-time payment; renew manually.</div>
-            <div class="plan-payment-buttons"><button class="pay-btn" data-provider="yoco" data-plan-id="business">Pay with Yoco 💳</button><button class="pay-btn paystack-option" data-provider="paystack" data-plan-id="business">Pay with Paystack 💳</button></div>
+            <div class="plan-payment-buttons"><button class="pay-btn" data-plan-id="business">Pay with PayFast 💳</button></div>
         </article>
         <article class="plan-box">
             <div class="plan-name">Corporate SLA</div>
             <div class="plan-price">R4,999<span style="font-size:12px;color:#777;"> / 30 days</span></div>
             <div class="plan-term">One-time payment; renew manually.</div>
-            <div class="plan-payment-buttons"><button class="pay-btn" data-provider="yoco" data-plan-id="corporate">Pay with Yoco 💳</button><button class="pay-btn paystack-option" data-provider="paystack" data-plan-id="corporate">Pay with Paystack 💳</button></div>
+            <div class="plan-payment-buttons"><button class="pay-btn" data-plan-id="corporate">Pay with PayFast 💳</button></div>
         </article>
-    </section>
-
-    <section class="ticket-card" id="client-documents" aria-labelledby="client-documents-title">
-        <h2 id="client-documents-title">🧾 Your quotes & invoices</h2>
-        <p class="section-note">View service documents sent by IT Elements. You can accept or decline a quote here. Invoice payment status updates after we confirm your payment.</p>
-        <div id="client-documents-list" class="client-documents" aria-live="polite"><p class="notice">Loading your quotes and invoices…</p></div>
     </section>
 
     <section class="ticket-card request-section" id="ticket-request">
@@ -290,7 +221,7 @@
         <div id="onsite-history-rows" class="visit-list"><p class="notice">Loading your on-site requests…</p></div>
     </section>
 
-    <section class="ticket-card" id="remote-ticket-history">
+    <section class="ticket-card" id="ticket-history">
         <h2>📋 Your Active Support Tickets</h2>
         <p style="font-size:12px;color:#777;margin-top:-5px;">Ticket history linked to your account.</p>
         <table class="table-logs">
@@ -299,7 +230,7 @@
         </table>
     </section>
 
-    <section class="ticket-card" id="downloads">
+    <section class="ticket-card">
         <h2>📥 Required Software Downloads</h2>
         <p style="font-size:12px;color:#777;margin-top:-5px;">Download remote support software only when asked by your engineer.</p>
         <div class="soft-box">
@@ -307,7 +238,6 @@
             <div class="soft-item"><strong>TeamViewer</strong><span style="color:#777;font-size:12px;display:block;">Remote support application</span><a href="https://www.teamviewer.com/en/download/" target="_blank" rel="noopener noreferrer" class="dl-link">Download TeamViewer</a></div>
         </div>
     </section>
-    </div>
 </main>
 
 <script>
@@ -330,11 +260,9 @@
     const totalTicketCount = document.getElementById('ticket-total');
     const openTicketCount = document.getElementById('ticket-open-count');
     const resolvedTicketCount = document.getElementById('ticket-resolved-count');
-    const clientDocumentsList = document.getElementById('client-documents-list');
     const query = new URLSearchParams(window.location.search);
-    const returnedFromGateway = ['returned', 'yoco-returned'].includes(query.get('payment'));
-    const checkoutReference = query.get('ref');
-    const yocoPurchaseId = query.get('purchase');
+    const returnedFromGateway = query.get('payment') === 'returned';
+    const payfastPaymentId = query.get('payfastId');
     const selectedPlanId = query.get('plan');
 
     if (query.get('request') === 'remote-sent') {
@@ -350,57 +278,6 @@
     } else if (query.get('payment') === 'failed') {
         statusMessage.textContent = 'Payment could not be completed. Your plan has not changed.';
         statusMessage.className = 'notice error';
-    }
-
-    function renderBusinessDocuments(documents) {
-        clientDocumentsList.replaceChildren();
-        if (!Array.isArray(documents) || documents.length === 0) {
-            const empty = document.createElement('p'); empty.className = 'notice'; empty.textContent = 'No quotes or invoices have been sent to your account yet.'; clientDocumentsList.appendChild(empty); return;
-        }
-        for (const documentData of documents) {
-            const card = document.createElement('article'); card.className = 'client-document';
-            const details = document.createElement('div');
-            const title = document.createElement('h3'); title.textContent = `${documentData.type}: ${documentData.title}`;
-            const number = document.createElement('p'); number.className = 'client-document-meta'; number.textContent = `${documentData.documentNumber} · Issued ${documentData.createdAt ? new Date(documentData.createdAt).toLocaleDateString('en-ZA') : 'date unavailable'}`;
-            const description = document.createElement('p'); description.textContent = documentData.description || '';
-            const amount = document.createElement('p');
-            const amountLabel = document.createElement('strong'); amountLabel.textContent = 'Amount: ';
-            const amountValue = document.createElement('span'); amountValue.textContent = new Intl.NumberFormat('en-ZA', { style:'currency', currency:'ZAR' }).format((Number(documentData.amountCents) || 0) / 100);
-            amount.append(amountLabel, amountValue);
-            const status = document.createElement('span'); status.className = `client-document-status ${String(documentData.status || '').toLowerCase()}`; status.textContent = `${documentData.status || 'Sent'}${documentData.dueDate ? ` · Due ${new Date(documentData.dueDate).toLocaleDateString('en-ZA')}` : ''}`;
-            details.append(title, number, description, amount, status);
-            const actions = document.createElement('div'); actions.className = 'client-document-actions';
-            if (documentData.type === 'Quote' && documentData.status === 'Sent') {
-                for (const choice of [{ response:'Accepted', label:'Accept quote' }, { response:'Declined', label:'Decline' }]) {
-                    const button = document.createElement('button'); button.type = 'button'; button.textContent = choice.label;
-                    if (choice.response === 'Declined') button.classList.add('secondary');
-                    button.addEventListener('click', async () => {
-                        if (choice.response === 'Declined' && !window.confirm('Decline this quote?')) return;
-                        button.disabled = true;
-                        try {
-                            const response = await fetch(`/api/client/business-documents/${encodeURIComponent(documentData._id)}/respond`, { method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify({ response:choice.response }) });
-                            const result = await response.json();
-                            if (!response.ok || !result.success) throw new Error(result.message || 'Could not update this quote.');
-                            await loadBusinessDocuments();
-                        } catch (error) { window.alert(error.message || 'Could not update this quote.'); button.disabled = false; }
-                    });
-                    actions.appendChild(button);
-                }
-            }
-            card.append(details, actions); clientDocumentsList.appendChild(card);
-        }
-    }
-
-    async function loadBusinessDocuments() {
-        try {
-            const response = await fetch('/api/client/business-documents', { headers:{ Accept:'application/json' } });
-            if (response.status === 401 || response.redirected) return window.location.assign('/client/login');
-            if (!response.ok) throw new Error('Could not load your quotes and invoices.');
-            renderBusinessDocuments(await response.json());
-        } catch (error) {
-            clientDocumentsList.replaceChildren();
-            const message = document.createElement('p'); message.className = 'notice error'; message.textContent = error.message || 'Could not load your quotes and invoices.'; clientDocumentsList.appendChild(message);
-        }
     }
 
     function renderTickets(tickets) {
@@ -590,7 +467,7 @@
     setInterval(loadNotifications, 20000);
 
     async function loadProfile() {
-        const params = checkoutReference ? '?reference=' + encodeURIComponent(checkoutReference) : yocoPurchaseId ? '?purchase=' + encodeURIComponent(yocoPurchaseId) : '';
+        const params = payfastPaymentId ? '?payfastId=' + encodeURIComponent(payfastPaymentId) : '';
         const response = await fetch('/api/client/profile-data' + params, { headers: { Accept: 'application/json' } });
         if (response.status === 401 || response.redirected) {
             window.location.assign('/client/login');
@@ -611,7 +488,6 @@
         planStatus.className = 'summary-value ' + (user.subscriptionStatus === 'Active' ? 'active' : '');
         planExpiry.textContent = user.subscriptionExpiresAt ? new Date(user.subscriptionExpiresAt).toLocaleDateString() : '—';
         renderTickets(data.tickets);
-        await loadBusinessDocuments();
         return data;
     }
 
@@ -623,35 +499,51 @@
             return 'paid';
         }
         if (checkout && checkout.status === 'failed') {
-            statusMessage.textContent = 'The provider reported that payment did not complete. You can try again.';
+            statusMessage.textContent = 'PayFast reported that payment did not complete. You can try again.';
             statusMessage.className = 'notice error';
             return 'failed';
         }
-        statusMessage.textContent = 'You returned from checkout. Waiting for secure provider confirmation…';
+        statusMessage.textContent = 'You returned from PayFast. Waiting for secure payment confirmation…';
         statusMessage.className = 'notice';
         return 'pending';
     }
 
     async function startPlanCheckout(button) {
         button.disabled = true;
-        const provider = button.dataset.provider || 'paystack';
-        statusMessage.textContent = 'Connecting securely to ' + (provider === 'yoco' ? 'Yoco' : 'Paystack') + '…';
+        statusMessage.textContent = 'Connecting securely to PayFast…';
         statusMessage.className = 'notice';
         try {
-            const response = await fetch('/api/payment/' + provider + '-plan-checkout', {
+            const response = await fetch('/api/payment/payfast-plan-checkout', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
                 body: JSON.stringify({ planId: button.dataset.planId })
             });
             const result = await response.json();
-            if (!response.ok || !result.success) throw new Error(result.message || 'Could not start ' + provider + ' checkout.');
-            if (typeof result.redirectUrl !== 'string' || !result.redirectUrl.startsWith('https://')) throw new Error(provider + ' returned an invalid checkout link.');
-            window.location.assign(result.redirectUrl);
+            if (!response.ok || !result.success) throw new Error(result.message || 'Could not start PayFast checkout.');
+            submitPayFastCheckout(result);
         } catch (error) {
-            statusMessage.textContent = error.message || 'Could not connect to ' + provider + '. Please try again.';
+            statusMessage.textContent = error.message || 'Could not connect to PayFast. Please try again.';
             statusMessage.className = 'notice error';
             button.disabled = false;
         }
+    }
+
+    function submitPayFastCheckout(checkout) {
+        const action = new URL(checkout.action);
+        if (action.protocol !== 'https:' || !['www.payfast.co.za', 'sandbox.payfast.co.za'].includes(action.hostname) || action.pathname !== '/eng/process') {
+            throw new Error('PayFast returned an invalid secure checkout address.');
+        }
+        if (!checkout.fields || typeof checkout.fields !== 'object') throw new Error('PayFast checkout details are missing.');
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = action.href;
+        for (const [name, value] of Object.entries(checkout.fields)) {
+            const input = document.createElement('input');
+            input.type = 'hidden'; input.name = name; input.value = String(value);
+            form.appendChild(input);
+        }
+        document.body.appendChild(form);
+        form.submit();
     }
 
     document.querySelectorAll('.pay-btn').forEach(button => button.addEventListener('click', () => startPlanCheckout(button)));
@@ -680,7 +572,7 @@
             }
             if (!returnedFromGateway) return;
             let state = showReturnedPaymentState(data);
-            if (state !== 'pending' || (!checkoutReference && !yocoPurchaseId)) return;
+            if (state !== 'pending' || !payfastPaymentId) return;
             const timeoutAt = Date.now() + 60000;
             while (Date.now() < timeoutAt) {
                 await new Promise(resolve => setTimeout(resolve, 3000));
@@ -689,7 +581,7 @@
                 state = showReturnedPaymentState(data);
                 if (state !== 'pending') return;
             }
-            statusMessage.textContent = 'Payment is still awaiting provider confirmation. Refresh this page shortly; the plan will activate when confirmation arrives.';
+            statusMessage.textContent = 'Payment is still awaiting PayFast confirmation. Refresh this page shortly; the plan will activate when confirmation arrives.';
         } catch (error) {
             statusMessage.textContent = error.message;
             statusMessage.className = 'notice error';
