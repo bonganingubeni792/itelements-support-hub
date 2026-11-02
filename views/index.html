@@ -59,7 +59,7 @@
         @media (max-width:560px) { body { padding:12px; } .feature-grid,.how-it-works { grid-template-columns:1fr; gap:12px; }.feature-card:last-child,.how-it-works .step-card:last-child { grid-column:auto; } .main-card,.incident-box { padding:26px 16px; }.onsite-promo { grid-template-columns:1fr; }.onsite-promo-link { justify-self:stretch; }.feedback-section { grid-template-columns:1fr; } }
     .brand-support{color:#fff!important}</style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
-    <link rel="stylesheet" href="/assets/theme.css?v=12">
+    <link rel="stylesheet" href="/assets/theme.css?v=13">
 </head>
 <body>
     <nav class="navbar" aria-label="Main navigation">
@@ -90,6 +90,42 @@
                 <div class="hero-proof"><span>✓ Remote support</span><span>✓ Yoco hosted checkout</span><span>✓ South African support</span></div>
             </div>
             <div class="hero-device" aria-hidden="true"><div class="device-screen"><span class="screen-dots">● ● ●</span><div class="warning-symbol">!</div><strong>Need a hand?</strong><span>Support that starts with a clear next step.</span></div><div class="device-base"></div><div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div></div>
+        </section>
+        <section class="incident-box quick-fix-section" aria-labelledby="incident-heading">
+            <div class="quick-fix-heading">
+                <span class="quick-fix-mark" aria-hidden="true">✦</span>
+                <div>
+                    <span class="section-kicker">ONE-TIME REMOTE HELP</span>
+                    <h2 id="incident-heading">Need a quick incident fix?</h2>
+                    <p>Choose the session length that suits you. Pay securely through Yoco; no subscription is required.</p>
+                </div>
+            </div>
+
+            <div class="quick-downloads-container">
+                <a href="https://anydesk.com/en/downloads" target="_blank" rel="noopener noreferrer" class="inline-dl-link">⚙️ Download AnyDesk</a>
+                <a href="https://www.teamviewer.com/en/download/" target="_blank" rel="noopener noreferrer" class="inline-dl-link">🔒 Download TeamViewer</a>
+            </div>
+
+            <div class="quick-fix-options" role="radiogroup" aria-label="Choose a remote support session">
+                <button type="button" class="quick-fix-option" data-duration="30min" aria-pressed="false">
+                    <span class="quick-option-icon" aria-hidden="true">⚡</span><span class="quick-option-name">Quick fix</span>
+                    <strong>30 minutes</strong><span class="quick-option-price">R200</span><span class="quick-option-select">Choose this session</span>
+                </button>
+                <button type="button" class="quick-fix-option is-selected" data-duration="1hour" aria-pressed="true">
+                    <span class="quick-option-icon" aria-hidden="true">⌚</span><span class="quick-option-name">Focused support</span>
+                    <strong>1 hour</strong><span class="quick-option-price">R350</span><span class="quick-option-select">Selected</span>
+                </button>
+                <button type="button" class="quick-fix-option" data-duration="2hours" aria-pressed="false">
+                    <span class="quick-option-icon" aria-hidden="true">🛠</span><span class="quick-option-name">Extended support</span>
+                    <strong>2 hours</strong><span class="quick-option-price">R700</span><span class="quick-option-select">Choose this session</span>
+                </button>
+            </div>
+
+            <div class="quick-fix-checkout">
+                <p class="price-display" id="dynamic-price-tag" aria-live="polite">R 350</p>
+                <button type="button" id="yoco-checkout-trigger" class="pay-trigger-btn">PAY R350 VIA YOCO 💳</button>
+                <p id="checkout-message" class="checkout-message" role="status" aria-live="polite"></p>
+            </div>
         </section>
         <div class="support-hours" role="note">🕒 Support hours: <strong>Monday to Friday, 08:00–17:00 South African time (SAST)</strong></div>
 
@@ -126,29 +162,6 @@
         </section>
 
         <section class="onsite-promo" aria-labelledby="onsite-title"><div><span class="step-number">ON-SITE SUPPORT</span><h2 id="onsite-title">Some problems need hands-on attention.</h2><p>Tell us where you are and what needs fixing. We’ll review your area, availability, and any call-out costs before confirming a visit.</p></div><a class="onsite-promo-link" href="/onsite-support">Request an on-site assessment →</a></section>
-
-        <section class="incident-box" aria-labelledby="incident-heading">
-            <h2 id="incident-heading" style="margin-top:0;color:#fff;font-size:24px;">Need a Quick Incident Fix?</h2>
-            <p style="color:#888;font-size:14px;margin-bottom:25px;">Don't want a subscription? Pay an ad-hoc flat hourly rate for immediate remote desktop support engineering.</p>
-
-            <div class="quick-downloads-container">
-                <a href="https://anydesk.com/en/downloads" target="_blank" rel="noopener noreferrer" class="inline-dl-link">⚙️ Download AnyDesk</a>
-                <a href="https://www.teamviewer.com/en/download/" target="_blank" rel="noopener noreferrer" class="inline-dl-link">🔒 Download TeamViewer</a>
-            </div>
-
-            <label for="duration-selector" style="display:block;font-size:13px;color:#aaa;margin-bottom:8px;">SELECT DURATION ALLOCATION:</label>
-            <select class="form-control" id="duration-selector">
-                <option value="1">1 Hour Dedicated Emergency Services</option>
-                <option value="2">2 Hours Dedicated Support Package</option>
-                <option value="3">3 Hours Comprehensive Network Overhaul</option>
-                <option value="4">4 Hours Corporate Hardware Deep-Clean</option>
-                <option value="5">5 Hours Complete Enterprise SLA Care</option>
-            </select>
-
-            <div class="price-display" id="dynamic-price-tag" aria-live="polite">R 350</div>
-            <button type="button" id="yoco-checkout-trigger" class="pay-trigger-btn">PAY VIA CREDIT CARD 💳</button>
-            <p id="checkout-message" class="checkout-message" role="status" aria-live="polite"></p>
-        </section>
 
         <section class="feedback-section" aria-labelledby="feedback-title">
             <div>
@@ -194,12 +207,30 @@
 
     <script>
         (function () {
-            const pricePerHourZAR = 350;
-            const durationSelector = document.getElementById('duration-selector');
+            const quickFixPrices = { '30min': 200, '1hour': 350, '2hours': 700 };
+            const quickFixOptions = document.querySelectorAll('.quick-fix-option');
             const priceTag = document.getElementById('dynamic-price-tag');
             const payButton = document.getElementById('yoco-checkout-trigger');
             const checkoutMessage = document.getElementById('checkout-message');
+            let selectedDuration = '1hour';
             const params = new URLSearchParams(window.location.search);
+
+            quickFixOptions.forEach(function (option) {
+                option.addEventListener('click', function () {
+                    selectedDuration = option.dataset.duration;
+                    quickFixOptions.forEach(function (item) {
+                        const isSelected = item === option;
+                        item.classList.toggle('is-selected', isSelected);
+                        item.setAttribute('aria-pressed', String(isSelected));
+                        item.querySelector('.quick-option-select').textContent = isSelected ? 'Selected' : 'Choose this session';
+                    });
+                    const selectedPrice = quickFixPrices[selectedDuration];
+                    priceTag.textContent = 'R ' + selectedPrice;
+                    payButton.textContent = 'PAY R' + selectedPrice + ' VIA YOCO 💳';
+                    checkoutMessage.textContent = '';
+                    checkoutMessage.classList.remove('error');
+                });
+            });
 
             document.getElementById('copyright-year').textContent = new Date().getFullYear();
             const publicReviews = document.getElementById('public-reviews');
@@ -228,11 +259,6 @@
                 } catch (error) { status.textContent = error.message || 'Could not send feedback. Please try again.'; status.className = 'feedback-status error'; }
                 button.disabled = false;
             });
-            durationSelector.addEventListener('change', function () {
-                const hours = Number(durationSelector.value);
-                priceTag.textContent = 'R ' + (pricePerHourZAR * hours);
-            });
-
             if (params.get('payment') === 'returned') {
                 checkoutMessage.textContent = 'You returned from Yoco. Please allow Yoco to confirm the payment; this return page alone is not proof of payment.';
             } else if (params.get('payment') === 'cancelled') {
@@ -251,7 +277,7 @@
                     const response = await fetch('/api/payment/yoco-checkout', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ hours: Number(durationSelector.value) })
+                        body: JSON.stringify({ durationOption: selectedDuration })
                     });
                     const result = await response.json();
                     if (!response.ok || !result.success) {
