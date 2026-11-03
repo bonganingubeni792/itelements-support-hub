@@ -8,4 +8,6 @@ IT Elements Support Hub — PayFast deployment
 6. Use https://www.itelements.help as PUBLIC_BASE_URL. PayFast ITN endpoint: https://www.itelements.help/webhooks/payfast.
 7. Do not paste merchant secrets into GitHub, HTML, or chat. A merchant key was visible in a screenshot shared in this conversation; regenerate it before live use and set the new value in Render.
 
+The Invoice & Quote Studio is available from the site navigation before Home. It includes four print layouts, optional business logo, reusable customer details, VAT, discounts, saved invoices/quotes, and browser print-to-PDF. Existing PayFast environment variables are used; no new secrets are required for this feature.
+
 Plan purchases and quick-fix purchases activate only after server-side PayFast ITN verification. Plans last 30 days and renew manually.

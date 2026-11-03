@@ -63,13 +63,14 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     subscriptionTier: { type: String, default: 'None (Unpaid)' },
     subscriptionStatus: { type: String, default: 'Inactive' },
     subscriptionPaidAt: { type: Date, default: null },
-    subscriptionExpiresAt: { type: Date, default: null }
+    subscriptionExpiresAt: { type: Date, default: null },
+    invoiceProUntil: { type: Date, default: null }
 }, { collection: 'useraccounts' }));
 
 const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     paymentId: { type: String, required: true, unique: true },
     userEmail: { type: String, default: '', lowercase: true, trim: true },
-    purchaseType: { type: String, enum: ['plan', 'quickfix'], required: true },
+    purchaseType: { type: String, enum: ['plan', 'quickfix', 'invoicePro'], required: true },
     planId: { type: String, default: '' },
     planName: { type: String, default: '' },
     durationOption: { type: String, default: '' },
@@ -81,6 +82,29 @@ const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     expiresAt: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
 }, { collection: 'payfastpurchases' }));
+
+const BusinessDocument = mongoose.model('BusinessDocument', new mongoose.Schema({
+    ownerEmail: { type: String, required: true, lowercase: true, trim: true, index: true },
+    kind: { type: String, enum: ['invoice', 'quote'], required: true },
+    number: { type: String, required: true },
+    business: { type: Object, default: {} },
+    customer: { type: Object, default: {} },
+    layout: { type: String, enum: ['modern', 'classic', 'compact', 'ledger'], default: 'modern' },
+    discountRate: { type: Number, min: 0, max: 100, default: 0 },
+    discountCents: { type: Number, min: 0, default: 0 },
+    issueDate: { type: String, default: '' },
+    dueDate: { type: String, default: '' },
+    reference: { type: String, default: '' },
+    paymentTerms: { type: String, default: '' },
+    items: { type: [Object], default: [] },
+    vatRate: { type: Number, enum: [0, 15], default: 0 },
+    subtotalCents: { type: Number, required: true },
+    vatCents: { type: Number, required: true },
+    totalCents: { type: Number, required: true },
+    notes: { type: String, default: '' },
+    paymentInstructions: { type: String, default: '' },
+    createdAt: { type: Date, default: Date.now }
+}, { collection: 'businessdocuments' }));
 
 const PasswordReset = mongoose.model('PasswordReset', new mongoose.Schema({
     email: { type: String, required: true, index: true },
@@ -314,6 +338,12 @@ async function markPayFastPurchasePaid(fields) {
     const update = { status: 'paid', paidAt, pfPaymentId: String(fields.pf_payment_id || '') };
     if (purchase.purchaseType === 'plan') {
         update.expiresAt = new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000);
+    } else if (purchase.purchaseType === 'invoicePro') {
+        const user = await UserAccount.findOne({ email: purchase.userEmail });
+        update.expiresAt = new Date(Math.max(paidAt.getTime(), user?.invoiceProUntil?.getTime() || 0) + 30 * 24 * 60 * 60 * 1000);
+    }
+    const saved = await PayFastPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: update });
+    if (saved.modifiedCount && purchase.purchaseType === 'plan') {
         await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, { $set: {
             subscriptionTier: purchase.planName,
             subscriptionStatus: 'Active',
@@ -321,7 +351,14 @@ async function markPayFastPurchasePaid(fields) {
             subscriptionExpiresAt: update.expiresAt
         } });
     }
-    const saved = await PayFastPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: update });
+    if (saved.modifiedCount && purchase.purchaseType === 'invoicePro') {
+        await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, { $set: { invoiceProUntil: update.expiresAt } });
+        await sendCustomerEmail(purchase.userEmail, 'IT Elements Invoice Pro is active', [
+            'PayFast confirmed your Invoice Pro payment.',
+            `Your extra document allowance is active until ${update.expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
+            'Open the Invoice Maker from your customer portal to create invoices and quotes.'
+        ]);
+    }
     if (purchase.purchaseType === 'plan' && saved.modifiedCount) {
         await sendCustomerEmail(purchase.userEmail, 'Your IT Elements plan payment is confirmed', [
             `PayFast confirmed your payment for ${purchase.planName}.`,
@@ -363,7 +400,7 @@ app.post('/webhooks/payfast', async (req, res) => {
     }
 });
 
-app.use(express.json({ limit: '20kb' }));
+app.use(express.json({ limit: '100kb' }));
 if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
     throw new Error('SESSION_SECRET must be set in production.');
 }
@@ -386,12 +423,14 @@ function checkAdminAuth(req, res, next) {
 }
 function checkUserAuth(req, res, next) {
     if (req.session && (req.session.isUser || req.session.isAdmin)) return next();
+    if (req.path === '/tools/invoices' || req.path === '/invoice-maker.html') req.session.returnTo = '/tools/invoices';
     res.redirect('/client/login');
 }
 
 // Do not let static-file requests bypass the session checks on these pages.
 app.get('/admin.html', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
 app.get('/dashboard.html', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
+app.get('/invoice-maker.html', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
 app.use(express.static(viewsPath, { index: false }));
 app.use('/assets', express.static(path.join(__dirname, 'public')));
 
@@ -416,6 +455,7 @@ app.get('/client/forgot-password', (req, res) => res.sendFile(path.join(viewsPat
 app.get('/reset-password', (req, res) => res.sendFile(path.join(viewsPath, 'reset-password.html')));
 app.get('/register', (req, res) => res.sendFile(path.join(viewsPath, 'register.html')));
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
+app.get('/tools/invoices', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
 
 async function createPayFastCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
@@ -425,18 +465,18 @@ async function createPayFastCheckout({ email, amount, purchaseType, planId = '',
     if (!publicBaseUrl.startsWith('https://')) throw Object.assign(new Error('Set PUBLIC_BASE_URL to your deployed HTTPS website address.'), { statusCode: 503 });
     const paymentId = `ite-${randomUUID()}`;
     const purchase = await PayFastPurchase.create({ paymentId, userEmail: email, purchaseType, planId, planName, durationOption, amount, mode: config.mode });
-    const returnPath = purchaseType === 'plan' ? '/dashboard' : '/';
+    const returnPath = purchaseType === 'plan' ? '/dashboard' : purchaseType === 'invoicePro' ? '/tools/invoices' : '/';
     const fields = {
         merchant_id: config.merchantId,
         merchant_key: config.merchantKey,
-        return_url: `${publicBaseUrl}${returnPath}?payment=returned&${purchaseType === 'plan' ? 'payfastId' : 'paymentId'}=${encodeURIComponent(paymentId)}`,
+        return_url: `${publicBaseUrl}${returnPath}?payment=returned&${purchaseType === 'plan' || purchaseType === 'invoicePro' ? 'payfastId' : 'paymentId'}=${encodeURIComponent(paymentId)}`,
         cancel_url: `${publicBaseUrl}${returnPath}?payment=cancelled`,
         notify_url: `${publicBaseUrl}/webhooks/payfast`,
         email_address: email,
         m_payment_id: paymentId,
         amount: (amount / 100).toFixed(2),
-        item_name: purchaseType === 'plan' ? `IT Elements ${planName} 30-day support plan` : `IT Elements ${QUICK_FIX_OPTIONS[durationOption]?.label || 'remote support session'}`,
-        item_description: purchaseType === 'plan' ? 'One-time payment for 30 days of support; renew manually.' : 'One-time remote support session.'
+        item_name: purchaseType === 'plan' ? `IT Elements ${planName} 30-day support plan` : purchaseType === 'invoicePro' ? 'IT Elements Invoice Pro 30-day access' : `IT Elements ${QUICK_FIX_OPTIONS[durationOption]?.label || 'remote support session'}`,
+        item_description: purchaseType === 'plan' ? 'One-time payment for 30 days of support; renew manually.' : purchaseType === 'invoicePro' ? 'One-time payment for 30 days of additional invoice and quote creation.' : 'One-time remote support session.'
     };
     fields.signature = payfastSignature(fields, process.env.PAYFAST_PASSPHRASE || '');
     return { action: config.endpoint, fields, paymentId };
@@ -462,12 +502,114 @@ app.post('/api/payment/payfast-plan-checkout', checkUserAuth, async (req, res) =
     catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout. Please try again.' }); }
 });
 
+app.post('/api/payment/payfast-invoice-checkout', checkUserAuth, async (req, res) => {
+    const email = String(req.session.userEmail || '').trim().toLowerCase();
+    if (!email) return res.status(403).json({ success: false, message: 'Sign in to enable Invoice Pro.' });
+    try { return res.json({ success: true, ...(await createPayFastCheckout({ email, amount: 4900, purchaseType: 'invoicePro' })) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout.' }); }
+});
+
 app.get('/api/payment/payfast-status', async (req, res) => {
     const paymentId = String(req.query.paymentId || '');
     if (!/^ite-[a-f0-9-]{36}$/i.test(paymentId)) return res.status(400).json({ success: false });
     const purchase = await PayFastPurchase.findOne({ paymentId }, { userEmail: 0, __v: 0 });
     if (!purchase) return res.status(404).json({ success: false });
     res.json({ success: true, checkout: purchase });
+});
+
+app.get('/api/payment/payfast-invoice-status', checkUserAuth, async (req, res) => {
+    const paymentId = String(req.query.payfastId || req.query.paymentId || '');
+    if (!/^ite-[a-f0-9-]{36}$/i.test(paymentId)) return res.status(400).json({ success: false });
+    const purchase = await PayFastPurchase.findOne({
+        paymentId, userEmail: invoiceOwner(req), purchaseType: 'invoicePro'
+    }, { status: 1, expiresAt: 1, createdAt: 1 }).lean();
+    if (!purchase) return res.status(404).json({ success: false });
+    res.json({ success: true, status: purchase.status, expiresAt: purchase.expiresAt });
+});
+
+function invoiceOwner(req) { return String(req.session.userEmail || '').trim().toLowerCase(); }
+function cleanInvoiceText(value, max = 180) { return String(value || '').trim().slice(0, max); }
+function cleanInvoiceLogo(value) { const logo=String(value||''); return logo.length<=60000 && /^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(logo) ? logo : ''; }
+async function invoiceAllowance(email) {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const [user, used] = await Promise.all([
+        UserAccount.findOne({ email }, { invoiceProUntil: 1 }),
+        BusinessDocument.countDocuments({ ownerEmail: email, createdAt: { $gte: monthStart } })
+    ]);
+    const proUntil = user?.invoiceProUntil || null;
+    const pro = Boolean(proUntil && new Date(proUntil) > now);
+    return { pro, proUntil, used, freeLimit: 3, remaining: pro ? null : Math.max(0, 3 - used) };
+}
+
+app.get('/api/invoice-tools/status', checkUserAuth, async (req, res) => {
+    try { res.json({ success: true, ...(await invoiceAllowance(invoiceOwner(req))) }); }
+    catch (_) { res.status(500).json({ success: false, message: 'Could not load Invoice Maker access.' }); }
+});
+
+app.get('/api/invoices', checkUserAuth, async (req, res) => {
+    try {
+        const documents = await BusinessDocument.find({ ownerEmail: invoiceOwner(req) }, { ownerEmail: 0, __v: 0 }).sort({ createdAt: -1 }).limit(100).lean();
+        res.json({ success: true, documents });
+    } catch (_) { res.status(500).json({ success: false, message: 'Could not load your saved documents.' }); }
+});
+
+app.post('/api/invoices', checkUserAuth, async (req, res) => {
+    try {
+        const ownerEmail = invoiceOwner(req);
+        const allowance = await invoiceAllowance(ownerEmail);
+        if (!allowance.pro && allowance.remaining <= 0) return res.status(402).json({ success: false, code: 'UPGRADE_REQUIRED', message: 'Your three free documents for this month have been used. Enable Invoice Pro for R49 per 30 days, or return next month.' });
+        const body = req.body || {};
+        const kind = body.kind === 'quote' ? 'quote' : body.kind === 'invoice' ? 'invoice' : '';
+        if (!kind) return res.status(400).json({ success: false, message: 'Choose invoice or quote.' });
+        const layout = ['modern', 'classic', 'compact', 'ledger'].includes(body.layout) ? body.layout : 'modern';
+        const vatRate = Number(body.vatRate) === 15 ? 15 : 0;
+        const discountRate = Number(body.discountRate || 0);
+        if (!Number.isFinite(discountRate) || discountRate < 0 || discountRate > 100) return res.status(400).json({ success: false, message: 'Discount must be between 0% and 100%.' });
+        const itemsInput = Array.isArray(body.items) ? body.items.slice(0, 30) : [];
+        const items = itemsInput.map((item) => {
+            const description = cleanInvoiceText(item?.description, 160);
+            const quantity = Number(item?.quantity);
+            const unitPriceCents = Math.round(Number(item?.unitPrice) * 100);
+            if (!description || !Number.isFinite(quantity) || quantity <= 0 || quantity > 100000 || !Number.isSafeInteger(unitPriceCents) || unitPriceCents < 0 || unitPriceCents > 100000000) return null;
+            return { description, quantity, unitPriceCents, lineTotalCents: Math.round(quantity * unitPriceCents) };
+        });
+        if (!items.length || items.some(item => !item)) return res.status(400).json({ success: false, message: 'Add at least one valid item with a description, quantity, and non-negative price.' });
+        const subtotalCents = items.reduce((sum, item) => sum + item.lineTotalCents, 0);
+        const discountCents = Math.round(subtotalCents * discountRate / 100);
+        const taxableSubtotalCents = subtotalCents - discountCents;
+        const vatCents = Math.round(taxableSubtotalCents * vatRate / 100);
+        const totalCents = taxableSubtotalCents + vatCents;
+        if (!Number.isSafeInteger(totalCents) || totalCents > 1000000000) return res.status(400).json({ success: false, message: 'The document total is too large.' });
+        const now = new Date();
+        const prefix = kind === 'invoice' ? 'INV' : 'QUO';
+        const number = `${prefix}-${now.toISOString().slice(0, 10).replaceAll('-', '')}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
+        const saved = await BusinessDocument.create({
+            ownerEmail, kind, number, layout,
+            business: {
+                name: cleanInvoiceText(body.business?.name, 100), email: cleanInvoiceText(body.business?.email, 120),
+                phone: cleanInvoiceText(body.business?.phone, 40), address: cleanInvoiceText(body.business?.address, 240),
+                vatNumber: cleanInvoiceText(body.business?.vatNumber, 40), logoText: cleanInvoiceText(body.business?.logoText, 40), logoImage: cleanInvoiceLogo(body.business?.logoImage)
+            },
+            customer: { name: cleanInvoiceText(body.customer?.name, 100), email: cleanInvoiceText(body.customer?.email, 120), phone: cleanInvoiceText(body.customer?.phone, 40), address: cleanInvoiceText(body.customer?.address, 240) },
+            issueDate: /^\d{4}-\d{2}-\d{2}$/.test(String(body.issueDate || '')) ? body.issueDate : now.toISOString().slice(0, 10),
+            dueDate: /^\d{4}-\d{2}-\d{2}$/.test(String(body.dueDate || '')) ? body.dueDate : '',
+            reference: cleanInvoiceText(body.reference, 100),
+            paymentTerms: cleanInvoiceText(body.paymentTerms, 500),
+            items, vatRate, discountRate, discountCents, subtotalCents, vatCents, totalCents,
+            notes: cleanInvoiceText(body.notes, 1200),
+            paymentInstructions: cleanInvoiceText(body.paymentInstructions, 500)
+        });
+        res.status(201).json({ success: true, document: { ...saved.toObject(), ownerEmail: undefined, __v: undefined }, ...(await invoiceAllowance(ownerEmail)) });
+    } catch (_) { res.status(500).json({ success: false, message: 'Could not save this document. Please try again.' }); }
+});
+
+app.delete('/api/invoices/:id', checkUserAuth, async (req, res) => {
+    try {
+        const removed = await BusinessDocument.deleteOne({ _id: req.params.id, ownerEmail: invoiceOwner(req) });
+        if (!removed.deletedCount) return res.status(404).json({ success: false, message: 'Document not found.' });
+        res.json({ success: true });
+    } catch (_) { res.status(400).json({ success: false, message: 'Could not remove that document.' }); }
 });
 
 app.post('/client/register', async (req, res) => {
@@ -485,9 +627,12 @@ app.post('/client/register', async (req, res) => {
         await newUser.save();
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
-        const nextUrl = req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
-            ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-            : '/dashboard';
+        const nextUrl = req.session.returnTo === '/tools/invoices'
+            ? '/tools/invoices'
+            : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+                ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+                : '/dashboard';
+        delete req.session.returnTo;
         res.send(`<script>alert("Account created successfully!");window.location.href=${JSON.stringify(nextUrl)};</script>`);
     } catch (err) { res.status(500).send(err.message); }
 });
@@ -503,9 +648,12 @@ app.post('/client/login', async (req, res) => {
         if (user && await verifyAndUpgradePassword(user, password)) {
             req.session.isUser = true;
             req.session.userEmail = user.email;
-            const nextUrl = req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
-                ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-                : '/dashboard';
+            const nextUrl = req.session.returnTo === '/tools/invoices'
+                ? '/tools/invoices'
+                : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+                    ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+                    : '/dashboard';
+            delete req.session.returnTo;
             return res.send(`<script>window.location.href=${JSON.stringify(nextUrl)};</script>`);
         }
         res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
