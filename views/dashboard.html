@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1422">
+<meta name="theme-color" content="#050505">
 <title>IT Elements Client Command Center</title>
 <link rel="stylesheet" href="/assets/responsive.css?v=1">
 <link rel="stylesheet" href="/assets/theme.css?v=13">
@@ -95,6 +95,68 @@ textarea.form-control{height:90px;resize:vertical}
 @media(max-width:650px){body{padding:12px}.quick-stats{grid-template-columns:1fr}.visit-item{grid-template-columns:1fr}.header h1{font-size:18px}.header h1 img{width:42px;height:42px}.ticket-card{padding:14px}.subscription-summary{display:grid;grid-template-columns:1fr 1fr}.plans-wrapper{display:grid;grid-template-columns:1fr}.plan-box{width:100%;min-width:0}.table-logs{min-width:580px}.soft-box{flex-direction:column}.onsite-dashboard-form{grid-template-columns:1fr}.dashboard-request-form .full-field{grid-column:auto}.notification-widget{right:14px;bottom:16px}}
 @media(max-width:380px){.header-actions a{font-size:11px;padding:7px}.subscription-summary{grid-template-columns:1fr}.notification-center{max-height:65vh}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
+/* IT ELEMENTS CLIENT PORTAL — BLACK / RED / WHITE THEME */
+:root{color-scheme:dark;--bg:#050505;--panel:#101010;--panel2:#171717;--line:#383838;--white:#fff;--muted:#d0d0d0;--red:#ed1c24;--blue:#398bff;}
+html,body{background:#050505!important;color:#fff!important}
+body{background:#050505!important;color:#fff!important}
+.page{background:transparent!important}
+/* Keep every heading, label, name and table value readable */
+h1,h2,h3,h4,h5,h6,p,label,strong,b,th,td,span,small,summary,article,section,li,div{ text-shadow:none; }
+body,.page,.page *{color:inherit}
+body,.page,h1,h2,h3,h4,h5,h6,p,label,strong,b,th,td,span,small,summary{color:#fff}
+.intro,.welcome-subtitle,.section-note,.request-description,.request-section-intro,.request-hours,.form-help,.summary-label,.plan-term{color:#c7c7c7!important}
+a,.dl-link{color:#fff!important}
+a:hover,.dl-link:hover{color:#ff454b!important}
+.header{background:#101010!important;border:1px solid #3c3c3c!important;border-left:4px solid #ed1c24!important;box-shadow:0 8px 24px #000!important}
+.header h1,.welcome,.section-title,.ticket-card h2,.request-choice h3{color:#fff!important}
+.header-actions a{background:#181818!important;color:#fff!important;border:1px solid #414141!important}
+.header-actions a:hover,.header-actions a:focus-visible{background:#252525!important;border-color:#398bff!important;color:#fff!important}
+.header-actions .logout-link{background:#c91620!important;border-color:#ed1c24!important;color:#fff!important}
+.quick-stat,.subscription-summary,.ticket-card,.plan-box,.request-choice,.soft-item{background:#111!important;border:1px solid #393939!important;box-shadow:0 7px 20px #0009!important}
+.quick-stat{border-top:3px solid #ed1c24!important}
+.quick-stat:nth-child(2),.quick-stat:nth-child(3){border-top-color:#777!important}
+.quick-stat-label,.summary-label,.plan-term,.request-kicker{color:#c9c9c9!important}
+.quick-stat-value,.summary-value,.plan-name,.plan-price,.section-title{color:#fff!important}
+.quick-stat-value.green,.summary-value.active{color:#fff!important}
+.quick-stat-value.yellow,.summary-value.pending{color:#e6e6e6!important}
+.plan-box:hover{border-color:#ed1c24!important}
+.plan-price{color:#ff555b!important}
+.plan-price span{color:#c8c8c8!important}
+.pay-btn,.submit-btn,.conversation-form button{background:#d71920!important;border:1px solid #f0444b!important;color:#fff!important}
+.pay-btn:hover,.submit-btn:hover,.conversation-form button:hover{background:#f0222b!important}
+.form-control,.dashboard-request-form select,.dashboard-request-form textarea,.conversation-form textarea{background:#080808!important;color:#fff!important;border:1px solid #555!important}
+.form-control::placeholder,.dashboard-request-form textarea::placeholder{color:#aaa!important;opacity:1}
+.form-control:focus,.dashboard-request-form select:focus,.dashboard-request-form textarea:focus{border-color:#398bff!important;box-shadow:0 0 0 3px #398bff25!important}
+.form-control option,.dashboard-request-form select option{background:#111!important;color:#fff!important}
+.password-toggle{background:#202020!important;border-color:#555!important;color:#fff!important}
+.table-logs{border-color:#444!important}
+.table-logs th{background:#202020!important;color:#fff!important}
+.table-logs td{background:#111!important;color:#fff!important;border-bottom:1px solid #383838!important}
+.table-logs tr:hover td{background:#1b1b1b!important}
+.visit-item,.conversation,.conversation-message{background:#111!important;border-color:#414141!important}
+.visit-item>div{border-bottom-color:#383838!important}
+.visit-item strong{color:#d7d7d7!important}
+.visit-item span,.conversation-message p,.conversation-message strong,.conversation summary{color:#fff!important}
+.conversation-message time{color:#bdbdbd!important}
+.status-badge{background:#252525!important;color:#fff!important;border:1px solid #555!important}
+.status-badge.open,.visit-status{color:#fff!important;background:#292020!important;border-color:#a52a30!important}
+.status-badge.hold,.visit-status.paused{color:#fff!important;background:#292020!important;border-color:#777!important}
+.status-badge.resolved,.visit-status.finished{color:#fff!important;background:#18251c!important;border-color:#477653!important}
+.status-badge.confirmed,.status-badge.contacted,.visit-status.contacted,.visit-status.scheduled{color:#fff!important;background:#111d2b!important;border-color:#398bff!important}
+.notice{color:#eee!important}.notice.error,.conversation-error{color:#ff8585!important}.notice.success{color:#fff!important}
+.request-icon{background:#242424!important;border:1px solid #444!important}
+.remote-choice,.onsite-choice{border-top:3px solid #ed1c24!important}
+.notification-toggle{background:#151515!important;border-color:#ed1c24!important;color:#fff!important}
+.notification-center{background:#101010!important;border-color:#454545!important}
+.notification-item{background:#171717!important;border-color:#3c3c3c!important;color:#fff!important}
+.notification-item strong,.notification-item span{color:#fff!important}
+.notification-item time,.notification-empty{color:#c4c4c4!important}
+.notification-button{background:#202020!important;border-color:#555!important;color:#fff!important}
+.notification-button:hover{border-color:#ed1c24!important}
+::selection{background:#ed1c24;color:#fff}
+@media(max-width:650px){body{padding:14px!important}.header{padding:14px!important}.ticket-card{padding:15px!important}}
+
 </style>
 <style id="readable-white-text-override">
 /* Force readable white text after the shared theme stylesheet. */
