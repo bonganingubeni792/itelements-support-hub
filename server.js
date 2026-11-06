@@ -430,7 +430,7 @@ function checkUserAuth(req, res, next) {
 // Do not let static-file requests bypass the session checks on these pages.
 app.get('/admin.html', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
 app.get('/dashboard.html', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
-app.get('/invoice-maker.html', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
+app.get('/invoice-maker.html', (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
 app.use(express.static(viewsPath, { index: false }));
 app.use('/assets', express.static(path.join(__dirname, 'public')));
 
@@ -455,7 +455,7 @@ app.get('/client/forgot-password', (req, res) => res.sendFile(path.join(viewsPat
 app.get('/reset-password', (req, res) => res.sendFile(path.join(viewsPath, 'reset-password.html')));
 app.get('/register', (req, res) => res.sendFile(path.join(viewsPath, 'register.html')));
 app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
-app.get('/tools/invoices', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
+app.get('/tools/invoices', (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
 app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
 
 async function createPayFastCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
