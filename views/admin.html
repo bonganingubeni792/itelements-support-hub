@@ -599,6 +599,94 @@ body .stat-value-label {
   text-shadow:0 1px 2px rgba(0,0,0,.45) !important;
 }
 </style>
+
+<style id="final-black-background-contrast-fix">
+/* Final readability pass: true black surfaces, bright readable text, blue kept only as an accent. */
+:root{--bg:#000000!important;--panel:#090909!important;--panel2:#101010!important;--line:#343434!important;--text:#ffffff!important;--muted:#d0d0d0!important;}
+html,body{background:#000!important;color:#fff!important;}
+body{background:#000!important;}
+.sidebar,.main-shell,.content,.main-content,.dashboard,.page,.section,.dashboard-card,.card,.panel,.table-wrap,.dataTables_wrapper{background-color:#080808!important;color:#fff!important;}
+.sidebar{background:#050505!important;border-right-color:#333!important;}
+.topbar{background:#080808!important;border-color:#333!important;color:#fff!important;}
+.topbar h1,.topbar-brand,.topbar .brand-title,.side-nav a,.side-nav a span,.card-title,.section-title,h1,h2,h3,h4,.stat-label,.stat-value,.dashboard-card,.dashboard-card *,.card,.card *,.panel,.panel *,.table-wrap,.table-wrap *{color:#fff!important;}
+.side-nav a:hover,.side-nav a.active,.side-nav a[aria-current="page"]{background:#202020!important;color:#fff!important;}
+a:not(.button):not(.btn),.client-name,.customer-name,.ticket-client,.client-link{color:#fff!important;}
+th,td,tbody tr,thead tr{color:#fff!important;border-color:#353535!important;}
+thead th{background:#171717!important;color:#fff!important;}
+tbody tr:nth-child(even){background:#101010!important;}
+input,select,textarea{background:#111!important;color:#fff!important;border-color:#555!important;}
+input::placeholder,textarea::placeholder{color:#bdbdbd!important;opacity:1!important;}
+.stat-card,.stat-box,.metric-card{background:#0b0b0b!important;color:#fff!important;}
+/* Keep status/action colours clear while ensuring readable labels. */
+button,.btn{color:#fff;}
+</style>
+
+<style id="admin-black-red-white-theme">
+/* Final IT Elements palette: true black, red highlights, white text, subtle grey, restrained blue accents. */
+:root{color-scheme:dark;--bg:#050505;--panel:#111111;--panel2:#181818;--line:#343434;--text:#ffffff;--muted:#b8b8b8;--red:#ed1c24;--blue:#168cff}
+html,body{background:#050505!important;color:#fff!important}
+body{background:#050505!important;color:#fff!important}
+.sidebar{background:#080808!important;border-right:1px solid #303030!important;color:#fff!important}
+.brand{border-bottom-color:#303030!important}
+.side-nav a,.side-nav a:visited{color:#fff!important}
+.side-nav a:hover{background:#202020!important;color:#fff!important}
+.side-nav a.active{background:linear-gradient(90deg,#c90016,#65000a)!important;border-left-color:#ff3038!important;color:#fff!important}
+.side-nav .nav-icon,.help-box .headset{color:#168cff!important}
+.help-box{background:#151515!important;border-color:#454545!important;color:#fff!important}
+.help-box p,.sidebar-foot{color:#c5c5c5!important}
+.topbar{background:#101010!important;border-color:#383838!important;color:#fff!important}
+.topbar h1,.admin-user{color:#fff!important}
+.brand-dot{background:radial-gradient(circle at 35% 30%,#ff7777,#ed101c 60%,#8d0710)!important}
+.main-shell{background:transparent!important;color:#fff!important}
+.dashboard-card,.notification-center,.review-item,.onsite-request{background:#111!important;border:1px solid #393939!important;color:#fff!important}
+.stat-card{background:#151515!important;border-color:#444!important;color:#fff!important}
+.stat-card.tickets{background:linear-gradient(120deg,#241012,#141414)!important}
+.stat-card.subs{background:linear-gradient(120deg,#102019,#141414)!important}
+.stat-card.canceled{background:linear-gradient(120deg,#241d0d,#141414)!important}
+.stat-card.rev{background:linear-gradient(120deg,#111d2b,#141414)!important}
+.stat-label,.stat-value,.card-title,.dashboard-card h2,.dashboard-card h3,.dashboard-card p,.dashboard-card label,.dashboard-card small,.dashboard-card strong,.dashboard-card span,.dashboard-card summary,.dashboard-card time{color:#fff!important}
+.card-title.green,.card-title.yellow,.card-title.gray,.card-title.blue{color:#fff!important}
+.note,.field-label,.empty-text,.loading-text{color:#c2c2c2!important}
+.table-scroll{background:#090909!important;border-color:#414141!important}
+.table-header,.subscriber-header{background:#242424!important;color:#fff!important;border-color:#444!important}
+.data-row,.subscriber-row,.data-row:nth-child(even),.subscriber-row:nth-child(even){background:#111!important;color:#fff!important;border-color:#333!important}
+.data-row:hover,.subscriber-row:hover{background:#202020!important}
+.cell,.client-name,.review-item h3,.review-item p,.onsite-request p{color:#fff!important}
+.mono{color:#ffd36a!important}
+.credential-value{color:#e6e6e6!important}
+.toolbar input,.toolbar select,.list-size select,.visit-confirm-form input,.ticket-reply-form textarea{background:#080808!important;color:#fff!important;border:1px solid #555!important}
+.toolbar input::placeholder,.ticket-reply-form textarea::placeholder{color:#bdbdbd!important;opacity:1!important}
+.toolbar select option{background:#111!important;color:#fff!important}
+.refresh-btn{background:#171717!important;color:#fff!important;border:1px solid #168cff!important}
+.action-btn,.copy-btn,.notification-button,.ticket-reply-form button{background:#1b1b1b!important;color:#fff!important;border:1px solid #555!important}
+.btn-hold{color:#ffe08a!important;border-color:#d99b00!important}
+.btn-unhold,.btn-contacted{color:#fff!important;border-color:#168cff!important}
+.btn-resolve{color:#fff!important;border-color:#00b96b!important}
+.btn-reopen{color:#fff!important;border-color:#ed1c24!important}
+.status-badge{background:#242424!important;color:#fff!important}
+.badge-open{background:#3b1119!important;color:#fff!important;border-color:#ed1c24!important}
+.badge-onhold{background:#392b0b!important;color:#ffe08a!important;border-color:#d99b00!important}
+.badge-resolved,.badge-active{background:#103323!important;color:#aaffd0!important;border-color:#00b96b!important}
+.badge-confirmed,.badge-contacted{background:#101f30!important;color:#fff!important;border-color:#168cff!important}
+.badge-expired{color:#ffe08a!important}
+.ticket-conversation{background:#090909!important;border-color:#444!important}
+.ticket-conversation summary{color:#ff777d!important}
+.ticket-message{background:#1b1b1b!important}
+.ticket-message strong,.ticket-message p{color:#fff!important}
+.ticket-message time{color:#c0c0c0!important}
+.notification-center{background:#111!important;border-color:#444!important}
+.notification-button,.notification-item{background:#1a1a1a!important;color:#fff!important;border-color:#444!important}
+.notification-item strong,.notification-item span{color:#fff!important}
+.notification-item time,.notification-empty{color:#c2c2c2!important}
+.notification-item.unread{border-left-color:#ed1c24!important}
+.toast{background:#242424!important;color:#fff!important;border-color:#555!important}
+a:not(.logout-btn):not(.help-box a){color:#fff!important}
+a:not(.logout-btn):not(.help-box a):hover{color:#ff555b!important}
+.logout-btn,.help-box a{background:#d9101b!important;color:#fff!important;border-color:#ff454d!important}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid #168cff!important;outline-offset:2px}
+@media(max-width:900px){.main-shell{margin-left:var(--sidebar)!important}}
+</style>
+
 </head>
 <body>
 <aside class="sidebar">
