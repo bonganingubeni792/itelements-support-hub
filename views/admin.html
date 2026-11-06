@@ -92,6 +92,20 @@
         .notification-item span { display:block; color:#aab4c2; font-size:11px; line-height:1.45; }
         .notification-item time { color:#718096; font-size:10px; display:block; margin-top:5px; }
         .notification-empty { color:#718096; font-size:12px; padding:8px 2px; }
+        .invoice-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; margin:12px 0 18px; padding:16px; background:#f7f9fc; border:1px solid #d7deea; border-radius:10px; }
+        .invoice-form label { display:block; margin-bottom:5px; color:#40516a; font-size:12px; font-weight:800; }
+        .invoice-form input,.invoice-form select,.invoice-form textarea { width:100%; min-height:42px; padding:10px 12px; border:1px solid #bdc9d8; border-radius:7px; background:#fff; color:#172436; font:inherit; }
+        .invoice-form textarea { min-height:86px; resize:vertical; }
+        .invoice-form .full-field { grid-column:1/-1; }
+        .invoice-form button { min-height:42px; padding:10px 16px; border:0; border-radius:7px; background:#1769e8; color:#fff; font-weight:800; cursor:pointer; }
+        .invoice-form-message { min-height:22px; color:#34465d; font-size:13px; font-weight:700; }
+        .business-document-list { display:grid; gap:10px; }
+        .business-document { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; padding:15px; border:1px solid #d7deea; border-radius:10px; background:#f8fafc; }
+        .business-document h3 { margin:0 0 5px; color:#172436; font-size:15px; }
+        .business-document p { margin:4px 0; color:#455870; font-size:13px; line-height:1.5; overflow-wrap:anywhere; }
+        .business-document-actions { display:flex; flex-wrap:wrap; justify-content:flex-end; align-content:center; gap:6px; }
+        .document-status { display:inline-block; padding:4px 9px; border-radius:20px; background:#e9eef6; color:#34465d; font-size:11px; font-weight:800; }
+        @media(max-width:650px) { .invoice-form { grid-template-columns:1fr; }.invoice-form .full-field { grid-column:auto; }.business-document { grid-template-columns:1fr; }.business-document-actions { justify-content:flex-start; } }
         @media(max-width:520px) { .notification-widget { right:14px; bottom:16px; }.notification-center { max-height:65vh; } }
 
     </style>
@@ -151,6 +165,7 @@
         <a class="sidebar-link" href="#admin-overview"><span class="side-icon">▦</span>Overview</a>
         <a class="sidebar-link" href="#tickets"><span class="side-icon">🎫</span>Support tickets</a>
         <a class="sidebar-link" href="#visits"><span class="side-icon">📍</span>On-site enquiries</a>
+        <a class="sidebar-link" href="#invoices"><span class="side-icon">🧾</span>Invoices & quotes</a>
         <a class="sidebar-link" href="#active-subs"><span class="side-icon">👑</span>Paid subscribers</a>
         <a class="sidebar-link" href="#inactive-subs"><span class="side-icon">◉</span>Inactive accounts</a>
         <a class="sidebar-link" href="#history"><span class="side-icon">✓</span>Resolved history</a>
@@ -184,6 +199,22 @@
         <h2 class="card-title">📍 On-site visit enquiries</h2>
         <p class="note">Review the requested area and preferred time. Enter the agreed appointment and call-out fee below; “Confirm visit” emails the customer and updates their dashboard.</p>
         <div id="onsite-requests-body" class="onsite-list"><div class="loading-text">Loading on-site enquiries…</div></div>
+    </section>
+
+    <section class="dashboard-card" id="invoices">
+        <h2 class="card-title">🧾 Quotes & invoices</h2>
+        <p class="note">Create a quote or invoice for a registered customer. Customers can review it in their portal; email delivery depends on your Resend sender settings.</p>
+        <form id="business-document-form" class="invoice-form">
+            <div><label for="document-type">Document type</label><select id="document-type" name="type" required><option value="Invoice">Invoice</option><option value="Quote">Quote</option></select></div>
+            <div><label for="document-customer-email">Customer account email</label><input id="document-customer-email" name="customerEmail" type="email" required maxlength="254" placeholder="customer@example.com"></div>
+            <div class="full-field"><label for="document-title">Title / service</label><input id="document-title" name="title" required maxlength="140" placeholder="e.g. Laptop setup and diagnostics"></div>
+            <div class="full-field"><label for="document-description">Work description</label><textarea id="document-description" name="description" required maxlength="3000" placeholder="List the work, parts, or service included"></textarea></div>
+            <div><label for="document-amount">Total amount (ZAR)</label><input id="document-amount" name="amount" type="number" min="0.01" max="10000000" step="0.01" required placeholder="350.00"></div>
+            <div><label for="document-due-date">Due date (optional)</label><input id="document-due-date" name="dueDate" type="date"></div>
+            <div class="full-field"><button id="document-submit" type="submit">Create and notify customer</button></div>
+        </form>
+        <p class="invoice-form-message" id="invoice-form-message" role="status" aria-live="polite"></p>
+        <div id="business-documents-body" class="business-document-list"><div class="loading-text">Loading quotes and invoices…</div></div>
     </section>
 
     <section class="dashboard-card" id="active-subs">
@@ -228,6 +259,9 @@
     const inactiveSubBody = document.getElementById('canceled-subscribers-body');
     const onsiteBody = document.getElementById('onsite-requests-body');
     const reviewsBody = document.getElementById('customer-reviews-body');
+    const businessDocumentsBody = document.getElementById('business-documents-body');
+    const businessDocumentForm = document.getElementById('business-document-form');
+    const invoiceFormMessage = document.getElementById('invoice-form-message');
     const searchInput = document.getElementById('ticket-search');
     const statusFilter = document.getElementById('ticket-status-filter');
     const toast = document.getElementById('toast');
@@ -261,6 +295,64 @@
         clearTimeout(toastTimer);
         toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
     }
+
+    function formatZar(cents) { return new Intl.NumberFormat('en-ZA', { style:'currency', currency:'ZAR' }).format((Number(cents) || 0) / 100); }
+
+    async function loadBusinessDocuments() {
+        try {
+            const response = await fetch('/api/admin/business-documents', { headers: { Accept:'application/json' } });
+            if (response.redirected || response.status === 401) return window.location.assign('/client/login');
+            if (!response.ok) throw new Error('Could not load quotes and invoices.');
+            const documents = await response.json();
+            businessDocumentsBody.replaceChildren();
+            if (!documents.length) return showMessage(businessDocumentsBody, 'No quotes or invoices have been created yet.');
+            for (const item of documents) {
+                const card = document.createElement('article'); card.className = 'business-document';
+                const detail = document.createElement('div');
+                const heading = document.createElement('h3'); heading.textContent = `${item.documentNumber} · ${item.title}`;
+                const meta = document.createElement('p'); meta.textContent = `${item.type} for ${item.customerName} · ${item.customerEmail} · ${formatZar(item.amountCents)}`;
+                const description = document.createElement('p'); description.textContent = item.description;
+                const status = document.createElement('span'); status.className = 'document-status'; status.textContent = `${item.status}${item.dueDate ? ` · Due ${new Date(item.dueDate).toLocaleDateString()}` : ''}`;
+                const email = document.createElement('p'); email.textContent = item.emailSent ? 'Email sent to customer.' : 'Portal copy saved; email delivery is not confirmed.';
+                detail.append(heading, meta, description, status, email);
+                const actions = document.createElement('div'); actions.className = 'business-document-actions';
+                const options = item.type === 'Invoice'
+                    ? (item.status === 'Paid' || item.status === 'Cancelled' ? [] : [['Paid', 'Mark paid'], ['Overdue', 'Mark overdue'], ['Cancelled', 'Cancel']])
+                    : (['Accepted', 'Declined', 'Expired', 'Cancelled'].includes(item.status) ? [] : [['Expired', 'Mark expired'], ['Cancelled', 'Cancel']]);
+                for (const [statusValue, label] of options) {
+                    const button = document.createElement('button'); button.type = 'button'; button.className = `action-btn ${statusValue === 'Paid' ? 'btn-resolve' : statusValue === 'Cancelled' ? 'btn-reopen' : 'btn-hold'}`; button.textContent = label;
+                    button.addEventListener('click', async () => {
+                        if (statusValue === 'Paid' && !window.confirm('Only mark this invoice paid after you have confirmed the payment in your bank or payment provider. Continue?')) return;
+                        button.disabled = true;
+                        try {
+                            const update = await fetch(`/api/admin/business-documents/${encodeURIComponent(item._id)}/status`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ status:statusValue }) });
+                            const result = await update.json();
+                            if (!update.ok || !result.success) throw new Error(result.message || 'Could not update document status.');
+                            announce(`${item.documentNumber} marked ${statusValue.toLowerCase()}.`); loadBusinessDocuments();
+                        } catch (error) { announce(error.message); button.disabled = false; }
+                    });
+                    actions.appendChild(button);
+                }
+                card.append(detail, actions); businessDocumentsBody.appendChild(card);
+            }
+        } catch (error) { showMessage(businessDocumentsBody, error.message || 'Could not load quotes and invoices.', true); }
+    }
+
+    businessDocumentForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        const submit = document.getElementById('document-submit');
+        const payload = Object.fromEntries(new FormData(businessDocumentForm).entries());
+        submit.disabled = true; invoiceFormMessage.textContent = 'Creating and notifying the customer…';
+        try {
+            const response = await fetch('/api/admin/business-documents', { method:'POST', headers:{'Content-Type':'application/json', Accept:'application/json'}, body:JSON.stringify(payload) });
+            const result = await response.json();
+            if (!response.ok || !result.success) throw new Error(result.message || 'Could not create the document.');
+            invoiceFormMessage.textContent = result.emailSent ? `${result.document.documentNumber} created and emailed. The customer can also see it in their portal.` : `${result.document.documentNumber} created and saved to the customer portal, but email could not be confirmed. Check your Resend email settings.`;
+            businessDocumentForm.reset();
+            loadBusinessDocuments();
+        } catch (error) { invoiceFormMessage.textContent = error.message; }
+        finally { submit.disabled = false; }
+    });
 
     async function copyText(value, label) {
         if (!value) return announce(`No ${label} was provided for this ticket.`);
@@ -574,11 +666,13 @@
             renderUsers(activeSubBody, subscribers, true);
             renderUsers(inactiveSubBody, inactiveUsers, false);
             loadCustomerReviews();
+            loadBusinessDocuments();
         } catch (error) {
             showMessage(queueBody, error.message || 'Could not load tickets.', true);
             showMessage(activeSubBody, 'Could not load subscribers.', true);
             showMessage(inactiveSubBody, 'Could not load accounts.', true);
             showMessage(historyBody, 'Could not load ticket history.', true);
+            showMessage(businessDocumentsBody, 'Could not load quotes and invoices.', true);
         }
     }
 
