@@ -5,6 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#d9dde3">
     <title>IT Elements - On-Demand Remote Support</title>
+
+    <!-- Google Consent Mode v2: set consent before loading the Google tag. -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){window.dataLayer.push(arguments);}
+        gtag('consent', 'default', {
+            ad_storage: 'denied',
+            ad_user_data: 'denied',
+            ad_personalization: 'denied',
+            analytics_storage: 'denied',
+            functionality_storage: 'granted',
+            security_storage: 'granted',
+            wait_for_update: 500
+        });
+
+        (function () {
+            try {
+                var savedConsent = localStorage.getItem('itelements_cookie_consent');
+                if (savedConsent === 'accepted') {
+                    gtag('consent', 'update', {
+                        ad_storage: 'granted',
+                        ad_user_data: 'granted',
+                        ad_personalization: 'granted',
+                        analytics_storage: 'granted'
+                    });
+                } else if (savedConsent === 'rejected') {
+                    gtag('consent', 'update', {
+                        ad_storage: 'denied',
+                        ad_user_data: 'denied',
+                        ad_personalization: 'denied',
+                        analytics_storage: 'denied'
+                    });
+                }
+            } catch (error) {
+                // If browser storage is unavailable, keep the privacy-protective denied defaults.
+            }
+        }());
+
+        gtag('js', new Date());
+        gtag('config', 'G-HKZ3YY1JYZ');
+    </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HKZ3YY1JYZ"></script>
+
     <style>
         body { background-color:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',Tahoma,sans-serif; margin:0; padding:20px; text-align:center; }
         .navbar { background:rgba(20,20,20,.97); border:1px solid #292929; border-bottom:2px solid #303030; padding:13px 18px; display:flex; justify-content:space-between; align-items:center; gap:18px; width:min(100%,1500px); margin:0 auto 25px; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,.22); }
@@ -57,7 +100,22 @@
         @media (max-width:900px) { .feature-grid,.how-it-works { grid-template-columns:repeat(2,minmax(0,1fr)); }.feature-card:last-child,.how-it-works .step-card:last-child { grid-column:1 / -1; } }
         @media (max-width:700px) { .navbar { align-items:flex-start; gap:12px; flex-direction:column; } .nav-links { gap:4px; } }
         @media (max-width:560px) { body { padding:12px; } .feature-grid,.how-it-works { grid-template-columns:1fr; gap:12px; }.feature-card:last-child,.how-it-works .step-card:last-child { grid-column:auto; } .main-card,.incident-box { padding:26px 16px; }.onsite-promo { grid-template-columns:1fr; }.onsite-promo-link { justify-self:stretch; }.feedback-section { grid-template-columns:1fr; } }
-    .brand-support{color:#fff!important}</style>
+        .brand-support{color:#fff!important}
+
+        /* IT Elements cookie banner */
+        .ie-cookie-banner { position:fixed; z-index:1000000; left:20px; right:20px; bottom:20px; max-width:760px; margin:0 auto; padding:22px; display:none; gap:18px; align-items:center; text-align:left; background:#151515; color:#eee; border:1px solid #393939; border-top:3px solid #ff3333; border-radius:10px; box-shadow:0 18px 60px rgba(0,0,0,.65); }
+        .ie-cookie-banner.is-visible { display:flex; }
+        .ie-cookie-copy { flex:1; min-width:0; }
+        .ie-cookie-banner h2 { margin:0 0 7px; color:#fff; font-size:18px; }
+        .ie-cookie-banner p { margin:0; color:#aaa; font-size:13px; line-height:1.6; }
+        .ie-cookie-actions { display:flex; flex-wrap:wrap; gap:8px; flex-shrink:0; }
+        .ie-cookie-button { border:1px solid #444; border-radius:5px; padding:11px 14px; font:700 12px 'Segoe UI',Tahoma,sans-serif; cursor:pointer; }
+        .ie-cookie-accept { background:#ff3333; border-color:#ff3333; color:#fff; }
+        .ie-cookie-reject { background:#222; color:#eee; }
+        .ie-cookie-settings { display:inline-block; margin-top:9px; color:#ff7777; font-size:12px; text-decoration:underline; cursor:pointer; background:none; border:0; padding:0; }
+        .ie-cookie-settings-link { position:fixed; z-index:999990; left:14px; bottom:14px; border:1px solid #383838; border-radius:5px; background:#151515; color:#ddd; padding:8px 11px; font-size:11px; cursor:pointer; box-shadow:0 4px 16px #0008; }
+        @media(max-width:650px) { .ie-cookie-banner { left:10px; right:10px; bottom:10px; padding:17px; display:none; flex-direction:column; align-items:stretch; }.ie-cookie-banner.is-visible { display:flex; }.ie-cookie-actions { display:grid; grid-template-columns:1fr 1fr; }.ie-cookie-button { width:100%; }.ie-cookie-settings-link { left:10px; bottom:10px; } }
+    </style>
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
     <link rel="stylesheet" href="/assets/theme.css?v=13">
 </head>
@@ -218,6 +276,20 @@
         </svg>
     </a>
 
+    <!-- Cookie consent banner -->
+    <section id="ie-cookie-banner" class="ie-cookie-banner" role="dialog" aria-modal="false" aria-labelledby="ie-cookie-title" aria-describedby="ie-cookie-description">
+        <div class="ie-cookie-copy">
+            <h2 id="ie-cookie-title">Your privacy matters</h2>
+            <p id="ie-cookie-description">IT Elements uses necessary storage to keep this website working. With your permission, Google Analytics and advertising cookies help us understand website visits and measure advertising. You can accept or reject optional cookies, and change your choice later.</p>
+            <button type="button" class="ie-cookie-settings" id="ie-cookie-customize">Cookie settings</button>
+        </div>
+        <div class="ie-cookie-actions">
+            <button type="button" class="ie-cookie-button ie-cookie-reject" id="ie-cookie-reject">Reject optional</button>
+            <button type="button" class="ie-cookie-button ie-cookie-accept" id="ie-cookie-accept">Accept all</button>
+        </div>
+    </section>
+    <button type="button" class="ie-cookie-settings-link" id="ie-cookie-open" aria-label="Open cookie settings">Cookie settings</button>
+
     <script>
         (function () {
             const quickFixPrices = { '30min': 200, '1hour': 350, '2hours': 700, '3hours': 1050, '4hours': 1400, '5hours': 1750 };
@@ -313,7 +385,7 @@
                 const emailInput = selectedOption && selectedOption.querySelector('.quickfix-email-field input');
                 if (!emailInput) { checkoutMessage.textContent = 'Enter an email address in this session card to continue.'; checkoutMessage.classList.add('error'); payButton.disabled = false; return; }
                 if (!emailInput.reportValidity()) { payButton.disabled = false; return; }
-                    checkoutMessage.textContent = 'Connecting securely to checkout…';
+                checkoutMessage.textContent = 'Connecting securely to checkout…';
                 try {
                     const response = await fetch('/api/payment/payfast-quickfix', {
                         method: 'POST',
@@ -347,6 +419,49 @@
                 document.body.appendChild(form);
                 form.submit();
             }
+        }());
+
+        // Cookie choices update Consent Mode and are saved for the next visit.
+        (function () {
+            const banner = document.getElementById('ie-cookie-banner');
+            const acceptButton = document.getElementById('ie-cookie-accept');
+            const rejectButton = document.getElementById('ie-cookie-reject');
+            const openButton = document.getElementById('ie-cookie-open');
+            const settingsButton = document.getElementById('ie-cookie-customize');
+
+            function showBanner() {
+                banner.classList.add('is-visible');
+                banner.setAttribute('aria-modal', 'true');
+            }
+            function hideBanner() {
+                banner.classList.remove('is-visible');
+                banner.setAttribute('aria-modal', 'false');
+            }
+            function saveChoice(choice) {
+                const granted = choice === 'accepted';
+                const consentUpdate = {
+                    ad_storage: granted ? 'granted' : 'denied',
+                    ad_user_data: granted ? 'granted' : 'denied',
+                    ad_personalization: granted ? 'granted' : 'denied',
+                    analytics_storage: granted ? 'granted' : 'denied'
+                };
+                gtag('consent', 'update', consentUpdate);
+                try {
+                    localStorage.setItem('itelements_cookie_consent', choice);
+                } catch (error) {
+                    // Consent still applies for this page view if storage is blocked.
+                }
+                hideBanner();
+            }
+
+            let savedChoice = null;
+            try { savedChoice = localStorage.getItem('itelements_cookie_consent'); } catch (error) {}
+            if (savedChoice !== 'accepted' && savedChoice !== 'rejected') showBanner();
+
+            acceptButton.addEventListener('click', function () { saveChoice('accepted'); });
+            rejectButton.addEventListener('click', function () { saveChoice('rejected'); });
+            openButton.addEventListener('click', showBanner);
+            settingsButton.addEventListener('click', showBanner);
         }());
     </script>
 </body>
