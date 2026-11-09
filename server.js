@@ -1,653 +1,1035 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#08090b">
-  <title>IT Support Services & Pricing | IT Elements</title>
-  <meta name="description" content="Professional computer repairs, virus removal, Wi-Fi troubleshooting, computer setup and business IT support in South Africa.">
-  <style>
-    :root {
-      --bg: #08090b;
-      --panel: #111318;
-      --panel2: #171a20;
-      --red: #e32636;
-      --red2: #ff3949;
-      --white: #ffffff;
-      --muted: #a4a8b0;
-      --line: #292d35;
-      --green: #25d366;
+const express = require('express');
+const mongoose = require('mongoose');
+const path = require('path');
+const session = require('express-session');
+const cors = require('cors');
+const crypto = require('crypto');
+const dns = require('dns').promises;
+const { randomUUID } = crypto;
+const fs = require('fs');
+const scryptAsync = require('util').promisify(crypto.scrypt);
+
+// Load .env for local development without requiring an extra package.
+const envPath = path.join(__dirname, '.env');
+if (fs.existsSync(envPath)) {
+    for (const line of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
+        const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/);
+        if (match && !Object.prototype.hasOwnProperty.call(process.env, match[1])) {
+            process.env[match[1]] = match[2].replace(/^['"]|['"]$/g, '');
+        }
+    }
+}
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+const dbURI = process.env.MONGODB_URI;
+const QUICK_FIX_OPTIONS = Object.freeze({
+    '30min': { amount: 20000, label: '30-minute quick fix' },
+    '1hour': { amount: 35000, label: '1-hour support session' },
+    '2hours': { amount: 70000, label: '2-hour support session' },
+    '3hours': { amount: 105000, label: '3-hour support session' },
+    '4hours': { amount: 140000, label: '4-hour support session' },
+    '5hours': { amount: 175000, label: '5-hour support session' }
+});
+const viewsPath = path.join(__dirname, 'views');
+const SLA_PLANS = {
+    basic: { name: 'Basic Support', amount: 29900 },
+    standard: { name: 'Standard Tier', amount: 59900 },
+    business: { name: 'Business Growth', amount: 249900 },
+    corporate: { name: 'Corporate SLA', amount: 499900 }
+};
+
+function payfastConfig() {
+    const merchantId = String(process.env.PAYFAST_MERCHANT_ID || '').trim();
+    const merchantKey = String(process.env.PAYFAST_MERCHANT_KEY || '').trim();
+    const mode = String(process.env.PAYFAST_MODE || 'live').toLowerCase();
+    if (!/^\d{8}$/.test(merchantId) || merchantKey.length !== 13 || !['live', 'test'].includes(mode)) return null;
+    return { merchantId, merchantKey, mode, endpoint: mode === 'test' ? 'https://sandbox.payfast.co.za/eng/process' : 'https://www.payfast.co.za/eng/process', validateUrl: mode === 'test' ? 'https://sandbox.payfast.co.za/eng/query/validate' : 'https://www.payfast.co.za/eng/query/validate' };
+}
+
+if (dbURI) {
+    mongoose.connect(dbURI)
+        .then(() => console.log('📁 Database connection established successfully'))
+        .catch(err => console.error('❌ Cloud Database communication failure:', err.message));
+} else {
+    console.warn('⚠️ MONGODB_URI is not set; database features will not connect.');
+}
+
+const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
+    fullName: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    subscriptionTier: { type: String, default: 'None (Unpaid)' },
+    subscriptionStatus: { type: String, default: 'Inactive' },
+    subscriptionPaidAt: { type: Date, default: null },
+    subscriptionExpiresAt: { type: Date, default: null },
+    invoiceProUntil: { type: Date, default: null }
+}, { collection: 'useraccounts' }));
+
+const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
+    paymentId: { type: String, required: true, unique: true },
+    userEmail: { type: String, default: '', lowercase: true, trim: true },
+    purchaseType: { type: String, enum: ['plan', 'quickfix', 'invoicePro'], required: true },
+    planId: { type: String, default: '' },
+    planName: { type: String, default: '' },
+    durationOption: { type: String, default: '' },
+    amount: { type: Number, required: true },
+    mode: { type: String, enum: ['test', 'live'], default: 'live' },
+    status: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' },
+    pfPaymentId: { type: String, default: '' },
+    paidAt: { type: Date, default: null },
+    expiresAt: { type: Date, default: null },
+    createdAt: { type: Date, default: Date.now }
+}, { collection: 'payfastpurchases' }));
+
+const BusinessDocument = mongoose.model('BusinessDocument', new mongoose.Schema({
+    ownerEmail: { type: String, required: true, lowercase: true, trim: true, index: true },
+    kind: { type: String, enum: ['invoice', 'quote'], required: true },
+    number: { type: String, required: true },
+    business: { type: Object, default: {} },
+    customer: { type: Object, default: {} },
+    layout: { type: String, enum: ['modern', 'classic', 'compact', 'ledger'], default: 'modern' },
+    discountRate: { type: Number, min: 0, max: 100, default: 0 },
+    discountCents: { type: Number, min: 0, default: 0 },
+    issueDate: { type: String, default: '' },
+    dueDate: { type: String, default: '' },
+    reference: { type: String, default: '' },
+    paymentTerms: { type: String, default: '' },
+    items: { type: [Object], default: [] },
+    vatRate: { type: Number, enum: [0, 15], default: 0 },
+    subtotalCents: { type: Number, required: true },
+    vatCents: { type: Number, required: true },
+    totalCents: { type: Number, required: true },
+    notes: { type: String, default: '' },
+    paymentInstructions: { type: String, default: '' },
+    createdAt: { type: Date, default: Date.now }
+}, { collection: 'businessdocuments' }));
+
+const PasswordReset = mongoose.model('PasswordReset', new mongoose.Schema({
+    email: { type: String, required: true, index: true },
+    tokenHash: { type: String, required: true, unique: true },
+    expiresAt: { type: Date, required: true, index: { expires: 0 } },
+    usedAt: { type: Date, default: null },
+    createdAt: { type: Date, default: Date.now }
+}, { collection: 'passwordresets' }));
+
+async function hashPassword(password) {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const derived = await scryptAsync(password, salt, 64);
+    return `scrypt$${salt}$${Buffer.from(derived).toString('hex')}`;
+}
+
+async function verifyAndUpgradePassword(user, candidate) {
+    if (user.password.startsWith('scrypt$')) {
+        const [, salt, storedHex] = user.password.split('$');
+        if (!salt || !storedHex) return false;
+        const derived = Buffer.from(await scryptAsync(candidate, salt, 64));
+        const stored = Buffer.from(storedHex, 'hex');
+        return derived.length === stored.length && crypto.timingSafeEqual(derived, stored);
     }
 
-    * { box-sizing: border-box; }
+    // Existing accounts have plaintext passwords. Upgrade the hash after a
+    // successful login so customers keep access while the database migrates.
+    if (user.password !== candidate) return false;
+    user.password = await hashPassword(candidate);
+    await user.save();
+    return true;
+}
 
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--white);
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.6;
+const resetRequestBuckets = new Map();
+function rateLimitPasswordReset(req, res, next) {
+    const now = Date.now();
+    const key = req.ip || req.socket.remoteAddress || 'unknown';
+    const bucket = resetRequestBuckets.get(key);
+    if (!bucket || now - bucket.startedAt > 15 * 60 * 1000) {
+        resetRequestBuckets.set(key, { startedAt: now, count: 1 });
+        return next();
+    }
+    if (bucket.count >= 5) return res.status(429).json({ message: 'Too many reset requests. Please wait 15 minutes and try again.' });
+    bucket.count += 1;
+    return next();
+}
+
+async function sendPasswordResetEmail(to, resetUrl) {
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESET_EMAIL_FROM;
+    if (!apiKey || !from) throw new Error('Password reset email settings are missing.');
+
+    const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            from,
+            to: [to],
+            subject: 'Reset your IT Elements password',
+            html: `<p>We received a request to reset the password for your IT Elements account.</p><p><a href="${resetUrl}">Reset my password</a></p><p>This link expires in 15 minutes and can be used once. If you did not request this, you can ignore this email.</p>`
+        })
+    });
+    if (!response.ok) {
+        const details = await response.text();
+        console.error('Password reset email provider error:', response.status, details);
+        throw new Error('Password reset email could not be sent.');
+    }
+}
+
+function escapeHtml(value) {
+    return String(value || '').replace(/[&<>\"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+}
+
+async function sendCustomerEmail(to, subject, paragraphs) {
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.SUPPORT_EMAIL_FROM || process.env.RESET_EMAIL_FROM;
+    if (!to || !apiKey || !from) {
+        console.info('Customer email skipped: recipient or Resend sender settings are not configured.');
+        return false;
+    }
+    const html = paragraphs.map(text => `<p>${escapeHtml(text)}</p>`).join('');
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ from, to: [to], subject, html })
+        });
+        if (!response.ok) {
+            console.error('Customer email provider error:', response.status, await response.text());
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('Customer email delivery failed:', error.message);
+        return false;
+    }
+}
+
+function credentialEncryptionKey() {
+    if (!process.env.SESSION_SECRET) throw new Error('Set a stable SESSION_SECRET before storing remote access passwords.');
+    return crypto.createHash('sha256').update(`IT Elements support credential encryption:${process.env.SESSION_SECRET}`).digest();
+}
+
+function encryptSessionPassword(value) {
+    if (!value) return '';
+    if (String(value).startsWith('enc:v1:')) return String(value);
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv('aes-256-gcm', credentialEncryptionKey(), iv);
+    const encrypted = Buffer.concat([cipher.update(String(value), 'utf8'), cipher.final()]);
+    return `enc:v1:${iv.toString('hex')}:${cipher.getAuthTag().toString('hex')}:${encrypted.toString('hex')}`;
+}
+
+function decryptSessionPassword(value) {
+    if (!value || !String(value).startsWith('enc:v1:')) return value || '';
+    const [, version, ivHex, tagHex, encryptedHex] = String(value).split(':');
+    if (version !== 'v1' || !ivHex || !tagHex || !encryptedHex) throw new Error('Stored remote access credential is invalid.');
+    const decipher = crypto.createDecipheriv('aes-256-gcm', credentialEncryptionKey(), Buffer.from(ivHex, 'hex'));
+    decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
+    return Buffer.concat([decipher.update(Buffer.from(encryptedHex, 'hex')), decipher.final()]).toString('utf8');
+}
+
+const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
+    name: String,
+    email: String,
+    phone: String,
+    requestType: { type: String, enum: ['remote', 'onsite'], default: 'remote' },
+    area: String,
+    serviceType: String,
+    preferredDate: String,
+    preferredTime: String,
+    confirmedVisitAt: Date,
+    callOutFee: { type: Number, min: 0 },
+    remoteId: String,
+    remotePassword: String,
+    issue: String,
+    messages: [{
+        sender: { type: String, enum: ['customer', 'admin'], required: true },
+        name: { type: String, required: true, maxlength: 100 },
+        body: { type: String, required: true, maxlength: 2000 },
+        date: { type: Date, default: Date.now }
+    }],
+    status: { type: String, enum: ['Open', 'Contacted', 'Session Confirmed', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'], default: 'Open' },
+    date: { type: Date, default: Date.now }
+}, { collection: 'supportrequests' }));
+
+const SiteNotification = mongoose.model('SiteNotification', new mongoose.Schema({
+    recipientRole: { type: String, enum: ['admin', 'customer'], required: true, index: true },
+    recipientEmail: { type: String, default: '', lowercase: true, trim: true, index: true },
+    ticketId: { type: mongoose.Schema.Types.ObjectId, ref: 'SupportRequest', required: true, index: true },
+    requestType: { type: String, enum: ['remote', 'onsite'], default: 'remote' },
+    actorName: { type: String, required: true, maxlength: 100 },
+    title: { type: String, required: true, maxlength: 140 },
+    body: { type: String, required: true, maxlength: 240 },
+    createdAt: { type: Date, default: Date.now, index: true },
+    readAt: { type: Date, default: null }
+}, { collection: 'sitenotifications' }));
+
+async function createSiteNotification({ role, email = '', ticket, actor, title, body }) {
+    if (!ticket || !ticket._id || (role === 'customer' && !email)) return;
+    await SiteNotification.create({
+        recipientRole: role,
+        recipientEmail: role === 'customer' ? String(email).toLowerCase().trim() : '',
+        ticketId: ticket._id,
+        requestType: ticket.requestType === 'onsite' ? 'onsite' : 'remote',
+        actorName: String(actor || 'IT Elements Support').slice(0, 100),
+        title: String(title || 'Request update').slice(0, 140),
+        body: String(body || 'There is an update to your request.').slice(0, 240)
+    });
+}
+
+
+const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
+    name: { type: String, required: true, maxlength: 100 },
+    email: { type: String, default: '' },
+    rating: { type: Number, required: true, min: 1, max: 5 },
+    message: { type: String, required: true, maxlength: 1200 },
+    consent: { type: Boolean, required: true, default: false },
+    status: { type: String, enum: ['Pending', 'Published', 'Hidden'], default: 'Pending' },
+    date: { type: Date, default: Date.now }
+}, { collection: 'customerreviews' }));
+
+app.use(cors());
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https://*.whatsapp.com; connect-src 'self'");
+    next();
+});
+app.use(express.urlencoded({ extended: false, limit: '100kb', verify(req, res, buffer) { if (req.path === '/webhooks/payfast') req.payfastRawBody = Buffer.from(buffer); } }));
+
+function payfastEncode(value) {
+    return encodeURIComponent(String(value).trim())
+        // Match PHP urlencode() used in PayFast's hosted-checkout signature example.
+        .replace(/[!'()*~]/g, character => '%' + character.charCodeAt(0).toString(16).toUpperCase())
+        .replace(/%[0-9a-f]{2}/gi, escape => escape.toUpperCase())
+        .replace(/%20/g, '+');
+}
+
+function payfastSignature(fields, passphrase = '') {
+    const pairs = Object.entries(fields)
+        .filter(([key, value]) => key !== 'signature' && value !== undefined && value !== null && String(value).trim() !== '')
+        .map(([key, value]) => `${key}=${payfastEncode(value)}`);
+    if (passphrase) pairs.push(`passphrase=${payfastEncode(passphrase)}`);
+    return crypto.createHash('md5').update(pairs.join('&')).digest('hex');
+}
+
+function safeSignatureEqual(provided, expected) {
+    const left = Buffer.from(String(provided || '').toLowerCase(), 'hex');
+    const right = Buffer.from(String(expected || '').toLowerCase(), 'hex');
+    return left.length === right.length && left.length > 0 && crypto.timingSafeEqual(left, right);
+}
+
+async function payfastSourceIsValid(ip) {
+    const normalizedIp = String(ip || '').replace(/^::ffff:/, '');
+    const hosts = ['www.payfast.co.za', 'w1w.payfast.co.za', 'w2w.payfast.co.za'];
+    if (payfastConfig()?.mode === 'test') hosts.push('sandbox.payfast.co.za');
+    for (const host of hosts) {
+        try {
+            const addresses = await dns.lookup(host, { all: true });
+            if (addresses.some(address => address.address.replace(/^::ffff:/, '') === normalizedIp)) return true;
+        } catch (_) { /* try the remaining PayFast addresses */ }
+    }
+    return false;
+}
+
+async function markPayFastPurchasePaid(fields) {
+    const config = payfastConfig();
+    const purchase = await PayFastPurchase.findOne({ paymentId: String(fields.m_payment_id || '') });
+    if (!config || !purchase || purchase.status === 'paid' || purchase.mode !== config.mode) return purchase;
+    const paidAmount = Math.round(Number(fields.amount_gross) * 100);
+    if (fields.payment_status !== 'COMPLETE' || String(fields.merchant_id) !== config.merchantId || paidAmount !== purchase.amount) return purchase;
+
+    const paidAt = new Date();
+    const update = { status: 'paid', paidAt, pfPaymentId: String(fields.pf_payment_id || '') };
+    if (purchase.purchaseType === 'plan') {
+        update.expiresAt = new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000);
+    } else if (purchase.purchaseType === 'invoicePro') {
+        const user = await UserAccount.findOne({ email: purchase.userEmail });
+        update.expiresAt = new Date(Math.max(paidAt.getTime(), user?.invoiceProUntil?.getTime() || 0) + 30 * 24 * 60 * 60 * 1000);
+    }
+    const saved = await PayFastPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: update });
+    if (saved.modifiedCount && purchase.purchaseType === 'plan') {
+        await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, { $set: {
+            subscriptionTier: purchase.planName,
+            subscriptionStatus: 'Active',
+            subscriptionPaidAt: paidAt,
+            subscriptionExpiresAt: update.expiresAt
+        } });
+    }
+    if (saved.modifiedCount && purchase.purchaseType === 'invoicePro') {
+        await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, { $set: { invoiceProUntil: update.expiresAt } });
+        await sendCustomerEmail(purchase.userEmail, 'IT Elements Invoice Pro is active', [
+            'PayFast confirmed your Invoice Pro payment.',
+            `Your extra document allowance is active until ${update.expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
+            'Open the Invoice Maker from your customer portal to create invoices and quotes.'
+        ]);
+    }
+    if (purchase.purchaseType === 'plan' && saved.modifiedCount) {
+        await sendCustomerEmail(purchase.userEmail, 'Your IT Elements plan payment is confirmed', [
+            `PayFast confirmed your payment for ${purchase.planName}.`,
+            `Your 30-day support plan is active until ${update.expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
+            'Sign in to your IT Elements dashboard to view your plan and request support.'
+        ]);
+    }
+    return purchase;
+}
+
+app.post('/webhooks/payfast', async (req, res) => {
+    const config = payfastConfig();
+    if (!config) return res.status(503).send('PayFast merchant settings are not configured.');
+    try {
+        const raw = Buffer.isBuffer(req.payfastRawBody) ? req.payfastRawBody.toString('utf8') : '';
+        const pairs = raw.split('&').filter(Boolean).map(part => {
+            const separator = part.indexOf('=');
+            const decode = value => decodeURIComponent(String(value || '').replace(/\+/g, ' '));
+            return [decode(separator < 0 ? part : part.slice(0, separator)), decode(separator < 0 ? '' : part.slice(separator + 1))];
+        });
+        const fields = Object.fromEntries(pairs);
+        if (!fields.signature || !safeSignatureEqual(fields.signature, payfastSignature(Object.fromEntries(pairs), process.env.PAYFAST_PASSPHRASE || ''))) return res.status(401).send('Invalid PayFast signature.');
+        if (String(fields.merchant_id || '') !== config.merchantId) return res.status(400).send('Merchant ID mismatch.');
+        if (process.env.PAYFAST_VERIFY_SOURCE !== 'false' && !(await payfastSourceIsValid(req.ip))) return res.status(403).send('Unrecognized PayFast source address.');
+
+        const validationResponse = await fetch(config.validateUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: raw,
+            signal: AbortSignal.timeout(10000)
+        });
+        const validation = (await validationResponse.text()).trim();
+        if (!validationResponse.ok || validation !== 'VALID') return res.status(400).send('PayFast notification could not be validated.');
+        await markPayFastPurchasePaid(fields);
+        return res.sendStatus(200);
+    } catch (error) {
+        console.error('PayFast notification error:', error.message);
+        return res.sendStatus(500);
+    }
+});
+
+app.use(express.json({ limit: '100kb' }));
+if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET must be set in production.');
+}
+if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
+app.use(session({
+    secret: process.env.SESSION_SECRET || randomUUID(),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 86400000,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        httpOnly: true
+    }
+}));
+
+function checkAdminAuth(req, res, next) {
+    if (req.session && req.session.isAdmin) return next();
+    res.redirect('/client/login');
+}
+function checkUserAuth(req, res, next) {
+    if (req.session && (req.session.isUser || req.session.isAdmin)) return next();
+    if (req.path === '/tools/invoices' || req.path === '/invoice-maker.html') req.session.returnTo = '/tools/invoices';
+    res.redirect('/client/login');
+}
+
+// Do not let static-file requests bypass the session checks on these pages.
+app.get('/admin.html', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
+app.get('/dashboard.html', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
+app.get('/invoice-maker.html', (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
+app.use(express.static(viewsPath, { index: false }));
+app.use('/assets', express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => res.sendFile(path.join(viewsPath, 'index.html')));
+app.get('/pricing', (req, res) => res.sendFile(path.join(viewsPath, 'pricing.html')));
+app.get('/services', (req, res) => res.sendFile(path.join(viewsPath, 'services.html')));
+app.get('/onsite-support', (req, res) => res.sendFile(path.join(viewsPath, 'onsite-support.html')));
+app.get('/about', (req, res) => res.sendFile(path.join(viewsPath, 'about.html')));
+app.get('/faq', (req, res) => res.sendFile(path.join(viewsPath, 'faq.html')));
+app.get('/contact', (req, res) => res.sendFile(path.join(viewsPath, 'contact.html')));
+app.get('/subscribe/:planId', (req, res) => {
+    const planId = String(req.params.planId || '');
+    if (!SLA_PLANS[planId]) return res.status(404).send('Plan not found.');
+    req.session.pendingPlanId = planId;
+    if (req.session.isUser) return res.redirect(`/dashboard?plan=${encodeURIComponent(planId)}`);
+    return res.redirect('/client/login');
+});
+app.get('/support', (req, res) => res.sendFile(path.join(viewsPath, 'support.html')));
+app.get('/admin/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
+app.get('/client/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
+app.get('/client/forgot-password', (req, res) => res.sendFile(path.join(viewsPath, 'forgot-password.html')));
+app.get('/reset-password', (req, res) => res.sendFile(path.join(viewsPath, 'reset-password.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(viewsPath, 'register.html')));
+app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
+app.get('/tools/invoices', (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
+app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
+
+async function createPayFastCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
+    const config = payfastConfig();
+    if (!config) throw Object.assign(new Error('Check the PayFast Render settings: PAYFAST_MERCHANT_ID must be the 8-digit Merchant ID and PAYFAST_MERCHANT_KEY must be the 13-character Merchant Key. Do not enter your passphrase as the Merchant Key.'), { statusCode: 503 });
+    const publicBaseUrl = String(process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
+    if (!publicBaseUrl.startsWith('https://')) throw Object.assign(new Error('Set PUBLIC_BASE_URL to your deployed HTTPS website address.'), { statusCode: 503 });
+    const paymentId = `ite-${randomUUID()}`;
+    const purchase = await PayFastPurchase.create({ paymentId, userEmail: email, purchaseType, planId, planName, durationOption, amount, mode: config.mode });
+    const returnPath = purchaseType === 'plan' ? '/dashboard' : purchaseType === 'invoicePro' ? '/tools/invoices' : '/';
+    const fields = {
+        merchant_id: config.merchantId,
+        merchant_key: config.merchantKey,
+        return_url: `${publicBaseUrl}${returnPath}?payment=returned&${purchaseType === 'plan' || purchaseType === 'invoicePro' ? 'payfastId' : 'paymentId'}=${encodeURIComponent(paymentId)}`,
+        cancel_url: `${publicBaseUrl}${returnPath}?payment=cancelled`,
+        notify_url: `${publicBaseUrl}/webhooks/payfast`,
+        email_address: email,
+        m_payment_id: paymentId,
+        amount: (amount / 100).toFixed(2),
+        item_name: purchaseType === 'plan' ? `IT Elements ${planName} 30-day support plan` : purchaseType === 'invoicePro' ? 'IT Elements Invoice Pro 30-day access' : `IT Elements ${QUICK_FIX_OPTIONS[durationOption]?.label || 'remote support session'}`,
+        item_description: purchaseType === 'plan' ? 'One-time payment for 30 days of support; renew manually.' : purchaseType === 'invoicePro' ? 'One-time payment for 30 days of additional invoice and quote creation.' : 'One-time remote support session.'
+    };
+    fields.signature = payfastSignature(fields, process.env.PAYFAST_PASSPHRASE || '');
+    return { action: config.endpoint, fields, paymentId };
+}
+
+app.post('/api/payment/payfast-quickfix', async (req, res) => {
+    const durationOption = String(req.body.durationOption || '');
+    const quickFix = QUICK_FIX_OPTIONS[durationOption];
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (!quickFix) return res.status(400).json({ success: false, message: 'Choose one of the available quick-fix sessions.' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Enter a valid email address for your payment receipt.' });
+    try { return res.json({ success: true, ...(await createPayFastCheckout({ email, amount: quickFix.amount, purchaseType: 'quickfix', durationOption })) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout. Please try again.' }); }
+});
+
+app.post('/api/payment/payfast-plan-checkout', checkUserAuth, async (req, res) => {
+    const userEmail = String(req.session.userEmail || '').toLowerCase();
+    const planId = String(req.body.planId || '');
+    const plan = SLA_PLANS[planId];
+    if (!userEmail) return res.status(403).json({ success: false, message: 'Sign in with a customer account before choosing a plan.' });
+    if (!plan) return res.status(400).json({ success: false, message: 'Choose one of the available support plans.' });
+    try { return res.json({ success: true, ...(await createPayFastCheckout({ email: userEmail, amount: plan.amount, purchaseType: 'plan', planId, planName: plan.name })) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout. Please try again.' }); }
+});
+
+app.post('/api/payment/payfast-invoice-checkout', checkUserAuth, async (req, res) => {
+    const email = String(req.session.userEmail || '').trim().toLowerCase();
+    if (!email) return res.status(403).json({ success: false, message: 'Sign in to enable Invoice Pro.' });
+    try { return res.json({ success: true, ...(await createPayFastCheckout({ email, amount: 4900, purchaseType: 'invoicePro' })) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout.' }); }
+});
+
+app.get('/api/payment/payfast-status', async (req, res) => {
+    const paymentId = String(req.query.paymentId || '');
+    if (!/^ite-[a-f0-9-]{36}$/i.test(paymentId)) return res.status(400).json({ success: false });
+    const purchase = await PayFastPurchase.findOne({ paymentId }, { userEmail: 0, __v: 0 });
+    if (!purchase) return res.status(404).json({ success: false });
+    res.json({ success: true, checkout: purchase });
+});
+
+app.get('/api/payment/payfast-invoice-status', checkUserAuth, async (req, res) => {
+    const paymentId = String(req.query.payfastId || req.query.paymentId || '');
+    if (!/^ite-[a-f0-9-]{36}$/i.test(paymentId)) return res.status(400).json({ success: false });
+    const purchase = await PayFastPurchase.findOne({
+        paymentId, userEmail: invoiceOwner(req), purchaseType: 'invoicePro'
+    }, { status: 1, expiresAt: 1, createdAt: 1 }).lean();
+    if (!purchase) return res.status(404).json({ success: false });
+    res.json({ success: true, status: purchase.status, expiresAt: purchase.expiresAt });
+});
+
+function invoiceOwner(req) { return String(req.session.userEmail || '').trim().toLowerCase(); }
+function cleanInvoiceText(value, max = 180) { return String(value || '').trim().slice(0, max); }
+function cleanInvoiceLogo(value) { const logo=String(value||''); return logo.length<=60000 && /^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(logo) ? logo : ''; }
+async function invoiceAllowance(email) {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const [user, used] = await Promise.all([
+        UserAccount.findOne({ email }, { invoiceProUntil: 1 }),
+        BusinessDocument.countDocuments({ ownerEmail: email, createdAt: { $gte: monthStart } })
+    ]);
+    const proUntil = user?.invoiceProUntil || null;
+    const pro = Boolean(proUntil && new Date(proUntil) > now);
+    return { pro, proUntil, used, freeLimit: 3, remaining: pro ? null : Math.max(0, 3 - used) };
+}
+
+app.get('/api/invoice-tools/status', checkUserAuth, async (req, res) => {
+    try { res.json({ success: true, ...(await invoiceAllowance(invoiceOwner(req))) }); }
+    catch (_) { res.status(500).json({ success: false, message: 'Could not load Invoice Maker access.' }); }
+});
+
+app.get('/api/invoices', checkUserAuth, async (req, res) => {
+    try {
+        const documents = await BusinessDocument.find({ ownerEmail: invoiceOwner(req) }, { ownerEmail: 0, __v: 0 }).sort({ createdAt: -1 }).limit(100).lean();
+        res.json({ success: true, documents });
+    } catch (_) { res.status(500).json({ success: false, message: 'Could not load your saved documents.' }); }
+});
+
+app.post('/api/invoices', checkUserAuth, async (req, res) => {
+    try {
+        const ownerEmail = invoiceOwner(req);
+        const allowance = await invoiceAllowance(ownerEmail);
+        if (!allowance.pro && allowance.remaining <= 0) return res.status(402).json({ success: false, code: 'UPGRADE_REQUIRED', message: 'Your three free documents for this month have been used. Enable Invoice Pro for R49 per 30 days, or return next month.' });
+        const body = req.body || {};
+        const kind = body.kind === 'quote' ? 'quote' : body.kind === 'invoice' ? 'invoice' : '';
+        if (!kind) return res.status(400).json({ success: false, message: 'Choose invoice or quote.' });
+        const layout = ['modern', 'classic', 'compact', 'ledger'].includes(body.layout) ? body.layout : 'modern';
+        const vatRate = Number(body.vatRate) === 15 ? 15 : 0;
+        const discountRate = Number(body.discountRate || 0);
+        if (!Number.isFinite(discountRate) || discountRate < 0 || discountRate > 100) return res.status(400).json({ success: false, message: 'Discount must be between 0% and 100%.' });
+        const itemsInput = Array.isArray(body.items) ? body.items.slice(0, 30) : [];
+        const items = itemsInput.map((item) => {
+            const description = cleanInvoiceText(item?.description, 160);
+            const quantity = Number(item?.quantity);
+            const unitPriceCents = Math.round(Number(item?.unitPrice) * 100);
+            if (!description || !Number.isFinite(quantity) || quantity <= 0 || quantity > 100000 || !Number.isSafeInteger(unitPriceCents) || unitPriceCents < 0 || unitPriceCents > 100000000) return null;
+            return { description, quantity, unitPriceCents, lineTotalCents: Math.round(quantity * unitPriceCents) };
+        });
+        if (!items.length || items.some(item => !item)) return res.status(400).json({ success: false, message: 'Add at least one valid item with a description, quantity, and non-negative price.' });
+        const subtotalCents = items.reduce((sum, item) => sum + item.lineTotalCents, 0);
+        const discountCents = Math.round(subtotalCents * discountRate / 100);
+        const taxableSubtotalCents = subtotalCents - discountCents;
+        const vatCents = Math.round(taxableSubtotalCents * vatRate / 100);
+        const totalCents = taxableSubtotalCents + vatCents;
+        if (!Number.isSafeInteger(totalCents) || totalCents > 1000000000) return res.status(400).json({ success: false, message: 'The document total is too large.' });
+        const now = new Date();
+        const prefix = kind === 'invoice' ? 'INV' : 'QUO';
+        const number = `${prefix}-${now.toISOString().slice(0, 10).replaceAll('-', '')}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
+        const saved = await BusinessDocument.create({
+            ownerEmail, kind, number, layout,
+            business: {
+                name: cleanInvoiceText(body.business?.name, 100), email: cleanInvoiceText(body.business?.email, 120),
+                phone: cleanInvoiceText(body.business?.phone, 40), address: cleanInvoiceText(body.business?.address, 240),
+                vatNumber: cleanInvoiceText(body.business?.vatNumber, 40), logoText: cleanInvoiceText(body.business?.logoText, 40), logoImage: cleanInvoiceLogo(body.business?.logoImage)
+            },
+            customer: { name: cleanInvoiceText(body.customer?.name, 100), email: cleanInvoiceText(body.customer?.email, 120), phone: cleanInvoiceText(body.customer?.phone, 40), address: cleanInvoiceText(body.customer?.address, 240) },
+            issueDate: /^\d{4}-\d{2}-\d{2}$/.test(String(body.issueDate || '')) ? body.issueDate : now.toISOString().slice(0, 10),
+            dueDate: /^\d{4}-\d{2}-\d{2}$/.test(String(body.dueDate || '')) ? body.dueDate : '',
+            reference: cleanInvoiceText(body.reference, 100),
+            paymentTerms: cleanInvoiceText(body.paymentTerms, 500),
+            items, vatRate, discountRate, discountCents, subtotalCents, vatCents, totalCents,
+            notes: cleanInvoiceText(body.notes, 1200),
+            paymentInstructions: cleanInvoiceText(body.paymentInstructions, 500)
+        });
+        res.status(201).json({ success: true, document: { ...saved.toObject(), ownerEmail: undefined, __v: undefined }, ...(await invoiceAllowance(ownerEmail)) });
+    } catch (_) { res.status(500).json({ success: false, message: 'Could not save this document. Please try again.' }); }
+});
+
+app.delete('/api/invoices/:id', checkUserAuth, async (req, res) => {
+    try {
+        const removed = await BusinessDocument.deleteOne({ _id: req.params.id, ownerEmail: invoiceOwner(req) });
+        if (!removed.deletedCount) return res.status(404).json({ success: false, message: 'Document not found.' });
+        res.json({ success: true });
+    } catch (_) { res.status(400).json({ success: false, message: 'Could not remove that document.' }); }
+});
+
+app.post('/client/register', async (req, res) => {
+    try {
+        const { fullName, phone, email, password } = req.body;
+        if (!fullName || !phone || !email || !password) return res.status(400).send('<script>alert("Please complete every field.");window.history.back();</script>');
+        if (fullName.trim().length < 2 || fullName.trim().length > 100) return res.status(400).send('<script>alert("Enter a name or company name between 2 and 100 characters.");window.history.back();</script>');
+        if (phone.trim().length < 7 || phone.trim().length > 25) return res.status(400).send('<script>alert("Enter a valid contact phone number.");window.history.back();</script>');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return res.status(400).send('<script>alert("Enter a valid email address.");window.history.back();</script>');
+        if (password.length < 12 || password.length > 256) return res.status(400).send('<script>alert("Choose a password between 12 and 256 characters.");window.history.back();</script>');
+        const normalizedEmail = email.toLowerCase().trim();
+        const existingUser = await UserAccount.findOne({ email: normalizedEmail });
+        if (existingUser) return res.send('<script>alert("Email already registered.");window.history.back();</script>');
+        const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password: await hashPassword(password) });
+        await newUser.save();
+        req.session.isUser = true;
+        req.session.userEmail = newUser.email;
+        const nextUrl = req.session.returnTo === '/tools/invoices'
+            ? '/tools/invoices'
+            : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+                ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+                : '/dashboard';
+        delete req.session.returnTo;
+        res.send(`<script>alert("Account created successfully!");window.location.href=${JSON.stringify(nextUrl)};</script>`);
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+app.post('/client/login', async (req, res) => {
+    try {
+        const { email = '', password = '' } = req.body;
+        if (process.env.ADMIN_PASSWORD && password === process.env.ADMIN_PASSWORD) {
+            req.session.isAdmin = true;
+            return res.send('<script>window.location.href="/admin";</script>');
+        }
+        const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
+        if (user && await verifyAndUpgradePassword(user, password)) {
+            req.session.isUser = true;
+            req.session.userEmail = user.email;
+            const nextUrl = req.session.returnTo === '/tools/invoices'
+                ? '/tools/invoices'
+                : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+                    ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+                    : '/dashboard';
+            delete req.session.returnTo;
+            return res.send(`<script>window.location.href=${JSON.stringify(nextUrl)};</script>`);
+        }
+        res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+app.post('/api/auth/forgot-password', rateLimitPasswordReset, async (req, res) => {
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ message: 'Enter a valid email address.' });
+    }
+    if (!process.env.RESEND_API_KEY || !process.env.RESET_EMAIL_FROM || !process.env.PUBLIC_BASE_URL) {
+        console.error('Password reset is unavailable: set RESEND_API_KEY, RESET_EMAIL_FROM, and PUBLIC_BASE_URL.');
+        return res.status(503).json({ message: 'Password reset email is not configured yet. Please contact IT Elements support.' });
     }
 
-    a { color: inherit; text-decoration: none; }
+    try {
+        const user = await UserAccount.findOne({ email });
+        if (!user) return res.status(202).json({ message: 'If an account exists for that address, a reset link will be emailed.' });
 
-    .container {
-      width: min(1150px, 92%);
-      margin: auto;
+        const token = crypto.randomBytes(32).toString('hex');
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        await PasswordReset.deleteMany({ email, usedAt: null });
+        await PasswordReset.create({ email, tokenHash, expiresAt: new Date(Date.now() + 15 * 60 * 1000) });
+        const baseUrl = process.env.PUBLIC_BASE_URL.replace(/\/$/, '');
+        const resetUrl = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
+
+        try {
+            await sendPasswordResetEmail(email, resetUrl);
+        } catch (mailError) {
+            await PasswordReset.deleteOne({ tokenHash });
+            throw mailError;
+        }
+        return res.status(202).json({ message: 'If an account exists for that address, a reset link will be emailed.' });
+    } catch (err) {
+        console.error('Password reset request failed:', err.message);
+        return res.status(503).json({ message: 'We could not send the reset email right now. Please contact IT Elements support.' });
     }
+});
 
-    header {
-      background: #0c0e12;
-      border-bottom: 1px solid var(--line);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+app.post('/api/auth/reset-password', async (req, res) => {
+    const token = String(req.body.token || '');
+    const password = String(req.body.password || '');
+    if (password.length < 12) return res.status(400).json({ message: 'Choose a password with at least 12 characters.' });
+    if (password.length > 256) return res.status(400).json({ message: 'Password is too long.' });
+    if (!/^[a-f0-9]{64}$/i.test(token)) return res.status(400).json({ message: 'This reset link is invalid or expired. Request a new one.' });
+
+    try {
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        const now = new Date();
+        const reset = await PasswordReset.findOneAndUpdate(
+            { tokenHash, usedAt: null, expiresAt: { $gt: now } },
+            { $set: { usedAt: now } },
+            { new: true }
+        );
+        if (!reset) return res.status(400).json({ message: 'This reset link is invalid, expired, or already used. Request a new one.' });
+
+        try {
+            const passwordHash = await hashPassword(password);
+            const result = await UserAccount.updateOne({ email: reset.email }, { $set: { password: passwordHash } });
+            if (!result.matchedCount) return res.status(400).json({ message: 'This account no longer exists. Contact IT Elements support.' });
+            await PasswordReset.updateMany({ email: reset.email, usedAt: null }, { $set: { usedAt: now } });
+            return res.json({ success: true, message: 'Password updated. You can now sign in with your new password.' });
+        } catch (updateError) {
+            await PasswordReset.updateOne({ _id: reset._id, usedAt: now }, { $set: { usedAt: null } });
+            throw updateError;
+        }
+    } catch (err) {
+        console.error('Password reset failed:', err.message);
+        return res.status(500).json({ message: 'Password reset failed. Please request a new link and try again.' });
     }
+});
 
-    .nav {
-      min-height: 76px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
+app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+
+app.get('/api/notifications', (req, res, next) => {
+    if (req.session && req.session.isAdmin) return next();
+    return checkUserAuth(req, res, next);
+}, async (req, res) => {
+    try {
+        const filter = req.session.isAdmin
+            ? { recipientRole: 'admin' }
+            : { recipientRole: 'customer', recipientEmail: String(req.session.userEmail || '').toLowerCase() };
+        const notifications = await SiteNotification.find(filter).sort({ createdAt: -1 }).limit(40).lean();
+        res.json({ notifications: notifications.map(item => ({
+            id: String(item._id), ticketId: String(item.ticketId), actorName: item.actorName,
+            title: item.title, body: item.body, createdAt: item.createdAt,
+            read: Boolean(item.readAt), requestType: item.requestType || ''
+        })) });
+    } catch (err) {
+        console.error('Notification load failed:', err.message);
+        res.status(500).json({ message: 'Could not load notifications.' });
     }
+});
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 21px;
-      font-weight: 800;
+app.post('/api/notifications/:notificationId/read', (req, res, next) => {
+    if (req.session && req.session.isAdmin) return next();
+    return checkUserAuth(req, res, next);
+}, async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.notificationId)) return res.status(400).json({ success: false });
+    try {
+        const filter = req.session.isAdmin
+            ? { _id: req.params.notificationId, recipientRole: 'admin' }
+            : { _id: req.params.notificationId, recipientRole: 'customer', recipientEmail: String(req.session.userEmail || '').toLowerCase() };
+        await SiteNotification.updateOne(filter, { $set: { readAt: new Date() } });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Could not update notification.' });
     }
+});
 
-    .brand img {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
+app.post('/support', async (req, res) => {
+    try {
+        const { name, email, phone, area, serviceType, preferredDate, preferredTime, details, remoteId, remotePassword, issue, requestType } = req.body;
+        const isOnsiteEnquiry = requestType === 'onsite';
+        const normalizedEmail = email ? String(email).toLowerCase().trim() : (req.session.userEmail || '');
+        const request = new SupportRequest({
+            name: String(name || '').trim(),
+            email: normalizedEmail,
+            phone: String(phone || '').trim(),
+            requestType: isOnsiteEnquiry ? 'onsite' : 'remote',
+            area: isOnsiteEnquiry ? String(area || '').trim() : '',
+            serviceType: isOnsiteEnquiry ? String(serviceType || '').trim() : '',
+            preferredDate: String(preferredDate || '').trim(),
+            preferredTime: String(preferredTime || '').trim(),
+            remoteId: String(remoteId || '').trim(),
+            remotePassword: String(remotePassword || ''),
+            issue: isOnsiteEnquiry ? String(details || issue || '').trim() : String(issue || '').trim(),
+            status: 'Open'
+        });
+        await request.save();
+        const requestLabel = isOnsiteEnquiry ? 'on-site visit enquiry' : 'remote support ticket';
+        await createSiteNotification({ role: 'admin', ticket: request, actor: request.name || 'Customer', title: `New ${requestLabel}`, body: `${request.name || 'A customer'} submitted a ${requestLabel}.` });
+        await sendCustomerEmail(process.env.SUPPORT_NOTIFICATION_EMAIL || 'bongani@itelements.co.za', `New ${requestLabel} from ${request.name || 'customer'}`, [
+            `${request.name || 'A customer'} submitted a ${requestLabel}.`,
+            `Email: ${normalizedEmail || 'not provided'}. Sign in to the Admin console to review it.`
+        ]);
+        await sendCustomerEmail(normalizedEmail, isOnsiteEnquiry ? 'We received your on-site support enquiry' : 'We received your support request', isOnsiteEnquiry ? [
+            `Hello ${request.name || 'there'}, we received your request for ${request.serviceType || 'on-site support'} in ${request.area || 'your area'}.`,
+            'This is an enquiry, not a confirmed appointment. We will review availability and discuss any call-out or service cost before booking.',
+            'You can follow this request in your client dashboard when you use the email address linked to your account.'
+        ] : [
+            `Hello ${request.name || 'there'}, your support request has been received and is marked Open.`,
+            'We will review the issue and follow up. Share any temporary remote session password only when an engineer is ready to connect.'
+        ]);
+        if (isOnsiteEnquiry) {
+            if (req.body.returnToDashboard === '1' && req.session.isUser) return res.redirect('/dashboard?request=onsite-sent#onsite-history');
+            return res.redirect('/onsite-support?sent=1');
+        }
+        if (req.body.returnToDashboard === '1' && req.session.isUser) return res.redirect('/dashboard?request=remote-sent#ticket-history');
+        res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
+    } catch (err) { res.status(500).send('Database sync error.'); }
+});
+
+app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
+    try {
+        const user = await UserAccount.findOne({ email: req.session.userEmail }, { password: 0 });
+        if (user && user.subscriptionStatus === 'Active' && user.subscriptionExpiresAt && user.subscriptionExpiresAt <= new Date()) {
+            user.subscriptionStatus = 'Expired';
+            await UserAccount.updateOne({ _id: user._id }, { $set: { subscriptionStatus: 'Expired' } });
+        }
+        const tickets = await SupportRequest.find({ email: req.session.userEmail }, { remotePassword: 0 }).sort({ date: -1 });
+        const checkout = req.query.payfastId
+            ? await PayFastPurchase.findOne({ paymentId: String(req.query.payfastId), userEmail: req.session.userEmail }, { userEmail: 0, __v: 0 })
+            : null;
+        res.json({ user, tickets, checkout });
+    } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.post('/api/client/tickets/:ticketId/messages', checkUserAuth, async (req, res) => {
+    const ticketId = req.params.ticketId;
+    const body = String(req.body.message || '').trim();
+    if (!mongoose.isValidObjectId(ticketId)) return res.status(400).json({ success: false, message: 'Invalid ticket.' });
+    if (body.length < 2 || body.length > 2000) return res.status(400).json({ success: false, message: 'Your reply must be between 2 and 2,000 characters.' });
+    try {
+        const ticket = await SupportRequest.findOneAndUpdate(
+            { _id: ticketId, email: req.session.userEmail },
+            { $push: { messages: { $each: [{ sender: 'customer', name: req.session.userName || 'Customer', body, date: new Date() }], $slice: -100 } } },
+            { new: true }
+        );
+        if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found for your account.' });
+        await createSiteNotification({ role: 'admin', ticket, actor: ticket.name || 'Customer', title: `New message on ${ticket.requestType === 'onsite' ? 'on-site enquiry' : 'support ticket'}`, body: `${ticket.name || 'A customer'} sent a new message. Sign in to read it.` });
+        await sendCustomerEmail(process.env.SUPPORT_NOTIFICATION_EMAIL || 'bongani@itelements.co.za', `New customer reply on ticket ${ticket._id}`, [
+            `${ticket.name || 'Customer'} (${ticket.email}) replied to a support request.`,
+            'A new message is waiting in the Admin console. For privacy, the message text is not included in this email.'
+        ]);
+        res.json({ success: true, messages: ticket.messages });
+    } catch (err) {
+        console.error('Customer ticket reply failed:', err.message);
+        res.status(500).json({ success: false, message: 'Could not send your reply. Please try again.' });
     }
+});
 
-    .brand span { color: var(--red2); }
-
-    .navlinks {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 22px;
-      color: #d1d3d8;
-      font-size: 14px;
+app.get('/api/tickets', checkAdminAuth, async (req, res) => {
+    try {
+        const tickets = await SupportRequest.find().sort({ date: -1 }).lean();
+        for (const ticket of tickets) {
+            if (ticket.remotePassword && !String(ticket.remotePassword).startsWith('enc:v1:')) {
+                const encrypted = encryptSessionPassword(ticket.remotePassword);
+                await SupportRequest.updateOne({ _id: ticket._id }, { $set: { remotePassword: encrypted } });
+                ticket.remotePassword = encrypted;
+            }
+            ticket.remotePassword = decryptSessionPassword(ticket.remotePassword);
+        }
+        res.json(tickets);
+    } catch (err) {
+        console.error('Admin ticket load error:', err.message);
+        res.status(500).json({ error: true, message: 'Could not load tickets or decrypt a stored session password. Check that SESSION_SECRET has not changed.' });
     }
+});
 
-    .navlinks a:hover { color: var(--red2); }
-
-    .hero {
-      padding: 90px 0 75px;
-      text-align: center;
-      background:
-        radial-gradient(ellipse at top, rgba(227,38,54,.18), transparent 60%),
-        var(--bg);
+app.post('/api/admin/tickets/:ticketId/messages', checkAdminAuth, async (req, res) => {
+    const ticketId = req.params.ticketId;
+    const body = String(req.body.message || '').trim();
+    if (!mongoose.isValidObjectId(ticketId)) return res.status(400).json({ success: false, message: 'Invalid ticket.' });
+    if (body.length < 2 || body.length > 2000) return res.status(400).json({ success: false, message: 'Your reply must be between 2 and 2,000 characters.' });
+    try {
+        const ticket = await SupportRequest.findByIdAndUpdate(
+            ticketId,
+            { $push: { messages: { $each: [{ sender: 'admin', name: 'IT Elements Support', body, date: new Date() }], $slice: -100 } } },
+            { new: true }
+        );
+        if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found.' });
+        await createSiteNotification({ role: 'customer', email: ticket.email, ticket, actor: 'IT Elements Support', title: 'New reply from IT Elements Support', body: 'Your support team sent a new message. Sign in to read it.' });
+        await sendCustomerEmail(ticket.email, 'New reply from IT Elements Support', [
+            `IT Elements Support replied to your ${ticket.requestType === 'onsite' ? 'on-site enquiry' : 'support ticket'}.`,
+            'Sign in to your client dashboard to see the reply and continue the conversation. For privacy, the message text is not included in this email.'
+        ]);
+        res.json({ success: true, messages: ticket.messages });
+    } catch (err) {
+        console.error('Admin ticket reply failed:', err.message);
+        res.status(500).json({ success: false, message: 'Could not send your reply. Please try again.' });
     }
+});
 
-    .eyebrow {
-      display: inline-block;
-      border: 1px solid rgba(255,57,73,.5);
-      background: rgba(227,38,54,.10);
-      color: #ff6672;
-      padding: 7px 15px;
-      border-radius: 30px;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      text-transform: uppercase;
+app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
+        const { ticketId, newStatus } = req.body;
+    if (!mongoose.isValidObjectId(ticketId)) return res.status(400).json({ success: false, message: 'Invalid ticket.' });
+    try {
+        const current = await SupportRequest.findById(ticketId);
+        if (!current) return res.status(404).json({ success: false, message: 'Ticket not found.' });
+        const isOnsite = current.requestType === 'onsite' || String(current.issue || '').startsWith('ON-SITE SUPPORT ENQUIRY');
+        const allowedStatuses = isOnsite ? ['Open', 'Contacted', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'] : ['Open', 'Contacted', 'Session Confirmed', 'On Hold', 'Resolved'];
+        if (!allowedStatuses.includes(newStatus)) return res.status(400).json({ success: false, message: 'That status is not available for this request.' });
+        const update = { status: newStatus };
+        if (isOnsite && newStatus === 'Visit Confirmed') {
+            const visitAt = new Date(req.body.confirmedVisitAt);
+            const callOutFee = Number(req.body.callOutFee);
+            if (!req.body.confirmedVisitAt || Number.isNaN(visitAt.getTime()) || visitAt.getTime() < Date.now() || String(req.body.callOutFee ?? '').trim() === '' || !Number.isFinite(callOutFee) || callOutFee < 0) {
+                return res.status(400).json({ success: false, message: 'Enter a future confirmed visit date and time, and a call-out fee (enter 0 if there is no fee).' });
+            }
+            update.confirmedVisitAt = visitAt;
+            update.callOutFee = callOutFee;
+        }
+        if (!isOnsite && newStatus === 'Session Confirmed') {
+            const sessionAt = new Date(req.body.confirmedVisitAt);
+            if (!req.body.confirmedVisitAt || Number.isNaN(sessionAt.getTime()) || sessionAt.getTime() < Date.now()) {
+                return res.status(400).json({ success: false, message: 'Enter a future confirmed support session date and time.' });
+            }
+            update.confirmedVisitAt = sessionAt;
+        }
+        if (['Completed', 'Resolved'].includes(newStatus)) update.remotePassword = '';
+        const updated = await SupportRequest.findByIdAndUpdate(ticketId, { $set: update }, { new: true });
+        if ((current.status !== newStatus || newStatus === 'Visit Confirmed' || newStatus === 'Session Confirmed') && updated.email) {
+            await createSiteNotification({ role: 'customer', email: updated.email, ticket: updated, actor: 'IT Elements Support', title: `Request status: ${newStatus}`, body: `Your ${isOnsite ? 'on-site enquiry' : 'support ticket'} is now ${newStatus}.` });
+            await sendCustomerEmail(updated.email, `Your IT Elements request is now ${newStatus}`, [
+                `Hello ${updated.name || 'there'}, the status of your ${isOnsite ? 'on-site enquiry' : 'support ticket'} is now ${newStatus}.`,
+                isOnsite && newStatus === 'Visit Confirmed' ? `Your visit is confirmed for ${updated.confirmedVisitAt.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}. Call-out fee: R${Number(updated.callOutFee || 0).toFixed(2)}. Please sign in to your client dashboard for these details.` : !isOnsite && newStatus === 'Session Confirmed' ? `Your remote support session is confirmed for ${updated.confirmedVisitAt.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}. Sign in to your client dashboard to view the appointment.` : 'Sign in to your client dashboard to follow your request.'
+            ]);
+        }
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: 'Could not update ticket status.' }); }
+});
+
+app.get('/api/reviews', async (req, res) => {
+    try {
+        const reviews = await CustomerReview.find({ status: 'Published', consent: true }, { email: 0, consent: 0, status: 0 }).sort({ date: -1 }).limit(12).lean();
+        res.json({ reviews });
+    } catch (err) { res.status(500).json({ reviews: [] }); }
+});
+
+const reviewSubmissionBuckets = new Map();
+app.post('/api/reviews', async (req, res) => {
+    const bucketKey = req.ip || req.socket.remoteAddress || 'unknown';
+    const now = Date.now();
+    const bucket = reviewSubmissionBuckets.get(bucketKey);
+    if (bucket && now - bucket.startedAt < 60 * 60 * 1000 && bucket.count >= 3) {
+        return res.status(429).json({ success: false, message: 'Please wait before submitting more feedback.' });
     }
+    if (!bucket || now - bucket.startedAt >= 60 * 60 * 1000) reviewSubmissionBuckets.set(bucketKey, { startedAt: now, count: 1 });
+    else bucket.count += 1;
 
-    h1 {
-      font-size: clamp(36px, 6vw, 62px);
-      line-height: 1.12;
-      margin: 23px auto 18px;
-      max-width: 850px;
+    const name = String(req.body.name || '').trim();
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const message = String(req.body.message || '').trim();
+    const rating = Number(req.body.rating);
+    if (name.length < 2 || name.length > 100 || message.length < 10 || message.length > 1200 || !Number.isInteger(rating) || rating < 1 || rating > 5 || req.body.consent !== true) {
+        return res.status(400).json({ success: false, message: 'Add your name, a 1–5 rating, feedback of at least 10 characters, and permission to publish it.' });
     }
+    try {
+        await CustomerReview.create({ name, email, rating, message, consent: true, status: 'Pending' });
+        await sendCustomerEmail(email, 'Thank you for your feedback', ['Thank you for sharing feedback with IT Elements. Your review is awaiting approval and will only appear publicly after it is reviewed.']);
+        res.json({ success: true, message: 'Thank you. Your feedback has been sent for review and will not be published until approved.' });
+    } catch (err) { res.status(500).json({ success: false, message: 'Could not save your feedback. Please try again.' }); }
+});
 
-    h1 span { color: var(--red2); }
+app.get('/api/admin/reviews', checkAdminAuth, async (req, res) => {
+    try { res.json(await CustomerReview.find().sort({ date: -1 }).lean()); }
+    catch (err) { res.status(500).json({ error: true, message: 'Could not load customer feedback.' }); }
+});
 
-    .hero p {
-      max-width: 680px;
-      margin: auto;
-      color: var(--muted);
-      font-size: 17px;
+app.post('/api/admin/reviews/update-status', checkAdminAuth, async (req, res) => {
+    const { reviewId, status } = req.body;
+    if (!mongoose.isValidObjectId(reviewId) || !['Published', 'Hidden'].includes(status)) return res.status(400).json({ success: false, message: 'Invalid review or status.' });
+    try {
+        const review = await CustomerReview.findByIdAndUpdate(reviewId, { status }, { new: true });
+        if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: 'Could not update the review.' }); }
+});
+
+app.post('/api/admin/subscriptions/reset', checkAdminAuth, async (req, res) => {
+    const userId = String(req.body.userId || '');
+    if (!mongoose.isValidObjectId(userId)) return res.status(400).json({ success: false, message: 'Choose a valid customer account.' });
+    try {
+        const user = await UserAccount.findByIdAndUpdate(userId, { $set: {
+            subscriptionTier: 'None (Unpaid)',
+            subscriptionStatus: 'Inactive',
+            subscriptionPaidAt: null,
+            subscriptionExpiresAt: null
+        } }, { new: true, projection: { password: 0 } });
+        if (!user) return res.status(404).json({ success: false, message: 'Customer account not found.' });
+        return res.json({ success: true });
+    } catch (err) {
+        console.error('Admin subscription reset error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not reset this customer plan.' });
     }
+});
 
-    .hero-actions {
-      margin-top: 30px;
-      display: flex;
-      justify-content: center;
-      gap: 13px;
-      flex-wrap: wrap;
+app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
+    try {
+        const now = new Date();
+        await UserAccount.updateMany(
+            { subscriptionStatus: 'Active', subscriptionExpiresAt: { $lte: now } },
+            { $set: { subscriptionStatus: 'Expired' } }
+        );
+        const [users, tickets, payfastRevenueRows] = await Promise.all([
+            UserAccount.find({}, { password: 0 }).sort({ fullName: 1 }).lean(),
+            SupportRequest.find({}, { remotePassword: 0 }).lean(),
+            PayFastPurchase.aggregate([
+                { $match: { status: 'paid', mode: 'live', purchaseType: 'plan' } },
+                { $group: { _id: null, cents: { $sum: '$amount' }, count: { $sum: 1 } } }
+            ])
+        ]);
+        const activeSubscribers = users.filter(user => user.subscriptionStatus === 'Active');
+        const inactiveUsers = users.filter(user => user.subscriptionStatus !== 'Active');
+        const activeTickets = tickets.filter(ticket => !['Resolved', 'Completed'].includes(ticket.status)).length;
+        const confirmedPlanRevenue = (payfastRevenueRows[0]?.cents || 0) / 100;
+        const confirmedPaymentCount = payfastRevenueRows[0]?.count || 0;
+        res.json({
+            users,
+            activeSubscribers,
+            inactiveUsers,
+            stats: {
+                activeTickets,
+                activeSubscribers: activeSubscribers.length,
+                inactiveUsers: inactiveUsers.length,
+                confirmedPlanRevenue,
+                confirmedPlanPayments: confirmedPaymentCount
+            }
+        });
+    } catch (err) {
+        console.error('Admin overview error:', err.message);
+        res.status(500).json({ error: true, message: 'Could not load admin overview.' });
     }
+});
 
-    .btn {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      padding: 13px 22px;
-      border-radius: 8px;
-      border: 1px solid var(--line);
-      font-weight: bold;
-      cursor: pointer;
-      transition: .2s;
-      font-size: 14px;
-    }
-
-    .btn-red {
-      background: var(--red);
-      border-color: var(--red);
-      color: white;
-    }
-
-    .btn-red:hover { background: var(--red2); }
-
-    .btn-outline {
-      background: transparent;
-      color: white;
-    }
-
-    .btn-outline:hover { border-color: var(--red); }
-
-    section { padding: 65px 0; }
-
-    .section-heading {
-      text-align: center;
-      margin-bottom: 35px;
-    }
-
-    .section-heading h2 {
-      font-size: clamp(27px, 4vw, 38px);
-      margin: 0 0 10px;
-    }
-
-    .section-heading p {
-      color: var(--muted);
-      margin: 0;
-    }
-
-    .service-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-    }
-
-    .service-card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      padding: 25px;
-      transition: .2s;
-    }
-
-    .service-card:hover {
-      border-color: var(--red);
-      transform: translateY(-3px);
-    }
-
-    .service-icon {
-      width: 48px;
-      height: 48px;
-      display: grid;
-      place-items: center;
-      background: rgba(227,38,54,.13);
-      border-radius: 10px;
-      font-size: 24px;
-      margin-bottom: 17px;
-    }
-
-    .service-card h3 {
-      margin: 0 0 10px;
-      font-size: 19px;
-    }
-
-    .service-card p {
-      color: var(--muted);
-      font-size: 14px;
-      min-height: 66px;
-    }
-
-    .price {
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--red2);
-      margin: 18px 0;
-    }
-
-    .price small {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: normal;
-    }
-
-    .service-card .btn { width: 100%; }
-
-    .calculator-wrap {
-      max-width: 760px;
-      margin: auto;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 15px;
-      padding: 30px;
-    }
-
-    .field { margin-bottom: 20px; }
-
-    label {
-      display: block;
-      font-size: 14px;
-      font-weight: bold;
-      margin-bottom: 9px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 14px;
-      border-radius: 8px;
-      border: 1px solid #363b45;
-      background: #080a0e;
-      color: #fff;
-      font-size: 15px;
-      outline: none;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--red2);
-    }
-
-    select option { background: #111318; color: white; }
-
-    .estimate {
-      background: #080a0e;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 20px;
-      margin: 25px 0;
-      text-align: center;
-    }
-
-    .estimate span {
-      display: block;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .estimate strong {
-      display: block;
-      font-size: 35px;
-      color: var(--red2);
-      margin-top: 5px;
-    }
-
-    .notice {
-      color: var(--muted);
-      font-size: 12px;
-      text-align: center;
-    }
-
-    .benefits {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 17px;
-    }
-
-    .benefit {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      padding: 23px;
-      border-radius: 11px;
-    }
-
-    .benefit h3 { margin-top: 0; }
-
-    .benefit p {
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 0;
-    }
-
-    .cta {
-      background: linear-gradient(120deg, #210b10, #111318);
-      border: 1px solid #53212a;
-      border-radius: 16px;
-      padding: 45px 25px;
-      text-align: center;
-    }
-
-    .cta h2 { font-size: 30px; margin-top: 0; }
-
-    .cta p { color: var(--muted); }
-
-    footer {
-      border-top: 1px solid var(--line);
-      padding: 30px 0;
-      color: var(--muted);
-      font-size: 13px;
-      text-align: center;
-    }
-
-    footer a { color: white; }
-
-    @media(max-width: 850px) {
-      .service-grid { grid-template-columns: repeat(2, 1fr); }
-      .benefits { grid-template-columns: 1fr; }
-    }
-
-    @media(max-width: 600px) {
-      .nav {
-        align-items: flex-start;
-        flex-direction: column;
-        padding: 13px 0;
-      }
-
-      .navlinks { gap: 12px; font-size: 12px; }
-      .hero { padding: 65px 0 55px; }
-      .service-grid { grid-template-columns: 1fr; }
-      .calculator-wrap { padding: 20px; }
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  <div class="container nav">
-    <a class="brand" href="/">
-      <img src="/assets/itel-support-icon.png" alt="IT Elements logo">
-      <div>IT <span>ELEMENTS</span></div>
-    </a>
-
-    <nav class="navlinks">
-      <a href="/">Home</a>
-      <a href="/services">Services</a>
-      <a href="/pricing">Plans</a>
-      <a href="/onsite-support">On-site Support</a>
-      <a href="/dashboard">Client Portal</a>
-      <a href="/contact">Contact</a>
-    </nav>
-  </div>
-</header>
-
-<main>
-  <section class="hero">
-    <div class="container">
-      <span class="eyebrow">Professional IT Support in South Africa</span>
-      <h1>Your Technology.<br><span>Our Responsibility.</span></h1>
-      <p>
-        From computer problems and virus removal to business IT support,
-        IT Elements helps keep your technology running smoothly.
-      </p>
-      <div class="hero-actions">
-        <a class="btn btn-red" href="#services">Explore Services</a>
-        <a class="btn btn-outline" href="#quote">Get an Estimate</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="services">
-    <div class="container">
-      <div class="section-heading">
-        <h2>Our IT Services</h2>
-        <p>Practical technology solutions for individuals and businesses.</p>
-      </div>
-
-      <div class="service-grid">
-
-        <article class="service-card">
-          <div class="service-icon">🖥️</div>
-          <h3>PC Health Check</h3>
-          <p>Computer performance checks, basic diagnostics and recommendations to help your computer run better.</p>
-          <div class="price">R249 <small>starting price</small></div>
-          <button class="btn btn-red" onclick="chooseService('health')">Request Service</button>
-        </article>
-
-        <article class="service-card">
-          <div class="service-icon">🛡️</div>
-          <h3>Virus & Malware Removal</h3>
-          <p>Help identifying unwanted software, removing malware where possible and improving device security.</p>
-          <div class="price">R450 <small>starting price</small></div>
-          <button class="btn btn-red" onclick="chooseService('virus')">Request Service</button>
-        </article>
-
-        <article class="service-card">
-          <div class="service-icon">📶</div>
-          <h3>Wi-Fi & Network Support</h3>
-          <p>Troubleshooting connectivity issues, router configuration and basic network assistance.</p>
-          <div class="price">R399 <small>starting price</small></div>
-          <button class="btn btn-red" onclick="chooseService('wifi')">Request Service</button>
-        </article>
-
-        <article class="service-card">
-          <div class="service-icon">💻</div>
-          <h3>New Computer Setup</h3>
-          <p>Help setting up a new computer, installing essential software and configuring basic settings.</p>
-          <div class="price">R450 <small>starting price</small></div>
-          <button class="btn btn-red" onclick="chooseService('setup')">Request Service</button>
-        </article>
-
-        <article class="service-card">
-          <div class="service-icon">💾</div>
-          <h3>Data Backup Setup</h3>
-          <p>Assistance setting up a backup process to help protect important documents, photos and files.</p>
-          <div class="price">R499 <small>starting price</small></div>
-          <button class="btn btn-red" onclick="chooseService('backup')">Request Service</button>
-        </article>
-
-        <article class="service-card">
-          <div class="service-icon">🏢</div>
-          <h3>Business IT Support</h3>
-          <p>IT assistance for small businesses, including devices, software, email and general technical issues.</p>
-          <div class="price">Custom quote</div>
-          <button class="btn btn-red" onclick="chooseService('business')">Request a Quote</button>
-        </article>
-
-      </div>
-    </div>
-  </section>
-
-  <section id="quote">
-    <div class="container">
-      <div class="section-heading">
-        <h2>Get an Instant Estimate</h2>
-        <p>Select a service and tell us a little about your problem.</p>
-      </div>
-
-      <div class="calculator-wrap">
-        <form id="serviceForm">
-          <div class="field">
-            <label for="service">Choose your service</label>
-            <select id="service" required>
-              <option value="">Select a service</option>
-              <option value="health">PC Health Check — R249</option>
-              <option value="virus">Virus & Malware Removal — R450</option>
-              <option value="wifi">Wi-Fi & Network Support — R399</option>
-              <option value="setup">New Computer Setup — R450</option>
-              <option value="backup">Data Backup Setup — R499</option>
-              <option value="business">Business IT Support — Custom quote</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="name">Your name</label>
-            <input id="name" type="text" placeholder="Enter your full name" required>
-          </div>
-
-          <div class="field">
-            <label for="email">Email address</label>
-            <input id="email" type="email" placeholder="you@example.com" required>
-          </div>
-
-          <div class="field">
-            <label for="phone">WhatsApp / phone number</label>
-            <input id="phone" type="tel" placeholder="+27..." required>
-          </div>
-
-          <div class="field">
-            <label for="supportType">Preferred support method</label>
-            <select id="supportType">
-              <option value="Remote support">Remote support</option>
-              <option value="On-site support">On-site support</option>
-              <option value="Not sure yet">Not sure yet</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="description">Describe the problem</label>
-            <textarea id="description" rows="4" placeholder="Tell us what is happening with your computer or network..."></textarea>
-          </div>
-
-          <div class="estimate">
-            <span>Your estimated starting price</span>
-            <strong id="estimate">R0</strong>
-          </div>
-
-          <p class="notice">
-            Estimates are not final quotations. Final pricing may depend on
-            the issue, device, parts and work required. No payment is taken here.
-          </p>
-
-          <button type="submit" class="btn btn-red" style="width:100%;margin-top:15px">
-            Send My Service Request
-          </button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="section-heading">
-        <h2>Why Choose IT Elements?</h2>
-        <p>Reliable support with clear communication.</p>
-      </div>
-
-      <div class="benefits">
-        <div class="benefit">
-          <h3>⚡ Convenient Support</h3>
-          <p>Get help remotely where possible, or request an on-site appointment.</p>
-        </div>
-        <div class="benefit">
-          <h3>🔒 Security Focused</h3>
-          <p>We take your devices, accounts and important information seriously.</p>
-        </div>
-        <div class="benefit">
-          <h3>🤝 Personal Service</h3>
-          <p>Tell us what is wrong and we will help you understand the next steps.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="cta">
-        <h2>Need Help With Your Technology?</h2>
-        <p>Contact IT Elements and let us help you find the right solution.</p>
-        <a class="btn btn-red" href="/support">Open a Support Request</a>
-        <a class="btn btn-outline" href="https://wa.me/27606181229" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <div class="container">
-    <p>© <span id="year"></span> IT Elements. All rights reserved.</p>
-    <p>
-      <a href="/">Home</a> ·
-      <a href="/pricing">Pricing</a> ·
-      <a href="/support">Support</a> ·
-      <a href="/contact">Contact</a>
-    </p>
-    <p>Professional IT Support in South Africa.</p>
-  </div>
-</footer>
-
-<script>
-  const prices = {
-    health: 249,
-    virus: 450,
-    wifi: 399,
-    setup: 450,
-    backup: 499,
-    business: null
-  };
-
-  const serviceNames = {
-    health: "PC Health Check",
-    virus: "Virus & Malware Removal",
-    wifi: "Wi-Fi & Network Support",
-    setup: "New Computer Setup",
-    backup: "Data Backup Setup",
-    business: "Business IT Support"
-  };
-
-  const serviceSelect = document.getElementById("service");
-  const estimate = document.getElementById("estimate");
-
-  function updateEstimate() {
-    const selected = serviceSelect.value;
-    const price = prices[selected];
-
-    estimate.textContent = !selected
-      ? "R0"
-      : price === null
-        ? "Custom quote"
-        : "R" + price.toLocaleString("en-ZA");
-  }
-
-  function chooseService(service) {
-    serviceSelect.value = service;
-    updateEstimate();
-    document.getElementById("quote").scrollIntoView({ behavior: "smooth" });
-  }
-
-  serviceSelect.addEventListener("change", updateEstimate);
-
-  document.getElementById("serviceForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    const selected = serviceSelect.value;
-    if (!selected) {
-      alert("Please choose a service.");
-      return;
-    }
-
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const supportType = document.getElementById("supportType").value;
-    const description = document.getElementById("description").value.trim();
-
-    if (!name || !email || !phone) {
-      alert("Please complete your name, email and phone number.");
-      return;
-    }
-
-    const price = prices[selected] === null
-      ? "Custom quote"
-      : "R" + prices[selected];
-
-    const message = [
-      "Hello IT Elements, I would like to request a service.",
-      "",
-      "Service: " + serviceNames[selected],
-      "Estimated starting price: " + price,
-      "Name: " + name,
-      "Email: " + email,
-      "Phone: " + phone,
-      "Preferred support: " + supportType,
-      "Problem: " + (description || "Not provided")
-    ].join("\n");
-
-    const whatsappUrl = "https://wa.me/27606181229?text=" + encodeURIComponent(message);
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
-  });
-
-  document.getElementById("year").textContent = new Date().getFullYear();
-</script>
-
-</body>
-</html>
+app.listen(PORT, () => { console.log(`🚀 PRODUCTION ENGINE ACTIVE ON PORT ${PORT}`); });
