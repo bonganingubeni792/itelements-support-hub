@@ -10,141 +10,632 @@
 
 <style>
 :root{
- --bg:#070708;--panel:#111115;--panel2:#19191e;
- --red:#ed2638;--red2:#a90c20;--white:#fff;
- --muted:#a5a5ad;--line:#2b2b32;
+ --bg:#080809;
+ --panel:#111115;
+ --panel2:#19191f;
+ --red:#ed2638;
+ --red2:#a90c20;
+ --white:#fff;
+ --muted:#aaaab3;
+ --line:#292930;
+ --green:#18a05b;
+ --max:1500px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:100px}
 body{
- background:radial-gradient(ellipse at 10% 5%,#ed263820,transparent 35%),
- radial-gradient(ellipse at 90% 45%,#a90c2015,transparent 35%),
- #070708;
- color:var(--white);font-family:Arial,Helvetica,sans-serif;line-height:1.6;
+ background:
+ radial-gradient(ellipse at 8% 12%,#ed26381c,transparent 36%),
+ radial-gradient(ellipse at 95% 48%,#a90c2012,transparent 35%),
+ var(--bg);
+ color:var(--white);
+ font-family:Arial,Helvetica,sans-serif;
+ line-height:1.6;
+ overflow-x:hidden;
 }
 a{text-decoration:none;color:inherit}
 button{font:inherit}
-.container{width:min(1160px,92%);margin:auto}
+.container{
+ width:min(var(--max),94%);
+ margin-inline:auto;
+}
+
+/* NAVIGATION */
 header{
- background:#050506ed;border-bottom:1px solid var(--line);
- position:sticky;top:0;z-index:100;backdrop-filter:blur(15px);
+ background:#070708f5;
+ border-bottom:1px solid var(--line);
+ position:sticky;
+ top:0;
+ z-index:100;
+ backdrop-filter:blur(18px);
 }
-.navbar{min-height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:900}
-.brand img{width:45px;height:45px;object-fit:contain}
+.navbar{
+ min-height:78px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:25px;
+}
+.brand{
+ display:flex;
+ align-items:center;
+ gap:11px;
+ font-size:22px;
+ font-weight:900;
+ letter-spacing:.3px;
+ flex-shrink:0;
+}
+.brand img{
+ width:48px;
+ height:48px;
+ object-fit:contain;
+}
 .brand span,.red{color:var(--red)}
-.nav-links{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.nav-links a{font-size:13px;color:#ccc;font-weight:700}
+.nav-links{
+ display:flex;
+ align-items:center;
+ justify-content:flex-end;
+ gap:clamp(10px,1.5vw,24px);
+}
+.nav-links a{
+ color:#d2d2d8;
+ font-size:13px;
+ font-weight:700;
+ white-space:nowrap;
+ transition:.2s;
+}
 .nav-links a:hover{color:var(--red)}
-.nav-cta{background:var(--red);padding:9px 15px;border-radius:8px;color:white!important}
+.nav-links .nav-cta{
+ background:var(--red);
+ color:white;
+ padding:11px 18px;
+ border-radius:8px;
+}
+.nav-links .nav-cta:hover{
+ background:var(--red2);
+ color:white;
+}
+
+/* BUTTONS */
 .btn{
- display:inline-flex;align-items:center;justify-content:center;
- padding:13px 21px;border-radius:9px;border:1px solid transparent;
- background:linear-gradient(135deg,#f12b40,#a90c20);
- color:white;font-weight:800;cursor:pointer;transition:.25s;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:9px;
+ padding:14px 23px;
+ border-radius:9px;
+ border:1px solid transparent;
+ background:linear-gradient(135deg,#f12b40,#b30d23);
+ color:white;
+ font-size:14px;
+ font-weight:800;
+ cursor:pointer;
+ transition:.25s;
 }
-.btn:hover{transform:translateY(-3px);box-shadow:0 0 25px #ed263855}
-.btn-outline{background:transparent;border-color:var(--red)}
-.hero{padding:105px 0 90px;position:relative;overflow:hidden}
-.hero-inner{max-width:850px}
-.eyebrow{font-size:12px;letter-spacing:4px;color:#ff4658;font-weight:900;margin-bottom:17px}
-.hero h1{font-size:clamp(40px,7vw,74px);line-height:1.08;margin-bottom:23px;letter-spacing:-2px}
-.hero p{font-size:17px;color:var(--muted);max-width:680px;margin-bottom:30px}
-.hero-actions{display:flex;gap:13px;flex-wrap:wrap}
-.hero-note{margin-top:24px;color:#92929a;font-size:12px}
-.trust-strip{border-block:1px solid var(--line);background:#ffffff05;padding:20px 0}
-.trust-items{display:flex;justify-content:space-around;gap:20px;flex-wrap:wrap;text-align:center}
-.trust-items span{font-size:13px;font-weight:700;color:#d0d0d5}
-.trust-items b{color:var(--red);margin-right:7px}
-section{padding:75px 0}
-.section-heading{text-align:center;margin-bottom:40px}
-.section-heading h2{font-size:clamp(29px,4vw,43px);margin-bottom:12px}
-.section-heading p{color:var(--muted);max-width:720px;margin:auto}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.btn:hover{
+ transform:translateY(-3px);
+ box-shadow:0 9px 28px #ed26384a;
+}
+.btn-outline{
+ background:transparent;
+ border-color:#ed2638;
+ color:white;
+}
+.btn-outline:hover{background:#ed26381b}
+
+/* HERO */
+.hero{
+ min-height:650px;
+ min-height:calc(88svh - 78px);
+ display:flex;
+ align-items:center;
+ padding:75px 0;
+ position:relative;
+ overflow:hidden;
+}
+.hero::before{
+ content:"";
+ position:absolute;
+ width:650px;
+ height:650px;
+ border-radius:50%;
+ background:#ed26380b;
+ filter:blur(60px);
+ top:-200px;
+ left:-180px;
+ pointer-events:none;
+}
+.hero-layout{
+ display:grid;
+ grid-template-columns:minmax(0,1.08fr) minmax(390px,.92fr);
+ align-items:center;
+ gap:clamp(35px,6vw,100px);
+ position:relative;
+}
+.hero-content{max-width:780px}
+.eyebrow{
+ color:#ff4658;
+ font-size:12px;
+ letter-spacing:4px;
+ font-weight:900;
+ margin-bottom:18px;
+}
+.hero h1{
+ font-size:clamp(43px,5.2vw,78px);
+ line-height:1.04;
+ letter-spacing:-2.7px;
+ margin-bottom:24px;
+}
+.hero h1 span{color:var(--red)}
+.hero-description{
+ max-width:680px;
+ font-size:clamp(15px,1.2vw,18px);
+ color:#b7b7c0;
+ margin-bottom:31px;
+ line-height:1.8;
+}
+.hero-actions{
+ display:flex;
+ align-items:center;
+ gap:13px;
+ flex-wrap:wrap;
+}
+.hero-note{
+ margin-top:25px;
+ color:#9999a2;
+ font-size:12px;
+}
+.hero-note span{color:var(--red);margin-right:6px}
+
+/* HERO SUPPORT PANEL */
+.hero-visual{
+ width:100%;
+ max-width:590px;
+ justify-self:end;
+ position:relative;
+}
+.visual-glow{
+ position:absolute;
+ inset:10% 5%;
+ background:#ed263825;
+ filter:blur(75px);
+ border-radius:50%;
+}
+.dashboard-preview{
+ position:relative;
+ background:linear-gradient(145deg,#19191f,#0b0b0e);
+ border:1px solid #383840;
+ border-radius:19px;
+ padding:25px;
+ box-shadow:0 30px 90px #0009;
+}
+.preview-top{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:15px;
+ padding-bottom:19px;
+ border-bottom:1px solid var(--line);
+}
+.preview-brand{
+ display:flex;
+ align-items:center;
+ gap:10px;
+ font-weight:900;
+ font-size:14px;
+}
+.preview-logo{
+ width:37px;
+ height:37px;
+ border-radius:10px;
+ background:#ed263820;
+ display:grid;
+ place-items:center;
+ color:#ff4658;
+ font-weight:900;
+ font-size:17px;
+}
+.preview-status{
+ color:#63d99a;
+ font-size:11px;
+ font-weight:800;
+ background:#18a05b18;
+ border:1px solid #18a05b45;
+ border-radius:30px;
+ padding:6px 10px;
+}
+.preview-title{padding:23px 0 18px}
+.preview-title small{
+ color:#a3a3ac;
+ font-size:11px;
+ font-weight:700;
+ letter-spacing:1.5px;
+}
+.preview-title h2{
+ font-size:25px;
+ margin-top:5px;
+}
+.preview-title p{
+ font-size:12px;
+ color:var(--muted);
+ margin-top:5px;
+}
+.preview-services{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:12px;
+}
+.preview-item{
+ background:#222228;
+ border:1px solid #383840;
+ border-radius:11px;
+ padding:16px;
+ min-height:115px;
+}
+.preview-icon{
+ font-size:22px;
+ margin-bottom:8px;
+}
+.preview-item h3{font-size:13px}
+.preview-item p{
+ font-size:11px;
+ color:#a5a5ae;
+ margin-top:3px;
+}
+.preview-bottom{
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:12px;
+ margin-top:17px;
+ padding:15px;
+ border-radius:11px;
+ background:#ed263815;
+ border:1px solid #ed26384a;
+}
+.preview-bottom strong{font-size:13px}
+.preview-bottom span{
+ color:#ff6977;
+ font-size:12px;
+ font-weight:800;
+}
+.preview-caption{
+ text-align:center;
+ font-size:11px;
+ color:#8e8e97;
+ margin-top:14px;
+}
+
+/* TRUST STRIP */
+.trust-strip{
+ border-block:1px solid var(--line);
+ background:#ffffff06;
+ padding:20px 0;
+}
+.trust-items{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:20px;
+ text-align:center;
+}
+.trust-items span{
+ font-size:13px;
+ font-weight:800;
+ color:#d6d6dc;
+}
+.trust-items b{color:var(--red);margin-right:8px}
+
+/* SECTIONS */
+section{padding:85px 0}
+.section-heading{
+ max-width:800px;
+ margin:0 auto 43px;
+ text-align:center;
+}
+.section-heading .eyebrow{margin-bottom:12px}
+.section-heading h2{
+ font-size:clamp(30px,3.5vw,46px);
+ line-height:1.2;
+ margin-bottom:13px;
+}
+.section-heading p{
+ color:var(--muted);
+ font-size:15px;
+ max-width:720px;
+ margin:auto;
+}
+
+/* SERVICE CARDS */
+.grid{
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:20px;
+}
 .card{
- background:linear-gradient(145deg,#19191e,#0c0c0f);
- border:1px solid var(--line);border-radius:15px;padding:26px;transition:.25s;
+ background:linear-gradient(145deg,#19191f,#0d0d10);
+ border:1px solid var(--line);
+ border-radius:15px;
+ padding:27px;
+ transition:.25s;
+ min-width:0;
 }
-.card:hover{transform:translateY(-5px);border-color:var(--red);box-shadow:0 15px 35px #ed26381a}
+.card:hover{
+ transform:translateY(-5px);
+ border-color:var(--red);
+ box-shadow:0 15px 35px #ed26381a;
+}
 .icon{
- width:52px;height:52px;border-radius:13px;background:#ed263820;
- border:1px solid #ed263850;display:grid;place-items:center;
- font-size:24px;margin-bottom:16px;
+ width:54px;
+ height:54px;
+ border-radius:13px;
+ background:#ed263820;
+ border:1px solid #ed263850;
+ display:grid;
+ place-items:center;
+ font-size:25px;
+ margin-bottom:17px;
 }
 .card h3{font-size:19px;margin-bottom:9px}
-.card p{font-size:14px;color:var(--muted);margin-bottom:17px}
-.card-link{color:#ff4658;font-size:13px;font-weight:900}
+.card p{
+ font-size:14px;
+ color:var(--muted);
+ margin-bottom:17px;
+}
+.card-link{
+ color:#ff5262;
+ font-size:13px;
+ font-weight:900;
+}
 .card-link:hover{text-decoration:underline}
-.dark-section{background:#ffffff06;border-block:1px solid var(--line)}
-.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:17px}
-.price-card{background:#111115;border:1px solid var(--line);border-radius:14px;padding:23px}
+
+/* PRICING */
+.dark-section{
+ background:#ffffff05;
+ border-block:1px solid var(--line);
+}
+.pricing-grid{
+ display:grid;
+ grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:18px;
+}
+.price-card{
+ background:#111115;
+ border:1px solid var(--line);
+ border-radius:15px;
+ padding:25px;
+ transition:.2s;
+}
+.price-card:hover{border-color:#ed263880}
 .price-card h3{font-size:18px}
-.price-card .amount{font-size:29px;font-weight:900;color:#ff4658;margin:15px 0}
-.price-card .amount small{font-size:12px;color:var(--muted);font-weight:normal}
-.price-card p{font-size:13px;color:var(--muted);min-height:65px}
-.price-card a{display:block;text-align:center;margin-top:15px}
-.price-card.featured{border-color:var(--red);box-shadow:0 0 28px #ed26381b}
-.price-note{text-align:center;color:#888;font-size:12px;margin-top:22px}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.step{padding:25px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
-.step-number{color:var(--red);font-size:30px;font-weight:900}
-.step h3{margin:8px 0}
+.price-card .amount{
+ font-size:clamp(25px,2.3vw,34px);
+ font-weight:900;
+ color:#ff4658;
+ margin:17px 0;
+ white-space:nowrap;
+}
+.price-card .amount small{
+ font-size:12px;
+ color:var(--muted);
+ font-weight:normal;
+}
+.price-card p{
+ font-size:13px;
+ color:var(--muted);
+ min-height:62px;
+}
+.price-card a{
+ display:flex;
+ margin-top:17px;
+ text-align:center;
+}
+.price-card.featured{
+ border-color:var(--red);
+ box-shadow:0 0 28px #ed26381b;
+ position:relative;
+}
+.plan-tag{
+ display:inline-block;
+ background:#ed263820;
+ color:#ff6877;
+ border-radius:30px;
+ padding:5px 10px;
+ font-size:10px;
+ font-weight:900;
+ margin-bottom:12px;
+}
+.price-note{
+ text-align:center;
+ color:#888;
+ font-size:12px;
+ margin-top:23px;
+}
+
+/* PROCESS */
+.steps{
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:20px;
+}
+.step{
+ padding:27px;
+ border:1px solid var(--line);
+ border-radius:14px;
+ background:var(--panel);
+}
+.step-number{
+ color:var(--red);
+ font-size:31px;
+ font-weight:900;
+}
+.step h3{margin:9px 0;font-size:18px}
 .step p{font-size:14px;color:var(--muted)}
+
+/* BUSINESS */
 .business{
- background:radial-gradient(ellipse at right,#ed263820,transparent 50%),#111115;
- border:1px solid var(--line);border-radius:20px;padding:45px;
- display:flex;justify-content:space-between;align-items:center;gap:30px;
+ background:
+ radial-gradient(ellipse at right,#ed263825,transparent 55%),
+ linear-gradient(120deg,#17171d,#0e0e12);
+ border:1px solid var(--line);
+ border-radius:20px;
+ padding:clamp(30px,5vw,60px);
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:35px;
 }
-.business h2{font-size:clamp(26px,4vw,39px);margin-bottom:12px}
-.business p{color:var(--muted);max-width:650px}
-.business .btn{white-space:nowrap}
-.review-placeholder{text-align:center;padding:35px;border:1px dashed #555;border-radius:14px;background:#111115;color:var(--muted)}
-.faq-list{max-width:820px;margin:auto}
-details{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:12px;padding:17px}
+.business-content{max-width:800px}
+.business h2{
+ font-size:clamp(28px,3.5vw,43px);
+ line-height:1.2;
+ margin-bottom:14px;
+}
+.business p{color:var(--muted);font-size:15px}
+.business .btn{white-space:nowrap;flex-shrink:0}
+
+/* REVIEWS */
+.review-placeholder{
+ text-align:center;
+ padding:38px;
+ border:1px dashed #555;
+ border-radius:14px;
+ background:#111115;
+ color:var(--muted);
+}
+.review-placeholder h3{color:#fff;margin-bottom:8px}
+
+/* FAQ */
+.faq-list{max-width:900px;margin:auto}
+details{
+ background:var(--panel);
+ border:1px solid var(--line);
+ border-radius:10px;
+ margin-bottom:12px;
+ padding:19px 21px;
+}
 summary{cursor:pointer;font-weight:800}
-details p{font-size:14px;color:var(--muted);padding-top:12px}
-.cta{text-align:center;background:radial-gradient(ellipse at center,#ed263825,transparent 65%),#09090a;border-block:1px solid var(--line)}
-.cta h2{font-size:clamp(30px,5vw,46px)}
-.cta p{color:var(--muted);margin:12px 0 24px}
-footer{background:#050506;border-top:1px solid var(--line);padding:42px 0 20px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;margin-bottom:28px}
-.footer-grid h3{margin-bottom:12px;font-size:16px}
-.footer-grid p,.footer-grid a{display:block;color:var(--muted);font-size:13px;margin-bottom:9px}
+summary:hover{color:#ff5262}
+details p{
+ font-size:14px;
+ color:var(--muted);
+ padding-top:13px;
+}
+
+/* CTA */
+.cta{
+ text-align:center;
+ background:
+ radial-gradient(ellipse at center,#ed263825,transparent 65%),
+ #09090a;
+ border-block:1px solid var(--line);
+}
+.cta h2{font-size:clamp(30px,4.5vw,48px)}
+.cta p{color:var(--muted);margin:13px 0 25px}
+
+/* FOOTER */
+footer{
+ background:#050506;
+ border-top:1px solid var(--line);
+ padding:48px 0 22px;
+}
+.footer-grid{
+ display:grid;
+ grid-template-columns:2fr 1fr 1fr;
+ gap:35px;
+ margin-bottom:30px;
+}
+.footer-grid h3{margin-bottom:14px;font-size:16px}
+.footer-grid p,.footer-grid a{
+ display:block;
+ color:var(--muted);
+ font-size:13px;
+ margin-bottom:10px;
+}
 .footer-grid a:hover{color:var(--red)}
-.copyright{text-align:center;border-top:1px solid var(--line);padding-top:18px;color:#777;font-size:12px}
+.copyright{
+ text-align:center;
+ border-top:1px solid var(--line);
+ padding-top:19px;
+ color:#777;
+ font-size:12px;
+}
+
+/* WHATSAPP */
 .whatsapp{
- position:fixed;right:20px;bottom:20px;z-index:50;
- background:#168d4d;color:white;border-radius:50px;
- padding:13px 19px;font-size:13px;font-weight:900;
+ position:fixed;
+ right:22px;
+ bottom:22px;
+ z-index:50;
+ background:#168d4d;
+ color:white;
+ border-radius:50px;
+ padding:14px 20px;
+ font-size:13px;
+ font-weight:900;
  box-shadow:0 5px 25px #0009;
+ transition:.2s;
 }
-.whatsapp:hover{background:#0e713c}
-@media(max-width:950px){.pricing-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){
- .navbar{padding:13px 0;align-items:flex-start;flex-direction:column}
- .nav-links{gap:12px}
+.whatsapp:hover{background:#0e713c;transform:translateY(-3px)}
+
+/* TABLET */
+@media(max-width:1100px){
+ .navbar{flex-wrap:wrap;padding:13px 0}
+ .nav-links{flex-wrap:wrap;justify-content:flex-start}
+ .hero-layout{grid-template-columns:1fr 0.85fr;gap:30px}
+ .pricing-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+/* SMALL TABLET */
+@media(max-width:800px){
+ .hero{min-height:auto;padding:70px 0}
+ .hero-layout{grid-template-columns:1fr}
+ .hero-content{max-width:760px}
+ .hero-visual{justify-self:center;max-width:620px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .business{flex-direction:column;align-items:flex-start}
+ .trust-items{grid-template-columns:repeat(2,1fr)}
+}
+
+/* MOBILE */
+@media(max-width:560px){
+ .container{width:92%}
+ .navbar{align-items:flex-start;gap:12px}
+ .brand{font-size:19px}
+ .brand img{width:42px;height:42px}
+ .nav-links{gap:10px 15px}
  .nav-links a{font-size:12px}
- .grid,.steps{grid-template-columns:repeat(2,1fr)}
- .business{flex-direction:column;align-items:flex-start;padding:28px}
- .footer-grid{grid-template-columns:1fr}
- .hero{padding:75px 0}
-}
-@media(max-width:500px){
+ .nav-links .nav-cta{padding:7px 10px}
+ .hero{padding:58px 0}
+ .hero h1{font-size:clamp(39px,11vw,55px);letter-spacing:-1.7px}
+ .hero-description{font-size:15px}
+ .hero-actions{align-items:stretch}
+ .hero-actions .btn{width:100%}
+ .dashboard-preview{padding:17px}
+ .preview-title h2{font-size:21px}
+ .preview-item{padding:12px;min-height:105px}
+ .trust-items{gap:13px}
+ .trust-items span{font-size:11px}
+ section{padding:60px 0}
  .grid,.steps,.pricing-grid{grid-template-columns:1fr}
- .hero h1{letter-spacing:-1px}
- section{padding:55px 0}
- .whatsapp{right:12px;bottom:12px}
+ .card,.price-card,.step{padding:23px}
+ .price-card p{min-height:0}
+ .business{padding:25px}
+ .business .btn{white-space:normal;width:100%}
+ .footer-grid{grid-template-columns:1fr;gap:20px}
+ .whatsapp{right:12px;bottom:12px;padding:12px 16px}
 }
 </style>
 </head>
 
 <body>
+
 <header>
  <div class="container navbar">
   <a href="/" class="brand">
    <img src="/assets/itel-support-icon.png" alt="IT Elements logo">
    <div>IT <span>ELEMENTS</span></div>
   </a>
+
   <nav class="nav-links">
    <a href="/">Home</a>
    <a href="/services">Services</a>
@@ -159,25 +650,95 @@ footer{background:#050506;border-top:1px solid var(--line);padding:42px 0 20px}
 </header>
 
 <main>
+
+<!-- HERO -->
 <section class="hero">
- <div class="container">
-  <div class="hero-inner">
+ <div class="container hero-layout">
+
+  <div class="hero-content">
    <div class="eyebrow">YOUR TECHNOLOGY. OUR PRIORITY.</div>
-   <h1>IT Problems?<br><span class="red">We've Got You Covered.</span></h1>
-   <p>
+
+   <h1>
+    IT Problems?<br>
+    <span>We've Got You Covered.</span>
+   </h1>
+
+   <p class="hero-description">
     Reliable IT support for individuals, professionals and businesses.
-    From computer troubleshooting to network assistance and business technology solutions,
-    IT Elements helps keep you connected and productive.
+    From computer troubleshooting to network assistance and business
+    technology solutions, IT Elements helps keep you connected and productive.
    </p>
+
    <div class="hero-actions">
-    <a href="/services" class="btn">Explore Our Services</a>
+    <a href="/services" class="btn">Explore Our Services →</a>
     <a href="/support" class="btn btn-outline">Get IT Support</a>
    </div>
-   <div class="hero-note">Remote support · Onsite enquiries · Business IT solutions</div>
+
+   <div class="hero-note">
+    <span>●</span> Remote support · Onsite enquiries · Business IT solutions
+   </div>
   </div>
+
+  <!-- RIGHT SIDE SUPPORT VISUAL -->
+  <div class="hero-visual">
+   <div class="visual-glow"></div>
+
+   <div class="dashboard-preview">
+    <div class="preview-top">
+     <div class="preview-brand">
+      <div class="preview-logo">IT</div>
+      <span>IT ELEMENTS</span>
+     </div>
+     <div class="preview-status">● SUPPORT SERVICES</div>
+    </div>
+
+    <div class="preview-title">
+     <small>YOUR TECHNOLOGY PARTNER</small>
+     <h2>How can we help?</h2>
+     <p>Professional assistance for your everyday technology needs.</p>
+    </div>
+
+    <div class="preview-services">
+     <div class="preview-item">
+      <div class="preview-icon">💻</div>
+      <h3>Computer Support</h3>
+      <p>Troubleshooting and setup</p>
+     </div>
+
+     <div class="preview-item">
+      <div class="preview-icon">📶</div>
+      <h3>Network Support</h3>
+      <p>Wi-Fi and connectivity</p>
+     </div>
+
+     <div class="preview-item">
+      <div class="preview-icon">🛡️</div>
+      <h3>Security Assistance</h3>
+      <p>Protection and maintenance</p>
+     </div>
+
+     <div class="preview-item">
+      <div class="preview-icon">🏢</div>
+      <h3>Business IT</h3>
+      <p>Technology for businesses</p>
+     </div>
+    </div>
+
+    <div class="preview-bottom">
+     <strong>Need technical assistance?</strong>
+     <span>WE CAN HELP →</span>
+    </div>
+   </div>
+
+   <div class="preview-caption">
+    IT support for individuals, professionals and businesses
+   </div>
+  </div>
+
  </div>
 </section>
 
+<!-- TRUST STRIP -->
 <div class="trust-strip">
  <div class="container trust-items">
   <span><b>✓</b> Remote IT Support</span>
@@ -187,57 +748,71 @@ footer{background:#050506;border-top:1px solid var(--line);padding:42px 0 20px}
  </div>
 </div>
 
+<!-- SERVICES -->
 <section>
  <div class="container">
+
   <div class="section-heading">
    <div class="eyebrow">WHAT WE DO</div>
    <h2>Technology Support That <span class="red">Makes Sense.</span></h2>
-   <p>Practical help for common technology problems, computer maintenance and business IT needs.</p>
+   <p>
+    Practical help for common technology problems, computer maintenance
+    and business IT needs.
+   </p>
   </div>
 
   <div class="grid">
+
    <article class="card">
     <div class="icon">💻</div>
     <h3>Remote IT Support</h3>
     <p>Get assistance with software issues, computer errors, configuration and troubleshooting remotely.</p>
     <a class="card-link" href="/services">Explore Remote Support →</a>
    </article>
+
    <article class="card">
     <div class="icon">🔧</div>
     <h3>Computer Repairs</h3>
     <p>Help diagnosing computer problems, slow performance, software faults and setup issues.</p>
     <a class="card-link" href="/services">Explore Computer Services →</a>
    </article>
+
    <article class="card">
     <div class="icon">🏢</div>
     <h3>Business IT Solutions</h3>
     <p>Support for small businesses needing assistance with computers, email, networks and maintenance.</p>
     <a class="card-link" href="/business-support">Business Support →</a>
    </article>
+
    <article class="card">
     <div class="icon">🛡️</div>
     <h3>Security Assistance</h3>
     <p>Get help with malware removal, security checks, updates and safer computer configuration.</p>
     <a class="card-link" href="/services">Security Services →</a>
    </article>
+
    <article class="card">
     <div class="icon">📶</div>
     <h3>Wi-Fi & Network Support</h3>
     <p>Assistance with Wi-Fi connectivity, routers, internet problems and basic network troubleshooting.</p>
     <a class="card-link" href="/services">Network Services →</a>
    </article>
+
    <article class="card">
     <div class="icon">💾</div>
     <h3>Backup & Data Assistance</h3>
     <p>Help setting up backups and organising safer ways to protect important files.</p>
     <a class="card-link" href="/services">Backup Services →</a>
    </article>
+
   </div>
  </div>
 </section>
 
+<!-- MONTHLY PLANS -->
 <section class="dark-section" id="pricing">
  <div class="container">
+
   <div class="section-heading">
    <div class="eyebrow">SIMPLE MONTHLY PLANS</div>
    <h2>Support That Fits Your <span class="red">Needs.</span></h2>
@@ -245,69 +820,89 @@ footer{background:#050506;border-top:1px solid var(--line);padding:42px 0 20px}
   </div>
 
   <div class="pricing-grid">
+
    <article class="price-card">
     <h3>Basic</h3>
     <div class="amount">R299 <small>/month</small></div>
     <p>For customers needing an entry-level support arrangement.</p>
     <a href="/subscribe/basic" class="btn">View Plan</a>
    </article>
+
    <article class="price-card">
     <h3>Standard</h3>
     <div class="amount">R599 <small>/month</small></div>
     <p>For customers who need more regular technical assistance.</p>
     <a href="/subscribe/standard" class="btn">View Plan</a>
    </article>
+
    <article class="price-card featured">
+    <div class="plan-tag">BUSINESS OPTION</div>
     <h3>Business Growth</h3>
     <div class="amount">R2,499 <small>/month</small></div>
     <p>For growing businesses seeking a structured support arrangement.</p>
     <a href="/subscribe/business-growth" class="btn">View Plan</a>
    </article>
+
    <article class="price-card">
     <h3>Corporate SLA</h3>
     <div class="amount">R4,999 <small>/month</small></div>
     <p>For organisations requiring a formal support agreement.</p>
     <a href="/subscribe/corporate-sla" class="btn">View Plan</a>
    </article>
+
   </div>
-  <p class="price-note">Please review each plan's service limits, terms and included support before subscribing.</p>
-  <div style="text-align:center;margin-top:25px">
-   <a href="/pricing" class="btn btn-outline">View All Pricing</a>
+
+  <p class="price-note">
+   Please review each plan's service limits, terms and included support before subscribing.
+  </p>
+
+  <div style="text-align:center;margin-top:27px">
+   <a href="/pricing" class="btn btn-outline">View All Pricing →</a>
   </div>
+
  </div>
 </section>
 
+<!-- HOW IT WORKS -->
 <section>
  <div class="container">
+
   <div class="section-heading">
    <div class="eyebrow">HOW IT WORKS</div>
    <h2>Getting IT Help Is <span class="red">Simple.</span></h2>
    <p>Our support process starts with understanding the problem and identifying the next step.</p>
   </div>
+
   <div class="steps">
+
    <div class="step">
     <div class="step-number">01</div>
     <h3>Tell Us What's Wrong</h3>
     <p>Submit a support request with your contact details and a description of the issue.</p>
    </div>
+
    <div class="step">
     <div class="step-number">02</div>
     <h3>We Review Your Request</h3>
     <p>We review the information and discuss the appropriate support option with you.</p>
    </div>
+
    <div class="step">
     <div class="step-number">03</div>
     <h3>Get Technical Assistance</h3>
     <p>Proceed with the agreed support service and follow your request through the customer portal.</p>
    </div>
+
   </div>
  </div>
 </section>
 
+<!-- BUSINESS SUPPORT -->
 <section class="dark-section">
  <div class="container">
+
   <div class="business">
-   <div>
+   <div class="business-content">
     <div class="eyebrow">FOR SMALL & GROWING BUSINESSES</div>
     <h2>Your Business Deserves <span class="red">Reliable IT.</span></h2>
     <p>
@@ -315,80 +910,106 @@ footer{background:#050506;border-top:1px solid var(--line);padding:42px 0 20px}
      backup planning and ongoing technical support with IT Elements.
     </p>
    </div>
-   <a href="/business-support" class="btn">Business IT Solutions</a>
+
+   <a href="/business-support" class="btn">Business IT Solutions →</a>
   </div>
+
  </div>
 </section>
 
+<!-- REVIEWS -->
 <section>
  <div class="container">
+
   <div class="section-heading">
    <div class="eyebrow">CUSTOMER EXPERIENCE</div>
    <h2>Built Around <span class="red">Better Support.</span></h2>
    <p>We value honest feedback and use it to improve the way we serve our customers.</p>
   </div>
+
   <div class="review-placeholder">
    <h3>Customer Reviews</h3>
    <p>Approved customer testimonials will appear here.</p>
-   <a href="/reviews" class="btn btn-outline" style="margin-top:20px">Read Reviews & Leave Feedback</a>
+   <a href="/reviews" class="btn btn-outline" style="margin-top:20px">
+    Read Reviews & Leave Feedback
+   </a>
   </div>
+
  </div>
 </section>
 
+<!-- FAQ -->
 <section class="dark-section">
  <div class="container">
+
   <div class="section-heading">
    <div class="eyebrow">COMMON QUESTIONS</div>
    <h2>Frequently Asked <span class="red">Questions.</span></h2>
   </div>
+
   <div class="faq-list">
+
    <details>
     <summary>What is remote IT support?</summary>
     <p>Remote support allows a technician to assist with certain computer problems using an approved remote-access application and your permission.</p>
    </details>
+
    <details>
     <summary>Can I request onsite support?</summary>
     <p>Yes. You can submit an onsite support enquiry. Location, availability and any travel charges should be confirmed before the appointment.</p>
    </details>
+
    <details>
     <summary>How do I track my support request?</summary>
     <p>Use the IT Elements customer portal to log in and view your support requests and their progress.</p>
    </details>
+
    <details>
     <summary>Can my business get monthly IT support?</summary>
     <p>Yes. Explore our business support page and contact us to discuss the available monthly plans and your business requirements.</p>
    </details>
+
    <details>
     <summary>How do I pay for a service?</summary>
     <p>Payment options depend on the service or plan. Follow the checkout instructions presented for your selected service.</p>
    </details>
+
   </div>
  </div>
 </section>
 
+<!-- FINAL CTA -->
 <section class="cta">
  <div class="container">
   <div class="eyebrow">LET'S GET YOUR TECHNOLOGY WORKING</div>
   <h2>Ready to Get <span class="red">IT Support?</span></h2>
   <p>Tell us about your problem and let IT Elements help you find the next step.</p>
+
   <div class="hero-actions" style="justify-content:center">
    <a href="/support" class="btn">Submit Support Request</a>
    <a href="/contact" class="btn btn-outline">Contact Us</a>
   </div>
  </div>
 </section>
+
 </main>
 
+<!-- FOOTER -->
 <footer>
  <div class="container">
+
   <div class="footer-grid">
+
    <div>
     <a href="/" class="brand">
      <img src="/assets/itel-support-icon.png" alt="IT Elements logo">
      <div>IT <span>ELEMENTS</span></div>
     </a>
-    <p style="margin-top:14px;max-width:350px">Professional IT support, computer assistance and business technology solutions.</p>
+    <p style="margin-top:14px;max-width:390px">
+     Professional IT support, computer assistance and business technology solutions.
+    </p>
    </div>
+
    <div>
     <h3>Our Services</h3>
     <a href="/services">IT Services</a>
@@ -396,6 +1017,7 @@ footer{background:#050506;border-top:1px solid var(--line);padding:42px 0 20px}
     <a href="/business-support">Business IT</a>
     <a href="/pricing">Pricing</a>
    </div>
+
    <div>
     <h3>Customer Area</h3>
     <a href="/dashboard">Client Dashboard</a>
@@ -404,15 +1026,26 @@ footer{background:#050506;border-top:1px solid var(--line);padding:42px 0 20px}
     <a href="/reviews">Customer Reviews</a>
     <a href="/contact">Contact</a>
    </div>
+
   </div>
-  <div class="copyright">© <span id="year"></span> IT Elements. All rights reserved.</div>
+
+  <div class="copyright">
+   © <span id="year"></span> IT Elements. All rights reserved.
+  </div>
+
  </div>
 </footer>
 
-<a class="whatsapp" href="https://wa.me/27606181229" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+<a class="whatsapp"
+ href="https://wa.me/27606181229"
+ target="_blank"
+ rel="noopener noreferrer">
+ WhatsApp Us
+</a>
 
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
 </script>
+
 </body>
 </html>
