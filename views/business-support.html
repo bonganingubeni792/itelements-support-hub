@@ -1,0 +1,484 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070708">
+<meta name="description" content="Business IT support, maintenance, networking, security and technology solutions from IT Elements South Africa.">
+<title>Business IT Support | IT Elements</title>
+
+<style>
+:root {
+    --bg:#070708;
+    --panel:#111114;
+    --panel2:#17171b;
+    --red:#ed2638;
+    --red-dark:#a90c20;
+    --white:#fff;
+    --muted:#a3a3aa;
+    --line:#29292f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    color:var(--white);
+    background:
+      radial-gradient(ellipse at 10% 10%,rgba(237,38,56,.15),transparent 35%),
+      radial-gradient(ellipse at 90% 45%,rgba(169,12,32,.12),transparent 40%),
+      linear-gradient(135deg,#050505,#0c0c0f 55%,#050505);
+    line-height:1.6;
+}
+a{color:inherit;text-decoration:none}
+button,input,select,textarea{font:inherit}
+.container{width:min(1160px,92%);margin:auto}
+
+header{
+    background:rgba(5,5,6,.95);
+    border-bottom:1px solid var(--line);
+    position:sticky;top:0;z-index:100;
+    backdrop-filter:blur(15px);
+}
+.navbar{
+    min-height:76px;display:flex;
+    justify-content:space-between;align-items:center;
+    gap:20px;flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px}
+.brand img{width:43px;height:43px;object-fit:contain}
+.brand span{color:var(--red)}
+.nav-links{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.nav-links a{font-size:13px;font-weight:700;color:#c5c5ca}
+.nav-links a:hover{color:var(--red)}
+.nav-cta{background:var(--red);padding:9px 15px;border-radius:8px;color:white!important}
+
+.btn{
+    display:inline-flex;justify-content:center;align-items:center;
+    padding:13px 21px;border:0;border-radius:9px;
+    background:linear-gradient(135deg,#f12b40,#a90c20);
+    color:white;font-weight:800;cursor:pointer;transition:.25s;
+}
+.btn:hover{transform:translateY(-3px);box-shadow:0 0 25px #ed263855}
+.btn-outline{background:transparent;border:1px solid var(--red)}
+
+.hero{text-align:center;padding:95px 0 85px;position:relative;overflow:hidden}
+.hero:before{
+    content:"";position:absolute;width:400px;height:400px;
+    background:#ed263820;filter:blur(100px);
+    top:-190px;left:50%;transform:translateX(-50%);
+}
+.eyebrow{color:#ff4658;letter-spacing:4px;font-size:12px;font-weight:900;margin-bottom:16px}
+.hero h1{font-size:clamp(36px,6vw,65px);line-height:1.12;margin-bottom:20px}
+.hero h1 span,.red{color:var(--red)}
+.hero p{max-width:740px;margin:0 auto 28px;color:var(--muted)}
+.hero-actions{display:flex;justify-content:center;gap:13px;flex-wrap:wrap}
+
+section{padding:70px 0}
+.section-heading{text-align:center;margin-bottom:38px}
+.section-heading h2{font-size:clamp(27px,4vw,40px);margin-bottom:12px}
+.section-heading p{color:var(--muted);max-width:700px;margin:auto}
+
+.grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
+}
+.card{
+    background:linear-gradient(145deg,#17171b,#0c0c0e);
+    border:1px solid var(--line);border-radius:16px;
+    padding:27px;transition:.3s;
+}
+.card:hover{transform:translateY(-6px);border-color:var(--red);box-shadow:0 15px 35px #ed26381c}
+.card-icon{
+    width:52px;height:52px;display:grid;place-items:center;
+    background:#ed263820;border:1px solid #ed263850;
+    border-radius:13px;font-size:24px;margin-bottom:17px;
+}
+.card h3{font-size:19px;margin-bottom:10px}
+.card p{font-size:14px;color:var(--muted)}
+.card ul{padding-left:19px;margin:15px 0;color:#c5c5ca;font-size:13px}
+.card li{margin:7px 0}
+.price{font-size:29px;font-weight:900;color:#ff4658;margin:17px 0}
+.price small{font-size:12px;color:var(--muted);font-weight:normal}
+.card .btn{width:100%;margin-top:10px}
+
+.feature-section{background:#ffffff08;border-block:1px solid var(--line)}
+.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.feature{
+    background:#111114;border:1px solid var(--line);
+    border-radius:13px;padding:22px;
+}
+.feature h3{margin-bottom:7px}
+.feature p{color:var(--muted);font-size:14px}
+
+.form-wrap{
+    max-width:760px;margin:auto;padding:32px;
+    background:linear-gradient(145deg,#17171b,#09090b);
+    border:1px solid #393039;border-radius:18px;
+}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13px;font-weight:800;margin-bottom:7px}
+.field input,.field select,.field textarea{
+    width:100%;padding:13px;background:#09090b;
+    border:1px solid #38383e;border-radius:9px;color:white;
+    outline:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+    border-color:var(--red);box-shadow:0 0 0 3px #ed263820;
+}
+.field textarea{min-height:115px;resize:vertical}
+.field select option{background:#111;color:white}
+.form-wrap button{width:100%}
+.note{font-size:12px;color:#92929a;text-align:center;margin-top:14px}
+
+.cta{
+    text-align:center;
+    background:radial-gradient(ellipse at center,#ed263825,transparent 65%),#09090a;
+    border-top:1px solid var(--line);
+}
+.cta h2{font-size:clamp(28px,4vw,42px);margin-bottom:12px}
+.cta p{color:var(--muted);margin-bottom:25px}
+
+footer{background:#050506;border-top:1px solid var(--line);padding:42px 0 20px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:30px;margin-bottom:28px}
+.footer-grid h3{font-size:16px;margin-bottom:13px}
+.footer-grid p,.footer-grid a{display:block;color:var(--muted);font-size:13px;margin-bottom:9px}
+.footer-grid a:hover{color:var(--red)}
+.copyright{text-align:center;border-top:1px solid var(--line);padding-top:18px;color:#777;font-size:12px}
+
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){
+ .navbar{padding:13px 0;align-items:flex-start;flex-direction:column}
+ .nav-links{gap:12px}
+ .nav-links a{font-size:12px}
+ .grid,.feature-grid,.footer-grid{grid-template-columns:1fr}
+ section{padding:52px 0}
+ .hero{padding:65px 0}
+ .form-wrap{padding:21px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+ <div class="container navbar">
+  <a href="/" class="brand">
+   <img src="/assets/itel-support-icon.png" alt="IT Elements logo">
+   <div>IT <span>ELEMENTS</span></div>
+  </a>
+  <nav class="nav-links">
+   <a href="/">Home</a>
+   <a href="/services">Services</a>
+   <a href="/pricing">Pricing</a>
+   <a href="/onsite-support">Onsite Support</a>
+   <a href="/dashboard">Client Portal</a>
+   <a href="/contact">Contact</a>
+   <a href="/support" class="nav-cta">Get Support</a>
+  </nav>
+ </div>
+</header>
+
+<main>
+
+<section class="hero">
+ <div class="container">
+  <div class="eyebrow">IT ELEMENTS BUSINESS SOLUTIONS</div>
+  <h1>Keep Your Business<br><span>Running Without IT Stress.</span></h1>
+  <p>
+   Reliable technology support for small businesses and growing organisations.
+   Get assistance with computers, networks, security, backups and everyday IT operations.
+  </p>
+  <div class="hero-actions">
+   <a href="#packages" class="btn">Explore Business Plans</a>
+   <a href="#quote" class="btn btn-outline">Request a Business Quote</a>
+  </div>
+ </div>
+</section>
+
+<section>
+ <div class="container">
+  <div class="section-heading">
+   <div class="eyebrow">BUSINESS TECHNOLOGY</div>
+   <h2>IT Support That Works For <span class="red">Your Business</span></h2>
+   <p>Reduce technology disruption and get practical support for the systems your business relies on.</p>
+  </div>
+  <div class="grid">
+   <article class="card">
+    <div class="card-icon">💻</div>
+    <h3>Computer Maintenance</h3>
+    <p>Help with computer performance, software issues, updates and general troubleshooting.</p>
+   </article>
+   <article class="card">
+    <div class="card-icon">🌐</div>
+    <h3>Network Assistance</h3>
+    <p>Support for connectivity, Wi-Fi, routers and basic office network problems.</p>
+   </article>
+   <article class="card">
+    <div class="card-icon">🔒</div>
+    <h3>Security Assistance</h3>
+    <p>Security checks, malware assistance, safer configuration and update guidance.</p>
+   </article>
+   <article class="card">
+    <div class="card-icon">💾</div>
+    <h3>Backup Support</h3>
+    <p>Backup setup, backup checks and recommendations for protecting business files.</p>
+   </article>
+   <article class="card">
+    <div class="card-icon">📧</div>
+    <h3>Business Email</h3>
+    <p>Help configuring professional email accounts on computers and mobile devices.</p>
+   </article>
+   <article class="card">
+    <div class="card-icon">🤝</div>
+    <h3>Employee IT Assistance</h3>
+    <p>Practical technical help for staff members using business computers and software.</p>
+   </article>
+  </div>
+ </div>
+</section>
+
+<section class="feature-section" id="packages">
+ <div class="container">
+  <div class="section-heading">
+   <div class="eyebrow">MONTHLY SUPPORT</div>
+   <h2>Choose Your <span class="red">Business Plan</span></h2>
+   <p>Explore the existing IT Elements monthly plans. Confirm the included service limits before purchasing.</p>
+  </div>
+
+  <div class="grid">
+   <article class="card">
+    <div class="card-icon">🌱</div>
+    <h3>Basic</h3>
+    <p>For individuals and very small operations needing occasional IT assistance.</p>
+    <div class="price">R299 <small>/ month</small></div>
+    <ul>
+     <li>Basic remote support access</li>
+     <li>General troubleshooting</li>
+     <li>Customer support requests</li>
+     <li>Standard response priority</li>
+    </ul>
+    <a class="btn" href="/subscribe/basic">Choose Basic</a>
+   </article>
+
+   <article class="card">
+    <div class="card-icon">⚙️</div>
+    <h3>Standard</h3>
+    <p>For customers who need more regular technical assistance.</p>
+    <div class="price">R599 <small>/ month</small></div>
+    <ul>
+     <li>Remote support access</li>
+     <li>Software troubleshooting</li>
+     <li>Computer maintenance guidance</li>
+     <li>Customer support requests</li>
+    </ul>
+    <a class="btn" href="/subscribe/standard">Choose Standard</a>
+   </article>
+
+   <article class="card">
+    <div class="card-icon">🚀</div>
+    <h3>Business Growth</h3>
+    <p>For growing businesses requiring a more structured support arrangement.</p>
+    <div class="price">R2,499 <small>/ month</small></div>
+    <ul>
+     <li>Business IT support requests</li>
+     <li>Remote troubleshooting</li>
+     <li>Maintenance assistance</li>
+     <li>Priority handling as agreed</li>
+    </ul>
+    <a class="btn" href="/subscribe/business-growth">Choose Business Growth</a>
+   </article>
+
+   <article class="card">
+    <div class="card-icon">🏢</div>
+    <h3>Corporate SLA</h3>
+    <p>For organisations requiring a formal support arrangement.</p>
+    <div class="price">R4,999 <small>/ month</small></div>
+    <ul>
+     <li>Corporate support arrangement</li>
+     <li>Agreed service levels</li>
+     <li>Priority support as contracted</li>
+     <li>Business support coordination</li>
+    </ul>
+    <a class="btn" href="/subscribe/corporate-sla">Choose Corporate SLA</a>
+   </article>
+  </div>
+  <p class="note">Plan benefits, support limits, response targets and onsite costs must be confirmed in the applicable plan terms.</p>
+ </div>
+</section>
+
+<section>
+ <div class="container">
+  <div class="section-heading">
+   <div class="eyebrow">WHY BUSINESSES CHOOSE US</div>
+   <h2>More Than Just <span class="red">Technical Support</span></h2>
+   <p>We aim to help your business use technology with greater confidence.</p>
+  </div>
+  <div class="feature-grid">
+   <div class="feature">
+    <h3>⚡ Practical Problem Solving</h3>
+    <p>Get assistance focused on the issue affecting your business operations.</p>
+   </div>
+   <div class="feature">
+    <h3>🔐 Security Awareness</h3>
+    <p>Get guidance on safer computer use, updates and protecting important information.</p>
+   </div>
+   <div class="feature">
+    <h3>📊 Maintenance Planning</h3>
+    <p>Discuss routine maintenance and backup checks suitable for your business.</p>
+   </div>
+   <div class="feature">
+    <h3>🤝 Ongoing Support</h3>
+    <p>Use the customer portal to submit requests and follow support progress.</p>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section id="quote">
+ <div class="container">
+  <div class="section-heading">
+   <div class="eyebrow">LET'S TALK BUSINESS</div>
+   <h2>Request a <span class="red">Business IT Quote</span></h2>
+   <p>Tell us about your organisation and the support you need.</p>
+  </div>
+
+  <form class="form-wrap" id="businessForm">
+   <div class="field">
+    <label for="businessName">Business Name *</label>
+    <input id="businessName" required placeholder="Your business name">
+   </div>
+   <div class="field">
+    <label for="contactName">Contact Person *</label>
+    <input id="contactName" required placeholder="Your full name">
+   </div>
+   <div class="field">
+    <label for="email">Business Email *</label>
+    <input id="email" type="email" required placeholder="name@company.co.za">
+   </div>
+   <div class="field">
+    <label for="phone">Contact Number *</label>
+    <input id="phone" type="tel" required placeholder="Your phone number">
+   </div>
+   <div class="field">
+    <label for="employees">Number of Employees / Users</label>
+    <select id="employees">
+     <option>1–5</option>
+     <option>6–10</option>
+     <option>11–25</option>
+     <option>26–50</option>
+     <option>More than 50</option>
+    </select>
+   </div>
+   <div class="field">
+    <label for="interest">Support Interest *</label>
+    <select id="interest" required>
+     <option value="">Select your requirement</option>
+     <option>Monthly IT Maintenance</option>
+     <option>Business Growth Plan</option>
+     <option>Corporate SLA</option>
+     <option>Computer & Employee Support</option>
+     <option>Network & Wi-Fi Support</option>
+     <option>Security & Backup Support</option>
+     <option>Business Email Setup</option>
+     <option>Custom IT Support</option>
+    </select>
+   </div>
+   <div class="field">
+    <label for="details">Tell Us About Your Business IT Needs *</label>
+    <textarea id="details" required placeholder="Describe your computers, network, current IT challenges and what assistance you need..."></textarea>
+   </div>
+   <button class="btn" type="submit">Send Business Enquiry via WhatsApp</button>
+   <p class="note">Submitting this form sends an enquiry. It does not automatically activate a subscription or confirm a service contract.</p>
+  </form>
+ </div>
+</section>
+
+<section class="cta">
+ <div class="container">
+  <div class="eyebrow">BUILD A STRONGER IT FOUNDATION</div>
+  <h2>Let's Support Your <span class="red">Business Growth.</span></h2>
+  <p>Talk to IT Elements about a support arrangement that suits your organisation.</p>
+  <div class="hero-actions">
+   <a href="#quote" class="btn">Request a Business Quote</a>
+   <a href="/contact" class="btn btn-outline">Contact IT Elements</a>
+  </div>
+ </div>
+</section>
+
+</main>
+
+<footer>
+ <div class="container">
+  <div class="footer-grid">
+   <div>
+    <a href="/" class="brand">
+     <img src="/assets/itel-support-icon.png" alt="IT Elements">
+     <div>IT <span>ELEMENTS</span></div>
+    </a>
+    <p style="margin-top:15px;max-width:350px">Professional IT support and technology solutions for individuals and businesses.</p>
+   </div>
+   <div>
+    <h3>Explore</h3>
+    <a href="/">Home</a>
+    <a href="/services">IT Services</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/onsite-support">Onsite Support</a>
+   </div>
+   <div>
+    <h3>Customer Area</h3>
+    <a href="/dashboard">Client Dashboard</a>
+    <a href="/support">Submit Support Request</a>
+    <a href="/client/login">Client Login</a>
+    <a href="/contact">Contact</a>
+   </div>
+  </div>
+  <div class="copyright">© <span id="year"></span> IT Elements. All rights reserved.</div>
+ </div>
+</footer>
+
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
+
+document.getElementById("businessForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const data = {
+        business: document.getElementById("businessName").value.trim(),
+        contact: document.getElementById("contactName").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        employees: document.getElementById("employees").value,
+        interest: document.getElementById("interest").value,
+        details: document.getElementById("details").value.trim()
+    };
+
+    if (!data.business || !data.contact || !data.email ||
+        !data.phone || !data.interest || !data.details) {
+        alert("Please complete all required fields.");
+        return;
+    }
+
+    const message = [
+        "IT ELEMENTS - BUSINESS IT ENQUIRY",
+        "",
+        "Business: " + data.business,
+        "Contact: " + data.contact,
+        "Email: " + data.email,
+        "Phone: " + data.phone,
+        "Employees/users: " + data.employees,
+        "Interested in: " + data.interest,
+        "",
+        "Business requirements:",
+        data.details
+    ].join("\n");
+
+    window.open(
+        "https://wa.me/27606181229?text=" + encodeURIComponent(message),
+        "_blank",
+        "noopener,noreferrer"
+    );
+});
+</script>
+
+</body>
+</html>
