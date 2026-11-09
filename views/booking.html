@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#08090b">
+<title>Book IT Support | IT Elements</title>
+
+<style>
+:root {
+  --bg:#08090b;
+  --panel:#111318;
+  --red:#e32636;
+  --white:#fff;
+  --muted:#a4a8b0;
+  --line:#292d35;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--white);
+  font-family:Arial,sans-serif;line-height:1.6
+}
+.container{width:min(850px,92%);margin:auto}
+header{background:#0c0e12;border-bottom:1px solid var(--line)}
+.nav{
+  min-height:75px;display:flex;align-items:center;
+  justify-content:space-between;gap:15px
+}
+.logo{font-size:21px;font-weight:800}
+.logo span{color:var(--red)}
+.logo img{width:42px;height:42px;object-fit:contain;vertical-align:middle;margin-right:8px}
+.nav a{color:white;text-decoration:none;font-size:14px}
+.hero{text-align:center;padding:55px 0 30px}
+.hero h1{font-size:clamp(32px,6vw,48px);margin:12px 0}
+.hero h1 span{color:var(--red)}
+.hero p{color:var(--muted)}
+.form-card{
+  background:var(--panel);border:1px solid var(--line);
+  padding:30px;border-radius:14px;margin:20px auto 65px
+}
+label{display:block;font-weight:bold;font-size:14px;margin:18px 0 8px}
+input,select,textarea{
+  display:block;width:100%;padding:14px;
+  background:#080a0e;color:white;border:1px solid #363b45;
+  border-radius:8px;font-size:15px;outline:none
+}
+input:focus,select:focus,textarea:focus{border-color:var(--red)}
+select option{background:#111318;color:white}
+button{
+  width:100%;padding:15px;background:var(--red);
+  color:white;border:0;border-radius:8px;
+  font-weight:bold;font-size:16px;margin-top:25px;cursor:pointer
+}
+button:hover{background:#ff3949}
+.note{
+  background:#1a1517;border:1px solid #51212a;
+  color:#d7c3c5;padding:13px;border-radius:8px;
+  font-size:13px;margin-top:20px
+}
+footer{text-align:center;border-top:1px solid var(--line);padding:25px;color:var(--muted);font-size:13px}
+@media(max-width:550px){
+ .nav{flex-direction:column;padding:12px}
+ .form-card{padding:20px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="container nav">
+    <a href="/" class="logo">
+      <img src="/assets/itel-support-icon.png" alt="IT Elements">
+      IT <span>ELEMENTS</span>
+    </a>
+    <a href="/">← Back to Home</a>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="hero">
+    <h1>Book Your <span>IT Support</span></h1>
+    <p>Tell us what you need. We'll contact you to confirm the service and appointment.</p>
+  </section>
+
+  <section class="form-card">
+    <form id="bookingForm">
+
+      <label for="fullName">Full name *</label>
+      <input id="fullName" required maxlength="100"
+        placeholder="Enter your full name">
+
+      <label for="email">Email address *</label>
+      <input id="email" type="email" required maxlength="150"
+        placeholder="you@example.com">
+
+      <label for="phone">Phone / WhatsApp number *</label>
+      <input id="phone" type="tel" required maxlength="30"
+        placeholder="+27...">
+
+      <label for="service">Select your service *</label>
+      <select id="service" required>
+        <option value="">Choose a service</option>
+        <option>PC Health Check — R249 starting price</option>
+        <option>Virus & Malware Removal — R450 starting price</option>
+        <option>Wi-Fi & Network Support — R399 starting price</option>
+        <option>New Computer Setup — R450 starting price</option>
+        <option>Data Backup Setup — R499 starting price</option>
+        <option>Business IT Support — Custom quotation</option>
+        <option>Other IT Support — Please quote me</option>
+      </select>
+
+      <label for="supportType">Support type *</label>
+      <select id="supportType" required>
+        <option value="">Choose support type</option>
+        <option>Remote support</option>
+        <option>On-site support</option>
+        <option>Not sure — please advise</option>
+      </select>
+
+      <label for="date">Preferred appointment date</label>
+      <input id="date" type="date">
+
+      <label for="time">Preferred time</label>
+      <select id="time">
+        <option value="">Choose preferred time</option>
+        <option>08:00–10:00</option>
+        <option>10:00–12:00</option>
+        <option>12:00–14:00</option>
+        <option>14:00–17:00</option>
+      </select>
+
+      <label for="address">Address (for on-site support)</label>
+      <input id="address" maxlength="250"
+        placeholder="Enter your area or address">
+
+      <label for="problem">Describe your problem *</label>
+      <textarea id="problem" rows="5" required maxlength="2000"
+        placeholder="Tell us what is wrong with your computer, network or device..."></textarea>
+
+      <div class="note">
+        <strong>Important:</strong> This form sends an appointment request,
+        not a confirmed booking. IT Elements will contact you to confirm
+        availability and the final price. Do not send passwords or remote
+        access credentials through this form.
+      </div>
+
+      <button type="submit">Send My Booking Request</button>
+
+    </form>
+  </section>
+
+</main>
+
+<footer>
+  © <span id="year"></span> IT Elements. All rights reserved.
+</footer>
+
+<script>
+const dateInput = document.getElementById("date");
+const today = new Date();
+const localToday = new Date(
+  today.getTime() - today.getTimezoneOffset() * 60000
+).toISOString().split("T")[0];
+
+dateInput.min = localToday;
+document.getElementById("year").textContent = new Date().getFullYear();
+
+document.getElementById("bookingForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const get = id => document.getElementById(id).value.trim();
+
+  const name = get("fullName");
+  const email = get("email");
+  const phone = get("phone");
+  const service = get("service");
+  const support = get("supportType");
+  const date = get("date") || "Flexible";
+  const time = get("time") || "Flexible";
+  const address = get("address") || "Not provided";
+  const problem = get("problem");
+
+  if (!name || !email || !phone || !service || !support || !problem) {
+    alert("Please complete all required fields.");
+    return;
+  }
+
+  const message =
+`NEW IT ELEMENTS BOOKING REQUEST
+
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+
+Service: ${service}
+Support type: ${support}
+
+Preferred date: ${date}
+Preferred time: ${time}
+Address: ${address}
+
+Problem:
+${problem}
+
+Please contact me to confirm availability and pricing.`;
+
+  const url = "https://wa.me/27606181229?text=" +
+    encodeURIComponent(message);
+
+  window.open(url, "_blank", "noopener,noreferrer");
+});
+</script>
+
+</body>
+</html>
