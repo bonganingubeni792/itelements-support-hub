@@ -1,8 +1,8 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#ffffff">
 <meta name="description" content="Professional computer repairs, IT support, malware removal, networking and business IT services from IT Elements South Africa.">
@@ -10,523 +10,158 @@
 
 <style>
 :root{
- --red:#ed2638;
- --red-dark:#b50e24;
- --text:#171717;
- --muted:#55555e;
- --line:#e7e7ea;
- --soft:#f7f7f8;
- --white:#fff;
- --max:1240px;
+  --red:#e00000;
+  --red-dark:#b00000;
+  --ink:#171717;
+  --muted:#626873;
+  --line:#e5e7eb;
+  --soft:#f6f7f9;
+  --white:#fff;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;scroll-padding-top:100px}
-body{
- font-family:Arial,Helvetica,sans-serif;
- color:var(--text);
- background:#fff;
- line-height:1.6;
- overflow-x:hidden;
-}
+body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:var(--ink);line-height:1.6;min-height:100vh}
 a{color:inherit;text-decoration:none}
 button,input,select,textarea{font:inherit}
-img{max-width:100%;display:block}
-.container{width:min(var(--max),92%);margin-inline:auto}
+button,a{-webkit-tap-highlight-color:transparent}
+.container{width:min(1500px,92%);margin:0 auto}
 
 /* HEADER */
-header{
- position:sticky;
- top:0;
- z-index:1000;
- background:#fff;
- border-bottom:1px solid var(--line);
- box-shadow:0 3px 15px rgba(0,0,0,.045);
-}
-.navbar{
- min-height:78px;
- display:flex;
- align-items:center;
- justify-content:space-between;
- gap:22px;
- flex-wrap:wrap;
-}
-.brand{
- display:flex;
- align-items:center;
- gap:10px;
- font-size:21px;
- font-weight:900;
- letter-spacing:.3px;
- flex-shrink:0;
-}
-.brand img{width:46px;height:46px;object-fit:contain}
-.brand span{color:var(--red)}
-.nav-links{
- display:flex;
- align-items:center;
- justify-content:flex-end;
- gap:clamp(12px,1.7vw,23px);
-}
-.nav-links a{
- color:#292929;
- font-size:13px;
- font-weight:700;
- white-space:nowrap;
- transition:.2s;
-}
+header{position:sticky;top:0;z-index:1000;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 3px 15px rgba(0,0,0,.035)}
+.navbar{min-height:78px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:9px;white-space:nowrap;font-size:21px;font-weight:900;letter-spacing:-.6px}
+.brand img{width:46px;height:46px;object-fit:contain;flex-shrink:0}
+.brand-main{color:#171717}
+.brand-support{color:var(--red);font-weight:700}
+.nav-links{display:flex;align-items:center;justify-content:flex-end;gap:clamp(12px,1.5vw,24px)}
+.nav-links a{font-size:13px;font-weight:700;color:#343434;transition:.2s}
 .nav-links a:hover,.nav-links a.active{color:var(--red)}
-.nav-links .nav-cta{
- background:var(--red);
- color:#fff;
- padding:11px 17px;
- border-radius:8px;
-}
+.nav-links .nav-cta{background:var(--red);color:#fff;padding:11px 17px;border-radius:7px}
 .nav-links .nav-cta:hover{background:var(--red-dark);color:#fff}
-.menu-toggle{
- display:none;
- width:44px;
- height:42px;
- border:1px solid var(--line);
- border-radius:8px;
- background:#fff;
- color:#171717;
- cursor:pointer;
- font-size:24px;
- line-height:1;
- align-items:center;
- justify-content:center;
-}
+.menu-toggle{display:none;width:43px;height:42px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;color:#171717;font-size:23px}
 
 /* BUTTONS */
-.btn{
- display:inline-flex;
- justify-content:center;
- align-items:center;
- gap:8px;
- min-height:47px;
- padding:13px 21px;
- border:1px solid transparent;
- border-radius:9px;
- background:linear-gradient(135deg,#f12b40,#b30d23);
- color:#fff;
- font-size:14px;
- font-weight:800;
- cursor:pointer;
- text-align:center;
- transition:.2s;
-}
-.btn:hover{
- transform:translateY(-2px);
- box-shadow:0 8px 22px #ed263830;
-}
-.btn-outline{
- background:#fff;
- border-color:var(--red);
- color:var(--red);
-}
-.btn-outline:hover{background:#fff1f3}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:12px 21px;border:1px solid var(--red);border-radius:8px;background:var(--red);color:#fff;font-weight:800;font-size:14px;text-align:center;cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.btn:hover{background:var(--red-dark);border-color:var(--red-dark);transform:translateY(-2px)}
+.btn-outline{background:#fff;color:var(--red)}
+.btn-outline:hover{background:var(--red);color:#fff}
 
 /* HERO */
-.hero{
- position:relative;
- overflow:hidden;
- text-align:center;
- padding:clamp(65px,8vw,105px) 0;
- background:#fff;
-}
-.hero::before{
- content:"";
- position:absolute;
- width:500px;
- height:500px;
- top:-260px;
- left:50%;
- transform:translateX(-50%);
- border-radius:50%;
- background:#ed263810;
- filter:blur(65px);
- pointer-events:none;
-}
-.hero .container{position:relative}
-.eyebrow{
- color:#d71930;
- font-size:12px;
- font-weight:900;
- letter-spacing:3px;
- margin-bottom:15px;
-}
-.hero h1{
- max-width:950px;
- margin:0 auto 20px;
- font-size:clamp(38px,5.5vw,66px);
- line-height:1.08;
- letter-spacing:-2px;
- overflow-wrap:break-word;
-}
+.hero{padding:clamp(65px,8vw,115px) 0 85px;background:linear-gradient(180deg,#fff 0%,#fafafa 100%);text-align:center;border-bottom:1px solid var(--line)}
+.eyebrow{color:var(--red);font-size:12px;font-weight:900;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:15px}
+.hero h1{max-width:950px;margin:0 auto 20px;font-size:clamp(37px,5.6vw,68px);line-height:1.08;letter-spacing:-2px;font-weight:900}
 .hero h1 span,.red{color:var(--red)}
-.hero p{
- max-width:730px;
- margin:0 auto 28px;
- color:var(--muted);
- font-size:16px;
- line-height:1.8;
-}
-.hero-actions{
- display:flex;
- justify-content:center;
- align-items:center;
- gap:13px;
- flex-wrap:wrap;
-}
+.hero p{max-width:760px;margin:0 auto 29px;color:var(--muted);font-size:clamp(15px,1.5vw,17px)}
+.hero-actions{display:flex;justify-content:center;gap:13px;flex-wrap:wrap}
 
 /* SECTIONS */
-section{padding:75px 0;background:#fff}
-.section-heading{
- max-width:780px;
- margin:0 auto 38px;
- text-align:center;
-}
-.section-heading h2{
- font-size:clamp(29px,3.5vw,43px);
- line-height:1.2;
- margin-bottom:12px;
-}
-.section-heading p{
- max-width:700px;
- margin:auto;
- color:var(--muted);
- font-size:15px;
-}
-.soft-section{
- background:var(--soft);
- border-block:1px solid var(--line);
-}
+section{padding:75px 0}
+.section-heading{text-align:center;max-width:780px;margin:0 auto 40px}
+.section-heading h2{font-size:clamp(27px,3.5vw,42px);line-height:1.2;letter-spacing:-1px;margin-bottom:12px}
+.section-heading p{color:var(--muted);font-size:15px}
 
-/* SERVICE CARDS */
-.services-grid{
- display:grid;
- grid-template-columns:repeat(3,minmax(0,1fr));
- gap:20px;
-}
-.service-card{
- min-width:0;
- display:flex;
- flex-direction:column;
- align-items:flex-start;
- padding:27px;
- background:#fff;
- border:1px solid var(--line);
- border-radius:15px;
- box-shadow:0 5px 20px rgba(0,0,0,.035);
- position:relative;
- overflow:hidden;
- transition:.2s;
-}
-.service-card::before{
- content:"";
- position:absolute;
- height:3px;
- width:0;
- left:0;
- top:0;
- background:var(--red);
- transition:.25s;
-}
-.service-card:hover{
- transform:translateY(-4px);
- border-color:#ed263880;
- box-shadow:0 12px 30px #ed263815;
-}
-.service-card:hover::before{width:100%}
-.service-icon{
- width:53px;
- height:53px;
- display:grid;
- place-items:center;
- background:#fff0f2;
- border:1px solid #f4c5cc;
- border-radius:13px;
- font-size:25px;
- margin-bottom:17px;
- flex-shrink:0;
-}
-.service-card h3{font-size:18px;margin-bottom:9px}
-.service-card p{
- color:var(--muted);
- font-size:14px;
- flex:1;
- margin-bottom:15px;
-}
-.service-price{
- margin-top:5px;
- font-size:22px;
- font-weight:900;
- color:#d71930;
-}
-.service-price small{
- font-size:11px;
- color:#666;
- font-weight:normal;
-}
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:21px}
+.service-card{display:flex;flex-direction:column;align-items:flex-start;padding:27px;background:#fff;border:1px solid var(--line);border-radius:13px;transition:.2s;min-width:0}
+.service-card:hover{border-color:#e00000;box-shadow:0 12px 30px rgba(0,0,0,.07);transform:translateY(-3px)}
+.service-icon{width:52px;height:52px;display:grid;place-items:center;background:#fff0f0;border:1px solid #ffd4d4;border-radius:11px;font-size:24px;margin-bottom:18px}
+.service-card h3{font-size:19px;line-height:1.3;margin-bottom:9px}
+.service-card p{color:var(--muted);font-size:14px;flex:1}
+.service-price{font-size:22px;font-weight:900;color:var(--red);margin-top:18px}
+.service-price small{font-size:11px;color:var(--muted);font-weight:600}
 .service-card .btn{width:100%;margin-top:17px}
 
-/* WHY US */
-.why-grid{
- display:grid;
- grid-template-columns:repeat(4,minmax(0,1fr));
- gap:17px;
-}
-.why-card{
- background:#fff;
- border:1px solid var(--line);
- border-radius:14px;
- padding:24px;
- box-shadow:0 4px 16px rgba(0,0,0,.03);
-}
-.why-card h3{font-size:16px;margin-bottom:9px}
-.why-card p{color:var(--muted);font-size:13px}
+/* WHY CHOOSE US */
+.why-section{background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.why-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.why-card{padding:23px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.why-card h3{font-size:16px;margin-bottom:8px}
+.why-card p{font-size:13px;color:var(--muted)}
 
 /* PROCESS */
-.process-grid{
- display:grid;
- grid-template-columns:repeat(3,minmax(0,1fr));
- gap:20px;
-}
-.process-card{
- background:#fff;
- border:1px solid var(--line);
- border-radius:14px;
- padding:26px;
- box-shadow:0 5px 20px rgba(0,0,0,.035);
-}
-.process-number{
- font-size:31px;
- color:var(--red);
- font-weight:900;
-}
-.process-card h3{margin:8px 0;font-size:18px}
-.process-card p{color:var(--muted);font-size:14px}
+.process-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+.process-card{padding:25px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.process-number{font-size:32px;line-height:1.2;font-weight:900;color:var(--red)}
+.process-card h3{font-size:18px;margin:10px 0 7px}
+.process-card p{font-size:14px;color:var(--muted)}
 
-/* ESTIMATE FORM */
-.calculator-section{
- background:#f7f7f8;
- border-block:1px solid var(--line);
-}
-.calculator{
- width:100%;
- max-width:760px;
- margin:auto;
- padding:clamp(20px,4vw,35px);
- background:#fff;
- border:1px solid var(--line);
- border-radius:17px;
- box-shadow:0 12px 35px rgba(0,0,0,.06);
-}
-.field{margin-bottom:19px;min-width:0}
-.field label{
- display:block;
- color:#222;
- font-size:13px;
- font-weight:800;
- margin-bottom:8px;
-}
-.field input,.field select,.field textarea{
- display:block;
- width:100%;
- max-width:100%;
- min-height:48px;
- padding:13px 14px;
- background:#fff;
- color:#171717;
- border:1px solid #d9d9df;
- border-radius:9px;
- outline:none;
-}
-.field input::placeholder,.field textarea::placeholder{color:#888}
-.field input:focus,.field select:focus,.field textarea:focus{
- border-color:var(--red);
- box-shadow:0 0 0 3px #ed26381c;
-}
-.field select option{background:#fff;color:#171717}
-.field textarea{min-height:120px;resize:vertical}
-.estimate-box{
- margin:20px 0;
- padding:20px;
- border-radius:11px;
- background:#fff1f3;
- border:1px solid #f1c4cb;
- text-align:center;
-}
-.estimate-box span{
- display:block;
- color:#555;
- font-size:13px;
-}
-.estimate-box strong{
- display:block;
- color:#d71930;
- font-size:clamp(27px,5vw,34px);
- font-weight:900;
- margin:4px 0;
-}
-.calculator button{width:100%;min-height:49px}
-.form-note{
- color:#666;
- font-size:12px;
- text-align:center;
- margin-top:14px;
-}
+/* ESTIMATE */
+.calculator-section{background:#f7f7f8;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.calculator{max-width:850px;margin:auto;padding:clamp(22px,4vw,38px);background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:0 10px 30px rgba(0,0,0,.045)}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.field{margin-bottom:18px;min-width:0}
+.field label{display:block;font-size:13px;font-weight:800;margin-bottom:7px;color:#262626}
+.field input,.field select,.field textarea{display:block;width:100%;min-height:48px;padding:12px 13px;border:1px solid #d5d8de;border-radius:8px;background:#fff;color:#171717;outline:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(224,0,0,.09)}
+.field textarea{min-height:125px;resize:vertical}
+.field select option{color:#171717}
+.estimate-box{padding:20px;border:1px solid #ffd0d0;border-radius:10px;background:#fff6f6;text-align:center;margin:5px 0 20px}
+.estimate-box span{display:block;color:#626873;font-size:13px}
+.estimate-box strong{display:block;color:var(--red);font-size:clamp(27px,4vw,35px);line-height:1.3;margin:5px 0}
+.calculator>button{width:100%}
+.form-note{font-size:12px;color:#737780;text-align:center;margin-top:14px}
 
 /* FAQ */
-.faq-list{max-width:850px;margin:auto}
-details{
- background:#fff;
- border:1px solid var(--line);
- border-radius:11px;
- padding:18px 20px;
- margin-bottom:12px;
- box-shadow:0 3px 12px rgba(0,0,0,.025);
-}
-summary{
- cursor:pointer;
- font-weight:800;
- color:#171717;
-}
-summary:hover{color:var(--red)}
-details p{
- color:var(--muted);
- margin-top:13px;
- font-size:14px;
-}
+.faq-list{max-width:900px;margin:0 auto}
+details{padding:19px 21px;border:1px solid var(--line);border-radius:10px;margin-bottom:12px;background:#fff}
+summary{cursor:pointer;font-size:15px;font-weight:800;list-style:none;display:flex;justify-content:space-between;gap:15px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";font-size:21px;line-height:1;color:var(--red)}
+details[open] summary:after{content:"−"}
+details p{margin-top:12px;color:var(--muted);font-size:14px}
 
-/* FINAL CTA */
-.final-cta{
- text-align:center;
- background:#f8f8f9;
- border-block:1px solid var(--line);
-}
-.final-cta h2{
- font-size:clamp(29px,4vw,43px);
- line-height:1.2;
- margin-bottom:12px;
-}
-.final-cta p{color:var(--muted);margin-bottom:25px}
+/* CTA */
+.final-cta{background:#171717;color:#fff;text-align:center}
+.final-cta h2{font-size:clamp(28px,4vw,43px);line-height:1.2;margin-bottom:12px}
+.final-cta p{color:#d0d0d0;margin-bottom:25px}
+.final-cta .btn-outline{background:transparent;color:#fff;border-color:#fff}
+.final-cta .btn-outline:hover{background:#fff;color:#171717}
 
 /* FOOTER */
-footer{
- background:#fff;
- border-top:1px solid var(--line);
- padding:45px 0 20px;
-}
-.footer-grid{
- display:grid;
- grid-template-columns:2fr 1fr 1fr;
- gap:35px;
- margin-bottom:30px;
-}
-.footer-grid h3{margin-bottom:14px;font-size:16px}
-.footer-grid p,.footer-grid a{
- display:block;
- color:var(--muted);
- font-size:13px;
- margin-bottom:9px;
-}
-.footer-grid a:hover{color:var(--red)}
-.copyright{
- border-top:1px solid var(--line);
- padding-top:19px;
- color:#777;
- font-size:12px;
- text-align:center;
-}
+footer{background:#101010;color:#fff;padding:48px 0 20px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:35px;margin-bottom:30px}
+.footer-grid h3{font-size:15px;margin-bottom:14px}
+.footer-grid p,.footer-grid a{display:block;color:#c2c2c2;font-size:13px;margin-bottom:9px}
+.footer-grid a:hover{color:#fff}
+.footer-brand .brand-main{color:#fff}
+.footer-brand .brand-support{color:#ff3838}
+.copyright{border-top:1px solid #333;padding-top:18px;color:#aaa;font-size:12px;text-align:center}
 
-/* RESPONSIVE TABLET */
-@media(max-width:1100px){
- .nav-links{gap:12px}
- .nav-links a{font-size:12px}
- .services-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .why-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+/* RESPONSIVE */
+@media(max-width:1050px){
+  .nav-links{gap:12px}
+  .nav-links a{font-size:12px}
+  .services-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .why-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-
-/* MOBILE NAVIGATION */
-@media(max-width:850px){
- .navbar{
-  min-height:70px;
-  padding:10px 0;
- }
- .menu-toggle{display:flex}
- .nav-links{
-  display:none;
-  width:100%;
-  flex-direction:column;
-  align-items:stretch;
-  gap:0;
-  padding:8px 0 5px;
-  border-top:1px solid var(--line);
- }
- .nav-links.open{display:flex}
- .nav-links a{
-  display:block;
-  width:100%;
-  padding:12px 10px;
-  font-size:14px;
-  border-radius:6px;
- }
- .nav-links a:hover{background:#fff4f5}
- .nav-links .nav-cta{
-  text-align:center;
-  margin-top:7px;
- }
- .process-grid{grid-template-columns:1fr}
+@media(max-width:760px){
+  .navbar{min-height:70px}
+  .menu-toggle{display:block}
+  .nav-links{display:none;position:absolute;top:70px;left:0;right:0;padding:15px 4% 20px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 12px 18px rgba(0,0,0,.07);align-items:stretch;flex-direction:column;gap:0}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:11px 8px;font-size:14px;border-bottom:1px solid #f0f0f0}
+  .nav-links .nav-cta{margin-top:10px;text-align:center;border:0}
+  .hero{padding:65px 0}
+  section{padding:58px 0}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .footer-grid>div:first-child{grid-column:1/-1}
 }
-
-/* MOBILE PHONES */
 @media(max-width:560px){
- .container{width:91%}
- .brand{font-size:19px}
- .brand img{width:41px;height:41px}
- .hero{padding:55px 0}
- .hero h1{font-size:clamp(36px,10vw,49px);letter-spacing:-1.5px}
- .hero p{font-size:14px;line-height:1.75}
- .hero-actions{flex-direction:column;align-items:stretch}
- .hero-actions .btn{width:100%}
- section{padding:55px 0}
- .section-heading{margin-bottom:29px}
- .section-heading h2{font-size:30px}
- .section-heading p{font-size:14px}
- .services-grid,.why-grid,.process-grid,.footer-grid{
-  grid-template-columns:1fr;
- }
- .service-card{padding:23px}
- .service-card h3{font-size:18px}
- .service-card p{font-size:14px}
- .why-card,.process-card{padding:22px}
- .calculator{padding:20px 16px}
- .field input,.field select,.field textarea{font-size:16px}
- .estimate-box{padding:17px}
- details{padding:16px}
- summary{font-size:14px}
- details p{font-size:13px}
- .final-cta h2{font-size:30px}
- .footer-grid{gap:18px}
-}
-
-/* VERY SMALL PHONES */
-@media(max-width:360px){
- .hero h1{font-size:34px}
- .eyebrow{font-size:10px;letter-spacing:2px}
- .service-card{padding:19px}
- .btn{padding:12px 15px;font-size:13px}
-}
-
-/* ACCESSIBILITY */
-a:focus-visible,button:focus-visible,summary:focus-visible{
- outline:3px solid var(--red);
- outline-offset:3px;
+  .container{width:92%}
+  .brand{font-size:18px;gap:7px}
+  .brand img{width:41px;height:41px}
+  .hero h1{letter-spacing:-1.2px}
+  .services-grid,.why-grid,.process-grid,.form-grid,.footer-grid{grid-template-columns:1fr}
+  .footer-grid>div:first-child{grid-column:auto}
+  .service-card{padding:22px}
+  .calculator{padding:20px}
+  .hero-actions{flex-direction:column;align-items:stretch}
+  .hero-actions .btn{width:100%}
+  details{padding:16px}
 }
 @media(prefers-reduced-motion:reduce){
- html{scroll-behavior:auto}
- *,*::before,*::after{transition:none!important}
+  html{scroll-behavior:auto}
+  *,*:before,*:after{transition:none!important}
 }
 </style>
 </head>
@@ -534,521 +169,433 @@ a:focus-visible,button:focus-visible,summary:focus-visible{
 <body>
 
 <header>
- <div class="container navbar">
-  <a href="/" class="brand">
-   <img src="/assets/itel-support-icon.png" alt="IT Elements logo">
-   <div>IT <span>ELEMENTS</span></div>
-  </a>
+  <div class="container navbar">
+    <a class="brand" href="/" aria-label="IT Elements home">
+      <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo" width="46" height="46">
+      <span class="brand-main">IT Elements.</span>
+      <span class="brand-support">support</span>
+    </a>
 
-  <button class="menu-toggle" id="menuToggle"
-   type="button" aria-label="Open navigation menu"
-   aria-expanded="false" aria-controls="mainNavigation">
-   ☰
-  </button>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open navigation menu" aria-expanded="false">☰</button>
 
-  <nav class="nav-links" id="mainNavigation">
-   <a href="/">Home</a>
-   <a href="/services" class="active">Services</a>
-   <a href="/pricing">Pricing</a>
-   <a href="/onsite-support">Onsite Support</a>
-   <a href="/dashboard">Dashboard</a>
-   <a href="/contact">Contact</a>
-   <a href="/support" class="nav-cta">Get Support</a>
-  </nav>
- </div>
+    <nav class="nav-links" id="navLinks">
+      <a href="/">Home</a>
+      <a href="/services" class="active">Services</a>
+      <a href="/onsite-support">On-site</a>
+      <a href="/pricing">Pricing</a>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/contact">Contact</a>
+      <a href="/tools/invoices">Invoice Studio</a>
+      <a href="/client/login">Client Portal</a>
+      <a href="/support" class="nav-cta">Get Support</a>
+    </nav>
+  </div>
 </header>
 
 <main>
 
-<!-- HERO -->
 <section class="hero">
- <div class="container">
-  <div class="eyebrow">IT ELEMENTS · PROFESSIONAL IT SERVICES</div>
-
-  <h1>
-   Technology Problems?<br>
-   <span>We've Got You Covered.</span>
-  </h1>
-
-  <p>
-   Reliable IT support for individuals and businesses.
-   From computer troubleshooting and cybersecurity to networking
-   and business technology assistance, find the support you need.
-  </p>
-
-  <div class="hero-actions">
-   <a href="#services" class="btn">Explore Our Services</a>
-   <a href="#estimate" class="btn btn-outline">Get an Estimate</a>
+  <div class="container">
+    <div class="eyebrow">IT Elements · Professional IT Services</div>
+    <h1>Technology Problems?<br><span>We've Got You Covered.</span></h1>
+    <p>Reliable IT support for individuals and businesses. From computer troubleshooting and cybersecurity to networking and business technology assistance, find the support you need.</p>
+    <div class="hero-actions">
+      <a href="#services" class="btn">Explore Our Services</a>
+      <a href="#estimate" class="btn btn-outline">Get an Estimate</a>
+    </div>
   </div>
- </div>
 </section>
 
-<!-- SERVICES -->
 <section id="services">
- <div class="container">
+  <div class="container">
+    <div class="section-heading">
+      <div class="eyebrow">What We Do</div>
+      <h2>Our <span class="red">IT Services</span></h2>
+      <p>Practical technology solutions designed to help you stay connected, productive and protected.</p>
+    </div>
 
-  <div class="section-heading">
-   <div class="eyebrow">WHAT WE DO</div>
-   <h2>Our <span class="red">IT Services</span></h2>
-   <p>
-    Practical technology solutions designed to help you
-    stay connected, productive and protected.
-   </p>
+    <div class="services-grid">
+
+      <article class="service-card">
+        <div class="service-icon">💻</div>
+        <h3>PC Health Check</h3>
+        <p>General computer inspection, performance checks, system troubleshooting and recommendations.</p>
+        <div class="service-price">R249 <small>Starting price</small></div>
+        <a href="#estimate" class="btn" data-service="PC Health Check">Request Service</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon">🛡️</div>
+        <h3>Virus &amp; Malware Removal</h3>
+        <p>Assistance identifying and removing unwanted software and improving your computer's security.</p>
+        <div class="service-price">R450 <small>Starting price</small></div>
+        <a href="#estimate" class="btn" data-service="Virus &amp; Malware Removal">Request Service</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon">📡</div>
+        <h3>Wi-Fi &amp; Network Support</h3>
+        <p>Troubleshooting connectivity issues, router problems and basic network configuration.</p>
+        <div class="service-price">R399 <small>Starting price</small></div>
+        <a href="#estimate" class="btn" data-service="Wi-Fi &amp; Network Support">Request Service</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon">⚙️</div>
+        <h3>New Computer Setup</h3>
+        <p>Help setting up a new computer, installing essential applications and configuring basic settings.</p>
+        <div class="service-price">R450 <small>Starting price</small></div>
+        <a href="#estimate" class="btn" data-service="New Computer Setup">Request Service</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon">💾</div>
+        <h3>Data Backup Setup</h3>
+        <p>Assistance setting up file backups and organising your important documents and data.</p>
+        <div class="service-price">R499 <small>Starting price</small></div>
+        <a href="#estimate" class="btn" data-service="Data Backup Setup">Request Service</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon">🏢</div>
+        <h3>Business IT Support</h3>
+        <p>Technology assistance for small businesses, office computers, connectivity and IT troubleshooting.</p>
+        <div class="service-price">Custom Quote</div>
+        <a href="#estimate" class="btn" data-service="Business IT Support">Request a Quote</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon">🖨️</div>
+        <h3>Printer Support</h3>
+        <p>Help with printer installation, connection issues, configuration and common printing problems.</p>
+        <div class="service-price">Custom Quote</div>
+        <a href="#estimate" class="btn" data-service="Printer Support">Request Service</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon">🔧</div>
+        <h3>Software Troubleshooting</h3>
+        <p>Assistance with application errors, software installation and common operating system issues.</p>
+        <div class="service-price">Custom Quote</div>
+        <a href="#estimate" class="btn" data-service="Software Troubleshooting">Request Service</a>
+      </article>
+
+      <article class="service-card">
+        <div class="service-icon">🌐</div>
+        <h3>Website &amp; Email Assistance</h3>
+        <p>Basic help with website issues, business email configuration and common online service problems.</p>
+        <div class="service-price">Custom Quote</div>
+        <a href="#estimate" class="btn" data-service="Website &amp; Email Assistance">Request Service</a>
+      </article>
+
+    </div>
   </div>
-
-  <div class="services-grid">
-
-   <article class="service-card">
-    <div class="service-icon">💻</div>
-    <h3>PC Health Check</h3>
-    <p>General computer inspection, performance checks, system troubleshooting and recommendations.</p>
-    <div class="service-price">R249 <small>Starting price</small></div>
-    <a href="#estimate" class="btn" data-service="PC Health Check">Request Service</a>
-   </article>
-
-   <article class="service-card">
-    <div class="service-icon">🛡️</div>
-    <h3>Virus & Malware Removal</h3>
-    <p>Assistance identifying and removing unwanted software and improving your computer's security.</p>
-    <div class="service-price">R450 <small>Starting price</small></div>
-    <a href="#estimate" class="btn" data-service="Virus & Malware Removal">Request Service</a>
-   </article>
-
-   <article class="service-card">
-    <div class="service-icon">📡</div>
-    <h3>Wi-Fi & Network Support</h3>
-    <p>Troubleshooting connectivity issues, router problems and basic network configuration.</p>
-    <div class="service-price">R399 <small>Starting price</small></div>
-    <a href="#estimate" class="btn" data-service="Wi-Fi & Network Support">Request Service</a>
-   </article>
-
-   <article class="service-card">
-    <div class="service-icon">⚙️</div>
-    <h3>New Computer Setup</h3>
-    <p>Help setting up a new computer, installing essential applications and configuring basic settings.</p>
-    <div class="service-price">R450 <small>Starting price</small></div>
-    <a href="#estimate" class="btn" data-service="New Computer Setup">Request Service</a>
-   </article>
-
-   <article class="service-card">
-    <div class="service-icon">💾</div>
-    <h3>Data Backup Setup</h3>
-    <p>Assistance setting up file backups and organising your important documents and data.</p>
-    <div class="service-price">R499 <small>Starting price</small></div>
-    <a href="#estimate" class="btn" data-service="Data Backup Setup">Request Service</a>
-   </article>
-
-   <article class="service-card">
-    <div class="service-icon">🏢</div>
-    <h3>Business IT Support</h3>
-    <p>Technology assistance for small businesses, office computers, connectivity and IT troubleshooting.</p>
-    <div class="service-price">Custom Quote</div>
-    <a href="#estimate" class="btn" data-service="Business IT Support">Request a Quote</a>
-   </article>
-
-   <article class="service-card">
-    <div class="service-icon">🖨️</div>
-    <h3>Printer Support</h3>
-    <p>Help with printer installation, connection issues, configuration and common printing problems.</p>
-    <div class="service-price">Custom Quote</div>
-    <a href="#estimate" class="btn" data-service="Printer Support">Request Service</a>
-   </article>
-
-   <article class="service-card">
-    <div class="service-icon">🔧</div>
-    <h3>Software Troubleshooting</h3>
-    <p>Assistance with application errors, software installation and common operating system issues.</p>
-    <div class="service-price">Custom Quote</div>
-    <a href="#estimate" class="btn" data-service="Software Troubleshooting">Request Service</a>
-   </article>
-
-   <article class="service-card">
-    <div class="service-icon">🌐</div>
-    <h3>Website & Email Assistance</h3>
-    <p>Basic help with website issues, business email configuration and common online service problems.</p>
-    <div class="service-price">Custom Quote</div>
-    <a href="#estimate" class="btn" data-service="Website & Email Assistance">Request Service</a>
-   </article>
-
-  </div>
- </div>
 </section>
 
-<!-- WHY CHOOSE US -->
-<section class="soft-section">
- <div class="container">
+<section class="why-section">
+  <div class="container">
+    <div class="section-heading">
+      <div class="eyebrow">The IT Elements Difference</div>
+      <h2>Why Choose <span class="red">IT Elements?</span></h2>
+      <p>Technology support should be straightforward, professional and focused on solving your problem.</p>
+    </div>
 
-  <div class="section-heading">
-   <div class="eyebrow">THE IT ELEMENTS DIFFERENCE</div>
-   <h2>Why Choose <span class="red">IT Elements?</span></h2>
-   <p>Technology support should be straightforward, professional and focused on solving your problem.</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="service-icon">⚡</div>
+        <h3>Practical Solutions</h3>
+        <p>We focus on understanding the problem and finding an appropriate solution.</p>
+      </div>
+      <div class="why-card">
+        <div class="service-icon">🔒</div>
+        <h3>Security Awareness</h3>
+        <p>We take computer safety and responsible handling of information seriously.</p>
+      </div>
+      <div class="why-card">
+        <div class="service-icon">🤝</div>
+        <h3>Customer Focus</h3>
+        <p>We aim to make IT support easier to understand and access.</p>
+      </div>
+      <div class="why-card">
+        <div class="service-icon">🏢</div>
+        <h3>Business Support</h3>
+        <p>We assist individuals and businesses with everyday technology needs.</p>
+      </div>
+    </div>
   </div>
-
-  <div class="why-grid">
-
-   <div class="why-card">
-    <div class="service-icon">⚡</div>
-    <h3>Practical Solutions</h3>
-    <p>We focus on understanding the problem and finding an appropriate solution.</p>
-   </div>
-
-   <div class="why-card">
-    <div class="service-icon">🔒</div>
-    <h3>Security Awareness</h3>
-    <p>We take computer safety and responsible handling of information seriously.</p>
-   </div>
-
-   <div class="why-card">
-    <div class="service-icon">🤝</div>
-    <h3>Customer Focus</h3>
-    <p>We aim to make IT support easier to understand and access.</p>
-   </div>
-
-   <div class="why-card">
-    <div class="service-icon">🏢</div>
-    <h3>Business Support</h3>
-    <p>We assist individuals and businesses with everyday technology needs.</p>
-   </div>
-
-  </div>
- </div>
 </section>
 
-<!-- HOW IT WORKS -->
 <section>
- <div class="container">
+  <div class="container">
+    <div class="section-heading">
+      <div class="eyebrow">Simple Process</div>
+      <h2>How It <span class="red">Works</span></h2>
+      <p>Getting started with IT Elements is simple.</p>
+    </div>
 
-  <div class="section-heading">
-   <div class="eyebrow">SIMPLE PROCESS</div>
-   <h2>How It <span class="red">Works</span></h2>
-   <p>Getting started with IT Elements is simple.</p>
+    <div class="process-grid">
+      <div class="process-card">
+        <div class="process-number">01</div>
+        <h3>Choose Your Service</h3>
+        <p>Select the service that best describes the technology assistance you need.</p>
+      </div>
+      <div class="process-card">
+        <div class="process-number">02</div>
+        <h3>Send Your Request</h3>
+        <p>Provide your contact details and explain the problem you are experiencing.</p>
+      </div>
+      <div class="process-card">
+        <div class="process-number">03</div>
+        <h3>Arrange Assistance</h3>
+        <p>We will follow up to discuss the request, availability and next steps.</p>
+      </div>
+    </div>
   </div>
-
-  <div class="process-grid">
-
-   <div class="process-card">
-    <div class="process-number">01</div>
-    <h3>Choose Your Service</h3>
-    <p>Select the service that best describes the technology assistance you need.</p>
-   </div>
-
-   <div class="process-card">
-    <div class="process-number">02</div>
-    <h3>Send Your Request</h3>
-    <p>Provide your contact details and explain the problem you are experiencing.</p>
-   </div>
-
-   <div class="process-card">
-    <div class="process-number">03</div>
-    <h3>Arrange Assistance</h3>
-    <p>We will follow up to discuss the request, availability and next steps.</p>
-   </div>
-
-  </div>
- </div>
 </section>
 
-<!-- ESTIMATE FORM -->
 <section class="calculator-section" id="estimate">
- <div class="container">
+  <div class="container">
+    <div class="section-heading">
+      <div class="eyebrow">Start Your Request</div>
+      <h2>Get an Instant <span class="red">Estimate</span></h2>
+      <p>Choose a service and tell us what you need. Your request will be prepared for WhatsApp.</p>
+    </div>
 
-  <div class="section-heading">
-   <div class="eyebrow">START YOUR REQUEST</div>
-   <h2>Get an Instant <span class="red">Estimate</span></h2>
-   <p>
-    Choose a service and tell us what you need.
-    Your request will be prepared for WhatsApp.
-   </p>
+    <form class="calculator" id="serviceForm">
+      <div class="form-grid">
+        <div class="field">
+          <label for="customerName">Full Name *</label>
+          <input id="customerName" type="text" placeholder="Enter your full name" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="customerEmail">Email Address *</label>
+          <input id="customerEmail" type="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="customerPhone">Phone Number *</label>
+          <input id="customerPhone" type="tel" placeholder="Your contact number" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label for="serviceType">Select Your Service *</label>
+          <select id="serviceType" required>
+            <option value="">Choose a service</option>
+            <option value="PC Health Check" data-price="249">PC Health Check — R249</option>
+            <option value="Virus &amp; Malware Removal" data-price="450">Virus &amp; Malware Removal — R450</option>
+            <option value="Wi-Fi &amp; Network Support" data-price="399">Wi-Fi &amp; Network Support — R399</option>
+            <option value="New Computer Setup" data-price="450">New Computer Setup — R450</option>
+            <option value="Data Backup Setup" data-price="499">Data Backup Setup — R499</option>
+            <option value="Business IT Support" data-price="0">Business IT Support — Custom Quote</option>
+            <option value="Printer Support" data-price="0">Printer Support — Custom Quote</option>
+            <option value="Software Troubleshooting" data-price="0">Software Troubleshooting — Custom Quote</option>
+            <option value="Website &amp; Email Assistance" data-price="0">Website &amp; Email Assistance — Custom Quote</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="supportType">Support Method *</label>
+        <select id="supportType" required>
+          <option value="">Choose support method</option>
+          <option value="Remote Support">Remote Support</option>
+          <option value="Onsite Support">Onsite Support</option>
+        </select>
+      </div>
+
+      <div class="estimate-box">
+        <span>Estimated starting price</span>
+        <strong id="estimatePrice">R0</strong>
+        <span id="estimateNote">Select a service to see its starting price.</span>
+      </div>
+
+      <div class="field">
+        <label for="problemDescription">Describe Your Problem *</label>
+        <textarea id="problemDescription" placeholder="Tell us what is happening and what assistance you need..." required></textarea>
+      </div>
+
+      <button type="submit" class="btn">Send Service Request via WhatsApp</button>
+      <p class="form-note">This is a service enquiry, not a confirmed appointment or payment. We will contact you to discuss the next steps.</p>
+    </form>
   </div>
-
-  <form class="calculator" id="serviceForm">
-
-   <div class="field">
-    <label for="customerName">Full Name *</label>
-    <input id="customerName" name="name" type="text"
-     placeholder="Enter your full name" autocomplete="name" required>
-   </div>
-
-   <div class="field">
-    <label for="customerEmail">Email Address *</label>
-    <input id="customerEmail" name="email" type="email"
-     placeholder="you@example.com" autocomplete="email" required>
-   </div>
-
-   <div class="field">
-    <label for="customerPhone">Phone Number *</label>
-    <input id="customerPhone" name="phone" type="tel"
-     placeholder="Your contact number" autocomplete="tel" required>
-   </div>
-
-   <div class="field">
-    <label for="serviceType">Select Your Service *</label>
-    <select id="serviceType" name="service" required>
-     <option value="">Choose a service</option>
-     <option value="PC Health Check" data-price="249">PC Health Check — R249</option>
-     <option value="Virus & Malware Removal" data-price="450">Virus & Malware Removal — R450</option>
-     <option value="Wi-Fi & Network Support" data-price="399">Wi-Fi & Network Support — R399</option>
-     <option value="New Computer Setup" data-price="450">New Computer Setup — R450</option>
-     <option value="Data Backup Setup" data-price="499">Data Backup Setup — R499</option>
-     <option value="Business IT Support" data-price="0">Business IT Support — Custom Quote</option>
-     <option value="Printer Support" data-price="0">Printer Support — Custom Quote</option>
-     <option value="Software Troubleshooting" data-price="0">Software Troubleshooting — Custom Quote</option>
-     <option value="Website & Email Assistance" data-price="0">Website & Email Assistance — Custom Quote</option>
-    </select>
-   </div>
-
-   <div class="field">
-    <label for="supportType">Support Method *</label>
-    <select id="supportType" name="supportMethod" required>
-     <option value="">Choose support method</option>
-     <option value="Remote Support">Remote Support</option>
-     <option value="Onsite Support">Onsite Support</option>
-    </select>
-   </div>
-
-   <div class="estimate-box">
-    <span>Estimated starting price</span>
-    <strong id="estimatePrice">R0</strong>
-    <span id="estimateNote">Select a service to see its starting price.</span>
-   </div>
-
-   <div class="field">
-    <label for="problemDescription">Describe Your Problem *</label>
-    <textarea id="problemDescription" name="problem"
-     placeholder="Tell us what is happening and what assistance you need..."
-     required></textarea>
-   </div>
-
-   <button type="submit" class="btn">Send Service Request via WhatsApp</button>
-
-   <p class="form-note">
-    This is a service enquiry, not a confirmed appointment or payment.
-    We will contact you to discuss the next steps.
-   </p>
-
-  </form>
- </div>
 </section>
 
-<!-- FAQ -->
 <section>
- <div class="container">
+  <div class="container">
+    <div class="section-heading">
+      <div class="eyebrow">Help Centre</div>
+      <h2>Frequently Asked <span class="red">Questions</span></h2>
+      <p>Some useful information before requesting support.</p>
+    </div>
 
-  <div class="section-heading">
-   <div class="eyebrow">HELP CENTRE</div>
-   <h2>Frequently Asked <span class="red">Questions</span></h2>
-   <p>Some useful information before requesting support.</p>
+    <div class="faq-list">
+      <details>
+        <summary>Do you offer remote IT support?</summary>
+        <p>Yes. You can request remote assistance. The available support method and any required setup will be discussed before work begins.</p>
+      </details>
+      <details>
+        <summary>Can I request onsite assistance?</summary>
+        <p>Yes. Select Onsite Support in the request form. Availability, location and any travel costs will be confirmed with you.</p>
+      </details>
+      <details>
+        <summary>Are the displayed prices final?</summary>
+        <p>Displayed prices are starting prices for selected services. The final cost may depend on the complexity of the problem and any additional work required. We will discuss this with you before proceeding.</p>
+      </details>
+      <details>
+        <summary>Does submitting the form confirm my booking?</summary>
+        <p>No. Submitting the form sends a service enquiry. Your appointment is only confirmed after availability and arrangements have been agreed.</p>
+      </details>
+      <details>
+        <summary>Can businesses request IT support?</summary>
+        <p>Yes. Businesses can request assistance with computers, networks, software and general IT requirements. Select Business IT Support to get started.</p>
+      </details>
+    </div>
   </div>
-
-  <div class="faq-list">
-
-   <details>
-    <summary>Do you offer remote IT support?</summary>
-    <p>Yes. You can request remote assistance. The available support method and any required setup will be discussed before work begins.</p>
-   </details>
-
-   <details>
-    <summary>Can I request onsite assistance?</summary>
-    <p>Yes. Select Onsite Support in the request form. Availability, location and any travel costs will be confirmed with you.</p>
-   </details>
-
-   <details>
-    <summary>Are the displayed prices final?</summary>
-    <p>Displayed prices are starting prices for selected services. The final cost may depend on the complexity of the problem and any additional work required. We will discuss this with you before proceeding.</p>
-   </details>
-
-   <details>
-    <summary>Does submitting the form confirm my booking?</summary>
-    <p>No. Submitting the form sends a service enquiry. Your appointment is only confirmed after availability and arrangements have been agreed.</p>
-   </details>
-
-   <details>
-    <summary>Can businesses request IT support?</summary>
-    <p>Yes. Businesses can request assistance with computers, networks, software and general IT requirements. Select Business IT Support to get started.</p>
-   </details>
-
-  </div>
- </div>
 </section>
 
-<!-- FINAL CTA -->
 <section class="final-cta">
- <div class="container">
-  <div class="eyebrow">LET'S SOLVE YOUR IT PROBLEM</div>
-  <h2>Your Technology Deserves <span class="red">Better Support.</span></h2>
-  <p>Get in touch with IT Elements and tell us how we can assist.</p>
-
-  <div class="hero-actions">
-   <a href="#estimate" class="btn">Request IT Support</a>
-   <a href="/contact" class="btn btn-outline">Contact Us</a>
+  <div class="container">
+    <div class="eyebrow">Let's Solve Your IT Problem</div>
+    <h2>Your Technology Deserves <span class="red">Better Support.</span></h2>
+    <p>Get in touch with IT Elements and tell us how we can assist.</p>
+    <div class="hero-actions">
+      <a href="#estimate" class="btn">Request IT Support</a>
+      <a href="/contact" class="btn btn-outline">Contact Us</a>
+    </div>
   </div>
- </div>
 </section>
 
 </main>
 
-<!-- FOOTER -->
 <footer>
- <div class="container">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand footer-brand" href="/" aria-label="IT Elements home">
+          <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo" width="46" height="46">
+          <span class="brand-main">IT Elements.</span>
+          <span class="brand-support">support</span>
+        </a>
+        <p style="margin-top:15px;max-width:370px">Professional IT support and technology solutions for individuals and businesses.</p>
+      </div>
 
-  <div class="footer-grid">
+      <div>
+        <h3>Quick Links</h3>
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/pricing">Pricing</a>
+        <a href="/onsite-support">On-site Support</a>
+        <a href="/contact">Contact</a>
+      </div>
 
-   <div>
-    <a href="/" class="brand">
-     <img src="/assets/itel-support-icon.png" alt="IT Elements logo">
-     <div>IT <span>ELEMENTS</span></div>
-    </a>
-    <p style="margin-top:16px;max-width:350px">
-     Professional IT support and technology solutions
-     for individuals and businesses.
-    </p>
-   </div>
+      <div>
+        <h3>Customer Area</h3>
+        <a href="/client/login">Client Login</a>
+        <a href="/support">Submit Support Request</a>
+        <a href="/tools/invoices">Invoice Studio</a>
+      </div>
+    </div>
 
-   <div>
-    <h3>Quick Links</h3>
-    <a href="/">Home</a>
-    <a href="/services">Services</a>
-    <a href="/pricing">Pricing</a>
-    <a href="/onsite-support">Onsite Support</a>
-    <a href="/contact">Contact</a>
-   </div>
-
-   <div>
-    <h3>Customer Area</h3>
-    <a href="/dashboard">Client Dashboard</a>
-    <a href="/support">Submit Support Request</a>
-    <a href="/client/login">Client Login</a>
-    <a href="/admin/login">Admin Login</a>
-   </div>
-
+    <div class="copyright">© <span id="currentYear"></span> IT Elements. All rights reserved.</div>
   </div>
-
-  <div class="copyright">
-   © <span id="currentYear"></span> IT Elements. All rights reserved.
-  </div>
-
- </div>
 </footer>
 
 <script>
-/* MOBILE NAVIGATION */
-const menuToggle = document.getElementById("menuToggle");
-const mainNavigation = document.getElementById("mainNavigation");
+(function(){
+  const toggle=document.getElementById("menuToggle");
+  const nav=document.getElementById("navLinks");
 
-menuToggle.addEventListener("click", function(){
- const isOpen = mainNavigation.classList.toggle("open");
+  toggle.addEventListener("click",function(){
+    const isOpen=nav.classList.toggle("open");
+    toggle.setAttribute("aria-expanded",String(isOpen));
+    toggle.setAttribute("aria-label",isOpen?"Close navigation menu":"Open navigation menu");
+    toggle.textContent=isOpen?"×":"☰";
+  });
 
- menuToggle.setAttribute("aria-expanded", String(isOpen));
- menuToggle.setAttribute(
-  "aria-label",
-  isOpen ? "Close navigation menu" : "Open navigation menu"
- );
- menuToggle.textContent = isOpen ? "×" : "☰";
-});
+  nav.querySelectorAll("a").forEach(function(link){
+    link.addEventListener("click",function(){
+      nav.classList.remove("open");
+      toggle.setAttribute("aria-expanded","false");
+      toggle.setAttribute("aria-label","Open navigation menu");
+      toggle.textContent="☰";
+    });
+  });
 
-mainNavigation.querySelectorAll("a").forEach(function(link){
- link.addEventListener("click", function(){
-  mainNavigation.classList.remove("open");
-  menuToggle.setAttribute("aria-expanded","false");
-  menuToggle.setAttribute("aria-label","Open navigation menu");
-  menuToggle.textContent = "☰";
- });
-});
+  const serviceSelect=document.getElementById("serviceType");
+  const estimatePrice=document.getElementById("estimatePrice");
+  const estimateNote=document.getElementById("estimateNote");
 
-window.addEventListener("resize", function(){
- if(window.innerWidth > 850){
-  mainNavigation.classList.remove("open");
-  menuToggle.setAttribute("aria-expanded","false");
-  menuToggle.setAttribute("aria-label","Open navigation menu");
-  menuToggle.textContent = "☰";
- }
-});
+  function updateEstimate(){
+    const option=serviceSelect.options[serviceSelect.selectedIndex];
 
-/* SERVICE ESTIMATE CALCULATOR */
-const serviceSelect = document.getElementById("serviceType");
-const estimatePrice = document.getElementById("estimatePrice");
-const estimateNote = document.getElementById("estimateNote");
+    if(!option||!option.value){
+      estimatePrice.textContent="R0";
+      estimateNote.textContent="Select a service to see its starting price.";
+      return;
+    }
 
-function updateEstimate(){
- const option = serviceSelect.options[serviceSelect.selectedIndex];
+    const price=Number(option.dataset.price||0);
 
- if(!option || !option.value){
-  estimatePrice.textContent = "R0";
-  estimateNote.textContent = "Select a service to see its starting price.";
-  return;
- }
+    if(price>0){
+      estimatePrice.textContent="R"+price.toLocaleString("en-ZA");
+      estimateNote.textContent="Starting price. Final cost will be confirmed before work begins.";
+    }else{
+      estimatePrice.textContent="Custom Quote";
+      estimateNote.textContent="We will discuss your requirements and provide a quotation.";
+    }
+  }
 
- const price = Number(option.dataset.price || 0);
+  serviceSelect.addEventListener("change",updateEstimate);
 
- if(price > 0){
-  estimatePrice.textContent = "R" + price.toLocaleString("en-ZA");
-  estimateNote.textContent =
-   "Starting price. Final cost will be confirmed before work begins.";
- }else{
-  estimatePrice.textContent = "Custom Quote";
-  estimateNote.textContent =
-   "We will discuss your requirements and provide a quotation.";
- }
-}
+  document.querySelectorAll("[data-service]").forEach(function(button){
+    button.addEventListener("click",function(){
+      serviceSelect.value=button.dataset.service;
+      updateEstimate();
+    });
+  });
 
-serviceSelect.addEventListener("change", updateEstimate);
+  document.getElementById("serviceForm").addEventListener("submit",function(event){
+    event.preventDefault();
 
-/* SERVICE CARD BUTTONS SELECT THE CORRECT SERVICE */
-document.querySelectorAll("[data-service]").forEach(function(button){
- button.addEventListener("click", function(){
-  serviceSelect.value = button.dataset.service;
-  updateEstimate();
- });
-});
+    const name=document.getElementById("customerName").value.trim();
+    const email=document.getElementById("customerEmail").value.trim();
+    const phone=document.getElementById("customerPhone").value.trim();
+    const service=serviceSelect.value;
+    const support=document.getElementById("supportType").value;
+    const problem=document.getElementById("problemDescription").value.trim();
 
-/* WHATSAPP SERVICE ENQUIRY */
-document.getElementById("serviceForm").addEventListener("submit",function(event){
- event.preventDefault();
+    if(!name||!email||!phone||!service||!support||!problem){
+      alert("Please complete all required fields.");
+      return;
+    }
 
- const name = document.getElementById("customerName").value.trim();
- const email = document.getElementById("customerEmail").value.trim();
- const phone = document.getElementById("customerPhone").value.trim();
- const service = serviceSelect.value;
- const support = document.getElementById("supportType").value;
- const problem = document.getElementById("problemDescription").value.trim();
+    const selectedOption=serviceSelect.options[serviceSelect.selectedIndex];
+    const price=Number(selectedOption.dataset.price||0);
+    const estimate=price>0
+      ?"R"+price.toLocaleString("en-ZA")+" (starting price)"
+      :"Custom quotation required";
 
- if(!name || !email || !phone || !service || !support || !problem){
-  alert("Please complete all required fields.");
-  return;
- }
+    const message=[
+      "IT ELEMENTS - NEW SERVICE ENQUIRY",
+      "",
+      "Name: "+name,
+      "Email: "+email,
+      "Phone: "+phone,
+      "Service: "+service,
+      "Support method: "+support,
+      "Estimated price: "+estimate,
+      "",
+      "Problem description:",
+      problem,
+      "",
+      "Please contact me regarding this service request."
+    ].join("\n");
 
- const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
- const price = Number(selectedOption.dataset.price || 0);
+    const whatsappURL="https://wa.me/27606181229?text="+encodeURIComponent(message);
+    window.open(whatsappURL,"_blank","noopener,noreferrer");
+  });
 
- const estimate = price > 0
-  ? "R" + price.toLocaleString("en-ZA") + " (starting price)"
-  : "Custom quotation required";
-
- const message = [
-  "IT ELEMENTS - NEW SERVICE ENQUIRY",
-  "",
-  "Name: " + name,
-  "Email: " + email,
-  "Phone: " + phone,
-  "Service: " + service,
-  "Support method: " + support,
-  "Estimated price: " + estimate,
-  "",
-  "Problem description:",
-  problem,
-  "",
-  "Please contact me regarding this service request."
- ].join("\n");
-
- const whatsappURL =
-  "https://wa.me/27606181229?text=" + encodeURIComponent(message);
-
- window.open(whatsappURL,"_blank","noopener,noreferrer");
-});
-
-/* FOOTER YEAR */
-document.getElementById("currentYear").textContent =
- new Date().getFullYear();
+  document.getElementById("currentYear").textContent=new Date().getFullYear();
+})();
 </script>
 
 </body>
