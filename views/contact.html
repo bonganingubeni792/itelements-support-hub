@@ -5,28 +5,40 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <title>Contact IT Elements | Customer Support</title>
+  <meta name="description" content="Contact IT Elements for IT support, enquiries and assistance in South Africa.">
+  <title>IT Elements | Contact</title>
 
   <style>
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --soft: #f7f7f8;
+      --border: #e5e5e8;
+      --text: #171717;
+      --muted: #55555e;
+      --red: #e00000;
+      --red-dark: #b00000;
+      --max: 1500px;
+    }
+
     * {
       box-sizing: border-box;
     }
 
-    :root {
-      --red: #e00000;
-      --red-dark: #b00000;
-      --text: #171717;
-      --muted: #666666;
-      --border: #e7e7e7;
-      --light: #f7f7f8;
-      --white: #ffffff;
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
     }
 
     body {
       margin: 0;
-      background: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--bg);
       color: var(--text);
-      font-family: "Segoe UI", Arial, sans-serif;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
       line-height: 1.6;
     }
 
@@ -34,203 +46,294 @@
       color: inherit;
     }
 
-    .site-header {
-      position: relative;
-      z-index: 10;
-      background: #ffffff;
-      border-bottom: 1px solid var(--border);
+    button {
+      font: inherit;
     }
 
-    .header-inner {
-      width: min(100% - 40px, 1280px);
-      min-height: 88px;
-      margin: auto;
+    /* HEADER */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      min-height: 76px;
+      margin: 0;
+      padding: 12px 4%;
+      border: 0;
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      background: rgba(255,255,255,.98);
+      box-shadow: 0 3px 15px rgba(0,0,0,.045);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 25px;
-    }
-
-    .logo {
-      display: inline-flex;
-      align-items: center;
+      gap: 10px;
+      color: #171717;
+      text-decoration: none;
+      font-size: 21px;
+      font-weight: 900;
+      white-space: nowrap;
       flex-shrink: 0;
     }
 
-    .logo img {
+    .brand img {
       display: block;
-      width: 205px;
-      height: auto;
-      max-height: 65px;
+      width: 46px;
+      height: 46px;
       object-fit: contain;
-      object-position: left center;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      flex-shrink: 0;
     }
 
-    .navigation {
+    .brand-support {
+      color: var(--red);
+      font-size: 14px;
+      font-weight: 700;
+      margin-left: -7px;
+    }
+
+    .links {
       display: flex;
-      align-items: center;
-      justify-content: flex-end;
       flex-wrap: wrap;
-      gap: 5px;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px 15px;
     }
 
-    .navigation a {
-      display: inline-flex;
-      align-items: center;
-      min-height: 40px;
-      padding: 8px 11px;
-      border-radius: 5px;
-      color: #333333;
+    .links a {
+      color: #292929;
       text-decoration: none;
       font-size: 13px;
-      font-weight: 600;
-      transition: background .2s, color .2s;
+      font-weight: 700;
+      padding: 8px 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      white-space: nowrap;
+      transition: color .2s ease;
     }
 
-    .navigation a:hover,
-    .navigation a:focus-visible,
-    .navigation a[aria-current="page"] {
+    .links a:hover,
+    .links a:focus-visible,
+    .links a[aria-current="page"] {
       color: var(--red);
-      background: #f5f5f5;
     }
 
-    .navigation a.portal-link {
-      background: var(--red);
+    .links a.nav-cta {
       color: #ffffff;
-      padding-inline: 16px;
+      background: var(--red);
+      border: 1px solid var(--red);
+      border-radius: 8px;
+      padding: 10px 15px;
     }
 
-    .navigation a.portal-link:hover {
+    .links a.nav-cta:hover {
+      color: #ffffff;
       background: var(--red-dark);
+      border-color: var(--red-dark);
     }
 
+    .menu-toggle {
+      display: none;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: #171717;
+      border-radius: 8px;
+      padding: 7px 12px;
+      font-size: 21px;
+      cursor: pointer;
+    }
+
+    /* MAIN LAYOUT */
     main {
-      width: min(100% - 40px, 1100px);
-      margin: 45px auto 0;
+      width: min(var(--max), 92%);
+      max-width: var(--max);
+      margin: 0 auto;
+      padding-top: 30px;
+    }
+
+    .hero,
+    .panel {
+      color: var(--text);
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: clamp(26px, 5vw, 58px);
+      margin-bottom: 28px;
+      box-shadow: 0 9px 30px rgba(0,0,0,.045);
     }
 
     .hero {
-      padding: clamp(28px, 5vw, 55px);
-      margin-bottom: 25px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      box-shadow: 0 5px 22px rgba(0, 0, 0, .035);
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 95% 5%, rgba(224,0,0,.055), transparent 42%),
+        #ffffff;
     }
 
     .eyebrow {
       display: inline-block;
       color: var(--red);
       font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
+      font-weight: 900;
+      letter-spacing: 2px;
       text-transform: uppercase;
     }
 
-    h1 {
-      max-width: 750px;
-      margin: 10px 0 12px;
-      color: #111111;
-      font-size: clamp(30px, 5vw, 46px);
-      line-height: 1.15;
-      letter-spacing: -1px;
+    .hero h1 {
+      max-width: 900px;
+      color: #171717;
+      font-size: clamp(34px, 5vw, 60px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin: 13px 0 18px;
+      overflow-wrap: break-word;
     }
 
-    .hero-description {
-      max-width: 700px;
-      margin: 0;
+    .hero-copy {
+      max-width: 780px;
       color: var(--muted);
-      font-size: 16px;
+      font-size: 17px;
+      line-height: 1.8;
+      margin: 0;
     }
 
-    .primary-button {
+    /* BUTTONS */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 27px;
+    }
+
+    .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 46px;
-      margin-top: 25px;
-      padding: 12px 21px;
+      min-height: 48px;
+      padding: 12px 22px;
       border: 1px solid var(--red);
-      border-radius: 5px;
+      border-radius: 8px;
       background: var(--red);
       color: #ffffff;
+      text-decoration: none;
       font-size: 14px;
       font-weight: 800;
-      text-decoration: none;
-      transition: background .2s, border-color .2s;
+      text-align: center;
+      transition: .2s ease;
     }
 
-    .primary-button:hover {
+    .btn:hover {
+      color: #ffffff;
       background: var(--red-dark);
       border-color: var(--red-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 7px 18px rgba(176,0,0,.15);
     }
 
-    .section-heading {
-      margin: 35px 0 16px;
+    .btn.secondary {
+      color: var(--red);
+      background: #ffffff;
+      border-color: var(--red);
     }
 
-    .section-heading h2 {
-      margin: 0 0 5px;
-      font-size: 23px;
-      color: #151515;
+    .btn.secondary:hover {
+      color: #ffffff;
+      background: var(--red);
+      border-color: var(--red);
     }
 
-    .section-heading p {
-      margin: 0;
-      color: var(--muted);
+    /* SECTION HEADINGS */
+    .section-title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin: 42px 0 20px;
+    }
+
+    .section-title h2 {
+      color: #171717;
+      font-size: clamp(25px, 3vw, 36px);
+      line-height: 1.2;
+      margin: 8px 0 0;
+      font-weight: 900;
+    }
+
+    .section-title p {
+      color: #666666;
       font-size: 14px;
+      margin: 0;
     }
 
+    /* CONTACT CARDS */
     .contact-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 17px;
+      gap: 22px;
+      width: 100%;
     }
 
     .contact-card {
       min-width: 0;
-      padding: 25px;
-      border: 1px solid var(--border);
-      border-radius: 9px;
+      padding: 29px;
+      color: #171717;
       background: #ffffff;
-      transition: transform .2s, box-shadow .2s;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      box-shadow: 0 7px 24px rgba(0,0,0,.04);
+      transition: .2s ease;
     }
 
     .contact-card:hover {
+      border-color: #e0a0a0;
       transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
+      box-shadow: 0 12px 28px rgba(0,0,0,.07);
     }
 
     .contact-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 43px;
-      height: 43px;
-      margin-bottom: 16px;
-      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      margin-bottom: 19px;
+      border-radius: 11px;
       background: #fff0f0;
       color: var(--red);
-      font-size: 21px;
-      font-weight: 800;
+      font-size: 23px;
+      font-weight: 900;
     }
 
-    .contact-card h3 {
-      margin: 0 0 8px;
+    .contact-card h2 {
       color: #171717;
-      font-size: 17px;
+      font-size: 20px;
+      line-height: 1.35;
+      margin: 0 0 9px;
+      font-weight: 850;
     }
 
     .contact-card p {
-      margin: 0 0 12px;
-      color: var(--muted);
-      font-size: 13px;
+      color: #5b5b63;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0 0 15px;
     }
 
     .contact-card a {
+      display: inline-block;
       color: var(--red);
-      font-size: 14px;
-      font-weight: 700;
+      font-size: 15px;
+      font-weight: 800;
       text-decoration: none;
       overflow-wrap: anywhere;
     }
@@ -240,112 +343,317 @@
       text-decoration: underline;
     }
 
-    .information-card {
+    /* SUPPORT HOURS */
+    .hours-panel {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 25px;
-      margin-top: 25px;
-      padding: 28px;
+      grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+      align-items: center;
+      gap: 30px;
+      margin-top: 38px;
+      padding: clamp(25px, 4vw, 42px);
+      background: var(--soft);
       border: 1px solid var(--border);
-      border-radius: 9px;
-      background: var(--light);
+      border-radius: 13px;
     }
 
-    .information-card h2 {
-      margin: 0 0 10px;
+    .hours-panel h2 {
       color: #171717;
-      font-size: 19px;
+      font-size: clamp(24px, 3vw, 32px);
+      line-height: 1.2;
+      margin: 8px 0 10px;
     }
 
-    .information-card p {
-      margin: 0;
+    .hours-panel p {
       color: var(--muted);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .hours-box {
+      padding: 22px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--red);
+      border-radius: 9px;
+    }
+
+    .hours-box strong {
+      display: block;
+      color: #171717;
+      font-size: 17px;
+      margin-bottom: 6px;
+    }
+
+    .hours-box span {
+      color: #55555e;
       font-size: 14px;
     }
 
-    .hours {
-      padding-left: 14px;
-      border-left: 4px solid var(--red);
+    /* QUICK LINKS */
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 25px;
     }
 
-    .information-card a {
-      color: var(--red);
-      font-weight: 700;
+    .quick-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      min-width: 0;
+      padding: 20px 22px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       text-decoration: none;
+      transition: .2s ease;
     }
 
-    .information-card a:hover {
-      text-decoration: underline;
+    .quick-link:hover {
+      border-color: var(--red);
+      box-shadow: 0 5px 17px rgba(0,0,0,.05);
     }
 
+    .quick-link strong {
+      display: block;
+      color: #171717;
+      font-size: 15px;
+    }
+
+    .quick-link small {
+      display: block;
+      color: #666666;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .quick-link .arrow {
+      color: var(--red);
+      font-size: 22px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    /* FOOTER */
     .footer {
-      margin-top: 55px;
-      padding: 25px 20px;
+      width: 100%;
+      margin-top: 45px;
+      padding: 30px 4%;
       border-top: 1px solid var(--border);
-      color: #777777;
+      color: #666666;
       text-align: center;
       font-size: 13px;
     }
 
-    @media (max-width: 900px) {
-      .header-inner {
-        align-items: flex-start;
+    .footer a {
+      color: var(--red);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .footer a:hover {
+      color: var(--red-dark);
+      text-decoration: underline;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--red);
+      outline-offset: 3px;
+    }
+
+    /* TABLET */
+    @media (max-width: 1050px) {
+      .nav {
         flex-direction: column;
-        justify-content: center;
-        padding-top: 15px;
-        padding-bottom: 15px;
-        gap: 12px;
+        align-items: stretch;
+        gap: 10px;
       }
 
-      .navigation {
+      .links {
+        width: 100%;
         justify-content: flex-start;
+        gap: 8px 15px;
+      }
+
+      .hours-panel {
+        grid-template-columns: 1fr;
       }
     }
 
+    @media (max-width: 760px) {
+      .contact-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .section-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+
+    /* MOBILE */
     @media (max-width: 650px) {
-      .header-inner,
-      main {
-        width: min(100% - 28px, 1100px);
+      .nav {
+        position: sticky;
+        top: 0;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 4%;
+        gap: 10px;
       }
 
-      .logo img {
-        width: 165px;
-        max-height: 55px;
+      .brand {
+        font-size: 19px;
+        gap: 9px;
       }
 
-      .navigation {
-        gap: 3px;
+      .brand img {
+        width: 40px;
+        height: 40px;
       }
 
-      .navigation a {
-        min-height: 36px;
-        padding: 7px 9px;
+      .brand-support {
+        font-size: 13px;
+        margin-left: -6px;
+      }
+
+      .menu-toggle {
+        display: block;
+        flex-shrink: 0;
+      }
+
+      .links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        width: 100%;
+        padding: 13px 4%;
+        background: #ffffff;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 12px 20px rgba(0,0,0,.07);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .links.open {
+        display: grid;
+      }
+
+      .links a {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 8px 5px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: #f7f7f8;
         font-size: 12px;
+        text-align: center;
+        white-space: normal;
+      }
+
+      .links a.nav-cta {
+        color: #ffffff;
+        background: var(--red);
+        border-color: var(--red);
+      }
+
+      main {
+        width: 92%;
+        padding-top: 19px;
+      }
+
+      .hero,
+      .panel {
+        padding: 25px 19px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+      }
+
+      .hero h1 {
+        font-size: clamp(31px, 9vw, 42px);
+        letter-spacing: -1px;
+      }
+
+      .hero-copy {
+        font-size: 15px;
+      }
+
+      .actions {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .actions .btn {
+        width: 100%;
+      }
+
+      .section-title {
+        margin: 32px 0 17px;
+      }
+
+      .section-title h2 {
+        font-size: 26px;
       }
 
       .contact-grid {
         grid-template-columns: 1fr;
+        gap: 14px;
       }
 
-      .information-card {
+      .contact-card {
+        padding: 23px;
+      }
+
+      .hours-panel {
+        padding: 23px 19px;
+        gap: 20px;
+      }
+
+      .hours-box {
+        padding: 17px;
+      }
+
+      .quick-links {
         grid-template-columns: 1fr;
-        gap: 22px;
-        padding: 22px;
+        gap: 11px;
       }
 
-      main {
-        margin-top: 25px;
-      }
-
-      .hero {
-        padding: 25px 21px;
+      .footer {
+        line-height: 2;
+        padding: 25px 5%;
       }
     }
 
-    @media (max-width: 380px) {
-      .navigation a {
-        font-size: 11px;
-        padding: 6px 7px;
+    @media (max-width: 370px) {
+      .brand {
+        font-size: 17px;
+        gap: 7px;
+      }
+
+      .brand img {
+        width: 36px;
+        height: 36px;
+      }
+
+      .brand-support {
+        font-size: 12px;
+        margin-left: -5px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
       }
     }
   </style>
@@ -353,64 +661,93 @@
 
 <body>
 
-  <header class="site-header">
-    <div class="header-inner">
+  <!-- HEADER -->
+  <nav class="nav" aria-label="Main navigation">
 
-      <a class="logo" href="/" aria-label="IT Elements Home">
-        <img
-          src="/assets/itel-support-logo-cropped.png"
-          alt="IT Elements"
-          onerror="this.onerror=null;this.src='/assets/itel-support-logo.png';"
-        >
-      </a>
+    <a class="brand" href="/" aria-label="IT Elements home">
+      <img
+        src="/assets/itel-support-icon.png?v=3"
+        alt="IT Elements logo"
+        width="46"
+        height="46"
+      >
+      <span>IT Elements.</span>
+      <span class="brand-support">support</span>
+    </a>
 
-      <nav class="navigation" aria-label="Main navigation">
-        <a href="/">Home</a>
-        <a href="/services">Services</a>
-        <a href="/onsite-support">On-site</a>
-        <a href="/pricing">Plans</a>
-        <a href="/about">About</a>
-        <a href="/faq">FAQ</a>
-        <a href="/contact" aria-current="page">Contact</a>
-        <a href="/tools/invoices">Invoice Studio</a>
-        <a href="/client/login" class="portal-link">Client Portal</a>
-      </nav>
+    <button
+      class="menu-toggle"
+      id="menuToggle"
+      type="button"
+      aria-label="Open navigation"
+      aria-expanded="false"
+      aria-controls="mainLinks"
+    >☰</button>
 
+    <div class="links" id="mainLinks">
+      <a href="/tools/invoices">Invoice Studio</a>
+      <a href="/">Home</a>
+      <a href="/services">Services</a>
+      <a href="/onsite-support">On-site</a>
+      <a href="/pricing">Plans</a>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/contact" aria-current="page">Contact</a>
+      <a href="/client/login" class="nav-cta">Client Portal</a>
     </div>
-  </header>
+
+  </nav>
 
   <main>
 
+    <!-- HERO -->
     <section class="hero">
+
       <span class="eyebrow">Talk to IT Elements</span>
 
       <h1>We're here to help you get started.</h1>
 
-      <p class="hero-description">
-        Have a question or need technical assistance?
-        Contact IT Elements using your preferred option.
-        For technical problems, you can also submit a support request
-        so we can understand what you need.
+      <p class="hero-copy">
+        Choose the contact option that works for you. For technical issues,
+        submitting a support request helps us understand what you need and
+        how we can assist.
       </p>
 
-      <a class="primary-button" href="/support">
-        Submit a Support Request
-      </a>
+      <div class="actions">
+        <a class="btn" href="/support">
+          Submit a support request
+        </a>
+
+        <a class="btn secondary" href="tel:+27606181229">
+          Call +27 60 618 1229
+        </a>
+      </div>
+
     </section>
 
+    <!-- CONTACT OPTIONS -->
     <section aria-labelledby="contact-heading">
 
-      <div class="section-heading">
-        <h2 id="contact-heading">Get in touch</h2>
-        <p>Choose the contact method that works best for you.</p>
+      <div class="section-title">
+        <div>
+          <span class="eyebrow">Get in touch</span>
+          <h2 id="contact-heading">Contact IT Elements</h2>
+        </div>
+
+        <p>Choose the contact method that suits you.</p>
       </div>
 
       <div class="contact-grid">
 
         <article class="contact-card">
           <div class="contact-icon" aria-hidden="true">@</div>
-          <h3>Email</h3>
-          <p>Send us your questions or enquiries.</p>
+
+          <h2>Email</h2>
+
+          <p>
+            Send us an email with your enquiry or support question.
+          </p>
+
           <a href="mailto:bongani@itelements.co.za">
             bongani@itelements.co.za
           </a>
@@ -418,17 +755,27 @@
 
         <article class="contact-card">
           <div class="contact-icon" aria-hidden="true">☎</div>
-          <h3>Phone</h3>
-          <p>Contact us directly by phone.</p>
+
+          <h2>Phone</h2>
+
+          <p>
+            Call IT Elements directly if you would like to speak to us.
+          </p>
+
           <a href="tel:+27606181229">
             +27 60 618 1229
           </a>
         </article>
 
         <article class="contact-card">
-          <div class="contact-icon" aria-hidden="true">W</div>
-          <h3>WhatsApp</h3>
-          <p>Send us a WhatsApp message.</p>
+          <div class="contact-icon" aria-hidden="true">◉</div>
+
+          <h2>WhatsApp</h2>
+
+          <p>
+            Send us a WhatsApp message for an enquiry or assistance.
+          </p>
+
           <a
             href="https://wa.me/27606181229"
             target="_blank"
@@ -441,39 +788,128 @@
       </div>
     </section>
 
-    <section class="information-card">
+    <!-- SUPPORT HOURS -->
+    <section class="hours-panel">
 
       <div>
+        <span class="eyebrow">When we're available</span>
+
         <h2>Support hours</h2>
-        <p class="hours">
-          Monday to Friday<br>
-          08:00–17:00<br>
-          South African time (SAST)
+
+        <p>
+          Send a support request and the team can follow up during
+          the published support hours.
         </p>
       </div>
 
-      <div>
-        <h2>Need more information?</h2>
-        <p>
-          Find out more about our support options and services.
-          Visit our <a href="/pricing">Plans</a> page for pricing
-          and coverage information, or our
-          <a href="/faq">Help Centre</a> for answers to common questions.
-        </p>
+      <div class="hours-box">
+        <strong>Monday to Friday</strong>
+        <span>08:00–17:00 South African time (SAST)</span>
       </div>
 
     </section>
 
+    <!-- HELPFUL LINKS -->
+    <section>
+
+      <div class="section-title">
+        <div>
+          <span class="eyebrow">Need more information?</span>
+          <h2>Helpful links</h2>
+        </div>
+      </div>
+
+      <div class="quick-links">
+
+        <a class="quick-link" href="/pricing">
+          <span>
+            <strong>Plans and pricing</strong>
+            <small>View available support plans and prices.</small>
+          </span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="quick-link" href="/faq">
+          <span>
+            <strong>Frequently asked questions</strong>
+            <small>Find answers to common support questions.</small>
+          </span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="quick-link" href="/services">
+          <span>
+            <strong>Our services</strong>
+            <small>Explore the IT support services we offer.</small>
+          </span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+
+        <a class="quick-link" href="/client/login">
+          <span>
+            <strong>Client portal</strong>
+            <small>Sign in to access your support account.</small>
+          </span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+
+      </div>
+    </section>
+
   </main>
 
+  <!-- FOOTER -->
   <footer class="footer">
-    <p>IT Elements Support · South Africa</p>
-    <p>&copy; <span id="current-year"></span> IT Elements. All rights reserved.</p>
+    IT Elements Support · South Africa
+    <br>
+    <a href="mailto:bongani@itelements.co.za">
+      bongani@itelements.co.za
+    </a>
+    &nbsp;·&nbsp;
+    <a href="tel:+27606181229">
+      +27 60 618 1229
+    </a>
   </footer>
 
   <script>
-    document.getElementById("current-year").textContent =
-      new Date().getFullYear();
+    (function () {
+      "use strict";
+
+      const menuToggle = document.getElementById("menuToggle");
+      const mainLinks = document.getElementById("mainLinks");
+
+      if (!menuToggle || !mainLinks) return;
+
+      menuToggle.addEventListener("click", function () {
+        const isOpen = mainLinks.classList.toggle("open");
+
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+        menuToggle.setAttribute(
+          "aria-label",
+          isOpen ? "Close navigation" : "Open navigation"
+        );
+
+        menuToggle.textContent = isOpen ? "✕" : "☰";
+      });
+
+      mainLinks.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          mainLinks.classList.remove("open");
+          menuToggle.setAttribute("aria-expanded", "false");
+          menuToggle.setAttribute("aria-label", "Open navigation");
+          menuToggle.textContent = "☰";
+        });
+      });
+
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 650) {
+          mainLinks.classList.remove("open");
+          menuToggle.setAttribute("aria-expanded", "false");
+          menuToggle.setAttribute("aria-label", "Open navigation");
+          menuToggle.textContent = "☰";
+        }
+      });
+    }());
   </script>
 
 </body>
