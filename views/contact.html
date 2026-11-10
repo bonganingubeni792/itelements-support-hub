@@ -1,12 +1,480 @@
+
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><title>IT Elements | Contact</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#0d0d0d;color:#e5e5e5;font:16px/1.6 'Segoe UI',Tahoma,sans-serif}.nav{width:min(100% - 32px,1280px);margin:18px auto 0;padding:14px 20px;background:#141414;border:1px solid #272727;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:18px}.brand{display:flex;align-items:center;gap:9px;font-weight:800;color:#ff4545;text-decoration:none;font-size:20px}.brand img{width:46px;height:46px;object-fit:cover;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(255,255,255,.15);background:#fff;flex:none}.links{display:flex;flex-wrap:wrap;gap:8px 18px}.links a{color:#bdbdbd;text-decoration:none;font-size:13px;padding:8px 10px;border:1px solid transparent;border-radius:6px;transition:all .2s}.links a:hover,.links a:focus-visible,.links a[aria-current="page"]{color:#fff;background:#202020;border-color:#353535}.links a:last-child{color:#fff;background:#8f2020;border-color:#b52b2b}.links a:last-child:hover{background:#aa2828}.links a:hover{color:#ff5555}main{width:min(100% - 32px,1000px);margin:42px auto}.hero,.card{background:#141414;border:1px solid #292929;border-radius:10px;padding:clamp(22px,4vw,40px);margin-bottom:20px}.eyebrow{color:#ff5555;text-transform:uppercase;letter-spacing:1.5px;font-size:12px;font-weight:800}h1{font-size:clamp(30px,5vw,44px);color:#fff;margin:9px 0 12px}.muted{color:#999}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.contact{background:#101113;border:1px solid #292929;border-radius:8px;padding:20px;min-width:0}.contact h2{font-size:16px;color:#fff;margin:0 0 6px}.contact a{color:#ff7777;overflow-wrap:anywhere}.hours{border-left:4px solid #ff4545;padding:12px 15px;background:#101113;color:#ccc;border-radius:5px;font-size:14px}.btn{display:inline-block;padding:11px 17px;border-radius:5px;background:#ff3333;color:#fff;text-decoration:none;font-weight:800;font-size:14px;margin-top:20px}.footer{text-align:center;color:#777;padding:20px;font-size:13px}@media(max-width:720px){.nav{align-items:flex-start;flex-direction:column}.grid{grid-template-columns:1fr}main{margin:24px auto}}.brand-support{color:#fff!important}</style>    <link rel="stylesheet" href="/assets/responsive.css?v=1">
-    <link rel="stylesheet" href="/assets/theme.css?v=13">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Contact IT Elements | Customer Support</title>
 
-<link rel="stylesheet" href="/assets/white-overrides.css?v=1">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --red: #e00000;
+      --red-dark: #b00000;
+      --text: #171717;
+      --muted: #666666;
+      --border: #e7e7e7;
+      --light: #f7f7f8;
+      --white: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      background: var(--white);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .site-header {
+      position: relative;
+      z-index: 10;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      width: min(100% - 40px, 1280px);
+      min-height: 88px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      display: block;
+      width: 205px;
+      height: auto;
+      max-height: 65px;
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .navigation {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .navigation a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 8px 11px;
+      border-radius: 5px;
+      color: #333333;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background .2s, color .2s;
+    }
+
+    .navigation a:hover,
+    .navigation a:focus-visible,
+    .navigation a[aria-current="page"] {
+      color: var(--red);
+      background: #f5f5f5;
+    }
+
+    .navigation a.portal-link {
+      background: var(--red);
+      color: #ffffff;
+      padding-inline: 16px;
+    }
+
+    .navigation a.portal-link:hover {
+      background: var(--red-dark);
+    }
+
+    main {
+      width: min(100% - 40px, 1100px);
+      margin: 45px auto 0;
+    }
+
+    .hero {
+      padding: clamp(28px, 5vw, 55px);
+      margin-bottom: 25px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 5px 22px rgba(0, 0, 0, .035);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 750px;
+      margin: 10px 0 12px;
+      color: #111111;
+      font-size: clamp(30px, 5vw, 46px);
+      line-height: 1.15;
+      letter-spacing: -1px;
+    }
+
+    .hero-description {
+      max-width: 700px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .primary-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      margin-top: 25px;
+      padding: 12px 21px;
+      border: 1px solid var(--red);
+      border-radius: 5px;
+      background: var(--red);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: background .2s, border-color .2s;
+    }
+
+    .primary-button:hover {
+      background: var(--red-dark);
+      border-color: var(--red-dark);
+    }
+
+    .section-heading {
+      margin: 35px 0 16px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 5px;
+      font-size: 23px;
+      color: #151515;
+    }
+
+    .section-heading p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 17px;
+    }
+
+    .contact-card {
+      min-width: 0;
+      padding: 25px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: #ffffff;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .contact-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .06);
+    }
+
+    .contact-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 43px;
+      height: 43px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      background: #fff0f0;
+      color: var(--red);
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .contact-card h3 {
+      margin: 0 0 8px;
+      color: #171717;
+      font-size: 17px;
+    }
+
+    .contact-card p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .contact-card a {
+      color: var(--red);
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    .contact-card a:hover {
+      color: var(--red-dark);
+      text-decoration: underline;
+    }
+
+    .information-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin-top: 25px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--light);
+    }
+
+    .information-card h2 {
+      margin: 0 0 10px;
+      color: #171717;
+      font-size: 19px;
+    }
+
+    .information-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hours {
+      padding-left: 14px;
+      border-left: 4px solid var(--red);
+    }
+
+    .information-card a {
+      color: var(--red);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .information-card a:hover {
+      text-decoration: underline;
+    }
+
+    .footer {
+      margin-top: 55px;
+      padding: 25px 20px;
+      border-top: 1px solid var(--border);
+      color: #777777;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+      .header-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        gap: 12px;
+      }
+
+      .navigation {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .header-inner,
+      main {
+        width: min(100% - 28px, 1100px);
+      }
+
+      .logo img {
+        width: 165px;
+        max-height: 55px;
+      }
+
+      .navigation {
+        gap: 3px;
+      }
+
+      .navigation a {
+        min-height: 36px;
+        padding: 7px 9px;
+        font-size: 12px;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .information-card {
+        grid-template-columns: 1fr;
+        gap: 22px;
+        padding: 22px;
+      }
+
+      main {
+        margin-top: 25px;
+      }
+
+      .hero {
+        padding: 25px 21px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .navigation a {
+        font-size: 11px;
+        padding: 6px 7px;
+      }
+    }
+  </style>
 </head>
-<body><nav class="nav" aria-label="Main navigation"><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="" width="32" height="32"><span>IT Elements.</span><span class="brand-support">support</span></a><div class="links"><a href="/tools/invoices">Invoice Studio</a><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/contact" aria-current="page">Contact</a><a href="/client/login">Client portal</a></div></nav>
-<main><section class="hero"><span class="eyebrow">Talk to IT Elements</span><h1>We’re here to help you get started</h1><p class="muted">Choose the contact option that works for you. For technical issues, submitting a support ticket helps us understand what you need.</p><a class="btn" href="/support">Submit a support request</a></section>
-<section class="grid" aria-label="Contact options"><article class="contact"><h2>Email</h2><a href="mailto:bongani@itelements.co.za">bongani@itelements.co.za</a></article><article class="contact"><h2>Phone</h2><a href="tel:+27606181229">+27 60 618 1229</a></article><article class="contact"><h2>WhatsApp</h2><a href="https://wa.me/27606181229" target="_blank" rel="noopener noreferrer">Message IT Elements</a></article></section>
-<section class="card"><h2>Support hours</h2><p class="hours">Monday to Friday, 08:00–17:00 South African time (SAST)</p><p class="muted">For plan prices and coverage, visit <a href="/pricing" style="color:#ff7777">Plans</a>. For common questions, visit the <a href="/faq" style="color:#ff7777">Help centre</a>.</p></section><footer class="footer">IT Elements Support · South Africa</footer></main></body></html>
+
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+
+      <a class="logo" href="/" aria-label="IT Elements Home">
+        <img
+          src="/assets/itel-support-logo-cropped.png"
+          alt="IT Elements"
+          onerror="this.onerror=null;this.src='/assets/itel-support-logo.png';"
+        >
+      </a>
+
+      <nav class="navigation" aria-label="Main navigation">
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/onsite-support">On-site</a>
+        <a href="/pricing">Plans</a>
+        <a href="/about">About</a>
+        <a href="/faq">FAQ</a>
+        <a href="/contact" aria-current="page">Contact</a>
+        <a href="/tools/invoices">Invoice Studio</a>
+        <a href="/client/login" class="portal-link">Client Portal</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main>
+
+    <section class="hero">
+      <span class="eyebrow">Talk to IT Elements</span>
+
+      <h1>We're here to help you get started.</h1>
+
+      <p class="hero-description">
+        Have a question or need technical assistance?
+        Contact IT Elements using your preferred option.
+        For technical problems, you can also submit a support request
+        so we can understand what you need.
+      </p>
+
+      <a class="primary-button" href="/support">
+        Submit a Support Request
+      </a>
+    </section>
+
+    <section aria-labelledby="contact-heading">
+
+      <div class="section-heading">
+        <h2 id="contact-heading">Get in touch</h2>
+        <p>Choose the contact method that works best for you.</p>
+      </div>
+
+      <div class="contact-grid">
+
+        <article class="contact-card">
+          <div class="contact-icon" aria-hidden="true">@</div>
+          <h3>Email</h3>
+          <p>Send us your questions or enquiries.</p>
+          <a href="mailto:bongani@itelements.co.za">
+            bongani@itelements.co.za
+          </a>
+        </article>
+
+        <article class="contact-card">
+          <div class="contact-icon" aria-hidden="true">☎</div>
+          <h3>Phone</h3>
+          <p>Contact us directly by phone.</p>
+          <a href="tel:+27606181229">
+            +27 60 618 1229
+          </a>
+        </article>
+
+        <article class="contact-card">
+          <div class="contact-icon" aria-hidden="true">W</div>
+          <h3>WhatsApp</h3>
+          <p>Send us a WhatsApp message.</p>
+          <a
+            href="https://wa.me/27606181229"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Message IT Elements
+          </a>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="information-card">
+
+      <div>
+        <h2>Support hours</h2>
+        <p class="hours">
+          Monday to Friday<br>
+          08:00–17:00<br>
+          South African time (SAST)
+        </p>
+      </div>
+
+      <div>
+        <h2>Need more information?</h2>
+        <p>
+          Find out more about our support options and services.
+          Visit our <a href="/pricing">Plans</a> page for pricing
+          and coverage information, or our
+          <a href="/faq">Help Centre</a> for answers to common questions.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>IT Elements Support · South Africa</p>
+    <p>&copy; <span id="current-year"></span> IT Elements. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById("current-year").textContent =
+      new Date().getFullYear();
+  </script>
+
+</body>
+</html>
