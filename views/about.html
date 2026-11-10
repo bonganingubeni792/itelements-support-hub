@@ -1,14 +1,457 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><title>IT Elements | About</title>
-  <style>*{box-sizing:border-box}body{margin:0;background:#0d0d0d;color:#e5e5e5;font:16px/1.65 'Segoe UI',Tahoma,sans-serif}.nav{width:min(100% - 32px,1280px);margin:18px auto 0;padding:14px 20px;background:#141414;border:1px solid #272727;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:18px}.brand{display:flex;align-items:center;gap:9px;font-weight:800;color:#ff4545;text-decoration:none;font-size:20px}.brand img{width:46px;height:46px;object-fit:cover;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(255,255,255,.15);background:#fff;flex:none}.links{display:flex;flex-wrap:wrap;gap:8px 18px}.links a{color:#bdbdbd;text-decoration:none;font-size:13px;padding:8px 10px;border:1px solid transparent;border-radius:6px;transition:all .2s}.links a:hover,.links a:focus-visible,.links a[aria-current="page"]{color:#fff;background:#202020;border-color:#353535}.links a:last-child{color:#fff;background:#8f2020;border-color:#b52b2b}.links a:last-child:hover{background:#aa2828}.links a:hover{color:#ff5555}main{width:min(100% - 32px,1000px);margin:42px auto}.card{background:#141414;border:1px solid #292929;border-radius:10px;padding:clamp(24px,5vw,48px);margin-bottom:20px}.eyebrow{color:#ff5555;text-transform:uppercase;letter-spacing:1.5px;font-size:12px;font-weight:800}h1{font-size:clamp(30px,5vw,46px);line-height:1.15;color:#fff;margin:10px 0 16px}h2{font-size:21px;color:#fff}.muted{color:#9a9a9a}.values{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.value{background:#101113;border:1px solid #292929;border-radius:8px;padding:18px}.value strong{display:block;color:#ff6666;margin-bottom:7px}.btn{display:inline-block;margin-top:12px;padding:11px 17px;border-radius:5px;background:#ff3333;color:#fff;text-decoration:none;font-weight:800;font-size:14px}.footer{text-align:center;color:#777;padding:20px;font-size:13px}@media(max-width:700px){.nav{align-items:flex-start;flex-direction:column}.values{grid-template-columns:1fr}main{margin:24px auto}}.brand-support{color:#fff!important}</style>
-    <link rel="stylesheet" href="/assets/responsive.css?v=1">
-    <link rel="stylesheet" href="/assets/theme.css?v=13">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>About IT Elements | IT Support South Africa</title>
 
-<link rel="stylesheet" href="/assets/white-overrides.css?v=1">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --red: #e00000;
+      --red-dark: #b00000;
+      --text: #171717;
+      --muted: #666666;
+      --border: #e7e7e7;
+      --light: #f7f7f8;
+      --white: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      background: var(--white);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .site-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      width: min(100% - 40px, 1280px);
+      min-height: 88px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      display: block;
+      width: 205px;
+      height: auto;
+      max-height: 65px;
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .navigation {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .navigation a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 8px 11px;
+      border-radius: 5px;
+      color: #333333;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background .2s, color .2s;
+    }
+
+    .navigation a:hover,
+    .navigation a:focus-visible,
+    .navigation a[aria-current="page"] {
+      color: var(--red);
+      background: #f5f5f5;
+    }
+
+    .navigation a.portal-link {
+      padding-inline: 16px;
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    .navigation a.portal-link:hover {
+      background: var(--red-dark);
+    }
+
+    main {
+      width: min(100% - 40px, 1050px);
+      margin: 45px auto 0;
+    }
+
+    .card {
+      margin-bottom: 22px;
+      padding: clamp(25px, 5vw, 48px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+      box-shadow: 0 5px 22px rgba(0, 0, 0, .035);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 780px;
+      margin: 10px 0 17px;
+      color: #111111;
+      font-size: clamp(30px, 5vw, 46px);
+      line-height: 1.15;
+      letter-spacing: -1px;
+    }
+
+    h2 {
+      margin: 0 0 17px;
+      color: #171717;
+      font-size: clamp(20px, 3vw, 25px);
+    }
+
+    .intro-text {
+      max-width: 800px;
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      margin-top: 13px;
+      padding: 12px 20px;
+      border: 1px solid var(--red);
+      border-radius: 5px;
+      background: var(--red);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: background .2s, border-color .2s;
+    }
+
+    .button:hover {
+      background: var(--red-dark);
+      border-color: var(--red-dark);
+    }
+
+    .values {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .value {
+      min-width: 0;
+      padding: 23px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+    }
+
+    .value-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 39px;
+      height: 39px;
+      margin-bottom: 15px;
+      border-radius: 7px;
+      background: #fff0f0;
+      color: var(--red);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .value h3 {
+      margin: 0 0 8px;
+      color: #171717;
+      font-size: 17px;
+    }
+
+    .value p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hours-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: var(--light);
+    }
+
+    .hours-card h2 {
+      margin-bottom: 8px;
+      font-size: 19px;
+    }
+
+    .hours-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .hours-highlight {
+      padding-left: 15px;
+      border-left: 4px solid var(--red);
+    }
+
+    .text-link {
+      color: var(--red);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .text-link:hover {
+      color: var(--red-dark);
+      text-decoration: underline;
+    }
+
+    .footer {
+      margin-top: 55px;
+      padding: 25px 20px;
+      border-top: 1px solid var(--border);
+      color: #777777;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .footer p {
+      margin: 3px 0;
+    }
+
+    @media (max-width: 900px) {
+      .header-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        gap: 12px;
+      }
+
+      .navigation {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .values {
+        grid-template-columns: 1fr;
+      }
+
+      .hours-card {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .header-inner,
+      main {
+        width: min(100% - 28px, 1050px);
+      }
+
+      .logo img {
+        width: 165px;
+        max-height: 55px;
+      }
+
+      .navigation {
+        gap: 3px;
+      }
+
+      .navigation a {
+        min-height: 36px;
+        padding: 7px 9px;
+        font-size: 12px;
+      }
+
+      main {
+        margin-top: 25px;
+      }
+
+      .card {
+        padding: 24px 21px;
+      }
+
+      .hours-card {
+        padding: 22px;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .navigation a {
+        font-size: 11px;
+        padding: 6px 7px;
+      }
+    }
+  </style>
 </head>
-<body><nav class="nav" aria-label="Main navigation"><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="" width="32" height="32"><span>IT Elements.</span><span class="brand-support">support</span></a><div class="links"><a href="/tools/invoices">Invoice Studio</a><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/about" aria-current="page">About</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="/client/login">Client portal</a></div></nav>
-<main><section class="card"><span class="eyebrow">About IT Elements</span><h1>Clear, approachable computer support</h1><p class="muted">IT Elements Support helps people and small organizations in South Africa request remote IT assistance, choose a support plan, and follow their support tickets through a client portal.</p><p class="muted">Our aim is to make it straightforward to explain a technical problem, understand the available support options, and arrange a secure session when remote access is needed.</p><a class="btn" href="/support">Tell us what you need help with</a></section>
-<section class="card"><h2>What customers can expect</h2><div class="values"><div class="value"><strong>Clear next steps</strong><span class="muted">Support requests are submitted through a simple form and can be followed in the client portal.</span></div><div class="value"><strong>Secure payment flow</strong><span class="muted">Pay securely through PayFast hosted checkout. Payment is confirmed by PayFast before a plan is activated.</span></div><div class="value"><strong>People-first support</strong><span class="muted">We explain the support process and ask customers to share remote access details only when ready.</span></div></div></section>
-<section class="card"><h2>Support hours</h2><p class="muted">Monday to Friday, 08:00–17:00 South African time (SAST).</p><p class="muted">For plan details, see <a href="/pricing" style="color:#ff7777">Support plans</a>. For help, use the <a href="/contact" style="color:#ff7777">contact page</a>.</p></section><footer class="footer">IT Elements Support · South Africa</footer></main></body></html>
+
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+
+      <a class="logo" href="/" aria-label="IT Elements Home">
+        <img
+          src="/assets/itel-support-logo-cropped.png"
+          alt="IT Elements"
+          onerror="this.onerror=null;this.src='/assets/itel-support-logo.png';"
+        >
+      </a>
+
+      <nav class="navigation" aria-label="Main navigation">
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/onsite-support">On-site</a>
+        <a href="/pricing">Plans</a>
+        <a href="/about" aria-current="page">About</a>
+        <a href="/faq">FAQ</a>
+        <a href="/contact">Contact</a>
+        <a href="/tools/invoices">Invoice Studio</a>
+        <a href="/client/login" class="portal-link">Client Portal</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main>
+
+    <section class="card">
+      <span class="eyebrow">About IT Elements</span>
+
+      <h1>Clear, approachable computer support.</h1>
+
+      <p class="intro-text">
+        IT Elements Support helps people and small organisations
+        in South Africa request remote IT assistance, choose a
+        support plan and follow their support tickets through
+        a customer portal.
+      </p>
+
+      <p class="intro-text">
+        Our aim is to make it straightforward to explain a
+        technical problem, understand the available support
+        options and arrange a secure session when remote access
+        is needed.
+      </p>
+
+      <a class="button" href="/support">
+        Tell Us What You Need Help With
+      </a>
+    </section>
+
+    <section class="card">
+      <h2>What customers can expect</h2>
+
+      <div class="values">
+
+        <article class="value">
+          <div class="value-number">01</div>
+          <h3>Clear Next Steps</h3>
+          <p>
+            Submit your support request through a simple form
+            and follow your ticket through the customer portal.
+          </p>
+        </article>
+
+        <article class="value">
+          <div class="value-number">02</div>
+          <h3>Secure Payment Flow</h3>
+          <p>
+            Pay securely through PayFast hosted checkout.
+            Payment is confirmed before a support plan is activated.
+          </p>
+        </article>
+
+        <article class="value">
+          <div class="value-number">03</div>
+          <h3>People-First Support</h3>
+          <p>
+            We explain the support process and ask customers
+            to share remote access details only when they are ready.
+          </p>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="hours-card">
+
+      <div>
+        <h2>Support Hours</h2>
+        <p class="hours-highlight">
+          Monday to Friday<br>
+          08:00–17:00<br>
+          South African time (SAST)
+        </p>
+      </div>
+
+      <div>
+        <h2>Explore IT Elements</h2>
+        <p>
+          Learn more about our
+          <a class="text-link" href="/pricing">support plans</a>,
+          or visit our
+          <a class="text-link" href="/contact">contact page</a>
+          if you need assistance.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>IT Elements Support · South Africa</p>
+    <p>&copy; <span id="current-year"></span> IT Elements. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById("current-year").textContent =
+      new Date().getFullYear();
+  </script>
+
+</body>
+</html>
