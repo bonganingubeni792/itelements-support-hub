@@ -818,7 +818,8 @@ app.get('/dashboard.html', checkUserAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
 
-app.get('/invoice-maker.html', checkUserAuth, (req, res) => {
+// Invoice Maker is public. Customer dashboards remain protected.
+app.get('/invoice-maker.html', (req, res) => {
     res.sendFile(path.join(viewsPath, 'invoice-maker.html'));
 });
 
