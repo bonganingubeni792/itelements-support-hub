@@ -23,7 +23,6 @@ if (fs.existsSync(envPath)) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 const dbURI = process.env.MONGODB_URI;
-
 const QUICK_FIX_OPTIONS = Object.freeze({
     '30min': { amount: 20000, label: '30-minute quick fix' },
     '1hour': { amount: 35000, label: '1-hour support session' },
@@ -32,38 +31,20 @@ const QUICK_FIX_OPTIONS = Object.freeze({
     '4hours': { amount: 140000, label: '4-hour support session' },
     '5hours': { amount: 175000, label: '5-hour support session' }
 });
-
 const viewsPath = path.join(__dirname, 'views');
-
 const SLA_PLANS = {
     basic: { name: 'Basic Support', amount: 29900 },
     standard: { name: 'Standard Tier', amount: 59900 },
     business: { name: 'Business Growth', amount: 249900 },
-    'business-growth': { name: 'Business Growth', amount: 249900 },
-    corporate: { name: 'Corporate SLA', amount: 499900 },
-    'corporate-sla': { name: 'Corporate SLA', amount: 499900 }
+    corporate: { name: 'Corporate SLA', amount: 499900 }
 };
 
 function payfastConfig() {
     const merchantId = String(process.env.PAYFAST_MERCHANT_ID || '').trim();
     const merchantKey = String(process.env.PAYFAST_MERCHANT_KEY || '').trim();
     const mode = String(process.env.PAYFAST_MODE || 'live').toLowerCase();
-
-    if (!/^\d{8}$/.test(merchantId) || merchantKey.length !== 13 || !['live', 'test'].includes(mode)) {
-        return null;
-    }
-
-    return {
-        merchantId,
-        merchantKey,
-        mode,
-        endpoint: mode === 'test'
-            ? 'https://sandbox.payfast.co.za/eng/process'
-            : 'https://www.payfast.co.za/eng/process',
-        validateUrl: mode === 'test'
-            ? 'https://sandbox.payfast.co.za/eng/query/validate'
-            : 'https://www.payfast.co.za/eng/query/validate'
-    };
+    if (!/^\d{8}$/.test(merchantId) || merchantKey.length !== 13 || !['live', 'test'].includes(mode)) return null;
+    return { merchantId, merchantKey, mode, endpoint: mode === 'test' ? 'https://sandbox.payfast.co.za/eng/process' : 'https://www.payfast.co.za/eng/process', validateUrl: mode === 'test' ? 'https://sandbox.payfast.co.za/eng/query/validate' : 'https://www.payfast.co.za/eng/query/validate' };
 }
 
 if (dbURI) {
@@ -96,51 +77,203 @@ const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     amount: { type: Number, required: true },
     mode: { type: String, enum: ['test', 'live'], default: 'live' },
     status: { type: String, enum: ['pending', 'paid', 'failed'], default: 'pending' },
-    createdAt: { type: Date, default: Date.now },
-    paidAt: { type: Date, default: null }
+    pfPaymentId: { type: String, default: '' },
+    paidAt: { type: Date, default: null },
+    expiresAt: { type: Date, default: null },
+    createdAt: { type: Date, default: Date.now }
 }, { collection: 'payfastpurchases' }));
 
 const BusinessDocument = mongoose.model('BusinessDocument', new mongoose.Schema({
-    userEmail: { type: String, required: true, lowercase: true, trim: true },
-    documentType: { type: String, default: 'invoice' },
-    documentNumber: { type: String, default: '' },
-    customerName: { type: String, default: '' },
-    customerEmail: { type: String, default: '' },
-    documentData: { type: mongoose.Schema.Types.Mixed, default: {} },
+    ownerEmail: { type: String, required: true, lowercase: true, trim: true, index: true },
+    kind: { type: String, enum: ['invoice', 'quote'], required: true },
+    number: { type: String, required: true },
+    business: { type: Object, default: {} },
+    customer: { type: Object, default: {} },
+    layout: { type: String, enum: ['modern', 'classic', 'compact', 'ledger'], default: 'modern' },
+    discountRate: { type: Number, min: 0, max: 100, default: 0 },
+    discountCents: { type: Number, min: 0, default: 0 },
+    issueDate: { type: String, default: '' },
+    dueDate: { type: String, default: '' },
+    reference: { type: String, default: '' },
+    paymentTerms: { type: String, default: '' },
+    items: { type: [Object], default: [] },
+    vatRate: { type: Number, enum: [0, 15], default: 0 },
+    subtotalCents: { type: Number, required: true },
+    vatCents: { type: Number, required: true },
+    totalCents: { type: Number, required: true },
+    notes: { type: String, default: '' },
+    paymentInstructions: { type: String, default: '' },
     createdAt: { type: Date, default: Date.now }
 }, { collection: 'businessdocuments' }));
 
 const PasswordReset = mongoose.model('PasswordReset', new mongoose.Schema({
-    email: { type: String, required: true, lowercase: true, trim: true },
-    tokenHash: { type: String, required: true },
-    expiresAt: { type: Date, required: true },
+    email: { type: String, required: true, index: true },
+    tokenHash: { type: String, required: true, unique: true },
+    expiresAt: { type: Date, required: true, index: { expires: 0 } },
+    usedAt: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
 }, { collection: 'passwordresets' }));
 
+async function hashPassword(password) {
+    const salt = crypto.randomBytes(16).toString('hex');
+    const derived = await scryptAsync(password, salt, 64);
+    return `scrypt$${salt}$${Buffer.from(derived).toString('hex')}`;
+}
+
+async function verifyAndUpgradePassword(user, candidate) {
+    if (user.password.startsWith('scrypt$')) {
+        const [, salt, storedHex] = user.password.split('$');
+        if (!salt || !storedHex) return false;
+        const derived = Buffer.from(await scryptAsync(candidate, salt, 64));
+        const stored = Buffer.from(storedHex, 'hex');
+        return derived.length === stored.length && crypto.timingSafeEqual(derived, stored);
+    }
+
+    // Existing accounts have plaintext passwords. Upgrade the hash after a
+    // successful login so customers keep access while the database migrates.
+    if (user.password !== candidate) return false;
+    user.password = await hashPassword(candidate);
+    await user.save();
+    return true;
+}
+
+const resetRequestBuckets = new Map();
+function rateLimitPasswordReset(req, res, next) {
+    const now = Date.now();
+    const key = req.ip || req.socket.remoteAddress || 'unknown';
+    const bucket = resetRequestBuckets.get(key);
+    if (!bucket || now - bucket.startedAt > 15 * 60 * 1000) {
+        resetRequestBuckets.set(key, { startedAt: now, count: 1 });
+        return next();
+    }
+    if (bucket.count >= 5) return res.status(429).json({ message: 'Too many reset requests. Please wait 15 minutes and try again.' });
+    bucket.count += 1;
+    return next();
+}
+
+async function sendPasswordResetEmail(to, resetUrl) {
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.RESET_EMAIL_FROM;
+    if (!apiKey || !from) throw new Error('Password reset email settings are missing.');
+
+    const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            from,
+            to: [to],
+            subject: 'Reset your IT Elements password',
+            html: `<p>We received a request to reset the password for your IT Elements account.</p><p><a href="${resetUrl}">Reset my password</a></p><p>This link expires in 15 minutes and can be used once. If you did not request this, you can ignore this email.</p>`
+        })
+    });
+    if (!response.ok) {
+        const details = await response.text();
+        console.error('Password reset email provider error:', response.status, details);
+        throw new Error('Password reset email could not be sent.');
+    }
+}
+
+function escapeHtml(value) {
+    return String(value || '').replace(/[&<>\"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
+}
+
+async function sendCustomerEmail(to, subject, paragraphs) {
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.SUPPORT_EMAIL_FROM || process.env.RESET_EMAIL_FROM;
+    if (!to || !apiKey || !from) {
+        console.info('Customer email skipped: recipient or Resend sender settings are not configured.');
+        return false;
+    }
+    const html = paragraphs.map(text => `<p>${escapeHtml(text)}</p>`).join('');
+    try {
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ from, to: [to], subject, html })
+        });
+        if (!response.ok) {
+            console.error('Customer email provider error:', response.status, await response.text());
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('Customer email delivery failed:', error.message);
+        return false;
+    }
+}
+
+function credentialEncryptionKey() {
+    if (!process.env.SESSION_SECRET) throw new Error('Set a stable SESSION_SECRET before storing remote access passwords.');
+    return crypto.createHash('sha256').update(`IT Elements support credential encryption:${process.env.SESSION_SECRET}`).digest();
+}
+
+function encryptSessionPassword(value) {
+    if (!value) return '';
+    if (String(value).startsWith('enc:v1:')) return String(value);
+    const iv = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv('aes-256-gcm', credentialEncryptionKey(), iv);
+    const encrypted = Buffer.concat([cipher.update(String(value), 'utf8'), cipher.final()]);
+    return `enc:v1:${iv.toString('hex')}:${cipher.getAuthTag().toString('hex')}:${encrypted.toString('hex')}`;
+}
+
+function decryptSessionPassword(value) {
+    if (!value || !String(value).startsWith('enc:v1:')) return value || '';
+    const [, version, ivHex, tagHex, encryptedHex] = String(value).split(':');
+    if (version !== 'v1' || !ivHex || !tagHex || !encryptedHex) throw new Error('Stored remote access credential is invalid.');
+    const decipher = crypto.createDecipheriv('aes-256-gcm', credentialEncryptionKey(), Buffer.from(ivHex, 'hex'));
+    decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
+    return Buffer.concat([decipher.update(Buffer.from(encryptedHex, 'hex')), decipher.final()]).toString('utf8');
+}
+
 const SupportRequest = mongoose.model('SupportRequest', new mongoose.Schema({
-    name: { type: String, required: true },
-    email: { type: String, required: true, lowercase: true, trim: true },
-    phone: { type: String, default: '' },
-    requestType: { type: String, default: 'support' },
-    serviceType: { type: String, default: '' },
-    area: { type: String, default: '' },
-    preferredDate: { type: String, default: '' },
-    preferredTime: { type: String, default: '' },
-    issue: { type: String, default: '' },
-    details: { type: String, default: '' },
-    remoteId: { type: String, default: '' },
-    remotePassword: { type: String, default: '' },
-    status: { type: String, default: 'New' },
-    createdAt: { type: Date, default: Date.now }
+    name: String,
+    email: String,
+    phone: String,
+    requestType: { type: String, enum: ['remote', 'onsite'], default: 'remote' },
+    area: String,
+    serviceType: String,
+    preferredDate: String,
+    preferredTime: String,
+    confirmedVisitAt: Date,
+    callOutFee: { type: Number, min: 0 },
+    remoteId: String,
+    remotePassword: String,
+    issue: String,
+    messages: [{
+        sender: { type: String, enum: ['customer', 'admin'], required: true },
+        name: { type: String, required: true, maxlength: 100 },
+        body: { type: String, required: true, maxlength: 2000 },
+        date: { type: Date, default: Date.now }
+    }],
+    status: { type: String, enum: ['Open', 'Contacted', 'Session Confirmed', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'], default: 'Open' },
+    date: { type: Date, default: Date.now }
 }, { collection: 'supportrequests' }));
 
 const SiteNotification = mongoose.model('SiteNotification', new mongoose.Schema({
-    userEmail: { type: String, default: '' },
-    title: { type: String, required: true },
-    message: { type: String, required: true },
-    read: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now }
+    recipientRole: { type: String, enum: ['admin', 'customer'], required: true, index: true },
+    recipientEmail: { type: String, default: '', lowercase: true, trim: true, index: true },
+    ticketId: { type: mongoose.Schema.Types.ObjectId, ref: 'SupportRequest', required: true, index: true },
+    requestType: { type: String, enum: ['remote', 'onsite'], default: 'remote' },
+    actorName: { type: String, required: true, maxlength: 100 },
+    title: { type: String, required: true, maxlength: 140 },
+    body: { type: String, required: true, maxlength: 240 },
+    createdAt: { type: Date, default: Date.now, index: true },
+    readAt: { type: Date, default: null }
 }, { collection: 'sitenotifications' }));
+
+async function createSiteNotification({ role, email = '', ticket, actor, title, body }) {
+    if (!ticket || !ticket._id || (role === 'customer' && !email)) return;
+    await SiteNotification.create({
+        recipientRole: role,
+        recipientEmail: role === 'customer' ? String(email).toLowerCase().trim() : '',
+        ticketId: ticket._id,
+        requestType: ticket.requestType === 'onsite' ? 'onsite' : 'remote',
+        actorName: String(actor || 'IT Elements Support').slice(0, 100),
+        title: String(title || 'Request update').slice(0, 140),
+        body: String(body || 'There is an update to your request.').slice(0, 240)
+    });
+}
+
 
 const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
     name: { type: String, required: true, maxlength: 100 },
@@ -152,830 +285,722 @@ const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'customerreviews' }));
 
-// Middleware
 app.use(cors());
-app.use(express.urlencoded({
-    extended: true,
-    verify: (req, res, buf) => {
-        req.rawBody = Buffer.from(buf);
-    }
-}));
-app.use(express.json({
-    verify: (req, res, buf) => {
-        req.rawBody = Buffer.from(buf);
-    }
-}));
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https://*.whatsapp.com; connect-src 'self'");
+    next();
+});
+app.use(express.urlencoded({ extended: false, limit: '100kb', verify(req, res, buffer) { if (req.path === '/webhooks/payfast') req.payfastRawBody = Buffer.from(buffer); } }));
 
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'change-this-session-secret',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: process.env.NODE_ENV === 'production',
-        httpOnly: true,
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000
-    }
-}));
-
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/assets', express.static(path.join(__dirname, 'public', 'assets')));
-app.use(express.static(viewsPath, { index: false }));
-
-// Helpers
-function normaliseEmail(email) {
-    return String(email || '').trim().toLowerCase();
+function payfastEncode(value) {
+    return encodeURIComponent(String(value).trim())
+        // Match PHP urlencode() used in PayFast's hosted-checkout signature example.
+        .replace(/[!'()*~]/g, character => '%' + character.charCodeAt(0).toString(16).toUpperCase())
+        .replace(/%[0-9a-f]{2}/gi, escape => escape.toUpperCase())
+        .replace(/%20/g, '+');
 }
 
-function safeText(value, maxLength = 2000) {
-    return String(value || '').trim().slice(0, maxLength);
+function payfastSignature(fields, passphrase = '') {
+    const pairs = Object.entries(fields)
+        .filter(([key, value]) => key !== 'signature' && value !== undefined && value !== null && String(value).trim() !== '')
+        .map(([key, value]) => `${key}=${payfastEncode(value)}`);
+    if (passphrase) pairs.push(`passphrase=${payfastEncode(passphrase)}`);
+    return crypto.createHash('md5').update(pairs.join('&')).digest('hex');
 }
 
-function checkAdminAuth(req, res, next) {
-    if (req.session && req.session.isAdmin) {
-        return next();
-    }
-
-    return res.status(401).json({
-        error: true,
-        message: 'Administrator authentication required.'
-    });
+function safeSignatureEqual(provided, expected) {
+    const left = Buffer.from(String(provided || '').toLowerCase(), 'hex');
+    const right = Buffer.from(String(expected || '').toLowerCase(), 'hex');
+    return left.length === right.length && left.length > 0 && crypto.timingSafeEqual(left, right);
 }
 
-function checkUserAuth(req, res, next) {
-    if (req.session && req.session.userEmail) {
-        return next();
+async function payfastSourceIsValid(ip) {
+    const normalizedIp = String(ip || '').replace(/^::ffff:/, '');
+    const hosts = ['www.payfast.co.za', 'w1w.payfast.co.za', 'w2w.payfast.co.za'];
+    if (payfastConfig()?.mode === 'test') hosts.push('sandbox.payfast.co.za');
+    for (const host of hosts) {
+        try {
+            const addresses = await dns.lookup(host, { all: true });
+            if (addresses.some(address => address.address.replace(/^::ffff:/, '') === normalizedIp)) return true;
+        } catch (_) { /* try the remaining PayFast addresses */ }
     }
-
-    return res.status(401).json({
-        error: true,
-        message: 'Please sign in to continue.'
-    });
+    return false;
 }
 
-function createPasswordHash(password, salt = crypto.randomBytes(16).toString('hex')) {
-    return new Promise((resolve, reject) => {
-        crypto.scrypt(password, salt, 64, (err, key) => {
-            if (err) return reject(err);
-            resolve(`${salt}:${key.toString('hex')}`);
-        });
-    });
-}
-
-async function verifyPassword(password, storedHash) {
-    try {
-        const [salt, hash] = String(storedHash || '').split(':');
-        if (!salt || !hash) return false;
-
-        const derivedKey = await scryptAsync(password, salt, 64);
-        const storedKey = Buffer.from(hash, 'hex');
-
-        return storedKey.length === derivedKey.length &&
-            crypto.timingSafeEqual(storedKey, derivedKey);
-    } catch (error) {
-        return false;
-    }
-}
-
-function getBaseUrl() {
-    return String(process.env.PUBLIC_BASE_URL || 'https://www.itelements.help').replace(/\/+$/, '');
-}
-
-function sendPage(res, filename) {
-    return res.sendFile(path.join(viewsPath, filename));
-}
-
-// Page routes
-app.get('/', (req, res) => sendPage(res, 'index.html'));
-app.get('/pricing', (req, res) => sendPage(res, 'pricing.html'));
-app.get('/services', (req, res) => sendPage(res, 'services.html'));
-app.get('/onsite-support', (req, res) => sendPage(res, 'onsite-support.html'));
-
-// FIX: Reviews page route
-app.get(['/reviews', '/reviews/', '/reviews.html'], (req, res) => {
-    return sendPage(res, 'reviews.html');
-});
-
-// FIX: Business Support page route
-app.get(['/business-support', '/business-support/', '/business-support.html'], (req, res) => {
-    return sendPage(res, 'business-support.html');
-});
-
-app.get('/about', (req, res) => sendPage(res, 'about.html'));
-app.get('/faq', (req, res) => sendPage(res, 'faq.html'));
-app.get('/contact', (req, res) => sendPage(res, 'contact.html'));
-
-// Subscription page aliases
-app.get('/subscribe/:planId', (req, res) => {
-    const planId = String(req.params.planId || '').toLowerCase();
-    const plan = SLA_PLANS[planId];
-
-    if (!plan) {
-        return res.status(404).send('Subscription plan not found.');
-    }
-
-    return res.redirect(`/pricing?plan=${encodeURIComponent(planId)}`);
-});
-
-// Authentication and account routes
-app.post('/api/register', async (req, res) => {
-    try {
-        const fullName = safeText(req.body.fullName, 120);
-        const phone = safeText(req.body.phone, 40);
-        const email = normaliseEmail(req.body.email);
-        const password = String(req.body.password || '');
-
-        if (!fullName || !phone || !email || password.length < 8) {
-            return res.status(400).json({
-                error: true,
-                message: 'Please complete all fields. Your password must contain at least 8 characters.'
-            });
-        }
-
-        const existing = await UserAccount.findOne({ email });
-
-        if (existing) {
-            return res.status(409).json({
-                error: true,
-                message: 'An account with this email address already exists.'
-            });
-        }
-
-        const passwordHash = await createPasswordHash(password);
-
-        const user = await UserAccount.create({
-            fullName,
-            phone,
-            email,
-            password: passwordHash
-        });
-
-        req.session.userEmail = user.email;
-        req.session.userName = user.fullName;
-
-        return res.json({
-            success: true,
-            message: 'Your account has been created successfully.'
-        });
-    } catch (err) {
-        console.error('Registration error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not create your account.'
-        });
-    }
-});
-
-app.post('/api/login', async (req, res) => {
-    try {
-        const email = normaliseEmail(req.body.email);
-        const password = String(req.body.password || '');
-
-        const user = await UserAccount.findOne({ email });
-
-        if (!user || !(await verifyPassword(password, user.password))) {
-            return res.status(401).json({
-                error: true,
-                message: 'Incorrect email address or password.'
-            });
-        }
-
-        req.session.userEmail = user.email;
-        req.session.userName = user.fullName;
-
-        return res.json({
-            success: true,
-            message: 'You have signed in successfully.'
-        });
-    } catch (err) {
-        console.error('Login error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Unable to sign in right now.'
-        });
-    }
-});
-
-app.post('/api/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.clearCookie('connect.sid');
-        res.json({ success: true });
-    });
-});
-
-app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
-    try {
-        const user = await UserAccount.findOne(
-            { email: req.session.userEmail },
-            { password: 0 }
-        ).lean();
-
-        if (!user) {
-            return res.status(404).json({
-                error: true,
-                message: 'Account not found.'
-            });
-        }
-
-        return res.json({ user });
-    } catch (err) {
-        console.error('Profile data error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not load your profile.'
-        });
-    }
-});
-
-// Support request submission
-app.post('/support', async (req, res) => {
-    try {
-        const name = safeText(req.body.name, 120);
-        const email = normaliseEmail(req.body.email);
-        const phone = safeText(req.body.phone, 40);
-        const requestType = safeText(req.body.requestType || 'support', 40);
-        const serviceType = safeText(req.body.serviceType, 150);
-        const area = safeText(req.body.area, 150);
-        const preferredDate = safeText(req.body.preferredDate, 40);
-        const preferredTime = safeText(req.body.preferredTime, 40);
-        const issue = safeText(req.body.issue, 3000);
-        const details = safeText(req.body.details, 3000);
-        const remoteId = safeText(req.body.remoteId, 100);
-        const remotePassword = safeText(req.body.remotePassword, 100);
-
-        if (!name || !email || (!issue && !details)) {
-            return res.status(400).send('Please complete the required fields.');
-        }
-
-        const request = await SupportRequest.create({
-            name,
-            email,
-            phone,
-            requestType,
-            serviceType,
-            area,
-            preferredDate,
-            preferredTime,
-            issue,
-            details,
-            remoteId,
-            remotePassword
-        });
-
-        await SiteNotification.create({
-            userEmail: email,
-            title: 'Support request received',
-            message: `Your support request ${request._id} has been received.`
-        });
-
-        console.log('New support request:', request._id);
-
-        return res.redirect('/?support=sent');
-    } catch (err) {
-        console.error('Support request error:', err.message);
-        return res.status(500).send('We could not submit your support request. Please try again.');
-    }
-});
-
-// Customer reviews
-app.get('/api/reviews', async (req, res) => {
-    try {
-        const reviews = await CustomerReview.find({
-            status: 'Published',
-            consent: true
-        })
-            .select('name rating message date')
-            .sort({ date: -1 })
-            .lean();
-
-        return res.json({ reviews });
-    } catch (err) {
-        console.error('Load reviews error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not load reviews.'
-        });
-    }
-});
-
-app.post('/api/reviews', async (req, res) => {
-    try {
-        const name = safeText(req.body.name, 100);
-        const email = normaliseEmail(req.body.email);
-        const rating = Number(req.body.rating);
-        const message = safeText(req.body.message, 1200);
-        const consent = req.body.consent === true;
-
-        if (name.length < 2 || message.length < 10 || !Number.isInteger(rating) ||
-            rating < 1 || rating > 5 || !consent) {
-            return res.status(400).json({
-                error: true,
-                message: 'Please provide your name, a rating, a review of at least 10 characters, and permission to publish it.'
-            });
-        }
-
-        const recentReviews = await CustomerReview.countDocuments({
-            email,
-            date: { $gte: new Date(Date.now() - 60 * 60 * 1000) }
-        });
-
-        if (email && recentReviews >= 3) {
-            return res.status(429).json({
-                error: true,
-                message: 'You have submitted the maximum number of reviews for this hour.'
-            });
-        }
-
-        await CustomerReview.create({
-            name,
-            email,
-            rating,
-            message,
-            consent,
-            status: 'Pending'
-        });
-
-        return res.json({
-            success: true,
-            message: 'Thank you. Your review has been submitted for approval.'
-        });
-    } catch (err) {
-        console.error('Review submission error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not submit your review.'
-        });
-    }
-});
-
-app.get('/api/admin/reviews', checkAdminAuth, async (req, res) => {
-    try {
-        const reviews = await CustomerReview.find({})
-            .select('-email')
-            .sort({ date: -1 })
-            .lean();
-
-        return res.json({ reviews });
-    } catch (err) {
-        console.error('Admin reviews error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not load reviews.'
-        });
-    }
-});
-
-app.post('/api/admin/reviews/update-status', checkAdminAuth, async (req, res) => {
-    try {
-        const reviewId = safeText(req.body.reviewId, 100);
-        const status = safeText(req.body.status, 20);
-
-        if (!mongoose.isValidObjectId(reviewId) || !['Published', 'Hidden'].includes(status)) {
-            return res.status(400).json({
-                error: true,
-                message: 'Invalid review or status.'
-            });
-        }
-
-        const review = await CustomerReview.findByIdAndUpdate(
-            reviewId,
-            { $set: { status } },
-            { new: true }
-        );
-
-        if (!review) {
-            return res.status(404).json({
-                error: true,
-                message: 'Review not found.'
-            });
-        }
-
-        return res.json({
-            success: true,
-            message: `Review ${status.toLowerCase()} successfully.`
-        });
-    } catch (err) {
-        console.error('Update review status error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not update review status.'
-        });
-    }
-});
-
-// Client tickets
-app.get('/api/tickets', checkUserAuth, async (req, res) => {
-    try {
-        const tickets = await SupportRequest.find({
-            email: req.session.userEmail
-        })
-            .select('-remotePassword')
-            .sort({ createdAt: -1 })
-            .lean();
-
-        return res.json({ tickets });
-    } catch (err) {
-        console.error('Tickets error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not load your support requests.'
-        });
-    }
-});
-
-app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
-    try {
-        const ticketId = safeText(req.body.ticketId, 100);
-        const status = safeText(req.body.status, 40);
-
-        if (!mongoose.isValidObjectId(ticketId)) {
-            return res.status(400).json({
-                error: true,
-                message: 'Invalid support request.'
-            });
-        }
-
-        const ticket = await SupportRequest.findByIdAndUpdate(
-            ticketId,
-            { $set: { status } },
-            { new: true }
-        ).select('-remotePassword');
-
-        if (!ticket) {
-            return res.status(404).json({
-                error: true,
-                message: 'Support request not found.'
-            });
-        }
-
-        return res.json({ success: true, ticket });
-    } catch (err) {
-        console.error('Ticket status update error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not update support request.'
-        });
-    }
-});
-
-// Client notifications
-app.get('/api/client/notifications', checkUserAuth, async (req, res) => {
-    try {
-        const notifications = await SiteNotification.find({
-            userEmail: req.session.userEmail
-        }).sort({ createdAt: -1 }).lean();
-
-        return res.json({ notifications });
-    } catch (err) {
-        console.error('Notifications error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not load notifications.'
-        });
-    }
-});
-
-// Business documents
-app.get('/api/business-documents', checkUserAuth, async (req, res) => {
-    try {
-        const documents = await BusinessDocument.find({
-            userEmail: req.session.userEmail
-        }).sort({ createdAt: -1 }).lean();
-
-        return res.json({ documents });
-    } catch (err) {
-        console.error('Business documents error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not load business documents.'
-        });
-    }
-});
-
-app.post('/api/business-documents', checkUserAuth, async (req, res) => {
-    try {
-        const document = await BusinessDocument.create({
-            userEmail: req.session.userEmail,
-            documentType: safeText(req.body.documentType || 'invoice', 40),
-            documentNumber: safeText(req.body.documentNumber, 100),
-            customerName: safeText(req.body.customerName, 150),
-            customerEmail: normaliseEmail(req.body.customerEmail),
-            documentData: req.body.documentData || {}
-        });
-
-        return res.json({
-            success: true,
-            document
-        });
-    } catch (err) {
-        console.error('Save business document error:', err.message);
-        return res.status(500).json({
-            error: true,
-            message: 'Could not save business document.'
-        });
-    }
-});
-
-// Invoice pages
-app.get('/tools/invoices', (req, res) => {
-    return sendPage(res, 'invoice-maker.html');
-});
-
-app.get('/invoice-maker.html', checkUserAuth, (req, res) => {
-    return sendPage(res, 'invoice-maker.html');
-});
-
-// PayFast helpers
-function createPayFastSignature(data, passphrase = '') {
-    const cryptoData = Object.keys(data)
-        .filter(key => data[key] !== undefined && data[key] !== null && data[key] !== '')
-        .map(key => `${key}=${encodeURIComponent(String(data[key]).trim()).replace(/%20/g, '+')}`)
-        .join('&');
-
-    const signatureData = passphrase
-        ? `${cryptoData}&passphrase=${encodeURIComponent(passphrase.trim()).replace(/%20/g, '+')}`
-        : cryptoData;
-
-    return crypto.createHash('md5').update(signatureData).digest('hex');
-}
-
-function buildPayFastForm(data) {
+async function markPayFastPurchasePaid(fields) {
     const config = payfastConfig();
+    const purchase = await PayFastPurchase.findOne({ paymentId: String(fields.m_payment_id || '') });
+    if (!config || !purchase || purchase.status === 'paid' || purchase.mode !== config.mode) return purchase;
+    const paidAmount = Math.round(Number(fields.amount_gross) * 100);
+    if (fields.payment_status !== 'COMPLETE' || String(fields.merchant_id) !== config.merchantId || paidAmount !== purchase.amount) return purchase;
 
-    if (!config) {
-        throw new Error('PayFast is not configured correctly. Check your Render environment variables.');
+    const paidAt = new Date();
+    const update = { status: 'paid', paidAt, pfPaymentId: String(fields.pf_payment_id || '') };
+    if (purchase.purchaseType === 'plan') {
+        update.expiresAt = new Date(paidAt.getTime() + 30 * 24 * 60 * 60 * 1000);
+    } else if (purchase.purchaseType === 'invoicePro') {
+        const user = await UserAccount.findOne({ email: purchase.userEmail });
+        update.expiresAt = new Date(Math.max(paidAt.getTime(), user?.invoiceProUntil?.getTime() || 0) + 30 * 24 * 60 * 60 * 1000);
     }
-
-    const payload = {
-        merchant_id: config.merchantId,
-        merchant_key: config.merchantKey,
-        ...data
-    };
-
-    const passphrase = String(process.env.PAYFAST_PASSPHRASE || '').trim();
-
-    if (passphrase) {
-        payload.signature = createPayFastSignature(payload, passphrase);
-    } else {
-        payload.signature = createPayFastSignature(payload);
+    const saved = await PayFastPurchase.updateOne({ _id: purchase._id, status: 'pending' }, { $set: update });
+    if (saved.modifiedCount && purchase.purchaseType === 'plan') {
+        await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, { $set: {
+            subscriptionTier: purchase.planName,
+            subscriptionStatus: 'Active',
+            subscriptionPaidAt: paidAt,
+            subscriptionExpiresAt: update.expiresAt
+        } });
     }
-
-    const fields = Object.entries(payload)
-        .map(([key, value]) => `<input type="hidden" name="${key}" value="${String(value).replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">`)
-        .join('');
-
-    return `<!doctype html><html><head><meta charset="utf-8"><title>Redirecting to PayFast</title></head><body><form id="payfast" action="${config.endpoint}" method="post">${fields}</form><script>document.getElementById('payfast').submit();</script></body></html>`;
+    if (saved.modifiedCount && purchase.purchaseType === 'invoicePro') {
+        await UserAccount.findOneAndUpdate({ email: purchase.userEmail }, { $set: { invoiceProUntil: update.expiresAt } });
+        await sendCustomerEmail(purchase.userEmail, 'IT Elements Invoice Pro is active', [
+            'PayFast confirmed your Invoice Pro payment.',
+            `Your extra document allowance is active until ${update.expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
+            'Open the Invoice Maker from your customer portal to create invoices and quotes.'
+        ]);
+    }
+    if (purchase.purchaseType === 'plan' && saved.modifiedCount) {
+        await sendCustomerEmail(purchase.userEmail, 'Your IT Elements plan payment is confirmed', [
+            `PayFast confirmed your payment for ${purchase.planName}.`,
+            `Your 30-day support plan is active until ${update.expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
+            'Sign in to your IT Elements dashboard to view your plan and request support.'
+        ]);
+    }
+    return purchase;
 }
 
-async function createPendingPurchase(data) {
-    return PayFastPurchase.create({
-        paymentId: randomUUID(),
-        userEmail: data.userEmail || '',
-        purchaseType: data.purchaseType,
-        planId: data.planId || '',
-        planName: data.planName || '',
-        durationOption: data.durationOption || '',
-        amount: data.amount,
-        mode: payfastConfig()?.mode || 'live',
-        status: 'pending'
-    });
-}
-
-// Quick fix checkout
-app.post('/api/payment/payfast-quickfix', async (req, res) => {
-    try {
-        const durationOption = safeText(req.body.durationOption, 30);
-        const option = QUICK_FIX_OPTIONS[durationOption];
-
-        if (!option) {
-            return res.status(400).send('Invalid support session option.');
-        }
-
-        const purchase = await createPendingPurchase({
-            purchaseType: 'quickfix',
-            durationOption,
-            planName: option.label,
-            amount: option.amount,
-            userEmail: req.session.userEmail || ''
-        });
-
-        const baseUrl = getBaseUrl();
-
-        return res.send(buildPayFastForm({
-            amount: (option.amount / 100).toFixed(2),
-            item_name: option.label,
-            item_description: option.label,
-            m_payment_id: purchase.paymentId,
-            return_url: `${baseUrl}/payment/success`,
-            cancel_url: `${baseUrl}/payment/cancel`,
-            notify_url: `${baseUrl}/webhooks/payfast`
-        }));
-    } catch (err) {
-        console.error('Quick fix checkout error:', err.message);
-        return res.status(500).send('Unable to start payment. Please try again.');
-    }
-});
-
-// Subscription checkout
-app.post('/api/payment/payfast-plan-checkout', checkUserAuth, async (req, res) => {
-    try {
-        const planId = safeText(req.body.planId, 50).toLowerCase();
-        const plan = SLA_PLANS[planId];
-
-        if (!plan) {
-            return res.status(400).send('Invalid subscription plan.');
-        }
-
-        const purchase = await createPendingPurchase({
-            purchaseType: 'plan',
-            planId,
-            planName: plan.name,
-            amount: plan.amount,
-            userEmail: req.session.userEmail
-        });
-
-        const baseUrl = getBaseUrl();
-
-        return res.send(buildPayFastForm({
-            amount: (plan.amount / 100).toFixed(2),
-            item_name: plan.name,
-            item_description: plan.name,
-            m_payment_id: purchase.paymentId,
-            email_address: req.session.userEmail,
-            return_url: `${baseUrl}/payment/success`,
-            cancel_url: `${baseUrl}/payment/cancel`,
-            notify_url: `${baseUrl}/webhooks/payfast`
-        }));
-    } catch (err) {
-        console.error('Plan checkout error:', err.message);
-        return res.status(500).send('Unable to start subscription payment.');
-    }
-});
-
-// Invoice Pro checkout
-app.post('/api/payment/payfast-invoice-checkout', checkUserAuth, async (req, res) => {
-    try {
-        const amount = 9900;
-
-        const purchase = await createPendingPurchase({
-            purchaseType: 'invoicePro',
-            planName: 'Invoice Studio Pro',
-            amount,
-            userEmail: req.session.userEmail
-        });
-
-        const baseUrl = getBaseUrl();
-
-        return res.send(buildPayFastForm({
-            amount: (amount / 100).toFixed(2),
-            item_name: 'Invoice Studio Pro',
-            item_description: 'Invoice Studio Pro access',
-            m_payment_id: purchase.paymentId,
-            email_address: req.session.userEmail,
-            return_url: `${baseUrl}/payment/success`,
-            cancel_url: `${baseUrl}/payment/cancel`,
-            notify_url: `${baseUrl}/webhooks/payfast`
-        }));
-    } catch (err) {
-        console.error('Invoice Pro checkout error:', err.message);
-        return res.status(500).send('Unable to start payment.');
-    }
-});
-
-// PayFast ITN verification
 app.post('/webhooks/payfast', async (req, res) => {
+    const config = payfastConfig();
+    if (!config) return res.status(503).send('PayFast merchant settings are not configured.');
     try {
-        const config = payfastConfig();
-
-        if (!config) {
-            return res.status(500).send('PayFast is not configured.');
-        }
-
-        const body = req.body || {};
-        const paymentId = safeText(body.m_payment_id, 100);
-
-        if (!paymentId) {
-            return res.status(400).send('Missing payment ID.');
-        }
-
-        const purchase = await PayFastPurchase.findOne({ paymentId });
-
-        if (!purchase || purchase.status === 'paid') {
-            return res.status(200).send('OK');
-        }
-
-        if (purchase.mode !== config.mode) {
-            return res.status(400).send('Payment mode mismatch.');
-        }
+        const raw = Buffer.isBuffer(req.payfastRawBody) ? req.payfastRawBody.toString('utf8') : '';
+        const pairs = raw.split('&').filter(Boolean).map(part => {
+            const separator = part.indexOf('=');
+            const decode = value => decodeURIComponent(String(value || '').replace(/\+/g, ' '));
+            return [decode(separator < 0 ? part : part.slice(0, separator)), decode(separator < 0 ? '' : part.slice(separator + 1))];
+        });
+        const fields = Object.fromEntries(pairs);
+        if (!fields.signature || !safeSignatureEqual(fields.signature, payfastSignature(Object.fromEntries(pairs), process.env.PAYFAST_PASSPHRASE || ''))) return res.status(401).send('Invalid PayFast signature.');
+        if (String(fields.merchant_id || '') !== config.merchantId) return res.status(400).send('Merchant ID mismatch.');
+        if (process.env.PAYFAST_VERIFY_SOURCE !== 'false' && !(await payfastSourceIsValid(req.ip))) return res.status(403).send('Unrecognized PayFast source address.');
 
         const validationResponse = await fetch(config.validateUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(body).toString()
+            body: raw,
+            signal: AbortSignal.timeout(10000)
         });
-
-        const validationText = (await validationResponse.text()).trim();
-
-        if (!validationResponse.ok || validationText !== 'VALID') {
-            return res.status(400).send('PayFast validation failed.');
-        }
-
-        const expectedAmount = (purchase.amount / 100).toFixed(2);
-        const receivedAmount = Number(body.amount_gross).toFixed(2);
-
-        if (expectedAmount !== receivedAmount) {
-            return res.status(400).send('Payment amount mismatch.');
-        }
-
-        if (body.payment_status !== 'COMPLETE') {
-            return res.status(200).send('Payment not complete.');
-        }
-
-        purchase.status = 'paid';
-        purchase.paidAt = new Date();
-        await purchase.save();
-
-        if (purchase.purchaseType === 'plan' && purchase.userEmail) {
-            const user = await UserAccount.findOne({ email: purchase.userEmail });
-
-            if (user) {
-                const now = new Date();
-                const expiry = new Date(now);
-                expiry.setMonth(expiry.getMonth() + 1);
-
-                user.subscriptionTier = purchase.planName;
-                user.subscriptionStatus = 'Active';
-                user.subscriptionPaidAt = now;
-                user.subscriptionExpiresAt = expiry;
-
-                await user.save();
-            }
-        }
-
-        if (purchase.purchaseType === 'invoicePro' && purchase.userEmail) {
-            const user = await UserAccount.findOne({ email: purchase.userEmail });
-
-            if (user) {
-                const expiry = new Date();
-                expiry.setMonth(expiry.getMonth() + 1);
-                user.invoiceProUntil = expiry;
-                await user.save();
-            }
-        }
-
-        return res.status(200).send('OK');
-    } catch (err) {
-        console.error('PayFast ITN error:', err.message);
-        return res.status(500).send('Payment notification error.');
+        const validation = (await validationResponse.text()).trim();
+        if (!validationResponse.ok || validation !== 'VALID') return res.status(400).send('PayFast notification could not be validated.');
+        await markPayFastPurchasePaid(fields);
+        return res.sendStatus(200);
+    } catch (error) {
+        console.error('PayFast notification error:', error.message);
+        return res.sendStatus(500);
     }
 });
 
-// Payment return pages
-app.get('/payment/success', (req, res) => {
-    return res.redirect('/dashboard?payment=returned');
-});
-
-app.get('/payment/cancel', (req, res) => {
-    return res.redirect('/pricing?payment=cancelled');
-});
-
-// Admin login
-app.post('/api/admin/login', (req, res) => {
-    const password = String(req.body.password || '');
-    const adminPassword = String(process.env.ADMIN_PASSWORD || '');
-
-    if (!adminPassword || password !== adminPassword) {
-        return res.status(401).json({
-            error: true,
-            message: 'Incorrect administrator password.'
-        });
+app.use(express.json({ limit: '100kb' }));
+if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
+    throw new Error('SESSION_SECRET must be set in production.');
+}
+if (process.env.NODE_ENV === 'production') app.set('trust proxy', 1);
+app.use(session({
+    secret: process.env.SESSION_SECRET || randomUUID(),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 86400000,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        httpOnly: true
     }
+}));
 
-    req.session.isAdmin = true;
+function checkAdminAuth(req, res, next) {
+    if (req.session && req.session.isAdmin) return next();
+    res.redirect('/client/login');
+}
+function checkUserAuth(req, res, next) {
+    if (req.session && (req.session.isUser || req.session.isAdmin)) return next();
+    if (req.path === '/tools/invoices' || req.path === '/invoice-maker.html') req.session.returnTo = '/tools/invoices';
+    res.redirect('/client/login');
+}
 
-    return res.json({
-        success: true,
-        message: 'Administrator signed in.'
-    });
+// Do not let static-file requests bypass the session checks on these pages.
+app.get('/admin.html', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
+app.get('/dashboard.html', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
+app.get('/invoice-maker.html', (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
+app.use(express.static(viewsPath, { index: false }));
+app.use('/assets', express.static(path.join(__dirname, 'public')));
+
+app.get('/', (req, res) => res.sendFile(path.join(viewsPath, 'index.html')));
+app.get('/pricing', (req, res) => res.sendFile(path.join(viewsPath, 'pricing.html')));
+app.get('/services', (req, res) => res.sendFile(path.join(viewsPath, 'services.html')));
+app.get('/onsite-support', (req, res) => res.sendFile(path.join(viewsPath, 'onsite-support.html')));
+app.get('/about', (req, res) => res.sendFile(path.join(viewsPath, 'about.html')));
+app.get('/faq', (req, res) => res.sendFile(path.join(viewsPath, 'faq.html')));
+app.get('/contact', (req, res) => res.sendFile(path.join(viewsPath, 'contact.html')));
+app.get('/subscribe/:planId', (req, res) => {
+    const planId = String(req.params.planId || '');
+    if (!SLA_PLANS[planId]) return res.status(404).send('Plan not found.');
+    req.session.pendingPlanId = planId;
+    if (req.session.isUser) return res.redirect(`/dashboard?plan=${encodeURIComponent(planId)}`);
+    return res.redirect('/client/login');
+});
+app.get('/support', (req, res) => res.sendFile(path.join(viewsPath, 'support.html')));
+app.get('/admin/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
+app.get('/client/login', (req, res) => res.sendFile(path.join(viewsPath, 'client-login.html')));
+app.get('/client/forgot-password', (req, res) => res.sendFile(path.join(viewsPath, 'forgot-password.html')));
+app.get('/reset-password', (req, res) => res.sendFile(path.join(viewsPath, 'reset-password.html')));
+app.get('/register', (req, res) => res.sendFile(path.join(viewsPath, 'register.html')));
+app.get('/dashboard', checkUserAuth, (req, res) => res.sendFile(path.join(viewsPath, 'dashboard.html')));
+app.get('/tools/invoices', (req, res) => res.sendFile(path.join(viewsPath, 'invoice-maker.html')));
+app.get('/admin', checkAdminAuth, (req, res) => res.sendFile(path.join(viewsPath, 'admin.html')));
+
+async function createPayFastCheckout({ email, amount, purchaseType, planId = '', planName = '', durationOption = '' }) {
+    const config = payfastConfig();
+    if (!config) throw Object.assign(new Error('Check the PayFast Render settings: PAYFAST_MERCHANT_ID must be the 8-digit Merchant ID and PAYFAST_MERCHANT_KEY must be the 13-character Merchant Key. Do not enter your passphrase as the Merchant Key.'), { statusCode: 503 });
+    const publicBaseUrl = String(process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
+    if (!publicBaseUrl.startsWith('https://')) throw Object.assign(new Error('Set PUBLIC_BASE_URL to your deployed HTTPS website address.'), { statusCode: 503 });
+    const paymentId = `ite-${randomUUID()}`;
+    const purchase = await PayFastPurchase.create({ paymentId, userEmail: email, purchaseType, planId, planName, durationOption, amount, mode: config.mode });
+    const returnPath = purchaseType === 'plan' ? '/dashboard' : purchaseType === 'invoicePro' ? '/tools/invoices' : '/';
+    const fields = {
+        merchant_id: config.merchantId,
+        merchant_key: config.merchantKey,
+        return_url: `${publicBaseUrl}${returnPath}?payment=returned&${purchaseType === 'plan' || purchaseType === 'invoicePro' ? 'payfastId' : 'paymentId'}=${encodeURIComponent(paymentId)}`,
+        cancel_url: `${publicBaseUrl}${returnPath}?payment=cancelled`,
+        notify_url: `${publicBaseUrl}/webhooks/payfast`,
+        email_address: email,
+        m_payment_id: paymentId,
+        amount: (amount / 100).toFixed(2),
+        item_name: purchaseType === 'plan' ? `IT Elements ${planName} 30-day support plan` : purchaseType === 'invoicePro' ? 'IT Elements Invoice Pro 30-day access' : `IT Elements ${QUICK_FIX_OPTIONS[durationOption]?.label || 'remote support session'}`,
+        item_description: purchaseType === 'plan' ? 'One-time payment for 30 days of support; renew manually.' : purchaseType === 'invoicePro' ? 'One-time payment for 30 days of additional invoice and quote creation.' : 'One-time remote support session.'
+    };
+    fields.signature = payfastSignature(fields, process.env.PAYFAST_PASSPHRASE || '');
+    return { action: config.endpoint, fields, paymentId };
+}
+
+app.post('/api/payment/payfast-quickfix', async (req, res) => {
+    const durationOption = String(req.body.durationOption || '');
+    const quickFix = QUICK_FIX_OPTIONS[durationOption];
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (!quickFix) return res.status(400).json({ success: false, message: 'Choose one of the available quick-fix sessions.' });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ success: false, message: 'Enter a valid email address for your payment receipt.' });
+    try { return res.json({ success: true, ...(await createPayFastCheckout({ email, amount: quickFix.amount, purchaseType: 'quickfix', durationOption })) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout. Please try again.' }); }
 });
 
-app.post('/api/admin/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.clearCookie('connect.sid');
+app.post('/api/payment/payfast-plan-checkout', checkUserAuth, async (req, res) => {
+    const userEmail = String(req.session.userEmail || '').toLowerCase();
+    const planId = String(req.body.planId || '');
+    const plan = SLA_PLANS[planId];
+    if (!userEmail) return res.status(403).json({ success: false, message: 'Sign in with a customer account before choosing a plan.' });
+    if (!plan) return res.status(400).json({ success: false, message: 'Choose one of the available support plans.' });
+    try { return res.json({ success: true, ...(await createPayFastCheckout({ email: userEmail, amount: plan.amount, purchaseType: 'plan', planId, planName: plan.name })) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout. Please try again.' }); }
+});
+
+app.post('/api/payment/payfast-invoice-checkout', checkUserAuth, async (req, res) => {
+    const email = String(req.session.userEmail || '').trim().toLowerCase();
+    if (!email) return res.status(403).json({ success: false, message: 'Sign in to enable Invoice Pro.' });
+    try { return res.json({ success: true, ...(await createPayFastCheckout({ email, amount: 4900, purchaseType: 'invoicePro' })) }); }
+    catch (err) { return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout.' }); }
+});
+
+app.get('/api/payment/payfast-status', async (req, res) => {
+    const paymentId = String(req.query.paymentId || '');
+    if (!/^ite-[a-f0-9-]{36}$/i.test(paymentId)) return res.status(400).json({ success: false });
+    const purchase = await PayFastPurchase.findOne({ paymentId }, { userEmail: 0, __v: 0 });
+    if (!purchase) return res.status(404).json({ success: false });
+    res.json({ success: true, checkout: purchase });
+});
+
+app.get('/api/payment/payfast-invoice-status', checkUserAuth, async (req, res) => {
+    const paymentId = String(req.query.payfastId || req.query.paymentId || '');
+    if (!/^ite-[a-f0-9-]{36}$/i.test(paymentId)) return res.status(400).json({ success: false });
+    const purchase = await PayFastPurchase.findOne({
+        paymentId, userEmail: invoiceOwner(req), purchaseType: 'invoicePro'
+    }, { status: 1, expiresAt: 1, createdAt: 1 }).lean();
+    if (!purchase) return res.status(404).json({ success: false });
+    res.json({ success: true, status: purchase.status, expiresAt: purchase.expiresAt });
+});
+
+function invoiceOwner(req) { return String(req.session.userEmail || '').trim().toLowerCase(); }
+function cleanInvoiceText(value, max = 180) { return String(value || '').trim().slice(0, max); }
+function cleanInvoiceLogo(value) { const logo=String(value||''); return logo.length<=60000 && /^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(logo) ? logo : ''; }
+async function invoiceAllowance(email) {
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const [user, used] = await Promise.all([
+        UserAccount.findOne({ email }, { invoiceProUntil: 1 }),
+        BusinessDocument.countDocuments({ ownerEmail: email, createdAt: { $gte: monthStart } })
+    ]);
+    const proUntil = user?.invoiceProUntil || null;
+    const pro = Boolean(proUntil && new Date(proUntil) > now);
+    return { pro, proUntil, used, freeLimit: 3, remaining: pro ? null : Math.max(0, 3 - used) };
+}
+
+app.get('/api/invoice-tools/status', checkUserAuth, async (req, res) => {
+    try { res.json({ success: true, ...(await invoiceAllowance(invoiceOwner(req))) }); }
+    catch (_) { res.status(500).json({ success: false, message: 'Could not load Invoice Maker access.' }); }
+});
+
+app.get('/api/invoices', checkUserAuth, async (req, res) => {
+    try {
+        const documents = await BusinessDocument.find({ ownerEmail: invoiceOwner(req) }, { ownerEmail: 0, __v: 0 }).sort({ createdAt: -1 }).limit(100).lean();
+        res.json({ success: true, documents });
+    } catch (_) { res.status(500).json({ success: false, message: 'Could not load your saved documents.' }); }
+});
+
+app.post('/api/invoices', checkUserAuth, async (req, res) => {
+    try {
+        const ownerEmail = invoiceOwner(req);
+        const allowance = await invoiceAllowance(ownerEmail);
+        if (!allowance.pro && allowance.remaining <= 0) return res.status(402).json({ success: false, code: 'UPGRADE_REQUIRED', message: 'Your three free documents for this month have been used. Enable Invoice Pro for R49 per 30 days, or return next month.' });
+        const body = req.body || {};
+        const kind = body.kind === 'quote' ? 'quote' : body.kind === 'invoice' ? 'invoice' : '';
+        if (!kind) return res.status(400).json({ success: false, message: 'Choose invoice or quote.' });
+        const layout = ['modern', 'classic', 'compact', 'ledger'].includes(body.layout) ? body.layout : 'modern';
+        const vatRate = Number(body.vatRate) === 15 ? 15 : 0;
+        const discountRate = Number(body.discountRate || 0);
+        if (!Number.isFinite(discountRate) || discountRate < 0 || discountRate > 100) return res.status(400).json({ success: false, message: 'Discount must be between 0% and 100%.' });
+        const itemsInput = Array.isArray(body.items) ? body.items.slice(0, 30) : [];
+        const items = itemsInput.map((item) => {
+            const description = cleanInvoiceText(item?.description, 160);
+            const quantity = Number(item?.quantity);
+            const unitPriceCents = Math.round(Number(item?.unitPrice) * 100);
+            if (!description || !Number.isFinite(quantity) || quantity <= 0 || quantity > 100000 || !Number.isSafeInteger(unitPriceCents) || unitPriceCents < 0 || unitPriceCents > 100000000) return null;
+            return { description, quantity, unitPriceCents, lineTotalCents: Math.round(quantity * unitPriceCents) };
+        });
+        if (!items.length || items.some(item => !item)) return res.status(400).json({ success: false, message: 'Add at least one valid item with a description, quantity, and non-negative price.' });
+        const subtotalCents = items.reduce((sum, item) => sum + item.lineTotalCents, 0);
+        const discountCents = Math.round(subtotalCents * discountRate / 100);
+        const taxableSubtotalCents = subtotalCents - discountCents;
+        const vatCents = Math.round(taxableSubtotalCents * vatRate / 100);
+        const totalCents = taxableSubtotalCents + vatCents;
+        if (!Number.isSafeInteger(totalCents) || totalCents > 1000000000) return res.status(400).json({ success: false, message: 'The document total is too large.' });
+        const now = new Date();
+        const prefix = kind === 'invoice' ? 'INV' : 'QUO';
+        const number = `${prefix}-${now.toISOString().slice(0, 10).replaceAll('-', '')}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
+        const saved = await BusinessDocument.create({
+            ownerEmail, kind, number, layout,
+            business: {
+                name: cleanInvoiceText(body.business?.name, 100), email: cleanInvoiceText(body.business?.email, 120),
+                phone: cleanInvoiceText(body.business?.phone, 40), address: cleanInvoiceText(body.business?.address, 240),
+                vatNumber: cleanInvoiceText(body.business?.vatNumber, 40), logoText: cleanInvoiceText(body.business?.logoText, 40), logoImage: cleanInvoiceLogo(body.business?.logoImage)
+            },
+            customer: { name: cleanInvoiceText(body.customer?.name, 100), email: cleanInvoiceText(body.customer?.email, 120), phone: cleanInvoiceText(body.customer?.phone, 40), address: cleanInvoiceText(body.customer?.address, 240) },
+            issueDate: /^\d{4}-\d{2}-\d{2}$/.test(String(body.issueDate || '')) ? body.issueDate : now.toISOString().slice(0, 10),
+            dueDate: /^\d{4}-\d{2}-\d{2}$/.test(String(body.dueDate || '')) ? body.dueDate : '',
+            reference: cleanInvoiceText(body.reference, 100),
+            paymentTerms: cleanInvoiceText(body.paymentTerms, 500),
+            items, vatRate, discountRate, discountCents, subtotalCents, vatCents, totalCents,
+            notes: cleanInvoiceText(body.notes, 1200),
+            paymentInstructions: cleanInvoiceText(body.paymentInstructions, 500)
+        });
+        res.status(201).json({ success: true, document: { ...saved.toObject(), ownerEmail: undefined, __v: undefined }, ...(await invoiceAllowance(ownerEmail)) });
+    } catch (_) { res.status(500).json({ success: false, message: 'Could not save this document. Please try again.' }); }
+});
+
+app.delete('/api/invoices/:id', checkUserAuth, async (req, res) => {
+    try {
+        const removed = await BusinessDocument.deleteOne({ _id: req.params.id, ownerEmail: invoiceOwner(req) });
+        if (!removed.deletedCount) return res.status(404).json({ success: false, message: 'Document not found.' });
         res.json({ success: true });
-    });
+    } catch (_) { res.status(400).json({ success: false, message: 'Could not remove that document.' }); }
 });
 
-// Admin dashboard data
+app.post('/client/register', async (req, res) => {
+    try {
+        const { fullName, phone, email, password } = req.body;
+        if (!fullName || !phone || !email || !password) return res.status(400).send('<script>alert("Please complete every field.");window.history.back();</script>');
+        if (fullName.trim().length < 2 || fullName.trim().length > 100) return res.status(400).send('<script>alert("Enter a name or company name between 2 and 100 characters.");window.history.back();</script>');
+        if (phone.trim().length < 7 || phone.trim().length > 25) return res.status(400).send('<script>alert("Enter a valid contact phone number.");window.history.back();</script>');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return res.status(400).send('<script>alert("Enter a valid email address.");window.history.back();</script>');
+        if (password.length < 12 || password.length > 256) return res.status(400).send('<script>alert("Choose a password between 12 and 256 characters.");window.history.back();</script>');
+        const normalizedEmail = email.toLowerCase().trim();
+        const existingUser = await UserAccount.findOne({ email: normalizedEmail });
+        if (existingUser) return res.send('<script>alert("Email already registered.");window.history.back();</script>');
+        const newUser = new UserAccount({ fullName: fullName.trim(), phone: phone.trim(), email: normalizedEmail, password: await hashPassword(password) });
+        await newUser.save();
+        req.session.isUser = true;
+        req.session.userEmail = newUser.email;
+        const nextUrl = req.session.returnTo === '/tools/invoices'
+            ? '/tools/invoices'
+            : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+                ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+                : '/dashboard';
+        delete req.session.returnTo;
+        res.send(`<script>alert("Account created successfully!");window.location.href=${JSON.stringify(nextUrl)};</script>`);
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+app.post('/client/login', async (req, res) => {
+    try {
+        const { email = '', password = '' } = req.body;
+        if (process.env.ADMIN_PASSWORD && password === process.env.ADMIN_PASSWORD) {
+            req.session.isAdmin = true;
+            return res.send('<script>window.location.href="/admin";</script>');
+        }
+        const user = await UserAccount.findOne({ email: email.toLowerCase().trim() });
+        if (user && await verifyAndUpgradePassword(user, password)) {
+            req.session.isUser = true;
+            req.session.userEmail = user.email;
+            const nextUrl = req.session.returnTo === '/tools/invoices'
+                ? '/tools/invoices'
+                : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+                    ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+                    : '/dashboard';
+            delete req.session.returnTo;
+            return res.send(`<script>window.location.href=${JSON.stringify(nextUrl)};</script>`);
+        }
+        res.send('<script>alert("Invalid credentials.");window.history.back();</script>');
+    } catch (err) { res.status(500).send(err.message); }
+});
+
+app.post('/api/auth/forgot-password', rateLimitPasswordReset, async (req, res) => {
+    const email = String(req.body.email || '').trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ message: 'Enter a valid email address.' });
+    }
+    if (!process.env.RESEND_API_KEY || !process.env.RESET_EMAIL_FROM || !process.env.PUBLIC_BASE_URL) {
+        console.error('Password reset is unavailable: set RESEND_API_KEY, RESET_EMAIL_FROM, and PUBLIC_BASE_URL.');
+        return res.status(503).json({ message: 'Password reset email is not configured yet. Please contact IT Elements support.' });
+    }
+
+    try {
+        const user = await UserAccount.findOne({ email });
+        if (!user) return res.status(202).json({ message: 'If an account exists for that address, a reset link will be emailed.' });
+
+        const token = crypto.randomBytes(32).toString('hex');
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        await PasswordReset.deleteMany({ email, usedAt: null });
+        await PasswordReset.create({ email, tokenHash, expiresAt: new Date(Date.now() + 15 * 60 * 1000) });
+        const baseUrl = process.env.PUBLIC_BASE_URL.replace(/\/$/, '');
+        const resetUrl = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
+
+        try {
+            await sendPasswordResetEmail(email, resetUrl);
+        } catch (mailError) {
+            await PasswordReset.deleteOne({ tokenHash });
+            throw mailError;
+        }
+        return res.status(202).json({ message: 'If an account exists for that address, a reset link will be emailed.' });
+    } catch (err) {
+        console.error('Password reset request failed:', err.message);
+        return res.status(503).json({ message: 'We could not send the reset email right now. Please contact IT Elements support.' });
+    }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+    const token = String(req.body.token || '');
+    const password = String(req.body.password || '');
+    if (password.length < 12) return res.status(400).json({ message: 'Choose a password with at least 12 characters.' });
+    if (password.length > 256) return res.status(400).json({ message: 'Password is too long.' });
+    if (!/^[a-f0-9]{64}$/i.test(token)) return res.status(400).json({ message: 'This reset link is invalid or expired. Request a new one.' });
+
+    try {
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        const now = new Date();
+        const reset = await PasswordReset.findOneAndUpdate(
+            { tokenHash, usedAt: null, expiresAt: { $gt: now } },
+            { $set: { usedAt: now } },
+            { new: true }
+        );
+        if (!reset) return res.status(400).json({ message: 'This reset link is invalid, expired, or already used. Request a new one.' });
+
+        try {
+            const passwordHash = await hashPassword(password);
+            const result = await UserAccount.updateOne({ email: reset.email }, { $set: { password: passwordHash } });
+            if (!result.matchedCount) return res.status(400).json({ message: 'This account no longer exists. Contact IT Elements support.' });
+            await PasswordReset.updateMany({ email: reset.email, usedAt: null }, { $set: { usedAt: now } });
+            return res.json({ success: true, message: 'Password updated. You can now sign in with your new password.' });
+        } catch (updateError) {
+            await PasswordReset.updateOne({ _id: reset._id, usedAt: now }, { $set: { usedAt: null } });
+            throw updateError;
+        }
+    } catch (err) {
+        console.error('Password reset failed:', err.message);
+        return res.status(500).json({ message: 'Password reset failed. Please request a new link and try again.' });
+    }
+});
+
+app.get('/admin/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+app.get('/client/logout', (req, res) => { req.session.destroy(() => { res.clearCookie('connect.sid'); res.redirect('/client/login'); }); });
+
+app.get('/api/notifications', (req, res, next) => {
+    if (req.session && req.session.isAdmin) return next();
+    return checkUserAuth(req, res, next);
+}, async (req, res) => {
+    try {
+        const filter = req.session.isAdmin
+            ? { recipientRole: 'admin' }
+            : { recipientRole: 'customer', recipientEmail: String(req.session.userEmail || '').toLowerCase() };
+        const notifications = await SiteNotification.find(filter).sort({ createdAt: -1 }).limit(40).lean();
+        res.json({ notifications: notifications.map(item => ({
+            id: String(item._id), ticketId: String(item.ticketId), actorName: item.actorName,
+            title: item.title, body: item.body, createdAt: item.createdAt,
+            read: Boolean(item.readAt), requestType: item.requestType || ''
+        })) });
+    } catch (err) {
+        console.error('Notification load failed:', err.message);
+        res.status(500).json({ message: 'Could not load notifications.' });
+    }
+});
+
+app.post('/api/notifications/:notificationId/read', (req, res, next) => {
+    if (req.session && req.session.isAdmin) return next();
+    return checkUserAuth(req, res, next);
+}, async (req, res) => {
+    if (!mongoose.isValidObjectId(req.params.notificationId)) return res.status(400).json({ success: false });
+    try {
+        const filter = req.session.isAdmin
+            ? { _id: req.params.notificationId, recipientRole: 'admin' }
+            : { _id: req.params.notificationId, recipientRole: 'customer', recipientEmail: String(req.session.userEmail || '').toLowerCase() };
+        await SiteNotification.updateOne(filter, { $set: { readAt: new Date() } });
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Could not update notification.' });
+    }
+});
+
+app.post('/support', async (req, res) => {
+    try {
+        const { name, email, phone, area, serviceType, preferredDate, preferredTime, details, remoteId, remotePassword, issue, requestType } = req.body;
+        const isOnsiteEnquiry = requestType === 'onsite';
+        const normalizedEmail = email ? String(email).toLowerCase().trim() : (req.session.userEmail || '');
+        const request = new SupportRequest({
+            name: String(name || '').trim(),
+            email: normalizedEmail,
+            phone: String(phone || '').trim(),
+            requestType: isOnsiteEnquiry ? 'onsite' : 'remote',
+            area: isOnsiteEnquiry ? String(area || '').trim() : '',
+            serviceType: isOnsiteEnquiry ? String(serviceType || '').trim() : '',
+            preferredDate: String(preferredDate || '').trim(),
+            preferredTime: String(preferredTime || '').trim(),
+            remoteId: String(remoteId || '').trim(),
+            remotePassword: String(remotePassword || ''),
+            issue: isOnsiteEnquiry ? String(details || issue || '').trim() : String(issue || '').trim(),
+            status: 'Open'
+        });
+        await request.save();
+        const requestLabel = isOnsiteEnquiry ? 'on-site visit enquiry' : 'remote support ticket';
+        await createSiteNotification({ role: 'admin', ticket: request, actor: request.name || 'Customer', title: `New ${requestLabel}`, body: `${request.name || 'A customer'} submitted a ${requestLabel}.` });
+        await sendCustomerEmail(process.env.SUPPORT_NOTIFICATION_EMAIL || 'bongani@itelements.co.za', `New ${requestLabel} from ${request.name || 'customer'}`, [
+            `${request.name || 'A customer'} submitted a ${requestLabel}.`,
+            `Email: ${normalizedEmail || 'not provided'}. Sign in to the Admin console to review it.`
+        ]);
+        await sendCustomerEmail(normalizedEmail, isOnsiteEnquiry ? 'We received your on-site support enquiry' : 'We received your support request', isOnsiteEnquiry ? [
+            `Hello ${request.name || 'there'}, we received your request for ${request.serviceType || 'on-site support'} in ${request.area || 'your area'}.`,
+            'This is an enquiry, not a confirmed appointment. We will review availability and discuss any call-out or service cost before booking.',
+            'You can follow this request in your client dashboard when you use the email address linked to your account.'
+        ] : [
+            `Hello ${request.name || 'there'}, your support request has been received and is marked Open.`,
+            'We will review the issue and follow up. Share any temporary remote session password only when an engineer is ready to connect.'
+        ]);
+        if (isOnsiteEnquiry) {
+            if (req.body.returnToDashboard === '1' && req.session.isUser) return res.redirect('/dashboard?request=onsite-sent#onsite-history');
+            return res.redirect('/onsite-support?sent=1');
+        }
+        if (req.body.returnToDashboard === '1' && req.session.isUser) return res.redirect('/dashboard?request=remote-sent#ticket-history');
+        res.send('<script>alert("Ticket logged successfully into queue!");window.location.href="/dashboard";</script>');
+    } catch (err) { res.status(500).send('Database sync error.'); }
+});
+
+app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
+    try {
+        const user = await UserAccount.findOne({ email: req.session.userEmail }, { password: 0 });
+        if (user && user.subscriptionStatus === 'Active' && user.subscriptionExpiresAt && user.subscriptionExpiresAt <= new Date()) {
+            user.subscriptionStatus = 'Expired';
+            await UserAccount.updateOne({ _id: user._id }, { $set: { subscriptionStatus: 'Expired' } });
+        }
+        const tickets = await SupportRequest.find({ email: req.session.userEmail }, { remotePassword: 0 }).sort({ date: -1 });
+        const checkout = req.query.payfastId
+            ? await PayFastPurchase.findOne({ paymentId: String(req.query.payfastId), userEmail: req.session.userEmail }, { userEmail: 0, __v: 0 })
+            : null;
+        res.json({ user, tickets, checkout });
+    } catch (err) { res.status(500).json({ error: true }); }
+});
+
+app.post('/api/client/tickets/:ticketId/messages', checkUserAuth, async (req, res) => {
+    const ticketId = req.params.ticketId;
+    const body = String(req.body.message || '').trim();
+    if (!mongoose.isValidObjectId(ticketId)) return res.status(400).json({ success: false, message: 'Invalid ticket.' });
+    if (body.length < 2 || body.length > 2000) return res.status(400).json({ success: false, message: 'Your reply must be between 2 and 2,000 characters.' });
+    try {
+        const ticket = await SupportRequest.findOneAndUpdate(
+            { _id: ticketId, email: req.session.userEmail },
+            { $push: { messages: { $each: [{ sender: 'customer', name: req.session.userName || 'Customer', body, date: new Date() }], $slice: -100 } } },
+            { new: true }
+        );
+        if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found for your account.' });
+        await createSiteNotification({ role: 'admin', ticket, actor: ticket.name || 'Customer', title: `New message on ${ticket.requestType === 'onsite' ? 'on-site enquiry' : 'support ticket'}`, body: `${ticket.name || 'A customer'} sent a new message. Sign in to read it.` });
+        await sendCustomerEmail(process.env.SUPPORT_NOTIFICATION_EMAIL || 'bongani@itelements.co.za', `New customer reply on ticket ${ticket._id}`, [
+            `${ticket.name || 'Customer'} (${ticket.email}) replied to a support request.`,
+            'A new message is waiting in the Admin console. For privacy, the message text is not included in this email.'
+        ]);
+        res.json({ success: true, messages: ticket.messages });
+    } catch (err) {
+        console.error('Customer ticket reply failed:', err.message);
+        res.status(500).json({ success: false, message: 'Could not send your reply. Please try again.' });
+    }
+});
+
+app.get('/api/tickets', checkAdminAuth, async (req, res) => {
+    try {
+        const tickets = await SupportRequest.find().sort({ date: -1 }).lean();
+        for (const ticket of tickets) {
+            if (ticket.remotePassword && !String(ticket.remotePassword).startsWith('enc:v1:')) {
+                const encrypted = encryptSessionPassword(ticket.remotePassword);
+                await SupportRequest.updateOne({ _id: ticket._id }, { $set: { remotePassword: encrypted } });
+                ticket.remotePassword = encrypted;
+            }
+            ticket.remotePassword = decryptSessionPassword(ticket.remotePassword);
+        }
+        res.json(tickets);
+    } catch (err) {
+        console.error('Admin ticket load error:', err.message);
+        res.status(500).json({ error: true, message: 'Could not load tickets or decrypt a stored session password. Check that SESSION_SECRET has not changed.' });
+    }
+});
+
+app.post('/api/admin/tickets/:ticketId/messages', checkAdminAuth, async (req, res) => {
+    const ticketId = req.params.ticketId;
+    const body = String(req.body.message || '').trim();
+    if (!mongoose.isValidObjectId(ticketId)) return res.status(400).json({ success: false, message: 'Invalid ticket.' });
+    if (body.length < 2 || body.length > 2000) return res.status(400).json({ success: false, message: 'Your reply must be between 2 and 2,000 characters.' });
+    try {
+        const ticket = await SupportRequest.findByIdAndUpdate(
+            ticketId,
+            { $push: { messages: { $each: [{ sender: 'admin', name: 'IT Elements Support', body, date: new Date() }], $slice: -100 } } },
+            { new: true }
+        );
+        if (!ticket) return res.status(404).json({ success: false, message: 'Ticket not found.' });
+        await createSiteNotification({ role: 'customer', email: ticket.email, ticket, actor: 'IT Elements Support', title: 'New reply from IT Elements Support', body: 'Your support team sent a new message. Sign in to read it.' });
+        await sendCustomerEmail(ticket.email, 'New reply from IT Elements Support', [
+            `IT Elements Support replied to your ${ticket.requestType === 'onsite' ? 'on-site enquiry' : 'support ticket'}.`,
+            'Sign in to your client dashboard to see the reply and continue the conversation. For privacy, the message text is not included in this email.'
+        ]);
+        res.json({ success: true, messages: ticket.messages });
+    } catch (err) {
+        console.error('Admin ticket reply failed:', err.message);
+        res.status(500).json({ success: false, message: 'Could not send your reply. Please try again.' });
+    }
+});
+
+app.post('/api/tickets/update-status', checkAdminAuth, async (req, res) => {
+        const { ticketId, newStatus } = req.body;
+    if (!mongoose.isValidObjectId(ticketId)) return res.status(400).json({ success: false, message: 'Invalid ticket.' });
+    try {
+        const current = await SupportRequest.findById(ticketId);
+        if (!current) return res.status(404).json({ success: false, message: 'Ticket not found.' });
+        const isOnsite = current.requestType === 'onsite' || String(current.issue || '').startsWith('ON-SITE SUPPORT ENQUIRY');
+        const allowedStatuses = isOnsite ? ['Open', 'Contacted', 'Visit Confirmed', 'Completed', 'On Hold', 'Resolved'] : ['Open', 'Contacted', 'Session Confirmed', 'On Hold', 'Resolved'];
+        if (!allowedStatuses.includes(newStatus)) return res.status(400).json({ success: false, message: 'That status is not available for this request.' });
+        const update = { status: newStatus };
+        if (isOnsite && newStatus === 'Visit Confirmed') {
+            const visitAt = new Date(req.body.confirmedVisitAt);
+            const callOutFee = Number(req.body.callOutFee);
+            if (!req.body.confirmedVisitAt || Number.isNaN(visitAt.getTime()) || visitAt.getTime() < Date.now() || String(req.body.callOutFee ?? '').trim() === '' || !Number.isFinite(callOutFee) || callOutFee < 0) {
+                return res.status(400).json({ success: false, message: 'Enter a future confirmed visit date and time, and a call-out fee (enter 0 if there is no fee).' });
+            }
+            update.confirmedVisitAt = visitAt;
+            update.callOutFee = callOutFee;
+        }
+        if (!isOnsite && newStatus === 'Session Confirmed') {
+            const sessionAt = new Date(req.body.confirmedVisitAt);
+            if (!req.body.confirmedVisitAt || Number.isNaN(sessionAt.getTime()) || sessionAt.getTime() < Date.now()) {
+                return res.status(400).json({ success: false, message: 'Enter a future confirmed support session date and time.' });
+            }
+            update.confirmedVisitAt = sessionAt;
+        }
+        if (['Completed', 'Resolved'].includes(newStatus)) update.remotePassword = '';
+        const updated = await SupportRequest.findByIdAndUpdate(ticketId, { $set: update }, { new: true });
+        if ((current.status !== newStatus || newStatus === 'Visit Confirmed' || newStatus === 'Session Confirmed') && updated.email) {
+            await createSiteNotification({ role: 'customer', email: updated.email, ticket: updated, actor: 'IT Elements Support', title: `Request status: ${newStatus}`, body: `Your ${isOnsite ? 'on-site enquiry' : 'support ticket'} is now ${newStatus}.` });
+            await sendCustomerEmail(updated.email, `Your IT Elements request is now ${newStatus}`, [
+                `Hello ${updated.name || 'there'}, the status of your ${isOnsite ? 'on-site enquiry' : 'support ticket'} is now ${newStatus}.`,
+                isOnsite && newStatus === 'Visit Confirmed' ? `Your visit is confirmed for ${updated.confirmedVisitAt.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}. Call-out fee: R${Number(updated.callOutFee || 0).toFixed(2)}. Please sign in to your client dashboard for these details.` : !isOnsite && newStatus === 'Session Confirmed' ? `Your remote support session is confirmed for ${updated.confirmedVisitAt.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' })}. Sign in to your client dashboard to view the appointment.` : 'Sign in to your client dashboard to follow your request.'
+            ]);
+        }
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: 'Could not update ticket status.' }); }
+});
+
+app.get('/api/reviews', async (req, res) => {
+    try {
+        const reviews = await CustomerReview.find({ status: 'Published', consent: true }, { email: 0, consent: 0, status: 0 }).sort({ date: -1 }).limit(12).lean();
+        res.json({ reviews });
+    } catch (err) { res.status(500).json({ reviews: [] }); }
+});
+
+const reviewSubmissionBuckets = new Map();
+app.post('/api/reviews', async (req, res) => {
+    const bucketKey = req.ip || req.socket.remoteAddress || 'unknown';
+    const now = Date.now();
+    const bucket = reviewSubmissionBuckets.get(bucketKey);
+    if (bucket && now - bucket.startedAt < 60 * 60 * 1000 && bucket.count >= 3) {
+        return res.status(429).json({ success: false, message: 'Please wait before submitting more feedback.' });
+    }
+    if (!bucket || now - bucket.startedAt >= 60 * 60 * 1000) reviewSubmissionBuckets.set(bucketKey, { startedAt: now, count: 1 });
+    else bucket.count += 1;
+
+    const name = String(req.body.name || '').trim();
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const message = String(req.body.message || '').trim();
+    const rating = Number(req.body.rating);
+    if (name.length < 2 || name.length > 100 || message.length < 10 || message.length > 1200 || !Number.isInteger(rating) || rating < 1 || rating > 5 || req.body.consent !== true) {
+        return res.status(400).json({ success: false, message: 'Add your name, a 1–5 rating, feedback of at least 10 characters, and permission to publish it.' });
+    }
+    try {
+        await CustomerReview.create({ name, email, rating, message, consent: true, status: 'Pending' });
+        await sendCustomerEmail(email, 'Thank you for your feedback', ['Thank you for sharing feedback with IT Elements. Your review is awaiting approval and will only appear publicly after it is reviewed.']);
+        res.json({ success: true, message: 'Thank you. Your feedback has been sent for review and will not be published until approved.' });
+    } catch (err) { res.status(500).json({ success: false, message: 'Could not save your feedback. Please try again.' }); }
+});
+
+app.get('/api/admin/reviews', checkAdminAuth, async (req, res) => {
+    try { res.json(await CustomerReview.find().sort({ date: -1 }).lean()); }
+    catch (err) { res.status(500).json({ error: true, message: 'Could not load customer feedback.' }); }
+});
+
+app.post('/api/admin/reviews/update-status', checkAdminAuth, async (req, res) => {
+    const { reviewId, status } = req.body;
+    if (!mongoose.isValidObjectId(reviewId) || !['Published', 'Hidden'].includes(status)) return res.status(400).json({ success: false, message: 'Invalid review or status.' });
+    try {
+        const review = await CustomerReview.findByIdAndUpdate(reviewId, { status }, { new: true });
+        if (!review) return res.status(404).json({ success: false, message: 'Review not found.' });
+        res.json({ success: true });
+    } catch (err) { res.status(500).json({ success: false, message: 'Could not update the review.' }); }
+});
+
+app.post('/api/admin/subscriptions/reset', checkAdminAuth, async (req, res) => {
+    const userId = String(req.body.userId || '');
+    if (!mongoose.isValidObjectId(userId)) return res.status(400).json({ success: false, message: 'Choose a valid customer account.' });
+    try {
+        const user = await UserAccount.findByIdAndUpdate(userId, { $set: {
+            subscriptionTier: 'None (Unpaid)',
+            subscriptionStatus: 'Inactive',
+            subscriptionPaidAt: null,
+            subscriptionExpiresAt: null
+        } }, { new: true, projection: { password: 0 } });
+        if (!user) return res.status(404).json({ success: false, message: 'Customer account not found.' });
+        return res.json({ success: true });
+    } catch (err) {
+        console.error('Admin subscription reset error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not reset this customer plan.' });
+    }
+});
+
 app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
     try {
         const now = new Date();
-
         await UserAccount.updateMany(
             { subscriptionStatus: 'Active', subscriptionExpiresAt: { $lte: now } },
             { $set: { subscriptionStatus: 'Expired' } }
         );
-
         const [users, tickets, payfastRevenueRows] = await Promise.all([
             UserAccount.find({}, { password: 0 }).sort({ fullName: 1 }).lean(),
             SupportRequest.find({}, { remotePassword: 0 }).lean(),
@@ -984,16 +1009,11 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
                 { $group: { _id: null, cents: { $sum: '$amount' }, count: { $sum: 1 } } }
             ])
         ]);
-
         const activeSubscribers = users.filter(user => user.subscriptionStatus === 'Active');
         const inactiveUsers = users.filter(user => user.subscriptionStatus !== 'Active');
-        const activeTickets = tickets.filter(ticket =>
-            !['Resolved', 'Completed'].includes(ticket.status)
-        ).length;
-
+        const activeTickets = tickets.filter(ticket => !['Resolved', 'Completed'].includes(ticket.status)).length;
         const confirmedPlanRevenue = (payfastRevenueRows[0]?.cents || 0) / 100;
         const confirmedPaymentCount = payfastRevenueRows[0]?.count || 0;
-
         res.json({
             users,
             activeSubscribers,
@@ -1008,13 +1028,8 @@ app.get('/api/admin/overview-data', checkAdminAuth, async (req, res) => {
         });
     } catch (err) {
         console.error('Admin overview error:', err.message);
-        res.status(500).json({
-            error: true,
-            message: 'Could not load admin overview.'
-        });
+        res.status(500).json({ error: true, message: 'Could not load admin overview.' });
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 PRODUCTION ENGINE ACTIVE ON PORT ${PORT}`);
-});
+app.listen(PORT, () => { console.log(`🚀 PRODUCTION ENGINE ACTIVE ON PORT ${PORT}`); });
