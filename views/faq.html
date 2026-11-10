@@ -5,302 +5,455 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
+
   <title>IT Elements | Frequently Asked Questions</title>
+  <meta name="description" content="Find answers to common questions about IT Elements support, support plans, payments, remote assistance and customer tickets.">
 
   <style>
+    :root {
+      --red: #e00000;
+      --red-dark: #b00000;
+      --black: #111111;
+      --text: #292929;
+      --muted: #666666;
+      --light: #f7f7f7;
+      --border: #e7e7e7;
+      --white: #ffffff;
+      --page-width: 1600px;
+    }
+
     * {
       box-sizing: border-box;
     }
 
-    :root {
-      --red: #e00000;
-      --red-dark: #b00000;
-      --text: #171717;
-      --muted: #666666;
-      --border: #e7e7e7;
-      --light: #f7f7f8;
-      --white: #ffffff;
+    html {
+      width: 100%;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
     }
 
     body {
+      width: 100%;
+      min-width: 320px;
       margin: 0;
       background: var(--white);
       color: var(--text);
-      font-family: "Segoe UI", Arial, sans-serif;
-      line-height: 1.6;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
     }
 
     a {
       color: inherit;
     }
 
+    /* HEADER */
+
     .site-header {
+      width: 100%;
       background: #ffffff;
       border-bottom: 1px solid var(--border);
+      position: relative;
+      z-index: 10;
     }
 
     .header-inner {
-      width: min(100% - 40px, 1280px);
-      min-height: 88px;
-      margin: auto;
+      width: calc(100% - 64px);
+      max-width: var(--page-width);
+      min-height: 94px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 25px;
+      gap: 35px;
     }
 
     .logo {
       display: inline-flex;
       align-items: center;
-      flex-shrink: 0;
+      flex: 0 0 auto;
+      text-decoration: none;
     }
 
     .logo img {
       display: block;
-      width: 205px;
+      width: 220px;
+      max-width: 100%;
       height: auto;
-      max-height: 65px;
+      max-height: 72px;
       object-fit: contain;
       object-position: left center;
     }
 
-    .navigation {
+    .main-nav {
       display: flex;
       align-items: center;
       justify-content: flex-end;
       flex-wrap: wrap;
-      gap: 5px;
+      gap: 7px;
     }
 
-    .navigation a {
+    .main-nav a {
       display: inline-flex;
       align-items: center;
-      min-height: 40px;
-      padding: 8px 11px;
-      border-radius: 5px;
+      justify-content: center;
+      padding: 10px 13px;
+      border-radius: 6px;
       color: #333333;
-      text-decoration: none;
       font-size: 13px;
-      font-weight: 600;
-      transition: background .2s, color .2s;
+      font-weight: 700;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.2s ease, color 0.2s ease;
     }
 
-    .navigation a:hover,
-    .navigation a:focus-visible,
-    .navigation a[aria-current="page"] {
+    .main-nav a:hover,
+    .main-nav a:focus-visible {
       color: var(--red);
-      background: #f5f5f5;
+      background: #fff1f1;
+      outline: none;
     }
 
-    .navigation a.portal-link {
-      background: var(--red);
+    .main-nav a[aria-current="page"] {
+      color: var(--red);
+      background: #fff1f1;
+    }
+
+    .main-nav a.portal-link {
       color: #ffffff;
-      padding-inline: 16px;
+      background: var(--red);
+      padding-left: 17px;
+      padding-right: 17px;
     }
 
-    .navigation a.portal-link:hover {
+    .main-nav a.portal-link:hover {
+      color: #ffffff;
       background: var(--red-dark);
     }
 
-    main {
-      width: min(100% - 40px, 950px);
-      margin: 45px auto 0;
+    /* PAGE WIDTH */
+
+    .page-container {
+      width: calc(100% - 64px);
+      max-width: var(--page-width);
+      margin: 0 auto;
     }
 
-    .intro {
-      padding: clamp(27px, 5vw, 48px);
-      margin-bottom: 25px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
+    /* HERO */
+
+    .faq-hero {
+      width: 100%;
+      padding: 65px 0 45px;
       background: #ffffff;
-      box-shadow: 0 5px 22px rgba(0, 0, 0, .035);
+    }
+
+    .hero-panel {
+      width: 100%;
+      min-height: 260px;
+      padding: 48px 55px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #f7f7f7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 35px;
+    }
+
+    .hero-copy {
+      min-width: 0;
+      max-width: 920px;
     }
 
     .eyebrow {
       display: inline-block;
+      margin-bottom: 12px;
       color: var(--red);
       font-size: 12px;
       font-weight: 800;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
     }
 
     h1 {
-      margin: 10px 0 12px;
-      color: #111111;
-      font-size: clamp(30px, 5vw, 44px);
-      line-height: 1.15;
-      letter-spacing: -1px;
+      margin: 0 0 16px;
+      color: var(--black);
+      font-size: clamp(38px, 5vw, 60px);
+      line-height: 1.1;
+      letter-spacing: -1.5px;
     }
 
-    .intro p {
-      max-width: 720px;
+    .hero-copy p {
+      max-width: 780px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .hero-mark {
+      width: 130px;
+      height: 130px;
+      flex: 0 0 130px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1px solid #eeeeee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--red);
+      font-size: 58px;
+      font-weight: 800;
+    }
+
+    /* FAQ CONTENT */
+
+    .faq-section {
+      padding: 35px 0 75px;
+    }
+
+    .section-heading {
+      max-width: 850px;
+      margin-bottom: 30px;
+    }
+
+    .section-heading h2 {
+      margin: 0 0 10px;
+      color: var(--black);
+      font-size: clamp(27px, 3vw, 36px);
+      line-height: 1.25;
+    }
+
+    .section-heading p {
       margin: 0;
       color: var(--muted);
       font-size: 15px;
+      line-height: 1.8;
     }
 
-    .faq-section {
-      padding: clamp(22px, 4vw, 35px);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #ffffff;
-    }
-
-    .faq-section h2 {
-      margin: 0 0 5px;
-      color: #171717;
-      font-size: 22px;
-    }
-
-    .section-description {
-      margin: 0 0 12px;
-      color: var(--muted);
-      font-size: 14px;
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      width: 100%;
     }
 
     .faq-item {
-      padding: 19px 0;
-      border-top: 1px solid var(--border);
+      min-width: 0;
+      padding: 27px 29px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: #ffffff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .faq-item:hover {
+      border-color: #e7aaaa;
+      box-shadow: 0 9px 25px rgba(0, 0, 0, 0.045);
+    }
+
+    .faq-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 35px;
+      height: 35px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      background: #fff0f0;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 900;
     }
 
     .faq-item h3 {
-      position: relative;
-      margin: 0 0 7px;
-      padding-left: 17px;
-      color: #171717;
-      font-size: 16px;
-      line-height: 1.45;
-    }
-
-    .faq-item h3::before {
-      position: absolute;
-      left: 0;
-      top: 0;
-      color: var(--red);
-      content: "+";
+      margin: 0 0 10px;
+      color: var(--black);
       font-size: 19px;
-      font-weight: 800;
+      line-height: 1.4;
     }
 
     .faq-item p {
       margin: 0;
-      padding-left: 17px;
       color: var(--muted);
       font-size: 14px;
+      line-height: 1.85;
     }
 
-    .security-note {
-      margin-top: 22px;
-      padding: 20px;
-      border-left: 4px solid var(--red);
-      border-radius: 5px;
-      background: var(--light);
+    /* CONTACT PANEL */
+
+    .contact-section {
+      padding: 0 0 75px;
     }
 
-    .security-note h3 {
-      margin: 0 0 6px;
-      color: #171717;
-      font-size: 16px;
+    .contact-panel {
+      width: 100%;
+      padding: 42px 45px;
+      border-radius: 12px;
+      background: var(--black);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 25px;
     }
 
-    .security-note p {
+    .contact-copy {
+      min-width: 0;
+      flex: 1 1 400px;
+    }
+
+    .contact-copy .eyebrow {
+      color: #ff5555;
+    }
+
+    .contact-copy h2 {
+      margin: 0 0 10px;
+      color: #ffffff;
+      font-size: clamp(25px, 3vw, 34px);
+      line-height: 1.25;
+    }
+
+    .contact-copy p {
+      max-width: 650px;
       margin: 0;
-      color: var(--muted);
-      font-size: 14px;
+      color: #cccccc;
+      font-size: 15px;
+      line-height: 1.8;
     }
 
-    .cta-section {
-      margin-top: 25px;
-      padding: 28px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--light);
-    }
-
-    .cta-section h2 {
-      margin: 0 0 7px;
-      color: #171717;
-      font-size: 21px;
-    }
-
-    .cta-section p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .cta-buttons {
+    .contact-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 11px;
-      margin-top: 19px;
+      gap: 12px;
     }
 
-    .btn {
+    .button {
+      min-height: 48px;
+      padding: 12px 20px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 44px;
-      padding: 11px 18px;
       border: 1px solid var(--red);
-      border-radius: 5px;
+      border-radius: 6px;
       background: var(--red);
       color: #ffffff;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 800;
       text-decoration: none;
-      transition: background .2s, border-color .2s;
+      transition: background 0.2s ease;
     }
 
-    .btn:hover {
+    .button:hover {
       background: var(--red-dark);
       border-color: var(--red-dark);
     }
 
-    .btn.secondary {
-      background: #ffffff;
-      color: #222222;
-      border-color: #cccccc;
+    .button.secondary {
+      background: transparent;
+      border-color: #777777;
+      color: #ffffff;
     }
 
-    .btn.secondary:hover {
-      background: #eeeeee;
-      border-color: #999999;
+    .button.secondary:hover {
+      border-color: #ffffff;
+      background: #252525;
     }
 
-    .footer {
-      margin-top: 55px;
-      padding: 25px 20px;
-      border-top: 1px solid var(--border);
-      color: #777777;
-      text-align: center;
-      font-size: 13px;
+    /* FOOTER */
+
+    .site-footer {
+      width: 100%;
+      padding: 30px 0;
+      background: #111111;
+      color: #ffffff;
     }
 
-    .footer p {
-      margin: 3px 0;
+    .footer-inner {
+      width: calc(100% - 64px);
+      max-width: var(--page-width);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
     }
 
-    @media (max-width: 900px) {
+    .footer-brand {
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .footer-copy {
+      color: #bdbdbd;
+      font-size: 12px;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 17px;
+    }
+
+    .footer-links a {
+      color: #d0d0d0;
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: #ff5555;
+    }
+
+    /* TABLET */
+
+    @media (max-width: 1050px) {
       .header-inner {
+        width: calc(100% - 40px);
+        padding: 15px 0;
         align-items: flex-start;
         flex-direction: column;
-        justify-content: center;
-        padding-top: 15px;
-        padding-bottom: 15px;
-        gap: 12px;
+        gap: 13px;
       }
 
-      .navigation {
+      .main-nav {
+        width: 100%;
         justify-content: flex-start;
+      }
+
+      .hero-panel {
+        padding: 38px;
+      }
+
+      .hero-mark {
+        width: 100px;
+        height: 100px;
+        flex-basis: 100px;
+        font-size: 45px;
+      }
+
+      .faq-grid {
+        gap: 15px;
       }
     }
 
-    @media (max-width: 650px) {
+    /* MOBILE */
+
+    @media (max-width: 700px) {
       .header-inner,
-      main {
-        width: min(100% - 28px, 950px);
+      .page-container,
+      .footer-inner {
+        width: calc(100% - 32px);
+      }
+
+      .header-inner {
+        min-height: auto;
+        padding: 14px 0 13px;
+        gap: 12px;
       }
 
       .logo img {
@@ -308,45 +461,126 @@
         max-height: 55px;
       }
 
-      .navigation {
-        gap: 3px;
+      .main-nav {
+        justify-content: flex-start;
+        gap: 5px;
       }
 
-      .navigation a {
-        min-height: 36px;
-        padding: 7px 9px;
-        font-size: 12px;
+      .main-nav a {
+        padding: 8px 9px;
+        font-size: 11px;
       }
 
-      main {
-        margin-top: 25px;
+      .main-nav a.portal-link {
+        padding-left: 11px;
+        padding-right: 11px;
       }
 
-      .intro {
-        padding: 25px 21px;
+      .faq-hero {
+        padding: 28px 0 25px;
+      }
+
+      .hero-panel {
+        min-height: auto;
+        padding: 29px 23px;
+        border-radius: 10px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 22px;
+      }
+
+      h1 {
+        font-size: clamp(34px, 10vw, 45px);
+        letter-spacing: -1px;
+      }
+
+      .hero-copy p {
+        font-size: 15px;
+      }
+
+      .hero-mark {
+        width: 65px;
+        height: 65px;
+        flex-basis: 65px;
+        font-size: 32px;
       }
 
       .faq-section {
-        padding: 21px;
+        padding: 25px 0 45px;
       }
 
-      .cta-section {
-        padding: 22px;
+      .section-heading {
+        margin-bottom: 22px;
       }
 
-      .cta-buttons {
+      .section-heading h2 {
+        font-size: 27px;
+      }
+
+      .faq-grid {
+        grid-template-columns: 1fr;
+        gap: 13px;
+      }
+
+      .faq-item {
+        padding: 23px 21px;
+      }
+
+      .faq-item h3 {
+        font-size: 18px;
+      }
+
+      .contact-section {
+        padding-bottom: 45px;
+      }
+
+      .contact-panel {
+        padding: 29px 23px;
+        border-radius: 10px;
+        align-items: flex-start;
         flex-direction: column;
       }
 
-      .btn {
+      .contact-actions {
         width: 100%;
+      }
+
+      .contact-actions .button {
+        flex: 1 1 auto;
+      }
+
+      .footer-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .footer-links {
+        gap: 12px;
       }
     }
 
     @media (max-width: 380px) {
-      .navigation a {
-        font-size: 11px;
-        padding: 6px 7px;
+      .header-inner,
+      .page-container,
+      .footer-inner {
+        width: calc(100% - 24px);
+      }
+
+      .main-nav a {
+        padding: 7px;
+        font-size: 10px;
+      }
+
+      .hero-panel {
+        padding: 24px 18px;
+      }
+
+      .faq-item {
+        padding: 20px 17px;
+      }
+
+      .contact-panel {
+        padding: 25px 18px;
       }
     }
   </style>
@@ -359,13 +593,12 @@
 
       <a class="logo" href="/" aria-label="IT Elements Home">
         <img
-          src="/assets/itel-support-logo-cropped.png"
+          src="/assets/itel-support-logo.png"
           alt="IT Elements"
-          onerror="this.onerror=null;this.src='/assets/itel-support-logo.png';"
         >
       </a>
 
-      <nav class="navigation" aria-label="Main navigation">
+      <nav class="main-nav" aria-label="Main navigation">
         <a href="/">Home</a>
         <a href="/services">Services</a>
         <a href="/onsite-support">On-site</a>
@@ -374,7 +607,7 @@
         <a href="/faq" aria-current="page">FAQ</a>
         <a href="/contact">Contact</a>
         <a href="/tools/invoices">Invoice Studio</a>
-        <a href="/client/login" class="portal-link">Client Portal</a>
+        <a class="portal-link" href="/client/login">Client Portal</a>
       </nav>
 
     </div>
@@ -382,105 +615,209 @@
 
   <main>
 
-    <section class="intro">
-      <span class="eyebrow">Help Centre</span>
-      <h1>Frequently Asked Questions</h1>
-      <p>
-        Find answers to common questions about IT Elements support,
-        service plans, payments, remote assistance and your customer portal.
-        If you need more help, our team is available through the contact page.
-      </p>
-    </section>
+    <!-- FAQ HERO -->
 
-    <section class="faq-section" aria-labelledby="faq-heading">
+    <section class="faq-hero">
+      <div class="page-container">
 
-      <h2 id="faq-heading">How can we help?</h2>
-      <p class="section-description">
-        Here are some useful answers to help you get started.
-      </p>
+        <div class="hero-panel">
 
-      <article class="faq-item">
-        <h3>When is support available?</h3>
-        <p>
-          Monday to Friday, 08:00–17:00 South African time (SAST).
-          Send a support request and the team can follow up during support hours.
-        </p>
-      </article>
+          <div class="hero-copy">
 
-      <article class="faq-item">
-        <h3>How do I request help?</h3>
-        <p>
-          Use the Request Help form to describe the problem.
-          You can also sign in to the client portal to submit and track tickets.
-        </p>
-      </article>
+            <span class="eyebrow">IT Elements Help Centre</span>
 
-      <article class="faq-item">
-        <h3>Do I need a support plan?</h3>
-        <p>
-          No. You can choose a 30-day plan or request one-time hourly
-          incident support. Plan details and prices are listed on the Plans page.
-        </p>
-      </article>
+            <h1>Frequently asked questions.</h1>
 
-      <article class="faq-item">
-        <h3>How does payment work?</h3>
-        <p>
-          Pay securely through PayFast hosted checkout. Plans are one-time
-          30-day payments and require manual renewal. Your plan is activated
-          after PayFast confirms the payment.
-        </p>
-      </article>
+            <p>
+              Find answers to common questions about requesting
+              IT assistance, support plans, payments, remote
+              sessions and following your support tickets.
+            </p>
 
-      <article class="faq-item">
-        <h3>When should I provide my remote session password?</h3>
-        <p>
-          Only when you are ready and speaking with an IT Elements engineer.
-          Never put your account password or payment card details in a support ticket.
-        </p>
-      </article>
+          </div>
 
-      <article class="faq-item">
-        <h3>How can I follow my ticket?</h3>
-        <p>
-          Sign in to your client portal to view support ticket statuses
-          and your plan information.
-        </p>
-      </article>
+          <div class="hero-mark" aria-hidden="true">?</div>
 
-      <div class="security-note">
-        <h3>Keep your information safe</h3>
-        <p>
-          IT Elements will never need you to include your banking password,
-          email password or payment card details in a support request.
-          Share remote-session details only when you are ready to receive assistance.
-        </p>
+        </div>
+
       </div>
-
     </section>
 
-    <section class="cta-section">
-      <h2>Still need assistance?</h2>
-      <p>
-        If you cannot find the answer you need, contact us or submit
-        a support request so we can assist you.
-      </p>
+    <!-- QUESTIONS -->
 
-      <div class="cta-buttons">
-        <a class="btn" href="/support">Request Help</a>
-        <a class="btn secondary" href="/contact">Contact IT Elements</a>
+    <section class="faq-section">
+      <div class="page-container">
+
+        <div class="section-heading">
+
+          <span class="eyebrow">Help and information</span>
+
+          <h2>How can we help you?</h2>
+
+          <p>
+            Browse the questions below to understand how the
+            IT Elements support process works.
+          </p>
+
+        </div>
+
+        <div class="faq-grid">
+
+          <article class="faq-item">
+
+            <div class="faq-number">01</div>
+
+            <h3>When is support available?</h3>
+
+            <p>
+              Monday to Friday, 08:00–17:00 South African time
+              (SAST). Send a support request and the team can
+              follow up during support hours.
+            </p>
+
+          </article>
+
+          <article class="faq-item">
+
+            <div class="faq-number">02</div>
+
+            <h3>How do I request help?</h3>
+
+            <p>
+              Use the Request Help form to describe the problem.
+              You can also sign in to the client portal to submit
+              and track tickets.
+            </p>
+
+          </article>
+
+          <article class="faq-item">
+
+            <div class="faq-number">03</div>
+
+            <h3>Do I need a support plan?</h3>
+
+            <p>
+              No. You can choose a 30-day plan or request
+              one-time hourly incident support. Plan details
+              and prices are listed on the Plans page.
+            </p>
+
+          </article>
+
+          <article class="faq-item">
+
+            <div class="faq-number">04</div>
+
+            <h3>How does payment work?</h3>
+
+            <p>
+              Pay securely through PayFast hosted checkout.
+              Plans are one-time 30-day payments and require
+              manual renewal. Your plan is activated after
+              PayFast confirms the payment.
+            </p>
+
+          </article>
+
+          <article class="faq-item">
+
+            <div class="faq-number">05</div>
+
+            <h3>When should I provide my remote session password?</h3>
+
+            <p>
+              Only when you are ready and speaking with an
+              IT Elements engineer. Never put your account
+              password or payment card details in a support ticket.
+            </p>
+
+          </article>
+
+          <article class="faq-item">
+
+            <div class="faq-number">06</div>
+
+            <h3>How can I follow my ticket?</h3>
+
+            <p>
+              Sign in to your client portal to view support
+              ticket statuses and your plan information.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CONTACT CTA -->
+
+    <section class="contact-section">
+      <div class="page-container">
+
+        <div class="contact-panel">
+
+          <div class="contact-copy">
+
+            <span class="eyebrow">Still need assistance?</span>
+
+            <h2>Couldn't find your answer?</h2>
+
+            <p>
+              If you need more information or want to explain
+              a technical issue, contact IT Elements or submit
+              a support request.
+            </p>
+
+          </div>
+
+          <div class="contact-actions">
+
+            <a class="button" href="/support">
+              Request Help
+            </a>
+
+            <a class="button secondary" href="/contact">
+              Contact Us
+            </a>
+
+          </div>
+
+        </div>
+
       </div>
     </section>
 
   </main>
 
-  <footer class="footer">
-    <p>IT Elements Support · South Africa</p>
-    <p>&copy; <span id="current-year"></span> IT Elements. All rights reserved.</p>
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+
+      <div class="footer-brand">
+        IT Elements Support · South Africa
+      </div>
+
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/about">About</a>
+        <a href="/faq">FAQ</a>
+        <a href="/contact">Contact</a>
+      </div>
+
+      <div class="footer-copy">
+        © <span id="currentYear"></span> IT Elements. All rights reserved.
+      </div>
+
+    </div>
   </footer>
 
   <script>
-    document.getElementById("current-year").textContent =
+    document.getElementById("currentYear").textContent =
       new Date().getFullYear();
   </script>
 
