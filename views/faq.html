@@ -1,17 +1,488 @@
+
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#ffffff"><title>IT Elements | Frequently Asked Questions</title>
-<style>*{box-sizing:border-box}body{margin:0;background:#0d0d0d;color:#e5e5e5;font:16px/1.6 'Segoe UI',Tahoma,sans-serif}.nav{width:min(100% - 32px,1280px);margin:18px auto 0;padding:14px 20px;background:#141414;border:1px solid #272727;border-radius:8px;display:flex;justify-content:space-between;align-items:center;gap:18px}.brand{display:flex;align-items:center;gap:9px;font-weight:800;color:#ff4545;text-decoration:none;font-size:20px}.brand img{width:46px;height:46px;object-fit:cover;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(255,255,255,.15);background:#fff;flex:none}.links{display:flex;flex-wrap:wrap;gap:8px 18px}.links a{color:#bdbdbd;text-decoration:none;font-size:13px;padding:8px 10px;border:1px solid transparent;border-radius:6px;transition:all .2s}.links a:hover,.links a:focus-visible,.links a[aria-current="page"]{color:#fff;background:#202020;border-color:#353535}.links a:last-child{color:#fff;background:#8f2020;border-color:#b52b2b}.links a:last-child:hover{background:#aa2828}.links a:hover{color:#ff5555}main{width:min(100% - 32px,920px);margin:42px auto}.card{background:#141414;border:1px solid #292929;border-radius:10px;padding:clamp(22px,4vw,38px);margin-bottom:18px}.eyebrow{color:#ff5555;text-transform:uppercase;letter-spacing:1.5px;font-size:12px;font-weight:800}h1{font-size:clamp(30px,5vw,44px);color:#fff;margin:9px 0 22px}.faq-item{padding:18px 0;border-top:1px solid #292929}.faq-item h2{font-size:17px;color:#fff;margin:0 0 6px}.faq-item p{margin:0;color:#9a9a9a;font-size:14px}.cta{display:flex;flex-wrap:wrap;gap:12px}.btn{display:inline-block;padding:11px 17px;border-radius:5px;background:#ff3333;color:#fff;text-decoration:none;font-weight:800;font-size:14px}.btn.secondary{background:#202020;border:1px solid #393939}.footer{text-align:center;color:#777;padding:20px;font-size:13px}@media(max-width:700px){.nav{align-items:flex-start;flex-direction:column}main{margin:24px auto}}.brand-support{color:#fff!important}</style>    <link rel="stylesheet" href="/assets/responsive.css?v=1">
-    <link rel="stylesheet" href="/assets/theme.css?v=13">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>IT Elements | Frequently Asked Questions</title>
 
-<link rel="stylesheet" href="/assets/white-overrides.css?v=1">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --red: #e00000;
+      --red-dark: #b00000;
+      --text: #171717;
+      --muted: #666666;
+      --border: #e7e7e7;
+      --light: #f7f7f8;
+      --white: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      background: var(--white);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .site-header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      width: min(100% - 40px, 1280px);
+      min-height: 88px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      display: block;
+      width: 205px;
+      height: auto;
+      max-height: 65px;
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .navigation {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .navigation a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 40px;
+      padding: 8px 11px;
+      border-radius: 5px;
+      color: #333333;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background .2s, color .2s;
+    }
+
+    .navigation a:hover,
+    .navigation a:focus-visible,
+    .navigation a[aria-current="page"] {
+      color: var(--red);
+      background: #f5f5f5;
+    }
+
+    .navigation a.portal-link {
+      background: var(--red);
+      color: #ffffff;
+      padding-inline: 16px;
+    }
+
+    .navigation a.portal-link:hover {
+      background: var(--red-dark);
+    }
+
+    main {
+      width: min(100% - 40px, 950px);
+      margin: 45px auto 0;
+    }
+
+    .intro {
+      padding: clamp(27px, 5vw, 48px);
+      margin-bottom: 25px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+      box-shadow: 0 5px 22px rgba(0, 0, 0, .035);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      color: var(--red);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 10px 0 12px;
+      color: #111111;
+      font-size: clamp(30px, 5vw, 44px);
+      line-height: 1.15;
+      letter-spacing: -1px;
+    }
+
+    .intro p {
+      max-width: 720px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .faq-section {
+      padding: clamp(22px, 4vw, 35px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+    }
+
+    .faq-section h2 {
+      margin: 0 0 5px;
+      color: #171717;
+      font-size: 22px;
+    }
+
+    .section-description {
+      margin: 0 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .faq-item {
+      padding: 19px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .faq-item h3 {
+      position: relative;
+      margin: 0 0 7px;
+      padding-left: 17px;
+      color: #171717;
+      font-size: 16px;
+      line-height: 1.45;
+    }
+
+    .faq-item h3::before {
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--red);
+      content: "+";
+      font-size: 19px;
+      font-weight: 800;
+    }
+
+    .faq-item p {
+      margin: 0;
+      padding-left: 17px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .security-note {
+      margin-top: 22px;
+      padding: 20px;
+      border-left: 4px solid var(--red);
+      border-radius: 5px;
+      background: var(--light);
+    }
+
+    .security-note h3 {
+      margin: 0 0 6px;
+      color: #171717;
+      font-size: 16px;
+    }
+
+    .security-note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .cta-section {
+      margin-top: 25px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--light);
+    }
+
+    .cta-section h2 {
+      margin: 0 0 7px;
+      color: #171717;
+      font-size: 21px;
+    }
+
+    .cta-section p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 11px;
+      margin-top: 19px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 11px 18px;
+      border: 1px solid var(--red);
+      border-radius: 5px;
+      background: var(--red);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      transition: background .2s, border-color .2s;
+    }
+
+    .btn:hover {
+      background: var(--red-dark);
+      border-color: var(--red-dark);
+    }
+
+    .btn.secondary {
+      background: #ffffff;
+      color: #222222;
+      border-color: #cccccc;
+    }
+
+    .btn.secondary:hover {
+      background: #eeeeee;
+      border-color: #999999;
+    }
+
+    .footer {
+      margin-top: 55px;
+      padding: 25px 20px;
+      border-top: 1px solid var(--border);
+      color: #777777;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .footer p {
+      margin: 3px 0;
+    }
+
+    @media (max-width: 900px) {
+      .header-inner {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        gap: 12px;
+      }
+
+      .navigation {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .header-inner,
+      main {
+        width: min(100% - 28px, 950px);
+      }
+
+      .logo img {
+        width: 165px;
+        max-height: 55px;
+      }
+
+      .navigation {
+        gap: 3px;
+      }
+
+      .navigation a {
+        min-height: 36px;
+        padding: 7px 9px;
+        font-size: 12px;
+      }
+
+      main {
+        margin-top: 25px;
+      }
+
+      .intro {
+        padding: 25px 21px;
+      }
+
+      .faq-section {
+        padding: 21px;
+      }
+
+      .cta-section {
+        padding: 22px;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 380px) {
+      .navigation a {
+        font-size: 11px;
+        padding: 6px 7px;
+      }
+    }
+  </style>
 </head>
-<body><nav class="nav" aria-label="Main navigation"><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="" width="32" height="32"><span>IT Elements.</span><span class="brand-support">support</span></a><div class="links"><a href="/tools/invoices">Invoice Studio</a><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/about">About</a><a href="/faq" aria-current="page">FAQ</a><a href="/contact">Contact</a><a href="/client/login">Client portal</a></div></nav>
-<main><section class="card"><span class="eyebrow">Help centre</span><h1>Frequently asked questions</h1>
-<article class="faq-item"><h2>When is support available?</h2><p>Monday to Friday, 08:00–17:00 South African time (SAST). Send a support request and the team can follow up during support hours.</p></article>
-<article class="faq-item"><h2>How do I request help?</h2><p>Use the Request Help form to describe the problem. You can also sign in to the client portal to submit and track tickets.</p></article>
-<article class="faq-item"><h2>Do I need a support plan?</h2><p>No. You can choose a 30-day plan or request one-time hourly incident support. Plan details and prices are listed on the Plans page.</p></article>
-<article class="faq-item"><h2>How does payment work?</h2><p>Pay securely through PayFast hosted checkout. Plans are one-time 30-day payments and require manual renewal. Your plan is activated after PayFast confirms the payment.</p></article>
-<article class="faq-item"><h2>When should I provide my remote session password?</h2><p>Only when you are ready and speaking with an IT Elements engineer. Never put your account password or payment card details in a support ticket.</p></article>
-<article class="faq-item"><h2>How can I follow my ticket?</h2><p>Sign in to your client portal to view support ticket statuses and your plan information.</p></article>
-<div class="cta"><a class="btn" href="/support">Request help</a><a class="btn secondary" href="/contact">Contact us</a></div></section><footer class="footer">IT Elements Support · South Africa</footer></main></body></html>
+
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+
+      <a class="logo" href="/" aria-label="IT Elements Home">
+        <img
+          src="/assets/itel-support-logo-cropped.png"
+          alt="IT Elements"
+          onerror="this.onerror=null;this.src='/assets/itel-support-logo.png';"
+        >
+      </a>
+
+      <nav class="navigation" aria-label="Main navigation">
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/onsite-support">On-site</a>
+        <a href="/pricing">Plans</a>
+        <a href="/about">About</a>
+        <a href="/faq" aria-current="page">FAQ</a>
+        <a href="/contact">Contact</a>
+        <a href="/tools/invoices">Invoice Studio</a>
+        <a href="/client/login" class="portal-link">Client Portal</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <main>
+
+    <section class="intro">
+      <span class="eyebrow">Help Centre</span>
+      <h1>Frequently Asked Questions</h1>
+      <p>
+        Find answers to common questions about IT Elements support,
+        service plans, payments, remote assistance and your customer portal.
+        If you need more help, our team is available through the contact page.
+      </p>
+    </section>
+
+    <section class="faq-section" aria-labelledby="faq-heading">
+
+      <h2 id="faq-heading">How can we help?</h2>
+      <p class="section-description">
+        Here are some useful answers to help you get started.
+      </p>
+
+      <article class="faq-item">
+        <h3>When is support available?</h3>
+        <p>
+          Monday to Friday, 08:00–17:00 South African time (SAST).
+          Send a support request and the team can follow up during support hours.
+        </p>
+      </article>
+
+      <article class="faq-item">
+        <h3>How do I request help?</h3>
+        <p>
+          Use the Request Help form to describe the problem.
+          You can also sign in to the client portal to submit and track tickets.
+        </p>
+      </article>
+
+      <article class="faq-item">
+        <h3>Do I need a support plan?</h3>
+        <p>
+          No. You can choose a 30-day plan or request one-time hourly
+          incident support. Plan details and prices are listed on the Plans page.
+        </p>
+      </article>
+
+      <article class="faq-item">
+        <h3>How does payment work?</h3>
+        <p>
+          Pay securely through PayFast hosted checkout. Plans are one-time
+          30-day payments and require manual renewal. Your plan is activated
+          after PayFast confirms the payment.
+        </p>
+      </article>
+
+      <article class="faq-item">
+        <h3>When should I provide my remote session password?</h3>
+        <p>
+          Only when you are ready and speaking with an IT Elements engineer.
+          Never put your account password or payment card details in a support ticket.
+        </p>
+      </article>
+
+      <article class="faq-item">
+        <h3>How can I follow my ticket?</h3>
+        <p>
+          Sign in to your client portal to view support ticket statuses
+          and your plan information.
+        </p>
+      </article>
+
+      <div class="security-note">
+        <h3>Keep your information safe</h3>
+        <p>
+          IT Elements will never need you to include your banking password,
+          email password or payment card details in a support request.
+          Share remote-session details only when you are ready to receive assistance.
+        </p>
+      </div>
+
+    </section>
+
+    <section class="cta-section">
+      <h2>Still need assistance?</h2>
+      <p>
+        If you cannot find the answer you need, contact us or submit
+        a support request so we can assist you.
+      </p>
+
+      <div class="cta-buttons">
+        <a class="btn" href="/support">Request Help</a>
+        <a class="btn secondary" href="/contact">Contact IT Elements</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>IT Elements Support · South Africa</p>
+    <p>&copy; <span id="current-year"></span> IT Elements. All rights reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById("current-year").textContent =
+      new Date().getFullYear();
+  </script>
+
+</body>
+</html>
