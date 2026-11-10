@@ -1,137 +1,486 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#ffffff">
-    <title>IT Elements - Register Account</title>
-    <style>
-        * { box-sizing:border-box; }
-        body { background:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:20px; display:flex; justify-content:center; align-items:center; min-height:100vh; }
-        .register-container { background:#141414; border:1px solid #222; border-radius:8px; padding:36px 32px; width:100%; max-width:470px; box-shadow:0 4px 15px rgba(0,0,0,.5); }
-        .brand-header { display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:5px; }
-        .brand-header h1 { margin:0; font-size:22px; color:#fff; letter-spacing:1px; }
-        .brand-header span { color:#ff3333; }
-        .sub-header { color:#888; font-size:13px; margin-bottom:26px; text-align:center; line-height:1.6; }
-        .form-group { text-align:left; margin-bottom:18px; }
-        .form-label { font-size:11px; font-weight:bold; color:#aaa; letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px; display:block; }
-        .form-input { background:#0a0a0a; color:#fff; border:1px solid #333; padding:13px 14px; border-radius:4px; width:100%; font-size:15px; }
-        .form-input::placeholder { color:#69717c; }
-        .form-input:focus { outline:2px solid #ff3333; outline-offset:1px; border-color:#ff3333; }
-        .password-wrapper { position:relative; width:100%; }
-        .password-wrapper .form-input { padding-right:75px; }
-        .toggle-password { position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:0; color:#aaa; cursor:pointer; font-size:12px; font-weight:bold; text-transform:uppercase; }
-        .toggle-password:hover { color:#ff3333; }
-        .password-help { margin:7px 0 0; color:#818894; font-size:12px; line-height:1.5; }
-        .password-match { min-height:18px; margin:6px 0 0; font-size:12px; color:#818894; }
-        .password-match.good { color:#4dff4d; }.password-match.bad { color:#ff7777; }
-        .submit-btn { background:#ff2222; color:#fff; border:0; padding:14px; width:100%; border-radius:4px; font-size:14px; font-weight:bold; text-transform:uppercase; letter-spacing:.5px; cursor:pointer; margin-top:8px; transition:background .2s; }
-        .submit-btn:hover { background:#cc0000; }.submit-btn:disabled { opacity:.6; cursor:wait; }
-        .footer-link { text-align:center; margin-top:22px; font-size:13px; color:#888; line-height:1.8; }
-        .footer-link a { color:#ff5555; text-decoration:none; font-weight:bold; }.footer-link a:hover { text-decoration:underline; }
-        .privacy-note { margin:16px 0 0; color:#66707c; font-size:11px; text-align:center; line-height:1.5; }
-        @media(max-width:520px) { body { padding:12px; align-items:flex-start; } .register-container { margin:auto 0; padding:30px 20px; } }
-    </style>
-    <link rel="stylesheet" href="/assets/responsive.css?v=1">
-    <link rel="stylesheet" href="/assets/theme.css?v=13">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>Create Account | IT Elements</title>
+<meta name="description" content="Create your IT Elements customer account to manage support requests and services.">
 
+<link rel="stylesheet" href="/assets/responsive.css?v=1">
+<link rel="stylesheet" href="/assets/theme.css?v=13">
 <link rel="stylesheet" href="/assets/white-overrides.css?v=1">
+
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+margin:0;
+min-height:100vh;
+font-family:Arial,Helvetica,sans-serif;
+background:#fff;
+color:#171717;
+display:flex;
+flex-direction:column;
+}
+a{color:inherit}
+.topbar{
+width:100%;
+border-bottom:1px solid #e8e8e8;
+background:#fff;
+}
+.nav{
+max-width:1180px;
+margin:auto;
+padding:17px 24px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:20px;
+}
+.logo{
+font-size:23px;
+font-weight:900;
+letter-spacing:-1px;
+text-decoration:none;
+white-space:nowrap;
+}
+.logo span{color:#e00000}
+.nav-links{
+display:flex;
+align-items:center;
+gap:24px;
+flex-wrap:wrap;
+}
+.nav-links a{
+font-size:13px;
+font-weight:700;
+text-decoration:none;
+color:#333;
+}
+.nav-links a:hover{color:#e00000}
+.nav-links .nav-button{
+background:#e00000;
+color:#fff;
+padding:11px 17px;
+border-radius:5px;
+}
+.nav-links .nav-button:hover{background:#b00000;color:#fff}
+main{
+flex:1;
+width:100%;
+padding:55px 20px;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+.register-layout{
+width:100%;
+max-width:1000px;
+display:grid;
+grid-template-columns:1fr 1fr;
+border:1px solid #e8e8e8;
+border-radius:12px;
+overflow:hidden;
+background:#fff;
+box-shadow:0 12px 40px rgba(0,0,0,.07);
+}
+.intro-panel{
+background:#171717;
+color:#fff;
+padding:55px 42px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+}
+.intro-label{
+display:inline-block;
+width:max-content;
+padding:7px 11px;
+border:1px solid rgba(255,255,255,.25);
+border-radius:30px;
+font-size:11px;
+font-weight:800;
+letter-spacing:1px;
+text-transform:uppercase;
+color:#fff;
+}
+.intro-panel h1{
+font-size:37px;
+line-height:1.15;
+letter-spacing:-1.3px;
+margin:23px 0 16px;
+}
+.intro-panel h1 span{color:#ff3030}
+.intro-panel>p{
+color:#c9c9c9;
+font-size:15px;
+line-height:1.8;
+margin:0;
+}
+.benefits{
+list-style:none;
+padding:0;
+margin:30px 0 0;
+display:grid;
+gap:17px;
+}
+.benefits li{
+display:flex;
+align-items:flex-start;
+gap:12px;
+font-size:14px;
+line-height:1.6;
+color:#eee;
+}
+.check{
+width:22px;
+height:22px;
+flex:0 0 22px;
+border-radius:50%;
+background:#e00000;
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:13px;
+font-weight:bold;
+}
+.form-panel{padding:43px 42px}
+.form-heading{margin-bottom:27px}
+.form-heading h2{
+font-size:27px;
+letter-spacing:-.7px;
+margin:0 0 9px;
+}
+.form-heading p{
+font-size:14px;
+line-height:1.6;
+color:#666;
+margin:0;
+}
+.form-group{margin-bottom:19px}
+.form-label{
+display:block;
+font-size:12px;
+font-weight:800;
+color:#333;
+margin-bottom:8px;
+}
+.form-input{
+width:100%;
+height:47px;
+padding:12px 14px;
+border:1px solid #d8d8d8;
+border-radius:6px;
+background:#fff;
+color:#171717;
+font-size:14px;
+font-family:inherit;
+outline:none;
+}
+.form-input::placeholder{color:#999}
+.form-input:focus{
+border-color:#e00000;
+box-shadow:0 0 0 3px rgba(224,0,0,.09);
+}
+.password-wrapper{position:relative}
+.password-wrapper .form-input{padding-right:75px}
+.toggle-password{
+position:absolute;
+right:12px;
+top:50%;
+transform:translateY(-50%);
+border:0;
+background:transparent;
+color:#555;
+font-size:11px;
+font-weight:800;
+cursor:pointer;
+padding:7px 3px;
+}
+.toggle-password:hover{color:#e00000}
+.password-help{
+font-size:11px;
+line-height:1.6;
+color:#777;
+margin:7px 0 0;
+}
+.password-match{
+min-height:17px;
+margin:7px 0 0;
+font-size:12px;
+color:#666;
+}
+.password-match.good{color:#16803c}
+.password-match.bad{color:#c00000}
+.submit-btn{
+width:100%;
+min-height:49px;
+border:0;
+border-radius:6px;
+background:#e00000;
+color:#fff;
+font-size:13px;
+font-weight:800;
+letter-spacing:.5px;
+text-transform:uppercase;
+cursor:pointer;
+margin-top:5px;
+transition:background .2s,transform .2s;
+}
+.submit-btn:hover{background:#b00000;transform:translateY(-1px)}
+.submit-btn:disabled{opacity:.65;cursor:wait;transform:none}
+.privacy-note{
+font-size:11px;
+line-height:1.6;
+color:#777;
+text-align:center;
+margin:15px 0 0;
+}
+.footer-link{
+font-size:13px;
+color:#555;
+text-align:center;
+margin-top:22px;
+}
+.footer-link a{
+color:#d00000;
+font-weight:800;
+text-decoration:none;
+}
+.footer-link a:hover{text-decoration:underline}
+footer{
+border-top:1px solid #eee;
+padding:20px;
+text-align:center;
+color:#777;
+font-size:12px;
+}
+@media(max-width:760px){
+.nav{padding:15px 18px}
+.nav-links{gap:13px}
+.nav-links a{font-size:12px}
+main{padding:35px 15px}
+.register-layout{max-width:520px;grid-template-columns:1fr}
+.intro-panel{padding:30px 27px}
+.intro-panel h1{font-size:29px;margin:17px 0 10px}
+.intro-panel>p{font-size:13px}
+.benefits{margin-top:19px;gap:10px}
+.benefits li{font-size:12px}
+.form-panel{padding:32px 27px}
+}
+@media(max-width:480px){
+.nav{align-items:flex-start;flex-direction:column;gap:12px}
+.logo{font-size:21px}
+.nav-links{width:100%;justify-content:space-between;gap:8px}
+.nav-links a{font-size:11px}
+.nav-links .nav-button{padding:9px 11px}
+main{padding:22px 12px}
+.intro-panel{padding:27px 22px}
+.form-panel{padding:28px 21px}
+.form-heading h2{font-size:24px}
+}
+</style>
 </head>
+
 <body>
-    <main class="register-container">
-        <form action="/client/register" method="POST" id="register-form">
-            <div class="brand-header"><h1>IT ELEMENTS<span>.HELP</span></h1></div>
-            <p class="sub-header">Create your client account to manage support requests and service plans.</p>
 
-            <div class="form-group">
-                <label class="form-label" for="full-name">Full name or company name</label>
-                <input type="text" id="full-name" name="fullName" class="form-input" placeholder="IT Elements Support" autocomplete="name" minlength="2" maxlength="100" required>
-            </div>
+<header class="topbar">
+<nav class="nav">
+<a href="/" class="logo">IT ELEMENTS<span>.HELP</span></a>
+<div class="nav-links">
+<a href="/">Home</a>
+<a href="/services">Services</a>
+<a href="/pricing">Pricing</a>
+<a href="/client/login" class="nav-button">Client Login</a>
+</div>
+</nav>
+</header>
 
-            <div class="form-group">
-                <label class="form-label" for="phone">Contact phone number</label>
-                <input type="tel" id="phone" name="phone" class="form-input" placeholder="e.g. 060 618 1229" autocomplete="tel" inputmode="tel" minlength="7" maxlength="25" required>
-            </div>
+<main>
+<div class="register-layout">
 
-            <div class="form-group">
-                <label class="form-label" for="email">Email address</label>
-                <input type="email" id="email" name="email" class="form-input" placeholder="name@company.co.za" autocomplete="email" maxlength="254" required>
-            </div>
+<section class="intro-panel">
+<span class="intro-label">IT Elements Customer Portal</span>
+<h1>Your IT support, <span>all in one place.</span></h1>
+<p>Create your account to access your customer portal and manage your IT support services more easily.</p>
 
-            <div class="form-group">
-                <label class="form-label" for="register-password">Create password</label>
-                <div class="password-wrapper">
-                    <input type="password" id="register-password" name="password" class="form-input" autocomplete="new-password" minlength="12" maxlength="256" required>
-                    <button type="button" class="toggle-password" data-target="register-password" aria-pressed="false">Show</button>
-                </div>
-                <p class="password-help">Use at least 12 characters. Don’t reuse your AnyDesk or TeamViewer session key.</p>
-            </div>
+<ul class="benefits">
+<li><span class="check">✓</span><span>Manage your support requests and keep track of assistance.</span></li>
+<li><span class="check">✓</span><span>Access your customer account and service information.</span></li>
+<li><span class="check">✓</span><span>Keep your contact details in one convenient place.</span></li>
+</ul>
+</section>
 
-            <div class="form-group">
-                <label class="form-label" for="confirm-password">Confirm password</label>
-                <div class="password-wrapper">
-                    <input type="password" id="confirm-password" class="form-input" autocomplete="new-password" minlength="12" maxlength="256" required>
-                    <button type="button" class="toggle-password" data-target="confirm-password" aria-pressed="false">Show</button>
-                </div>
-                <p class="password-match" id="password-match" aria-live="polite"></p>
-            </div>
+<section class="form-panel">
+<div class="form-heading">
+<h2>Create your account</h2>
+<p>Enter your details below to register with IT Elements.</p>
+</div>
 
-            <button type="submit" class="submit-btn" id="submit-button">Create account</button>
-            <p class="privacy-note">Your password is stored securely. We will never ask you to send it to a support engineer.</p>
-            <div class="footer-link">Already have an account? <a href="/client/login">Sign in</a></div>
-        </form>
-    </main>
+<form action="/client/register" method="POST" id="register-form">
 
-    <script>
-        (() => {
-            const form = document.getElementById('register-form');
-            const password = document.getElementById('register-password');
-            const confirmation = document.getElementById('confirm-password');
-            const matchMessage = document.getElementById('password-match');
-            const submitButton = document.getElementById('submit-button');
+<div class="form-group">
+<label class="form-label" for="full-name">Full name or company name</label>
+<input
+type="text"
+id="full-name"
+name="fullName"
+class="form-input"
+placeholder="Your name or company name"
+autocomplete="name"
+minlength="2"
+maxlength="100"
+required>
+</div>
 
-            document.querySelectorAll('.toggle-password').forEach(button => {
-                button.addEventListener('click', () => {
-                    const input = document.getElementById(button.dataset.target);
-                    const show = input.type === 'password';
-                    input.type = show ? 'text' : 'password';
-                    button.textContent = show ? 'Hide' : 'Show';
-                    button.setAttribute('aria-pressed', String(show));
-                });
-            });
+<div class="form-group">
+<label class="form-label" for="phone">Contact phone number</label>
+<input
+type="tel"
+id="phone"
+name="phone"
+class="form-input"
+placeholder="e.g. 060 618 1229"
+autocomplete="tel"
+inputmode="tel"
+minlength="7"
+maxlength="25"
+required>
+</div>
 
-            function updatePasswordMatch() {
-                if (!confirmation.value) {
-                    matchMessage.textContent = '';
-                    matchMessage.className = 'password-match';
-                    return;
-                }
-                const matches = password.value === confirmation.value;
-                matchMessage.textContent = matches ? 'Passwords match.' : 'Passwords do not match.';
-                matchMessage.className = 'password-match ' + (matches ? 'good' : 'bad');
-            }
-            password.addEventListener('input', updatePasswordMatch);
-            confirmation.addEventListener('input', updatePasswordMatch);
+<div class="form-group">
+<label class="form-label" for="email">Email address</label>
+<input
+type="email"
+id="email"
+name="email"
+class="form-input"
+placeholder="name@company.co.za"
+autocomplete="email"
+maxlength="254"
+required>
+</div>
 
-            form.addEventListener('submit', event => {
-                if (password.value.length < 12) {
-                    event.preventDefault();
-                    password.setCustomValidity('Use at least 12 characters.');
-                    password.reportValidity();
-                    password.addEventListener('input', () => password.setCustomValidity(''), { once:true });
-                    return;
-                }
-                if (password.value !== confirmation.value) {
-                    event.preventDefault();
-                    confirmation.setCustomValidity('The passwords must match.');
-                    confirmation.reportValidity();
-                    confirmation.addEventListener('input', () => confirmation.setCustomValidity(''), { once:true });
-                    return;
-                }
-                submitButton.disabled = true;
-                submitButton.textContent = 'Creating account…';
-            });
-        })();
-    </script>
+<div class="form-group">
+<label class="form-label" for="register-password">Create password</label>
+<div class="password-wrapper">
+<input
+type="password"
+id="register-password"
+name="password"
+class="form-input"
+autocomplete="new-password"
+minlength="12"
+maxlength="256"
+required>
+<button type="button" class="toggle-password" data-target="register-password" aria-pressed="false">Show</button>
+</div>
+<p class="password-help">Use at least 12 characters. Never share your password with anyone.</p>
+</div>
+
+<div class="form-group">
+<label class="form-label" for="confirm-password">Confirm password</label>
+<div class="password-wrapper">
+<input
+type="password"
+id="confirm-password"
+class="form-input"
+autocomplete="new-password"
+minlength="12"
+maxlength="256"
+required>
+<button type="button" class="toggle-password" data-target="confirm-password" aria-pressed="false">Show</button>
+</div>
+<p class="password-match" id="password-match" aria-live="polite"></p>
+</div>
+
+<button type="submit" class="submit-btn" id="submit-button">Create account</button>
+
+<p class="privacy-note">Your password is protected. IT Elements will never ask you to send your password to a support engineer.</p>
+
+<div class="footer-link">
+Already have an account? <a href="/client/login">Sign in here</a>
+</div>
+
+</form>
+</section>
+
+</div>
+</main>
+
+<footer>
+© <span id="current-year"></span> IT Elements. All rights reserved.
+</footer>
+
+<script>
+(() => {
+const form = document.getElementById('register-form');
+const password = document.getElementById('register-password');
+const confirmation = document.getElementById('confirm-password');
+const matchMessage = document.getElementById('password-match');
+const submitButton = document.getElementById('submit-button');
+
+document.getElementById('current-year').textContent = new Date().getFullYear();
+
+document.querySelectorAll('.toggle-password').forEach(button => {
+button.addEventListener('click', () => {
+const input = document.getElementById(button.dataset.target);
+const show = input.type === 'password';
+
+input.type = show ? 'text' : 'password';
+button.textContent = show ? 'Hide' : 'Show';
+button.setAttribute('aria-pressed', String(show));
+});
+});
+
+function updatePasswordMatch() {
+confirmation.setCustomValidity('');
+
+if (!confirmation.value) {
+matchMessage.textContent = '';
+matchMessage.className = 'password-match';
+return;
+}
+
+const matches = password.value === confirmation.value;
+
+matchMessage.textContent = matches
+? 'Passwords match.'
+: 'Passwords do not match.';
+
+matchMessage.className = 'password-match ' + (matches ? 'good' : 'bad');
+}
+
+password.addEventListener('input', updatePasswordMatch);
+confirmation.addEventListener('input', updatePasswordMatch);
+
+form.addEventListener('submit', event => {
+password.setCustomValidity('');
+confirmation.setCustomValidity('');
+
+if (password.value.length < 12) {
+event.preventDefault();
+password.setCustomValidity('Use at least 12 characters.');
+password.reportValidity();
+return;
+}
+
+if (password.value !== confirmation.value) {
+event.preventDefault();
+confirmation.setCustomValidity('The passwords must match.');
+confirmation.reportValidity();
+return;
+}
+
+submitButton.disabled = true;
+submitButton.textContent = 'Creating account...';
+});
+})();
+</script>
+
 </body>
 </html>
+
