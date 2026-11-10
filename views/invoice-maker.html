@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#ffffff">
-<meta name="description" content="Create professional invoices, quotations, receipts and pro forma invoices for free. No login required.">
+<meta name="description" content="Create professional invoices, quotations, receipts and pro forma invoices with IT Elements.">
 <title>Invoice & Quote Studio | IT Elements</title>
 
 <style>
@@ -14,9 +14,9 @@
   --red:#e00000;
   --red-dark:#b00000;
   --text:#171717;
-  --muted:#666;
-  --border:#e5e5e5;
-  --soft:#f7f7f7;
+  --muted:#55555e;
+  --border:#e5e5e8;
+  --soft:#f7f7f8;
   --white:#fff;
   --green:#16803c;
   --shadow:0 8px 30px rgba(0,0,0,.06);
@@ -34,55 +34,136 @@ body{
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 a{color:inherit}
+
+/* LOGIN CHECK */
+#authGate{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:#fff;
+}
+#authGate.hidden{display:none!important}
+.auth-card{
+  width:100%;
+  max-width:430px;
+  padding:32px 25px;
+  border:1px solid var(--border);
+  border-radius:14px;
+  text-align:center;
+  box-shadow:var(--shadow);
+}
+.auth-logo{
+  width:46px;
+  height:46px;
+  object-fit:contain;
+  display:block;
+  margin:0 auto 15px;
+}
+.auth-card h1{font-size:23px;margin:0 0 9px}
+.auth-card p{font-size:14px;color:var(--muted);margin:0 0 20px}
+.auth-card a{
+  display:inline-block;
+  padding:11px 20px;
+  background:var(--red);
+  color:#fff;
+  border-radius:8px;
+  text-decoration:none;
+  font-weight:700;
+}
+.auth-card a:hover{background:var(--red-dark)}
+.auth-error{color:#a00000!important}
+
+/* CONTACT PAGE STYLE HEADER */
 .topbar{
   background:#fff;
   border-bottom:1px solid var(--border);
   position:sticky;
   top:0;
-  z-index:20;
+  z-index:1000;
+  box-shadow:0 2px 8px rgba(0,0,0,.035);
 }
 .header{
-  max-width:1450px;
+  width:100%;
   min-height:76px;
   margin:auto;
-  padding:10px 24px;
+  padding:12px 4%;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:20px;
 }
-.brand{display:inline-flex;align-items:center;flex-shrink:0}
+.brand{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+  text-decoration:none;
+  font-size:21px;
+  font-weight:900;
+  white-space:nowrap;
+}
 .brand img{
   display:block;
-  width:205px;
-  height:auto;
-  max-height:65px;
+  width:46px;
+  height:46px;
   object-fit:contain;
-  object-position:left center;
+  background:transparent;
+}
+.brand-support{
+  color:var(--red);
+  font-size:14px;
+  font-weight:700;
+  margin-left:-7px;
 }
 .nav{
   display:flex;
   align-items:center;
-  gap:20px;
+  justify-content:flex-end;
   flex-wrap:wrap;
+  gap:8px 15px;
 }
 .nav a{
   text-decoration:none;
   color:#333;
-  font-size:14px;
-  font-weight:600;
+  font-size:13px;
+  font-weight:700;
+  padding:7px 0;
 }
 .nav a:hover{color:var(--red)}
 .nav .nav-portal{
-  color:var(--red);
+  background:var(--red);
+  color:#fff;
   border:1px solid var(--red);
-  border-radius:8px;
-  padding:8px 13px;
+  border-radius:7px;
+  padding:9px 14px;
 }
+.nav .nav-portal:hover{
+  background:var(--red-dark);
+  border-color:var(--red-dark);
+  color:#fff;
+}
+.menu-toggle{
+  display:none;
+  width:42px;
+  height:42px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  color:#171717;
+  font-size:23px;
+  line-height:1;
+}
+
+/* PAGE */
 .page{
-  max-width:1450px;
+  width:92%;
+  max-width:1500px;
   margin:0 auto;
-  padding:32px 24px 70px;
+  padding:32px 0 70px;
 }
 .intro{
   display:flex;
@@ -97,7 +178,7 @@ a{color:inherit}
   letter-spacing:-1px;
 }
 .intro p{margin:0;color:var(--muted);max-width:700px}
-.public-note{
+.login-note{
   border:1px solid #d8eadc;
   background:#f5fbf6;
   color:#176b32;
@@ -129,9 +210,11 @@ a{color:inherit}
 .btn-dark{background:#202020;border-color:#202020;color:#fff}
 .btn-danger{color:var(--red);border-color:#efcaca}
 .btn-small{padding:7px 10px;font-size:12px}
+
+/* EDITOR LAYOUT */
 .layout{
   display:grid;
-  grid-template-columns:minmax(0,1.1fr) minmax(420px,.9fr);
+  grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
   gap:22px;
   align-items:start;
 }
@@ -141,6 +224,7 @@ a{color:inherit}
   background:#fff;
   box-shadow:var(--shadow);
   overflow:hidden;
+  min-width:0;
 }
 .panel-head{
   padding:17px 20px;
@@ -217,8 +301,11 @@ a{color:inherit}
   white-space:nowrap;
 }
 .remove-item{
-  border:0;background:none;color:var(--red);
-  font-size:20px;padding:2px 7px;
+  border:0;
+  background:none;
+  color:var(--red);
+  font-size:20px;
+  padding:2px 7px;
 }
 .totals-editor{
   display:grid;
@@ -238,6 +325,8 @@ a{color:inherit}
   border:1px solid #f2cccc;
 }
 .total-box.grand strong{color:var(--red);font-size:23px}
+
+/* DOCUMENT PREVIEW */
 .preview-area{
   background:#f1f1f1;
   padding:18px;
@@ -294,23 +383,33 @@ a{color:inherit}
 .paper-parties p{margin:3px 0;font-size:12px;white-space:pre-line}
 .paper-items{width:100%;border-collapse:collapse;margin-bottom:20px}
 .paper-items th{
-  background:#202020;color:#fff;text-align:left;
-  padding:11px 8px;font-size:10px;text-transform:uppercase;
+  background:#202020;
+  color:#fff;
+  text-align:left;
+  padding:11px 8px;
+  font-size:10px;
+  text-transform:uppercase;
 }
 .paper-items td{
-  padding:11px 8px;border-bottom:1px solid #e8e8e8;
+  padding:11px 8px;
+  border-bottom:1px solid #e8e8e8;
   font-size:12px;
 }
 .paper-items td:not(:first-child),.paper-items th:not(:first-child){text-align:right}
 .paper-totals{width:260px;max-width:100%;margin-left:auto}
 .paper-total-row{
-  display:flex;justify-content:space-between;gap:15px;
-  padding:6px 0;font-size:12px;
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:6px 0;
+  font-size:12px;
 }
 .paper-total-row.final{
   border-top:2px solid var(--red);
-  margin-top:7px;padding-top:12px;
-  font-size:17px;font-weight:800;
+  margin-top:7px;
+  padding-top:12px;
+  font-size:17px;
+  font-weight:800;
 }
 .paper-total-row.final strong{color:var(--red)}
 .paper-notes{
@@ -321,14 +420,23 @@ a{color:inherit}
 .paper-notes h4{font-size:11px;margin:0 0 5px}
 .paper-notes p{font-size:11px;color:#555;white-space:pre-line;margin:0}
 .paper-footer{
-  margin-top:45px;padding-top:12px;
-  border-top:1px solid #eee;text-align:center;
-  font-size:10px;color:#777;
+  margin-top:45px;
+  padding-top:12px;
+  border-top:1px solid #eee;
+  text-align:center;
+  font-size:10px;
+  color:#777;
 }
+
+/* SAVED DOCUMENTS */
 .saved-list{display:grid;gap:8px}
 .saved-item{
-  display:flex;justify-content:space-between;align-items:center;
-  gap:10px;padding:11px;border:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:11px;
+  border:1px solid var(--border);
   border-radius:8px;
 }
 .saved-item strong{display:block;font-size:13px}
@@ -337,35 +445,81 @@ a{color:inherit}
 .empty{color:#777;font-size:13px;padding:15px 0}
 .hidden{display:none!important}
 .notice{
-  padding:11px 13px;border-radius:8px;
-  margin:0 0 14px;font-size:13px;
+  padding:11px 13px;
+  border-radius:8px;
+  margin:0 0 14px;
+  font-size:13px;
 }
 .notice.info{background:#f4f4f4;color:#444}
 .notice.success{background:#eff9f1;color:#176b32}
 .notice.error{background:#fff1f1;color:#a00000}
 .logo-preview{
-  max-width:160px;max-height:60px;object-fit:contain;
-  display:block;margin-top:9px;
+  max-width:160px;
+  max-height:60px;
+  object-fit:contain;
+  display:block;
+  margin-top:9px;
 }
 .footer{
   border-top:1px solid var(--border);
-  padding:22px 24px;text-align:center;
-  color:#777;font-size:12px;
+  padding:22px 24px;
+  text-align:center;
+  color:#777;
+  font-size:12px;
 }
+
+/* TABLET */
 @media(max-width:1050px){
   .layout{grid-template-columns:1fr}
   .preview-area{padding:12px}
   .paper{max-width:800px}
 }
+
+/* MOBILE NAVIGATION */
 @media(max-width:650px){
-  .header{padding:9px 14px;min-height:65px;align-items:center}
-  .brand img{width:150px;max-height:52px}
-  .nav{gap:10px}
-  .nav a{font-size:12px}
-  .nav a:not(.nav-portal){display:none}
-  .page{padding:23px 13px 45px}
+  .header{
+    padding:9px 4%;
+    min-height:65px;
+    align-items:center;
+    position:relative;
+  }
+  .brand{gap:9px;font-size:19px}
+  .brand img{width:40px;height:40px}
+  .brand-support{font-size:13px;margin-left:-7px}
+  .menu-toggle{display:block}
+  .nav{
+    display:none;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    width:100%;
+    padding:13px 4% 17px;
+    background:#fff;
+    border-bottom:1px solid var(--border);
+    box-shadow:0 8px 14px rgba(0,0,0,.07);
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
+  .nav.open{display:grid}
+  .nav a{
+    display:block;
+    padding:11px 9px;
+    border:1px solid #eee;
+    border-radius:7px;
+    font-size:13px;
+  }
+  .nav .nav-portal{
+    text-align:center;
+    border-color:var(--red);
+  }
+  .page{width:92%;padding:23px 0 45px}
   .intro{display:block}
-  .public-note{display:inline-block;margin-top:13px;white-space:normal}
+  .login-note{
+    display:inline-block;
+    margin-top:13px;
+    white-space:normal;
+  }
   .panel-body{padding:14px}
   .panel-head{padding:14px}
   .form-grid{gap:11px}
@@ -381,41 +535,73 @@ a{color:inherit}
   .saved-item{align-items:flex-start}
 }
 @media(max-width:390px){
+  .brand{font-size:17px;gap:7px}
+  .brand img{width:36px;height:36px}
+  .brand-support{font-size:12px;margin-left:-6px}
   .form-grid{grid-template-columns:1fr}
   .field.full{grid-column:auto}
   .totals-editor{grid-template-columns:1fr 1fr}
   .paper{padding:17px 12px}
+  .paper-parties{grid-template-columns:1fr 1fr}
 }
+
+/* PRINT */
 @media print{
   @page{size:A4;margin:12mm}
   body{background:#fff!important}
-  .topbar,.intro,.toolbar,.editor-panel,.saved-panel,.footer,
+  #authGate,.topbar,.intro,.toolbar,.editor-panel,.saved-panel,.footer,
   .panel-head,.no-print{display:none!important}
-  .page{max-width:none;padding:0;margin:0}
+  .page{width:100%;max-width:none;padding:0;margin:0}
   .layout{display:block}
   .preview-panel{border:0;box-shadow:none}
   .preview-area{padding:0;background:#fff;overflow:visible}
   .paper{
-    width:100%;max-width:none;min-height:0;
-    padding:0;box-shadow:none;margin:0;
+    width:100%;
+    max-width:none;
+    min-height:0;
+    padding:0;
+    box-shadow:none;
+    margin:0;
   }
 }
 </style>
 </head>
 
 <body>
+
+<!-- This screen remains visible until the server confirms the customer session. -->
+<div id="authGate">
+  <div class="auth-card">
+    <img class="auth-logo" src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo">
+    <h1 id="authTitle">Checking your login...</h1>
+    <p id="authMessage">Please wait while we verify your customer account.</p>
+    <a id="authLoginLink" class="hidden" href="/client/login?returnTo=%2Ftools%2Finvoices">Customer login</a>
+  </div>
+</div>
+
 <header class="topbar">
   <div class="header">
     <a class="brand" href="/" aria-label="IT Elements home">
       <img
-        src="/assets/itel-support-logo-cropped.png"
-        alt="IT Elements"
-        onerror="this.onerror=null;this.src='/assets/itel-support-logo.png';"
+        src="/assets/itel-support-icon.png?v=3"
+        alt="IT Elements logo"
+        width="46"
+        height="46"
       >
+      <span>IT Elements.</span>
+      <span class="brand-support">support</span>
     </a>
-    <nav class="nav" aria-label="Main navigation">
+
+    <button class="menu-toggle" id="menuToggle" type="button"
+      aria-label="Open navigation menu" aria-expanded="false">☰</button>
+
+    <nav class="nav" id="mainNav" aria-label="Main navigation">
       <a href="/">Home</a>
       <a href="/services">Services</a>
+      <a href="/onsite-support">On-site</a>
+      <a href="/pricing">Plans</a>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
       <a href="/contact">Contact</a>
       <a class="nav-portal" href="/client/login">Customer Portal</a>
     </nav>
@@ -426,9 +612,9 @@ a{color:inherit}
   <section class="intro">
     <div>
       <h1>Invoice & Quote Studio</h1>
-      <p>Create professional invoices, quotations, receipts and pro forma invoices. You do not need to sign in or register. Your documents are saved in this browser.</p>
+      <p>Create professional invoices, quotations, receipts and pro forma invoices for your business. Sign in to your customer account before creating and managing documents.</p>
     </div>
-    <div class="public-note">✓ No account or login required</div>
+    <div class="login-note">✓ Customer login required</div>
   </section>
 
   <div id="message" class="notice hidden" role="status"></div>
@@ -693,6 +879,60 @@ let logoData="";
 let currentId=null;
 let items=[];
 
+/* Require a valid customer session before displaying the invoice studio.
+   This checks the existing authenticated invoice-tools status endpoint. */
+async function verifyCustomerLogin(){
+  const gate=$("authGate");
+  const title=$("authTitle");
+  const message=$("authMessage");
+  const loginLink=$("authLoginLink");
+
+  try{
+    const response=await fetch("/api/invoice-tools/status",{
+      method:"GET",
+      credentials:"same-origin",
+      headers:{"Accept":"application/json"},
+      cache:"no-store"
+    });
+
+    if(response.status===401||response.status===403){
+      window.location.replace("/client/login?returnTo=%2Ftools%2Finvoices");
+      return;
+    }
+
+    if(!response.ok){
+      throw new Error("Could not verify your customer session.");
+    }
+
+    /* The endpoint must be protected by the server's customer-auth middleware.
+       A successful response means the server accepted the current session. */
+    gate.classList.add("hidden");
+  }catch(error){
+    title.textContent="Customer login required";
+    message.textContent="We could not verify your login. Please sign in to your customer account before using Invoice Studio.";
+    message.classList.add("auth-error");
+    loginLink.classList.remove("hidden");
+  }
+}
+
+const menuToggle=$("menuToggle");
+const mainNav=$("mainNav");
+
+menuToggle.addEventListener("click",()=>{
+  const isOpen=mainNav.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded",String(isOpen));
+  menuToggle.setAttribute("aria-label",isOpen?"Close navigation menu":"Open navigation menu");
+  menuToggle.textContent=isOpen?"×":"☰";
+});
+
+mainNav.querySelectorAll("a").forEach(link=>{
+  link.addEventListener("click",()=>{
+    mainNav.classList.remove("open");
+    menuToggle.setAttribute("aria-expanded","false");
+    menuToggle.textContent="☰";
+  });
+});
+
 function localDate(){
   const d=new Date();
   const offset=d.getTimezoneOffset();
@@ -749,8 +989,11 @@ function profileData(){
   };
 }
 function saveProfile(){
-  try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profileData()))}
-  catch(e){notify("Your business profile could not be saved. The logo may be too large.","error")}
+  try{
+    localStorage.setItem(PROFILE_KEY,JSON.stringify(profileData()));
+  }catch(e){
+    notify("Your business profile could not be saved. The logo may be too large.","error");
+  }
 }
 function loadProfile(){
   try{
@@ -945,7 +1188,7 @@ function fresh(){
   items=[{description:"",qty:1,price:0}];
   renderItemEditor();
   update();
-  notify("New document ready. No login is required.");
+  notify("New document ready.");
 }
 function saveDocument(){
   const doc=getDocument();
@@ -1041,6 +1284,7 @@ function importBackup(file){
 }
 
 $("addItemBtn").addEventListener("click",()=>addItem());
+
 $("itemsBody").addEventListener("input",event=>{
   const input=event.target;
   const index=Number(input.dataset.index);
@@ -1051,6 +1295,7 @@ $("itemsBody").addEventListener("input",event=>{
   const row=input.closest("tr");
   if(row)row.querySelector(".line-total").textContent=money(items[index].qty*items[index].price);
 });
+
 $("itemsBody").addEventListener("click",event=>{
   const button=event.target.closest("[data-remove]");
   if(!button)return;
@@ -1093,6 +1338,7 @@ $("businessLogo").addEventListener("change",event=>{
   };
   reader.readAsDataURL(file);
 });
+
 $("removeLogo").addEventListener("click",()=>{
   logoData="";
   $("businessLogo").value="";
@@ -1100,19 +1346,23 @@ $("removeLogo").addEventListener("click",()=>{
   saveProfile();
   update();
 });
+
 $("newBtn").addEventListener("click",fresh);
 $("saveBtn").addEventListener("click",saveDocument);
 $("printBtn").addEventListener("click",()=>window.print());
 $("previewPrintBtn").addEventListener("click",()=>window.print());
 $("exportBtn").addEventListener("click",exportBackup);
 $("importBtn").addEventListener("click",()=>$("importFile").click());
+
 $("importFile").addEventListener("change",event=>{
   const file=event.target.files?.[0];
   if(file)importBackup(file);
 });
+
 $("savedList").addEventListener("click",event=>{
   const open=event.target.closest("[data-open]");
   const del=event.target.closest("[data-delete]");
+
   if(open){
     const doc=readSaved().find(d=>d.id===open.dataset.open);
     if(doc){
@@ -1121,6 +1371,7 @@ $("savedList").addEventListener("click",event=>{
       window.scrollTo({top:0,behavior:"smooth"});
     }
   }
+
   if(del){
     const docs=readSaved().filter(d=>d.id!==del.dataset.delete);
     writeSaved(docs);
@@ -1128,6 +1379,7 @@ $("savedList").addEventListener("click",event=>{
     notify("Saved document deleted.");
   }
 });
+
 $("clearSavedBtn").addEventListener("click",()=>{
   if(!confirm("Delete all saved documents from this browser? This cannot be undone. Export a backup first if you want to keep them."))return;
   writeSaved([]);
@@ -1141,6 +1393,10 @@ loadProfile();
 items=[{description:"",qty:1,price:0}];
 fresh();
 renderSaved();
+
+/* Start the login check after the page has initialized. */
+verifyCustomerLogin();
+
 })();
 </script>
 </body>
