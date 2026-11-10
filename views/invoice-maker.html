@@ -5,1814 +5,1143 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#ffffff">
-<meta name="description" content="Create professional invoices and quotations with IT Elements.">
+<meta name="description" content="Create professional invoices, quotations, receipts and pro forma invoices for free. No login required.">
 <title>Invoice & Quote Studio | IT Elements</title>
 
 <style>
 :root{
   color-scheme:light;
-  --accent:#e00000;
-  --ink:#18202d;
-  --muted:#667085;
-  --line:#e2e6ed;
-  --bg:#f3f5f9;
-  --shadow:0 12px 34px #18202d12;
+  --red:#e00000;
+  --red-dark:#b00000;
+  --text:#171717;
+  --muted:#666;
+  --border:#e5e5e5;
+  --soft:#f7f7f7;
+  --white:#fff;
+  --green:#16803c;
+  --shadow:0 8px 30px rgba(0,0,0,.06);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{
   margin:0;
-  background:var(--bg);
-  color:var(--ink);
-  font:15px/1.5 Inter,system-ui,"Segoe UI",sans-serif;
+  background:#fff;
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:15px;
+  line-height:1.5;
 }
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
-a{color:inherit;text-decoration:none}
-
-/* HEADER */
-.head{
+a{color:inherit}
+.topbar{
+  background:#fff;
+  border-bottom:1px solid var(--border);
   position:sticky;
   top:0;
-  z-index:1000;
-  width:100%;
+  z-index:20;
+}
+.header{
+  max-width:1450px;
   min-height:76px;
-  padding:12px 4%;
-  background:rgba(255,255,255,.98);
-  border-bottom:1px solid var(--line);
-  box-shadow:0 3px 15px rgba(0,0,0,.045);
+  margin:auto;
+  padding:10px 24px;
   display:flex;
+  align-items:center;
   justify-content:space-between;
-  align-items:center;
   gap:20px;
-  backdrop-filter:blur(12px);
 }
-.brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color:#171717;
-  text-decoration:none;
-  font-size:21px;
-  font-weight:900;
-  white-space:nowrap;
-  flex-shrink:0;
-}
+.brand{display:inline-flex;align-items:center;flex-shrink:0}
 .brand img{
   display:block;
-  width:46px;
-  height:46px;
+  width:205px;
+  height:auto;
+  max-height:65px;
   object-fit:contain;
-  border:0;
-  border-radius:0;
-  background:transparent;
-  flex-shrink:0;
+  object-position:left center;
 }
-.brand-support{
-  color:var(--accent);
-  font-size:14px;
-  font-weight:700;
-  margin-left:-7px;
-}
-.brand small{display:none}
-.actions{
+.nav{
   display:flex;
-  gap:8px;
-  flex-wrap:wrap;
   align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
 }
-
-/* PAGE */
-.wrap{
-  max-width:1480px;
-  margin:auto;
-  padding:25px clamp(12px,3vw,34px) 50px;
+.nav a{
+  text-decoration:none;
+  color:#333;
+  font-size:14px;
+  font-weight:600;
+}
+.nav a:hover{color:var(--red)}
+.nav .nav-portal{
+  color:var(--red);
+  border:1px solid var(--red);
+  border-radius:8px;
+  padding:8px 13px;
+}
+.page{
+  max-width:1450px;
+  margin:0 auto;
+  padding:32px 24px 70px;
 }
 .intro{
   display:flex;
   justify-content:space-between;
-  align-items:end;
-  gap:18px;
-  margin-bottom:20px;
+  align-items:flex-start;
+  gap:24px;
+  margin-bottom:26px;
 }
-.eyebrow{
-  color:var(--accent);
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-}
-h1{
+.intro h1{
+  margin:0 0 8px;
   font-size:clamp(27px,4vw,38px);
-  line-height:1.1;
-  margin:5px 0;
+  letter-spacing:-1px;
 }
-.intro p,.hint{color:var(--muted)}
-.intro p{margin:5px 0}
-.pill{
-  border:1px solid var(--line);
-  border-radius:99px;
-  padding:6px 11px;
-  font-size:11px;
-  color:var(--muted);
-  font-weight:750;
+.intro p{margin:0;color:var(--muted);max-width:700px}
+.public-note{
+  border:1px solid #d8eadc;
+  background:#f5fbf6;
+  color:#176b32;
+  padding:10px 14px;
+  border-radius:9px;
+  font-size:13px;
+  font-weight:700;
   white-space:nowrap;
 }
-
-/* MAIN LAYOUT */
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-bottom:18px;
+}
+.btn{
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fff;
+  color:#222;
+  padding:10px 15px;
+  font-weight:700;
+  font-size:13px;
+  transition:.15s;
+}
+.btn:hover{border-color:#aaa;background:#f8f8f8}
+.btn-red{background:var(--red);border-color:var(--red);color:#fff}
+.btn-red:hover{background:var(--red-dark);border-color:var(--red-dark)}
+.btn-dark{background:#202020;border-color:#202020;color:#fff}
+.btn-danger{color:var(--red);border-color:#efcaca}
+.btn-small{padding:7px 10px;font-size:12px}
 .layout{
   display:grid;
-  grid-template-columns:minmax(350px,.95fr) minmax(0,1.05fr);
-  gap:20px;
+  grid-template-columns:minmax(0,1.1fr) minmax(420px,.9fr);
+  gap:22px;
   align-items:start;
 }
 .panel{
+  border:1px solid var(--border);
+  border-radius:13px;
   background:#fff;
-  border:1px solid var(--line);
-  border-radius:17px;
   box-shadow:var(--shadow);
-  padding:20px;
-  min-width:0;
+  overflow:hidden;
 }
-.ptitle,.previewhead{
+.panel-head{
+  padding:17px 20px;
+  border-bottom:1px solid var(--border);
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:12px;
-  margin-bottom:15px;
 }
-.ptitle h2,.previewhead h2{font-size:18px;margin:0}
-
-/* TABS */
-.tabs{
-  display:flex;
-  gap:5px;
-  overflow-x:auto;
-  background:#f1f3f7;
-  padding:4px;
-  border-radius:11px;
-  margin-bottom:18px;
-  scrollbar-width:thin;
+.panel-head h2{font-size:17px;margin:0}
+.panel-body{padding:20px}
+.section-title{
+  font-size:13px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.5px;
+  margin:0 0 13px;
 }
-.tab{
-  border:0;
-  background:transparent;
-  border-radius:8px;
-  padding:9px 12px;
-  font-weight:750;
-  color:#667085;
-  white-space:nowrap;
-  flex:0 0 auto;
-}
-.tab.active{
-  background:#fff;
-  color:var(--ink);
-  box-shadow:0 2px 7px #10182812;
-}
-.pane{display:none}
-.pane.active{display:block}
-
-/* FORM SECTIONS */
-.section{
-  border-top:1px solid #edf0f4;
-  padding:15px 0;
-}
-.section:first-child{border:0;padding-top:0}
-.section h3{font-size:13px;margin:0 0 12px}
-.grid{
+.form-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:11px;
+  gap:13px;
+  margin-bottom:22px;
 }
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-  min-width:0;
-}
+.field{min-width:0}
 .field.full{grid-column:1/-1}
 .field label{
-  font-size:11px;
-  font-weight:800;
-  color:#475467;
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:6px;
+  color:#444;
 }
-.field input,
-.field select,
-.field textarea{
+.field input,.field select,.field textarea{
   display:block;
   width:100%;
   min-width:0;
-  border:1px solid #d5dbe5;
-  border-radius:9px;
-  padding:10px 11px;
-  background:#fff!important;
-  color:#18202d!important;
-  -webkit-text-fill-color:#18202d;
-  caret-color:#18202d;
-  outline:none;
-  opacity:1;
-  font-size:14px;
-}
-.field input::placeholder,
-.field textarea::placeholder{
-  color:#98a2b3!important;
-  -webkit-text-fill-color:#98a2b3;
-  opacity:1;
-}
-.field select option{background:#fff;color:#18202d}
-.field textarea{min-height:75px;resize:vertical}
-.field input:focus,
-.field select:focus,
-.field textarea:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px #e000001a;
-}
-.field input[type="color"]{
-  min-height:43px;
-  padding:5px;
-  cursor:pointer;
-}
-.field input[type="file"]{padding:8px}
-.hint{font-size:11px;line-height:1.5}
-
-/* BUTTONS */
-.btn{
-  display:inline-flex;
-  justify-content:center;
-  align-items:center;
-  gap:6px;
-  border:1px solid #d5dbe5;
+  border:1px solid #d9d9d9;
+  border-radius:7px;
   background:#fff;
-  color:#18202d;
-  padding:9px 13px;
-  border-radius:9px;
-  font-weight:750;
-  text-align:center;
-  text-decoration:none;
-  transition:border-color .2s,background .2s,color .2s;
+  padding:10px 11px;
+  color:#171717;
+  outline:none;
 }
-.btn:hover{border-color:var(--accent);color:var(--accent)}
-.btn.primary{
-  background:var(--accent);
-  border-color:var(--accent);
-  color:#fff;
+.field textarea{min-height:76px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--red);
+  box-shadow:0 0 0 3px rgba(224,0,0,.08);
 }
-.btn.primary:hover{background:#b00000;border-color:#b00000}
-.btn.small{padding:6px 9px;font-size:12px}
-.btn:focus-visible,.tab:focus-visible{
-  outline:3px solid #e0000055;
-  outline-offset:2px;
-}
-
-/* ITEMS TABLE */
-.itemswrap{
-  overflow:auto;
-  border:1px solid var(--line);
-  border-radius:10px;
-}
-.items{
-  width:100%;
-  min-width:490px;
-  border-collapse:collapse;
-}
-.items th{
-  background:#f4f6f9;
+.items-wrap{overflow-x:auto;margin-bottom:12px}
+.items-table{width:100%;border-collapse:collapse;min-width:570px}
+.items-table th{
   text-align:left;
-  padding:9px;
-  font-size:10px;
-  color:#667085;
+  background:#f7f7f7;
+  color:#555;
+  font-size:11px;
   text-transform:uppercase;
+  padding:10px 7px;
 }
-.items td{padding:7px;border-top:1px solid #edf0f4}
-.items input{
+.items-table td{padding:7px;border-bottom:1px solid #eee;vertical-align:middle}
+.items-table input{
   width:100%;
   min-width:0;
-  padding:8px;
-  border:1px solid #dce1e9;
-  border-radius:7px;
-  background:#fff!important;
-  color:#18202d!important;
-  -webkit-text-fill-color:#18202d;
+  padding:9px 7px;
+  border:1px solid #ddd;
+  border-radius:6px;
 }
-.items .qty{width:70px}
-.items .price{width:110px}
-.remove{
-  border:0;
-  background:#fff0ef;
-  color:#bd2b22;
-  border-radius:7px;
-  padding:7px 10px;
-}
-
-/* MESSAGES AND SAVED DOCUMENTS */
-.message{
-  min-height:22px;
-  margin:12px 0;
+.items-table .item-name{min-width:150px}
+.items-table .item-number{width:78px}
+.items-table .line-total{
+  min-width:85px;
   font-size:13px;
-  font-weight:650;
-  color:#475467;
+  font-weight:700;
+  white-space:nowrap;
 }
-.message.error{color:#b42318}
-.message.success{color:#167647}
-.savedlist{
+.remove-item{
+  border:0;background:none;color:var(--red);
+  font-size:20px;padding:2px 7px;
+}
+.totals-editor{
   display:grid;
-  gap:8px;
-  max-height:350px;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-top:18px;
+}
+.total-box{
+  background:var(--soft);
+  border-radius:9px;
+  padding:13px;
+}
+.total-box span{display:block;color:var(--muted);font-size:12px}
+.total-box strong{display:block;font-size:18px;margin-top:4px}
+.total-box.grand{
+  background:#fff3f3;
+  border:1px solid #f2cccc;
+}
+.total-box.grand strong{color:var(--red);font-size:23px}
+.preview-area{
+  background:#f1f1f1;
+  padding:18px;
   overflow:auto;
 }
-.saved{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  padding:10px;
-  border:1px solid var(--line);
-  border-radius:10px;
-}
-.saved strong{display:block;font-size:13px}
-.saved small{color:var(--muted)}
-.empty{padding:12px;color:var(--muted);font-style:italic}
-
-/* DOCUMENT PREVIEW */
-.preview{position:sticky;top:94px}
 .paper{
-  --paper-accent:var(--accent);
+  width:100%;
+  max-width:760px;
+  min-height:850px;
+  margin:0 auto;
   background:#fff;
-  color:#18202d;
-  border:1px solid #e0e4eb;
-  border-radius:8px;
-  min-height:750px;
-  padding:clamp(22px,4vw,48px);
-  box-shadow:0 10px 30px #10182812;
-  overflow-wrap:anywhere;
+  padding:42px;
+  box-shadow:0 3px 18px rgba(0,0,0,.09);
+  color:#171717;
 }
-.paper.classic{
-  font-family:Georgia,serif;
-  border-top:9px solid #18202d;
-  --paper-accent:#18202d;
-}
-.paper.minimal{
-  border:0;
-  box-shadow:none;
-  --paper-accent:#475467;
-}
-.paper.bold{
-  border-left:9px solid var(--paper-accent);
-  background:linear-gradient(135deg,#fff 0 84%,#f3f4f6 84%);
-}
-.top{
+.paper-top{
   display:flex;
   justify-content:space-between;
   gap:20px;
-  border-bottom:2px solid var(--paper-accent);
-  padding-bottom:20px;
+  border-bottom:3px solid var(--red);
+  padding-bottom:22px;
+  margin-bottom:24px;
 }
-.logo{
-  max-width:150px;
-  max-height:68px;
+.paper-logo{
+  max-width:190px;
+  max-height:75px;
   object-fit:contain;
-  display:block;
-  margin-bottom:10px;
+  object-position:left center;
 }
-.biz{font-size:22px;font-weight:900}
-.biz span{color:var(--paper-accent)}
-.kind{
-  font-size:30px;
-  font-weight:950;
-  text-align:right;
-  color:var(--paper-accent);
-  overflow-wrap:anywhere;
+.paper-brand-name{font-size:22px;font-weight:800}
+.paper-meta{text-align:right}
+.paper-meta h2{
+  margin:0;
+  color:var(--red);
+  font-size:27px;
+  letter-spacing:1px;
 }
-.meta{text-align:right;font-size:12px;color:#667085}
-.parties{
+.paper-meta p{margin:4px 0;color:#555;font-size:12px}
+.paper-parties{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:22px;
-  margin:25px 0;
+  gap:25px;
+  margin-bottom:30px;
 }
-.label{
+.paper-label{
+  color:#777;
   font-size:10px;
+  font-weight:800;
   text-transform:uppercase;
-  letter-spacing:.13em;
-  font-weight:900;
-  color:#7a8493;
+  letter-spacing:1px;
+  margin-bottom:7px;
 }
-.parties p{white-space:pre-line;margin:5px 0;font-size:13px}
-.dates{
-  display:flex;
-  gap:22px;
-  flex-wrap:wrap;
-  font-size:12px;
-  color:#475467;
+.paper-parties strong{font-size:14px}
+.paper-parties p{margin:3px 0;font-size:12px;white-space:pre-line}
+.paper-items{width:100%;border-collapse:collapse;margin-bottom:20px}
+.paper-items th{
+  background:#202020;color:#fff;text-align:left;
+  padding:11px 8px;font-size:10px;text-transform:uppercase;
 }
-.previewitems{
-  width:100%;
-  border-collapse:collapse;
-  margin:22px 0;
-}
-.previewitems th{
-  background:var(--paper-accent);
-  color:#fff;
-  text-align:left;
-  padding:10px;
-  font-size:11px;
-}
-.previewitems td{
-  padding:11px 9px;
-  border-bottom:1px solid #e7eaf0;
+.paper-items td{
+  padding:11px 8px;border-bottom:1px solid #e8e8e8;
   font-size:12px;
 }
-.right{text-align:right}
-.totals{max-width:290px;margin:10px 0 0 auto}
-.line{
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-  padding:5px 0;
-  font-size:13px;
+.paper-items td:not(:first-child),.paper-items th:not(:first-child){text-align:right}
+.paper-totals{width:260px;max-width:100%;margin-left:auto}
+.paper-total-row{
+  display:flex;justify-content:space-between;gap:15px;
+  padding:6px 0;font-size:12px;
 }
-.grand{
-  font-size:21px;
-  font-weight:950;
-  color:var(--paper-accent);
-  border-top:2px solid #18202d;
-  margin-top:8px;
-  padding-top:11px;
+.paper-total-row.final{
+  border-top:2px solid var(--red);
+  margin-top:7px;padding-top:12px;
+  font-size:17px;font-weight:800;
 }
-.block{
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  margin-top:20px;
-  font-size:12px;
-  color:#475467;
+.paper-total-row.final strong{color:var(--red)}
+.paper-notes{
+  margin-top:35px;
+  padding-top:15px;
+  border-top:1px solid #e5e5e5;
 }
-.block b{display:block;color:#18202d;margin-bottom:4px}
-.foot{
-  border-top:1px solid #e1e5eb;
-  margin-top:32px;
-  padding-top:12px;
-  text-align:center;
-  color:#7b8492;
-  font-size:10px;
+.paper-notes h4{font-size:11px;margin:0 0 5px}
+.paper-notes p{font-size:11px;color:#555;white-space:pre-line;margin:0}
+.paper-footer{
+  margin-top:45px;padding-top:12px;
+  border-top:1px solid #eee;text-align:center;
+  font-size:10px;color:#777;
 }
-.logo-preview{
-  max-width:120px;
-  max-height:55px;
-  object-fit:contain;
-  display:none;
-  border:1px solid var(--line);
-  padding:5px;
+.saved-list{display:grid;gap:8px}
+.saved-item{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;padding:11px;border:1px solid var(--border);
   border-radius:8px;
 }
+.saved-item strong{display:block;font-size:13px}
+.saved-item small{display:block;color:var(--muted);font-size:11px}
+.saved-actions{display:flex;gap:6px;flex-shrink:0}
+.empty{color:#777;font-size:13px;padding:15px 0}
 .hidden{display:none!important}
-
-/* RESPONSIVE */
-@media(max-width:1000px){
+.notice{
+  padding:11px 13px;border-radius:8px;
+  margin:0 0 14px;font-size:13px;
+}
+.notice.info{background:#f4f4f4;color:#444}
+.notice.success{background:#eff9f1;color:#176b32}
+.notice.error{background:#fff1f1;color:#a00000}
+.logo-preview{
+  max-width:160px;max-height:60px;object-fit:contain;
+  display:block;margin-top:9px;
+}
+.footer{
+  border-top:1px solid var(--border);
+  padding:22px 24px;text-align:center;
+  color:#777;font-size:12px;
+}
+@media(max-width:1050px){
   .layout{grid-template-columns:1fr}
-  .preview{position:static}
-  .paper{min-height:0}
+  .preview-area{padding:12px}
+  .paper{max-width:800px}
 }
 @media(max-width:650px){
-  .head{padding:10px 4%;gap:10px}
-  .brand{font-size:19px;gap:9px}
-  .brand img{width:40px;height:40px}
-  .brand-support{font-size:13px;margin-left:-6px}
-  .head{align-items:flex-start;flex-direction:column}
-  .head .actions{width:100%}
-  .head .actions .btn{flex:1}
-  .intro{align-items:flex-start;flex-direction:column}
-  .panel{padding:14px}
-  .grid{grid-template-columns:1fr}
-  .field.full{grid-column:auto}
-  .paper{padding:20px 15px}
-  .top{gap:10px}
-  .kind{font-size:22px}
-  .biz{font-size:18px}
-  .parties{gap:10px}
-  .saved{align-items:flex-start;flex-direction:column}
-  .saved .actions{width:100%}
-  .previewitems th,.previewitems td{padding:7px 5px;font-size:10px}
-  .dates{gap:8px 15px}
+  .header{padding:9px 14px;min-height:65px;align-items:center}
+  .brand img{width:150px;max-height:52px}
+  .nav{gap:10px}
+  .nav a{font-size:12px}
+  .nav a:not(.nav-portal){display:none}
+  .page{padding:23px 13px 45px}
+  .intro{display:block}
+  .public-note{display:inline-block;margin-top:13px;white-space:normal}
+  .panel-body{padding:14px}
+  .panel-head{padding:14px}
+  .form-grid{gap:11px}
+  .totals-editor{gap:8px}
+  .paper{padding:22px 17px;min-height:700px}
+  .paper-logo{max-width:125px;max-height:55px}
+  .paper-brand-name{font-size:17px}
+  .paper-meta h2{font-size:21px}
+  .paper-parties{gap:12px}
+  .paper-parties p{font-size:10px}
+  .paper-items th,.paper-items td{padding:8px 5px;font-size:10px}
+  .toolbar .btn{flex:1 1 auto}
+  .saved-item{align-items:flex-start}
 }
-@media(max-width:370px){
-  .brand{font-size:17px;gap:7px}
-  .brand img{width:36px;height:36px}
-  .brand-support{font-size:12px;margin-left:-5px}
-  .head .actions{gap:5px}
-  .head .actions .btn{padding:8px 6px;font-size:12px}
+@media(max-width:390px){
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .totals-editor{grid-template-columns:1fr 1fr}
+  .paper{padding:17px 12px}
 }
 @media print{
-  @page{size:A4;margin:10mm}
+  @page{size:A4;margin:12mm}
   body{background:#fff!important}
-  .head,.intro,.editor,.previewhead,.previewnote,.message{
-    display:none!important;
-  }
-  .wrap{max-width:none;padding:0;margin:0}
+  .topbar,.intro,.toolbar,.editor-panel,.saved-panel,.footer,
+  .panel-head,.no-print{display:none!important}
+  .page{max-width:none;padding:0;margin:0}
   .layout{display:block}
-  .preview{
-    position:static;
-    border:0;
-    box-shadow:none;
-    padding:0;
-    margin:0;
-  }
+  .preview-panel{border:0;box-shadow:none}
+  .preview-area{padding:0;background:#fff;overflow:visible}
   .paper{
-    min-height:0;
-    border:0;
-    border-radius:0;
-    box-shadow:none;
-    padding:5mm;
-    overflow:visible;
-  }
-  .previewitems th{
-    print-color-adjust:exact;
-    -webkit-print-color-adjust:exact;
-  }
-  .paper.bold{
-    print-color-adjust:exact;
-    -webkit-print-color-adjust:exact;
+    width:100%;max-width:none;min-height:0;
+    padding:0;box-shadow:none;margin:0;
   }
 }
 </style>
 </head>
 
 <body>
-
-<header class="head">
-  <a class="brand" href="/" aria-label="IT Elements home">
-    <img
-      src="/assets/itel-support-icon.png?v=3"
-      alt="IT Elements logo"
-      width="46"
-      height="46"
-      onerror="this.style.display='none'">
-    <span>IT Elements.</span>
-    <span class="brand-support">support</span>
-  </a>
-
-  <div class="actions">
-    <a class="btn" href="/">← Back to website</a>
-    <button type="button" class="btn" id="newBtn">＋ New</button>
-    <button type="button" class="btn" id="saveBtn">Save draft</button>
-    <button type="button" class="btn primary" id="printBtn">Print / Save PDF</button>
+<header class="topbar">
+  <div class="header">
+    <a class="brand" href="/" aria-label="IT Elements home">
+      <img
+        src="/assets/itel-support-logo-cropped.png"
+        alt="IT Elements"
+        onerror="this.onerror=null;this.src='/assets/itel-support-logo.png';"
+      >
+    </a>
+    <nav class="nav" aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/services">Services</a>
+      <a href="/contact">Contact</a>
+      <a class="nav-portal" href="/client/login">Customer Portal</a>
+    </nav>
   </div>
 </header>
 
-<main class="wrap">
-
+<main class="page">
   <section class="intro">
     <div>
-      <div class="eyebrow">Your paperwork, upgraded</div>
       <h1>Invoice & Quote Studio</h1>
-      <p>Create professional business documents without signing in. Drafts stay in this browser.</p>
+      <p>Create professional invoices, quotations, receipts and pro forma invoices. You do not need to sign in or register. Your documents are saved in this browser.</p>
     </div>
-    <span class="pill">No account required · Local saving</span>
+    <div class="public-note">✓ No account or login required</div>
   </section>
 
+  <div id="message" class="notice hidden" role="status"></div>
+
+  <div class="toolbar no-print">
+    <button class="btn btn-red" id="newBtn" type="button">+ New document</button>
+    <button class="btn" id="saveBtn" type="button">Save document</button>
+    <button class="btn" id="printBtn" type="button">Print / Save PDF</button>
+    <button class="btn" id="exportBtn" type="button">Export backup</button>
+    <button class="btn" id="importBtn" type="button">Import backup</button>
+    <input type="file" id="importFile" accept=".json,application/json" hidden>
+  </div>
+
   <div class="layout">
-
-    <!-- DOCUMENT EDITOR -->
-    <section class="panel editor">
-
-      <div class="ptitle">
-        <h2>Document builder</h2>
-        <span class="pill" id="draftLabel">New draft</span>
+    <section class="panel editor-panel">
+      <div class="panel-head">
+        <h2>Document details</h2>
+        <span style="font-size:12px;color:#777">Editor</span>
       </div>
-
-      <div class="tabs">
-        <button type="button" class="tab active" data-tab="details">Details</button>
-        <button type="button" class="tab" data-tab="items">Items & totals</button>
-        <button type="button" class="tab" data-tab="style">Design & tools</button>
-        <button type="button" class="tab" data-tab="saved">My documents</button>
-      </div>
-
-      <!-- DETAILS -->
-      <div class="pane active" id="pane-details">
-
-        <div class="section">
-          <h3>Document information</h3>
-          <div class="grid">
-
-            <div class="field">
-              <label for="kind">Document type</label>
-              <select id="kind">
-                <option value="invoice">Invoice</option>
-                <option value="quote">Quotation</option>
-                <option value="receipt">Receipt</option>
-                <option value="proforma">Pro forma invoice</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="number">Document number</label>
-              <input id="number" value="INV-0001" maxlength="40">
-            </div>
-
-            <div class="field">
-              <label for="issue">Issue date</label>
-              <input id="issue" type="date">
-            </div>
-
-            <div class="field">
-              <label for="due">Due date / valid until</label>
-              <input id="due" type="date">
-            </div>
-
-            <div class="field full">
-              <label for="reference">Reference / purchase order</label>
-              <input id="reference" maxlength="100" placeholder="Optional reference">
-            </div>
-
+      <div class="panel-body">
+        <h3 class="section-title">Document setup</h3>
+        <div class="form-grid">
+          <div class="field">
+            <label for="docType">Document type</label>
+            <select id="docType">
+              <option value="Invoice">Invoice</option>
+              <option value="Quotation">Quotation</option>
+              <option value="Receipt">Receipt</option>
+              <option value="Pro Forma Invoice">Pro Forma Invoice</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="docNumber">Document number</label>
+            <input id="docNumber" type="text" placeholder="INV-0001">
+          </div>
+          <div class="field">
+            <label for="issueDate">Issue date</label>
+            <input id="issueDate" type="date">
+          </div>
+          <div class="field">
+            <label for="dueDate">Due date</label>
+            <input id="dueDate" type="date">
+          </div>
+          <div class="field">
+            <label for="currency">Currency</label>
+            <select id="currency">
+              <option value="ZAR">South African Rand (ZAR)</option>
+              <option value="USD">US Dollar (USD)</option>
+              <option value="GBP">British Pound (GBP)</option>
+              <option value="EUR">Euro (EUR)</option>
+              <option value="BWP">Botswana Pula (BWP)</option>
+              <option value="NAD">Namibian Dollar (NAD)</option>
+              <option value="AUD">Australian Dollar (AUD)</option>
+            </select>
           </div>
         </div>
 
-        <div class="section">
-          <h3>Your business</h3>
-          <div class="grid">
-
-            <div class="field">
-              <label for="bizName">Business name</label>
-              <input id="bizName" maxlength="100" placeholder="Your business name">
-            </div>
-
-            <div class="field">
-              <label for="tagline">Tagline</label>
-              <input id="tagline" maxlength="60" placeholder="Your tagline">
-            </div>
-
-            <div class="field">
-              <label for="bizEmail">Business email</label>
-              <input id="bizEmail" type="email" placeholder="hello@business.co.za">
-            </div>
-
-            <div class="field">
-              <label for="bizPhone">Phone</label>
-              <input id="bizPhone" placeholder="+27 ...">
-            </div>
-
-            <div class="field full">
-              <label for="bizAddress">Business address</label>
-              <textarea id="bizAddress" placeholder="Street, town, province, postal code"></textarea>
-            </div>
-
-            <div class="field">
-              <label for="vatNumber">VAT registration number</label>
-              <input id="vatNumber" placeholder="Optional">
-            </div>
-
-            <div class="field">
-              <label for="regNumber">Company registration number</label>
-              <input id="regNumber" placeholder="Optional">
-            </div>
-
-            <div class="field full">
-              <label for="logoFile">Business logo</label>
-              <input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp">
-              <span class="hint">PNG, JPG or WebP, up to 3 MB.</span>
-              <img id="logoPreview" class="logo-preview" alt="Logo preview">
-              <button type="button" class="btn small" id="removeLogo">Remove uploaded logo</button>
-            </div>
-
+        <h3 class="section-title">Your business details</h3>
+        <div class="form-grid">
+          <div class="field full">
+            <label for="businessName">Business / trading name</label>
+            <input id="businessName" type="text" placeholder="Your business name">
+          </div>
+          <div class="field">
+            <label for="businessEmail">Email address</label>
+            <input id="businessEmail" type="email" placeholder="you@example.com">
+          </div>
+          <div class="field">
+            <label for="businessPhone">Phone number</label>
+            <input id="businessPhone" type="text" placeholder="+27 ...">
+          </div>
+          <div class="field">
+            <label for="businessReg">Registration / VAT number</label>
+            <input id="businessReg" type="text" placeholder="Optional">
+          </div>
+          <div class="field">
+            <label for="businessWebsite">Website</label>
+            <input id="businessWebsite" type="text" placeholder="www.example.com">
+          </div>
+          <div class="field full">
+            <label for="businessAddress">Business address</label>
+            <textarea id="businessAddress" placeholder="Street, suburb, city, postal code"></textarea>
+          </div>
+          <div class="field full">
+            <label for="businessLogo">Business logo</label>
+            <input id="businessLogo" type="file" accept="image/*">
+            <img id="logoPreview" class="logo-preview hidden" alt="Uploaded business logo">
+            <button type="button" class="btn btn-small btn-danger" id="removeLogo" style="margin-top:8px">Remove uploaded logo</button>
           </div>
         </div>
 
-        <div class="section">
-          <h3>Customer / client</h3>
-          <div class="grid">
-
-            <div class="field">
-              <label for="clientName">Customer name</label>
-              <input id="clientName" placeholder="Customer or company">
-            </div>
-
-            <div class="field">
-              <label for="clientEmail">Customer email</label>
-              <input id="clientEmail" type="email" placeholder="customer@example.com">
-            </div>
-
-            <div class="field">
-              <label for="clientPhone">Customer phone</label>
-              <input id="clientPhone" placeholder="Optional">
-            </div>
-
-            <div class="field">
-              <label for="clientVat">Customer VAT number</label>
-              <input id="clientVat" placeholder="Optional">
-            </div>
-
-            <div class="field full">
-              <label for="clientAddress">Customer billing address</label>
-              <textarea id="clientAddress" placeholder="Customer address"></textarea>
-            </div>
-
+        <h3 class="section-title">Customer details</h3>
+        <div class="form-grid">
+          <div class="field full">
+            <label for="customerName">Customer / company name</label>
+            <input id="customerName" type="text" placeholder="Customer name">
+          </div>
+          <div class="field">
+            <label for="customerEmail">Customer email</label>
+            <input id="customerEmail" type="email" placeholder="customer@example.com">
+          </div>
+          <div class="field">
+            <label for="customerPhone">Customer phone</label>
+            <input id="customerPhone" type="text" placeholder="Phone number">
+          </div>
+          <div class="field full">
+            <label for="customerAddress">Customer address</label>
+            <textarea id="customerAddress" placeholder="Customer billing address"></textarea>
           </div>
         </div>
 
+        <h3 class="section-title">Items / services</h3>
+        <div class="items-wrap">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit price</th>
+                <th>Total</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="itemsBody"></tbody>
+          </table>
+        </div>
+        <button class="btn btn-small" type="button" id="addItemBtn">+ Add item</button>
+
+        <div class="form-grid" style="margin-top:20px;margin-bottom:0">
+          <div class="field">
+            <label for="taxRate">Tax / VAT (%)</label>
+            <input id="taxRate" type="number" min="0" max="100" step="0.01" value="15">
+          </div>
+          <div class="field">
+            <label for="discount">Discount amount</label>
+            <input id="discount" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div class="field full">
+            <label for="notes">Notes / payment terms</label>
+            <textarea id="notes" placeholder="Payment details, bank details, terms and conditions, or thank you message."></textarea>
+          </div>
+        </div>
+
+        <div class="totals-editor">
+          <div class="total-box">
+            <span>Subtotal</span>
+            <strong id="editSubtotal">R 0.00</strong>
+          </div>
+          <div class="total-box">
+            <span>Tax</span>
+            <strong id="editTax">R 0.00</strong>
+          </div>
+          <div class="total-box">
+            <span>Discount</span>
+            <strong id="editDiscount">R 0.00</strong>
+          </div>
+          <div class="total-box grand">
+            <span>Total</span>
+            <strong id="editTotal">R 0.00</strong>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <!-- ITEMS AND TOTALS -->
-      <div class="pane" id="pane-items">
+    <section>
+      <div class="panel preview-panel">
+        <div class="panel-head">
+          <h2>Live document preview</h2>
+          <button type="button" class="btn btn-small no-print" id="previewPrintBtn">Print</button>
+        </div>
+        <div class="preview-area">
+          <article class="paper" id="paper">
+            <div class="paper-top">
+              <div>
+                <img id="paperLogo" class="paper-logo hidden" alt="Business logo">
+                <div id="paperBusinessName" class="paper-brand-name">Your Business</div>
+              </div>
+              <div class="paper-meta">
+                <h2 id="paperType">INVOICE</h2>
+                <p id="paperNumber">INV-0001</p>
+                <p id="paperIssue">Issue date: —</p>
+                <p id="paperDue">Due date: —</p>
+              </div>
+            </div>
 
-        <div class="section">
-          <h3>Products and services</h3>
+            <div class="paper-parties">
+              <div>
+                <div class="paper-label">From</div>
+                <strong id="paperFromName">Your Business</strong>
+                <p id="paperFromDetails"></p>
+              </div>
+              <div>
+                <div class="paper-label">Bill to</div>
+                <strong id="paperCustomerName">Customer name</strong>
+                <p id="paperCustomerDetails"></p>
+              </div>
+            </div>
 
-          <div class="itemswrap">
-            <table class="items">
+            <table class="paper-items">
               <thead>
                 <tr>
                   <th>Description</th>
                   <th>Qty</th>
                   <th>Unit price</th>
-                  <th>Remove</th>
+                  <th>Total</th>
                 </tr>
               </thead>
-              <tbody id="itemRows"></tbody>
+              <tbody id="paperItems"></tbody>
             </table>
-          </div>
 
-          <div class="actions" style="margin-top:10px">
-            <button type="button" class="btn" id="addItem">＋ Add item</button>
-            <button type="button" class="btn" id="clearItems">Clear items</button>
-          </div>
+            <div class="paper-totals">
+              <div class="paper-total-row">
+                <span>Subtotal</span><strong id="paperSubtotal">R 0.00</strong>
+              </div>
+              <div class="paper-total-row">
+                <span>Tax</span><strong id="paperTax">R 0.00</strong>
+              </div>
+              <div class="paper-total-row">
+                <span>Discount</span><strong id="paperDiscount">R 0.00</strong>
+              </div>
+              <div class="paper-total-row final">
+                <span>Total due</span><strong id="paperTotal">R 0.00</strong>
+              </div>
+            </div>
+
+            <div class="paper-notes">
+              <h4>Notes & payment terms</h4>
+              <p id="paperNotes">Thank you for your business.</p>
+            </div>
+            <div class="paper-footer" id="paperFooter">Thank you for your business.</div>
+          </article>
         </div>
-
-        <div class="section">
-          <h3>Currency, tax and discount</h3>
-          <div class="grid">
-
-            <div class="field">
-              <label for="currency">Currency</label>
-              <select id="currency">
-                <option value="ZAR">South African rand (ZAR)</option>
-                <option value="USD">US dollar (USD)</option>
-                <option value="EUR">Euro (EUR)</option>
-                <option value="GBP">British pound (GBP)</option>
-                <option value="BWP">Botswana pula (BWP)</option>
-                <option value="NAD">Namibian dollar (NAD)</option>
-                <option value="KES">Kenyan shilling (KES)</option>
-                <option value="NGN">Nigerian naira (NGN)</option>
-                <option value="AUD">Australian dollar (AUD)</option>
-                <option value="CAD">Canadian dollar (CAD)</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="taxName">Tax label</label>
-              <input id="taxName" value="VAT">
-            </div>
-
-            <div class="field">
-              <label for="taxRate">Tax rate (%)</label>
-              <input id="taxRate" type="number" min="0" max="100" step=".01" value="0">
-            </div>
-
-            <div class="field">
-              <label for="discountType">Discount type</label>
-              <select id="discountType">
-                <option value="percent">Percentage (%)</option>
-                <option value="fixed">Fixed amount</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="discount">Discount value</label>
-              <input id="discount" type="number" min="0" step=".01" value="0">
-            </div>
-
-            <div class="field">
-              <label for="shipping">Delivery / extra charge</label>
-              <input id="shipping" type="number" min="0" step=".01" value="0">
-            </div>
-
-          </div>
-          <p class="hint">Tax is calculated after the discount. Check your local tax rules before issuing documents.</p>
-        </div>
-
-        <div class="section">
-          <h3>Payment and extra information</h3>
-          <div class="grid">
-
-            <div class="field">
-              <label for="paymentMethod">Preferred payment method</label>
-              <select id="paymentMethod">
-                <option>Bank transfer</option>
-                <option>PayFast</option>
-                <option>Cash</option>
-                <option>Card payment</option>
-                <option>EFT</option>
-                <option>Other</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="paymentRef">Payment reference</label>
-              <input id="paymentRef" placeholder="Use invoice number as reference">
-            </div>
-
-            <div class="field full">
-              <label for="bankDetails">Bank / payment details</label>
-              <textarea id="bankDetails" placeholder="Bank name, account holder, account number, branch code"></textarea>
-            </div>
-
-            <div class="field full">
-              <label for="terms">Payment terms</label>
-              <textarea id="terms" placeholder="e.g. Payment due within 7 days."></textarea>
-            </div>
-
-            <div class="field full">
-              <label for="notes">Notes / scope of work</label>
-              <textarea id="notes" placeholder="Thank you, delivery details, quote scope..."></textarea>
-            </div>
-
-            <div class="field full">
-              <label for="footer">Footer message</label>
-              <input id="footer" value="Thank you for your business.">
-            </div>
-
-          </div>
-        </div>
-
       </div>
 
-      <!-- DESIGN AND TOOLS -->
-      <div class="pane" id="pane-style">
-
-        <div class="section">
-          <h3>Choose your design</h3>
-          <div class="grid">
-
-            <div class="field">
-              <label for="theme">Template</label>
-              <select id="theme">
-                <option value="modern">Modern professional</option>
-                <option value="classic">Classic business</option>
-                <option value="minimal">Minimal clean</option>
-                <option value="bold">Bold accent</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="accent">Accent colour</label>
-              <input id="accent" type="color" value="#e00000">
-            </div>
-
-            <div class="field">
-              <label for="fontSize">Document text size</label>
-              <select id="fontSize">
-                <option value="compact">Compact</option>
-                <option value="normal" selected>Normal</option>
-                <option value="large">Large</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="showLogo">Show uploaded logo</label>
-              <select id="showLogo">
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-              </select>
-            </div>
-
-          </div>
+      <div class="panel saved-panel no-print" style="margin-top:18px">
+        <div class="panel-head">
+          <h2>Saved documents on this device</h2>
+          <button type="button" class="btn btn-small" id="clearSavedBtn">Clear all</button>
         </div>
-
-        <div class="section">
-          <h3>Document tools</h3>
-          <div class="actions">
-            <button type="button" class="btn" id="duplicateBtn">Duplicate current</button>
-            <button type="button" class="btn" id="resetBtn">Reset form</button>
-            <button type="button" class="btn" id="exportBtn">Export backup</button>
-            <label class="btn" for="importFile">Import backup</label>
-            <input id="importFile" class="hidden" type="file" accept="application/json">
-          </div>
-          <p class="hint">Export a backup to move your saved documents to another browser or device.</p>
+        <div class="panel-body">
+          <p class="notice info">Saved documents stay in this browser on this device. They are not automatically uploaded to an online account.</p>
+          <div id="savedList" class="saved-list"></div>
         </div>
-
       </div>
-
-      <!-- SAVED DOCUMENTS -->
-      <div class="pane" id="pane-saved">
-
-        <div class="section">
-          <h3>Saved on this device</h3>
-          <p class="hint">Your documents are stored in this browser and are not uploaded to an account.</p>
-          <div class="savedlist" id="savedList">
-            <div class="empty">No saved documents yet.</div>
-          </div>
-        </div>
-
-        <div class="section">
-          <h3>Privacy and backups</h3>
-          <p class="hint">Clearing browser data may remove saved documents. Export backups regularly.</p>
-          <button type="button" class="btn" id="clearSaved">Delete all saved documents</button>
-        </div>
-
-      </div>
-
-      <div class="message" id="message" role="status" aria-live="polite"></div>
-
     </section>
-
-    <!-- LIVE PREVIEW -->
-    <section class="panel preview">
-
-      <div class="previewhead">
-        <h2>Live document preview</h2>
-        <div class="actions">
-          <button type="button" class="btn small" id="copyText">Copy summary</button>
-          <button type="button" class="btn small primary" id="printPreview">Print / PDF</button>
-        </div>
-      </div>
-
-      <article class="paper" id="paper">
-        <p>Preparing your document preview...</p>
-      </article>
-
-      <p class="hint previewnote">Choose “Save as PDF” in your browser's print window to download a PDF.</p>
-
-    </section>
-
   </div>
 </main>
 
+<footer class="footer">
+  © <span id="year"></span> IT Elements. All rights reserved.
+</footer>
+
 <script>
-(() => {
-'use strict';
+(function(){
+"use strict";
 
-const $ = id => document.getElementById(id);
-const KEY = 'ite-invoice-studio-v2';
-const PROFILE = 'ite-invoice-profile-v2';
+const DOC_KEY="ite-invoice-studio-v2";
+const PROFILE_KEY="ite-invoice-profile-v2";
+const $=id=>document.getElementById(id);
 
-let currentId = null;
-let logo = '';
-let items = [{description:'',quantity:1,price:0}];
+let logoData="";
+let currentId=null;
+let items=[];
 
-const profileIds = [
-  'bizName','tagline','bizEmail','bizPhone',
-  'bizAddress','vatNumber','regNumber'
-];
-
-const ids = [
-  'kind','number','issue','due','reference',
-  'bizName','tagline','bizEmail','bizPhone','bizAddress',
-  'vatNumber','regNumber','clientName','clientEmail',
-  'clientPhone','clientVat','clientAddress','currency',
-  'taxName','taxRate','discountType','discount','shipping',
-  'paymentMethod','paymentRef','bankDetails','terms','notes',
-  'footer','theme','accent','fontSize','showLogo'
-];
-
-const esc = value => String(value ?? '').replace(/[&<>"']/g, char => ({
-  '&':'&amp;',
-  '<':'&lt;',
-  '>':'&gt;',
-  '"':'&quot;',
-  "'":'&#39;'
-}[char]));
-
-const val = id => $(id).value;
-
-const n = id => {
-  const value = Number(val(id));
-  return Number.isFinite(value) ? Math.max(0,value) : 0;
-};
-
-function cash(amount){
+function localDate(){
+  const d=new Date();
+  const offset=d.getTimezoneOffset();
+  return new Date(d.getTime()-offset*60000).toISOString().slice(0,10);
+}
+function makeId(){
+  return "doc-"+Date.now()+"-"+Math.random().toString(36).slice(2,8);
+}
+function escapeHTML(value){
+  return String(value??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+function number(value){
+  const n=Number(value);
+  return Number.isFinite(n)?n:0;
+}
+function money(value){
+  const currency=$("currency").value||"ZAR";
   try{
-    return new Intl.NumberFormat('en-ZA',{
-      style:'currency',
-      currency:val('currency') || 'ZAR'
-    }).format(Number(amount) || 0);
-  }catch{
-    return (val('currency') || 'ZAR') + ' ' + (Number(amount) || 0).toFixed(2);
+    return new Intl.NumberFormat("en-ZA",{
+      style:"currency",currency:currency
+    }).format(number(value));
+  }catch(e){
+    return currency+" "+number(value).toFixed(2);
   }
 }
-
-function say(message,type=''){
-  $('message').textContent = message;
-  $('message').className = 'message' + (type ? ' ' + type : '');
+function notify(message,type="success"){
+  const box=$("message");
+  box.textContent=message;
+  box.className="notice "+type;
+  window.scrollTo({top:0,behavior:"smooth"});
+  clearTimeout(notify.timer);
+  notify.timer=setTimeout(()=>box.classList.add("hidden"),4500);
 }
-
-function allDocs(){
+function readSaved(){
   try{
-    const data = JSON.parse(localStorage.getItem(KEY) || '[]');
-    return Array.isArray(data) ? data : [];
-  }catch{
-    return [];
-  }
+    const data=JSON.parse(localStorage.getItem(DOC_KEY)||"[]");
+    return Array.isArray(data)?data:[];
+  }catch(e){return []}
 }
-
-function calc(){
-  const subtotal = items.reduce((sum,item) => {
-    return sum +
-      Math.max(0,Number(item.quantity) || 0) *
-      Math.max(0,Number(item.price) || 0);
-  },0);
-
-  const discount = val('discountType') === 'fixed'
-    ? Math.min(subtotal,n('discount'))
-    : subtotal * Math.min(100,n('discount')) / 100;
-
-  const base = Math.max(0,subtotal-discount);
-  const tax = base * Math.min(100,n('taxRate')) / 100;
-  const extra = n('shipping');
-
+function writeSaved(data){
+  localStorage.setItem(DOC_KEY,JSON.stringify(data));
+}
+function profileData(){
   return {
-    sub:subtotal,
-    disc:discount,
-    tax,
-    extra,
-    total:base+tax+extra
+    businessName:$("businessName").value,
+    businessEmail:$("businessEmail").value,
+    businessPhone:$("businessPhone").value,
+    businessReg:$("businessReg").value,
+    businessWebsite:$("businessWebsite").value,
+    businessAddress:$("businessAddress").value,
+    logo:logoData
   };
 }
-
-/* ITEM ROWS */
-function renderRows(){
-  const body = $('itemRows');
-  body.replaceChildren();
-
-  items.forEach((item,index) => {
-    const tr = document.createElement('tr');
-
-    tr.innerHTML = `
-      <td>
-        <input
-          data-i="${index}"
-          data-k="description"
-          placeholder="Product or service"
-          value="${esc(item.description)}">
-      </td>
-      <td>
-        <input
-          class="qty"
-          data-i="${index}"
-          data-k="quantity"
-          type="number"
-          min="0"
-          step=".01"
-          value="${esc(item.quantity)}">
-      </td>
-      <td>
-        <input
-          class="price"
-          data-i="${index}"
-          data-k="price"
-          type="number"
-          min="0"
-          step=".01"
-          value="${esc(item.price)}">
-      </td>
-      <td>
-        <button type="button" class="remove" data-r="${index}" aria-label="Remove item">×</button>
-      </td>
-    `;
-
-    body.append(tr);
-  });
-
-  body.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input',() => {
-      const index = Number(input.dataset.i);
-      const key = input.dataset.k;
-
-      if(!items[index])return;
-
-      items[index][key] = key === 'description'
-        ? input.value
-        : (Number(input.value) || 0);
-
-      render();
-    });
-  });
-
-  body.querySelectorAll('[data-r]').forEach(button => {
-    button.addEventListener('click',() => {
-      items.splice(Number(button.dataset.r),1);
-
-      if(!items.length){
-        items = [{description:'',quantity:1,price:0}];
-      }
-
-      renderRows();
-      render();
-    });
-  });
+function saveProfile(){
+  try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profileData()))}
+  catch(e){notify("Your business profile could not be saved. The logo may be too large.","error")}
 }
-
-/* DOCUMENT PREVIEW */
-function render(){
-  const totals = calc();
-  const kind = val('kind');
-
-  const labels = {
-    invoice:'INVOICE',
-    quote:'QUOTATION',
-    receipt:'RECEIPT',
-    proforma:'PRO FORMA INVOICE'
-  };
-
-  const paper = $('paper');
-  const accent = val('accent') || '#e00000';
-
-  paper.className = 'paper ' + (val('theme') || 'modern');
-  paper.style.setProperty('--paper-accent',accent);
-
-  paper.style.fontSize =
-    val('fontSize') === 'compact' ? '12px' :
-    val('fontSize') === 'large' ? '15px' : '13px';
-
-  const logoHtml = logo && val('showLogo') !== 'no'
-    ? `<img class="logo" src="${esc(logo)}" alt="Business logo">`
-    : '';
-
-  const businessDetails = [
-    val('bizAddress'),
-    val('bizEmail'),
-    val('bizPhone'),
-    val('vatNumber') ? 'VAT: ' + val('vatNumber') : '',
-    val('regNumber') ? 'Reg: ' + val('regNumber') : ''
-  ].filter(Boolean).map(esc).join('<br>');
-
-  const clientDetails = [
-    val('clientAddress'),
-    val('clientEmail'),
-    val('clientPhone'),
-    val('clientVat') ? 'VAT: ' + val('clientVat') : ''
-  ].filter(Boolean).map(esc).join('<br>');
-
-  const rows = items
-    .filter(item => String(item.description || '').trim())
-    .map(item => `
-      <tr>
-        <td>${esc(item.description)}</td>
-        <td>${esc(item.quantity)}</td>
-        <td class="right">${cash(item.price)}</td>
-        <td class="right">${cash(item.quantity * item.price)}</td>
-      </tr>
-    `).join('') ||
-    '<tr><td colspan="4">Add products or services to see them here.</td></tr>';
-
-  paper.innerHTML = `
-    <div class="top">
-      <div>
-        ${logoHtml}
-        <div class="biz">
-          ${esc(val('bizName') || 'Your Business')}
-          <span>${esc(val('tagline'))}</span>
-        </div>
-        <div style="font-size:11px;color:#667085">
-          ${businessDetails || 'Business contact information'}
-        </div>
-      </div>
-
-      <div>
-        <div class="kind">${labels[kind] || 'INVOICE'}</div>
-        <div class="meta">
-          <b>${esc(val('number'))}</b><br>
-          Reference: ${esc(val('reference') || '—')}
-        </div>
-      </div>
-    </div>
-
-    <div class="parties">
-      <div>
-        <div class="label">Bill to</div>
-        <p>
-          <b>${esc(val('clientName') || 'Customer name')}</b><br>
-          ${clientDetails || 'Customer contact details'}
-        </p>
-      </div>
-
-      <div>
-        <div class="label">Issued by</div>
-        <p>
-          <b>${esc(val('bizName') || 'Your business')}</b><br>
-          ${businessDetails || 'Business contact details'}
-        </p>
-      </div>
-    </div>
-
-    <div class="dates">
-      <span><b>Issue date:</b> ${esc(val('issue') || '—')}</span>
-      <span>
-        <b>${kind === 'quote' ? 'Valid until' : 'Due date'}:</b>
-        ${esc(val('due') || '—')}
-      </span>
-    </div>
-
-    <table class="previewitems">
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Qty</th>
-          <th class="right">Unit price</th>
-          <th class="right">Amount</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
-
-    <div class="totals">
-      <div class="line">
-        <span>Subtotal</span>
-        <b>${cash(totals.sub)}</b>
-      </div>
-
-      ${totals.disc ? `
-        <div class="line">
-          <span>Discount</span>
-          <b>− ${cash(totals.disc)}</b>
-        </div>
-      ` : ''}
-
-      <div class="line">
-        <span>${esc(val('taxName') || 'Tax')} (${n('taxRate')}%)</span>
-        <b>${cash(totals.tax)}</b>
-      </div>
-
-      ${totals.extra ? `
-        <div class="line">
-          <span>Delivery / extra</span>
-          <b>${cash(totals.extra)}</b>
-        </div>
-      ` : ''}
-
-      <div class="line grand">
-        <span>Total</span>
-        <b>${cash(totals.total)}</b>
-      </div>
-    </div>
-
-    ${val('paymentMethod') || val('paymentRef') ? `
-      <div class="block">
-        <b>Payment information</b>
-        ${esc(val('paymentMethod'))}
-        ${val('paymentRef') ? '<br>Reference: ' + esc(val('paymentRef')) : ''}
-      </div>
-    ` : ''}
-
-    ${val('bankDetails') ? `
-      <div class="block">
-        <b>Bank / payment details</b>
-        ${esc(val('bankDetails'))}
-      </div>
-    ` : ''}
-
-    ${val('terms') ? `
-      <div class="block">
-        <b>Terms & conditions</b>
-        ${esc(val('terms'))}
-      </div>
-    ` : ''}
-
-    ${val('notes') ? `
-      <div class="block">
-        <b>Notes</b>
-        ${esc(val('notes'))}
-      </div>
-    ` : ''}
-
-    <div class="foot">
-      ${esc(val('footer') || 'Thank you for your business.')}
-    </div>
-  `;
-}
-
-/* DOCUMENT DATA */
-function collect(){
-  const data = {};
-
-  ids.forEach(id => {
-    data[id] = val(id);
-  });
-
-  data.items = items;
-  data.logo = logo;
-
-  return data;
-}
-
-function save(){
-  if(!val('bizName').trim() || !val('clientName').trim()){
-    say('Enter your business name and customer name before saving.','error');
-    return;
-  }
-
-  if(!items.some(item =>
-    String(item.description || '').trim() && Number(item.quantity) > 0
-  )){
-    say('Add at least one described item with a quantity.','error');
-    return;
-  }
-
+function loadProfile(){
   try{
-    const docs = allDocs();
-    const id = currentId || 'doc-' + Date.now();
-    const data = collect();
-
-    const entry = {
-      id,
-      updated:new Date().toISOString(),
-      number:val('number'),
-      kind:val('kind'),
-      client:val('clientName'),
-      total:calc().total,
-      data
-    };
-
-    const index = docs.findIndex(doc => doc.id === id);
-
-    if(index >= 0)docs[index] = entry;
-    else docs.unshift(entry);
-
-    localStorage.setItem(KEY,JSON.stringify(docs));
-
-    currentId = id;
-    $('draftLabel').textContent = 'Saved locally';
-
-    listSaved();
-    say('Document saved in this browser.','success');
-  }catch(error){
-    console.error(error);
-    say('Could not save. Your browser storage may be full. Export a backup or remove old documents.','error');
-  }
-}
-
-/* SAVED DOCUMENTS */
-function listSaved(){
-  const box = $('savedList');
-  const docs = allDocs();
-
-  box.replaceChildren();
-
-  if(!docs.length){
-    box.innerHTML = '<div class="empty">No saved documents yet.</div>';
-    return;
-  }
-
-  docs.forEach(doc => {
-    const row = document.createElement('div');
-    row.className = 'saved';
-
-    const info = document.createElement('div');
-    const strong = document.createElement('strong');
-    const small = document.createElement('small');
-
-    strong.textContent =
-      (doc.number || 'Untitled') + ' · ' + String(doc.kind || 'invoice').toUpperCase();
-
-    small.textContent =
-      (doc.client || 'Customer') + ' · ' +
-      cash(doc.total) + ' · ' +
-      (doc.updated ? new Date(doc.updated).toLocaleDateString() : 'No date');
-
-    info.append(strong,small);
-
-    const actions = document.createElement('div');
-    actions.className = 'actions';
-
-    const open = document.createElement('button');
-    open.type = 'button';
-    open.className = 'btn small';
-    open.textContent = 'Open';
-
-    open.onclick = () => {
-      if(!doc.data)return;
-
-      currentId = doc.id;
-      apply(doc.data);
-      $('draftLabel').textContent = 'Saved document';
-      say('Document loaded.','success');
-    };
-
-    const copy = document.createElement('button');
-    copy.type = 'button';
-    copy.className = 'btn small';
-    copy.textContent = 'Copy';
-
-    copy.onclick = () => {
-      if(!doc.data)return;
-
-      currentId = null;
-      apply(doc.data);
-      $('number').value = nextNumber();
-      $('draftLabel').textContent = 'Copied draft';
-      say('Copy created. Save it with a new number.','success');
-    };
-
-    const del = document.createElement('button');
-    del.type = 'button';
-    del.className = 'btn small';
-    del.textContent = 'Delete';
-
-    del.onclick = () => {
-      if(confirm('Delete ' + (doc.number || 'this document') + '?')){
-        try{
-          localStorage.setItem(
-            KEY,
-            JSON.stringify(allDocs().filter(item => item.id !== doc.id))
-          );
-          listSaved();
-          say('Document deleted.','success');
-        }catch(error){
-          say('Could not delete this document.','error');
-        }
-      }
-    };
-
-    actions.append(open,copy,del);
-    row.append(info,actions);
-    box.append(row);
-  });
-}
-
-function nextNumber(){
-  let max = 0;
-
-  allDocs().forEach(doc => {
-    const match = String(doc.number || '').match(/(\d+)$/);
-    if(match)max = Math.max(max,Number(match[1]));
-  });
-
-  return 'INV-' + String(max + 1).padStart(4,'0');
-}
-
-/* LOAD DOCUMENT */
-function apply(data){
-  if(!data || typeof data !== 'object')return;
-
-  ids.forEach(id => {
-    if(data[id] !== undefined && $(id)){
-      $(id).value = data[id];
-    }
-  });
-
-  items = Array.isArray(data.items) && data.items.length
-    ? data.items.map(item => ({
-        description:String(item.description || ''),
-        quantity:Number(item.quantity) || 0,
-        price:Number(item.price) || 0
-      }))
-    : [{description:'',quantity:1,price:0}];
-
-  logo = typeof data.logo === 'string' && data.logo.startsWith('data:image/')
-    ? data.logo
-    : '';
-
-  showLogo();
-  renderRows();
-  render();
-}
-
-function showLogo(){
-  const preview = $('logoPreview');
-
-  if(logo){
-    preview.src = logo;
-    preview.style.display = 'block';
-  }else{
-    preview.removeAttribute('src');
-    preview.style.display = 'none';
-  }
-}
-
-/* NEW DOCUMENT */
-function fresh(){
-  if(!confirm('Start a new document? Unsaved changes will be cleared.')){
-    return;
-  }
-
-  const profile = {};
-
-  profileIds.forEach(id => {
-    profile[id] = val(id);
-  });
-
-  const keepLogo = logo;
-
-  ids.forEach(id => {
-    if(![
-      ...profileIds,
-      'currency','accent','footer'
-    ].includes(id)){
-      $(id).value = '';
-    }
-  });
-
-  Object.entries(profile).forEach(([id,value]) => {
-    $(id).value = value;
-  });
-
-  logo = keepLogo;
-
-  $('kind').value = 'invoice';
-  $('number').value = nextNumber();
-  $('issue').value = new Date().toISOString().slice(0,10);
-  $('currency').value = 'ZAR';
-  $('taxName').value = 'VAT';
-  $('taxRate').value = '0';
-  $('discountType').value = 'percent';
-  $('discount').value = '0';
-  $('shipping').value = '0';
-  $('paymentMethod').value = 'Bank transfer';
-  $('theme').value = 'modern';
-  $('accent').value = '#e00000';
-  $('fontSize').value = 'normal';
-  $('showLogo').value = 'yes';
-  $('footer').value = 'Thank you for your business.';
-
-  items = [{description:'',quantity:1,price:0}];
-  currentId = null;
-
-  showLogo();
-  renderRows();
-  render();
-
-  $('draftLabel').textContent = 'New draft';
-  say('New document ready.');
-}
-
-/* EXPORT BACKUP */
-function backup(){
-  try{
-    const blob = new Blob(
-      [JSON.stringify(allDocs(),null,2)],
-      {type:'application/json'}
-    );
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-
-    link.href = url;
-    link.download = 'it-elements-invoice-backup.json';
-    document.body.append(link);
-    link.click();
-    link.remove();
-
-    setTimeout(() => URL.revokeObjectURL(url),1000);
-
-    say('Backup exported.','success');
-  }catch(error){
-    say('Could not export your backup.','error');
-  }
-}
-
-/* TABS */
-document.querySelectorAll('.tab').forEach(button => {
-  button.addEventListener('click',() => {
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.classList.toggle('active',tab === button);
-    });
-
-    document.querySelectorAll('.pane').forEach(pane => {
-      pane.classList.toggle(
-        'active',
-        pane.id === 'pane-' + button.dataset.tab
-      );
-    });
-  });
-});
-
-/* BUTTONS */
-$('addItem').onclick = () => {
-  items.push({description:'',quantity:1,price:0});
-  renderRows();
-  render();
-};
-
-$('clearItems').onclick = () => {
-  items = [{description:'',quantity:1,price:0}];
-  renderRows();
-  render();
-};
-
-$('saveBtn').onclick = save;
-$('newBtn').onclick = fresh;
-$('printBtn').onclick = () => window.print();
-$('printPreview').onclick = () => window.print();
-
-$('duplicateBtn').onclick = () => {
-  currentId = null;
-  $('number').value = nextNumber();
-  $('draftLabel').textContent = 'Copied draft';
-  say('Document duplicated. Save it as a new document.','success');
-};
-
-$('resetBtn').onclick = fresh;
-$('exportBtn').onclick = backup;
-
-$('clearSaved').onclick = () => {
-  if(confirm('Permanently delete all documents saved in this browser?')){
-    try{
-      localStorage.removeItem(KEY);
-      currentId = null;
-      listSaved();
-      say('All local documents deleted.','success');
-    }catch(error){
-      say('Could not delete saved documents.','error');
-    }
-  }
-};
-
-/* IMPORT BACKUP */
-$('importFile').onchange = event => {
-  const file = event.target.files[0];
-  if(!file)return;
-
-  if(file.size > 10 * 1024 * 1024){
-    say('Backup file is too large. Maximum size is 10 MB.','error');
-    event.target.value = '';
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    try{
-      const incoming = JSON.parse(reader.result);
-
-      if(!Array.isArray(incoming)){
-        throw new Error('Invalid backup');
-      }
-
-      const valid = incoming.filter(doc =>
-        doc &&
-        typeof doc.id === 'string' &&
-        doc.data &&
-        typeof doc.data === 'object'
-      );
-
-      const existing = allDocs();
-      const merged = [...valid,...existing];
-
-      const unique = [
-        ...new Map(merged.map(doc => [doc.id,doc])).values()
-      ];
-
-      localStorage.setItem(KEY,JSON.stringify(unique));
-      listSaved();
-      say('Backup imported.','success');
-    }catch(error){
-      console.error(error);
-      say('That backup file is not valid or could not be imported.','error');
-    }
-  };
-
-  reader.onerror = () => {
-    say('Could not read that backup file.','error');
-  };
-
-  reader.readAsText(file);
-  event.target.value = '';
-};
-
-/* COPY SUMMARY */
-$('copyText').onclick = async () => {
-  const totals = calc();
-
-  const summary = [
-    `${val('kind').toUpperCase()} ${val('number')}`,
-    `From: ${val('bizName')}`,
-    `To: ${val('clientName')}`,
-    `Subtotal: ${cash(totals.sub)}`,
-    `Discount: ${cash(totals.disc)}`,
-    `${val('taxName')} (${n('taxRate')}%): ${cash(totals.tax)}`,
-    `Extra: ${cash(totals.extra)}`,
-    `TOTAL: ${cash(totals.total)}`
-  ].join('\n');
-
-  try{
-    if(!navigator.clipboard || !navigator.clipboard.writeText){
-      throw new Error('Clipboard unavailable');
-    }
-
-    await navigator.clipboard.writeText(summary);
-    say('Summary copied.','success');
-  }catch(error){
-    say('Clipboard is unavailable. Try using the Print / PDF option instead.','error');
-  }
-};
-
-/* LOGO UPLOAD */
-$('logoFile').onchange = async event => {
-  const file = event.target.files[0];
-  if(!file)return;
-
-  const allowed = ['image/png','image/jpeg','image/webp'];
-
-  if(!allowed.includes(file.type) || file.size > 3 * 1024 * 1024){
-    say('Choose a PNG, JPG or WebP logo smaller than 3 MB.','error');
-    event.target.value = '';
-    return;
-  }
-
-  let bitmap;
-
-  try{
-    if(!window.createImageBitmap){
-      throw new Error('Image processing unavailable');
-    }
-
-    bitmap = await createImageBitmap(file);
-
-    const scale = Math.min(
-      1,
-      500 / bitmap.width,
-      220 / bitmap.height
-    );
-
-    const canvas = document.createElement('canvas');
-
-    canvas.width = Math.max(1,Math.round(bitmap.width * scale));
-    canvas.height = Math.max(1,Math.round(bitmap.height * scale));
-
-    const context = canvas.getContext('2d');
-
-    if(!context)throw new Error('Canvas unavailable');
-
-    context.drawImage(bitmap,0,0,canvas.width,canvas.height);
-    bitmap.close();
-    bitmap = null;
-
-    logo = canvas.toDataURL('image/webp',.75);
-
+    const p=JSON.parse(localStorage.getItem(PROFILE_KEY)||"{}");
+    $("businessName").value=p.businessName||"";
+    $("businessEmail").value=p.businessEmail||"";
+    $("businessPhone").value=p.businessPhone||"";
+    $("businessReg").value=p.businessReg||"";
+    $("businessWebsite").value=p.businessWebsite||"";
+    $("businessAddress").value=p.businessAddress||"";
+    logoData=p.logo||"";
     showLogo();
-    render();
-    say('Logo added. Remember to save your document.','success');
-  }catch(error){
-    if(bitmap)bitmap.close();
-    console.error(error);
-    say('Could not load this logo. Try another PNG, JPG or WebP image.','error');
+  }catch(e){}
+}
+function showLogo(){
+  const preview=$("logoPreview");
+  if(logoData){
+    preview.src=logoData;
+    preview.classList.remove("hidden");
+  }else{
+    preview.removeAttribute("src");
+    preview.classList.add("hidden");
   }
-
-  event.target.value = '';
-};
-
-$('removeLogo').onclick = () => {
-  logo = '';
-  showLogo();
-  render();
-  say('Uploaded logo removed.','success');
-};
-
-/* LIVE UPDATES AND BUSINESS PROFILE */
-ids.forEach(id => {
-  $(id).addEventListener('input',() => {
-    render();
-
-    if(profileIds.includes(id)){
-      const profile = {};
-
-      profileIds.forEach(key => {
-        profile[key] = val(key);
-      });
-
-      try{
-        localStorage.setItem(PROFILE,JSON.stringify(profile));
-      }catch(error){
-        console.warn('Business profile could not be saved.',error);
-      }
-    }
+}
+function nextNumber(){
+  const year=new Date().getFullYear();
+  const docs=readSaved();
+  const count=docs.filter(d=>(d.number||"").includes(String(year))).length+1;
+  return "INV-"+year+"-"+String(count).padStart(4,"0");
+}
+function addItem(item={}){
+  items.push({
+    description:item.description||"",
+    qty:number(item.qty??1),
+    price:number(item.price??0)
   });
+  renderItemEditor();
+  update();
+}
+function renderItemEditor(){
+  $("itemsBody").innerHTML=items.map((item,index)=>`
+    <tr>
+      <td><input class="item-name" data-index="${index}" data-key="description" aria-label="Item description" value="${escapeHTML(item.description)}" placeholder="Description"></td>
+      <td><input class="item-number" data-index="${index}" data-key="qty" aria-label="Quantity" type="number" min="0" step="0.01" value="${item.qty}"></td>
+      <td><input class="item-number" data-index="${index}" data-key="price" aria-label="Unit price" type="number" min="0" step="0.01" value="${item.price}"></td>
+      <td class="line-total">${money(item.qty*item.price)}</td>
+      <td><button class="remove-item" type="button" data-remove="${index}" aria-label="Remove item">×</button></td>
+    </tr>
+  `).join("");
+}
+function totals(){
+  const subtotal=items.reduce((sum,item)=>sum+number(item.qty)*number(item.price),0);
+  const discount=Math.min(Math.max(0,number($("discount").value)),subtotal);
+  const taxable=Math.max(0,subtotal-discount);
+  const tax=taxable*Math.max(0,number($("taxRate").value))/100;
+  return {subtotal,discount,tax,total:taxable+tax};
+}
+function dateDisplay(value){
+  if(!value)return "—";
+  const d=new Date(value+"T00:00:00");
+  return Number.isNaN(d.getTime())?value:d.toLocaleDateString("en-ZA");
+}
+function update(){
+  const t=totals();
+  $("editSubtotal").textContent=money(t.subtotal);
+  $("editTax").textContent=money(t.tax);
+  $("editDiscount").textContent=money(t.discount);
+  $("editTotal").textContent=money(t.total);
 
-  $(id).addEventListener('change',render);
-});
+  $("paperType").textContent=$("docType").value.toUpperCase();
+  $("paperNumber").textContent=$("docNumber").value||"—";
+  $("paperIssue").textContent="Issue date: "+dateDisplay($("issueDate").value);
+  $("paperDue").textContent="Due date: "+dateDisplay($("dueDate").value);
 
-/* INITIALISE */
-function init(){
+  const business=$("businessName").value.trim()||"Your Business";
+  $("paperBusinessName").textContent=business;
+  $("paperFromName").textContent=business;
+  $("paperFromDetails").textContent=[
+    $("businessAddress").value,
+    $("businessEmail").value,
+    $("businessPhone").value,
+    $("businessReg").value?"Reg / VAT: "+$("businessReg").value:"",
+    $("businessWebsite").value
+  ].filter(Boolean).join("\n");
+
+  $("paperCustomerName").textContent=$("customerName").value||"Customer name";
+  $("paperCustomerDetails").textContent=[
+    $("customerAddress").value,
+    $("customerEmail").value,
+    $("customerPhone").value
+  ].filter(Boolean).join("\n");
+
+  $("paperItems").innerHTML=items.map(item=>`
+    <tr>
+      <td>${escapeHTML(item.description||"Item / service")}</td>
+      <td>${number(item.qty)}</td>
+      <td>${money(item.price)}</td>
+      <td>${money(number(item.qty)*number(item.price))}</td>
+    </tr>
+  `).join("");
+
+  $("paperSubtotal").textContent=money(t.subtotal);
+  $("paperTax").textContent=money(t.tax);
+  $("paperDiscount").textContent=money(t.discount);
+  $("paperTotal").textContent=money(t.total);
+  $("paperNotes").textContent=$("notes").value||"Thank you for your business.";
+  $("paperFooter").textContent=business+" · Thank you for your business.";
+
+  if(logoData){
+    $("paperLogo").src=logoData;
+    $("paperLogo").classList.remove("hidden");
+  }else{
+    $("paperLogo").classList.add("hidden");
+  }
+}
+function getDocument(){
+  const t=totals();
+  return {
+    id:currentId||makeId(),
+    type:$("docType").value,
+    number:$("docNumber").value.trim(),
+    issueDate:$("issueDate").value,
+    dueDate:$("dueDate").value,
+    currency:$("currency").value,
+    business:profileData(),
+    customer:{
+      name:$("customerName").value,
+      email:$("customerEmail").value,
+      phone:$("customerPhone").value,
+      address:$("customerAddress").value
+    },
+    items:items.map(i=>({...i})),
+    taxRate:number($("taxRate").value),
+    discount:number($("discount").value),
+    notes:$("notes").value,
+    totals:t,
+    updatedAt:new Date().toISOString()
+  };
+}
+function applyDocument(doc){
+  if(!doc||typeof doc!=="object")return;
+  currentId=doc.id||makeId();
+  $("docType").value=doc.type||"Invoice";
+  $("docNumber").value=doc.number||nextNumber();
+  $("issueDate").value=doc.issueDate||localDate();
+  $("dueDate").value=doc.dueDate||"";
+  $("currency").value=doc.currency||"ZAR";
+
+  const b=doc.business||{};
+  $("businessName").value=b.businessName||"";
+  $("businessEmail").value=b.businessEmail||"";
+  $("businessPhone").value=b.businessPhone||"";
+  $("businessReg").value=b.businessReg||"";
+  $("businessWebsite").value=b.businessWebsite||"";
+  $("businessAddress").value=b.businessAddress||"";
+  logoData=b.logo||"";
+  showLogo();
+  saveProfile();
+
+  const c=doc.customer||{};
+  $("customerName").value=c.name||"";
+  $("customerEmail").value=c.email||"";
+  $("customerPhone").value=c.phone||"";
+  $("customerAddress").value=c.address||"";
+
+  $("taxRate").value=number(doc.taxRate??15);
+  $("discount").value=number(doc.discount??0);
+  $("notes").value=doc.notes||"";
+  items=Array.isArray(doc.items)?doc.items.map(i=>({
+    description:i.description||"",
+    qty:number(i.qty),
+    price:number(i.price)
+  })):[];
+  if(!items.length)items=[{description:"",qty:1,price:0}];
+  renderItemEditor();
+  update();
+}
+function fresh(){
+  currentId=makeId();
+  $("docType").value="Invoice";
+  $("docNumber").value=nextNumber();
+  $("issueDate").value=localDate();
+  $("dueDate").value="";
+  $("customerName").value="";
+  $("customerEmail").value="";
+  $("customerPhone").value="";
+  $("customerAddress").value="";
+  $("taxRate").value=15;
+  $("discount").value=0;
+  $("notes").value="";
+  $("currency").value="ZAR";
+  items=[{description:"",qty:1,price:0}];
+  renderItemEditor();
+  update();
+  notify("New document ready. No login is required.");
+}
+function saveDocument(){
+  const doc=getDocument();
+  if(!doc.number){
+    notify("Please enter a document number first.","error");
+    $("docNumber").focus();
+    return;
+  }
+  const docs=readSaved();
+  const index=docs.findIndex(d=>d.id===doc.id);
+  if(index>=0)docs[index]=doc;
+  else docs.unshift(doc);
   try{
-    const profile = JSON.parse(localStorage.getItem(PROFILE) || '{}');
-
-    if(profile && typeof profile === 'object'){
-      Object.entries(profile).forEach(([key,value]) => {
-        if(profileIds.includes(key) && $(key)){
-          $(key).value = String(value ?? '');
+    writeSaved(docs);
+    currentId=doc.id;
+    saveProfile();
+    renderSaved();
+    notify("Document saved in this browser.");
+  }catch(e){
+    notify("Could not save. Your browser storage may be full. Try exporting a backup.","error");
+  }
+}
+function renderSaved(){
+  const docs=readSaved();
+  if(!docs.length){
+    $("savedList").innerHTML='<div class="empty">No saved documents yet. Create a document and select Save document.</div>';
+    return;
+  }
+  $("savedList").innerHTML=docs.map(doc=>`
+    <div class="saved-item">
+      <div>
+        <strong>${escapeHTML(doc.type||"Document")} · ${escapeHTML(doc.number||"")}</strong>
+        <small>${escapeHTML(doc.customer?.name||"No customer")} · ${escapeHTML(dateDisplay(doc.issueDate))} · ${escapeHTML(moneyFor(doc.totals?.total,doc.currency))}</small>
+      </div>
+      <div class="saved-actions">
+        <button class="btn btn-small" type="button" data-open="${escapeHTML(doc.id)}">Open</button>
+        <button class="btn btn-small btn-danger" type="button" data-delete="${escapeHTML(doc.id)}">Delete</button>
+      </div>
+    </div>
+  `).join("");
+}
+function moneyFor(value,currency){
+  try{
+    return new Intl.NumberFormat("en-ZA",{style:"currency",currency:currency||"ZAR"}).format(number(value));
+  }catch(e){return number(value).toFixed(2)}
+}
+function exportBackup(){
+  const data={
+    app:"IT Elements Invoice Studio",
+    version:2,
+    exportedAt:new Date().toISOString(),
+    profile:profileData(),
+    documents:readSaved()
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="ite-invoice-backup-"+localDate()+".json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  notify("Backup exported.");
+}
+function importBackup(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!data||!Array.isArray(data.documents))throw new Error("Invalid backup");
+      const existing=readSaved();
+      const map=new Map(existing.map(d=>[d.id,d]));
+      data.documents.forEach(doc=>{
+        if(doc&&typeof doc==="object"){
+          const id=doc.id||makeId();
+          map.set(id,{...doc,id});
         }
       });
+      writeSaved(Array.from(map.values()));
+      if(data.profile){
+        localStorage.setItem(PROFILE_KEY,JSON.stringify(data.profile));
+        loadProfile();
+      }
+      renderSaved();
+      notify("Backup imported successfully.");
+    }catch(e){
+      notify("That backup file could not be read.","error");
     }
-  }catch(error){
-    console.warn('Business profile could not be loaded.',error);
+    $("importFile").value="";
+  };
+  reader.readAsText(file);
+}
+
+$("addItemBtn").addEventListener("click",()=>addItem());
+$("itemsBody").addEventListener("input",event=>{
+  const input=event.target;
+  const index=Number(input.dataset.index);
+  const key=input.dataset.key;
+  if(!Number.isInteger(index)||!items[index]||!key)return;
+  items[index][key]=key==="description"?input.value:number(input.value);
+  update();
+  const row=input.closest("tr");
+  if(row)row.querySelector(".line-total").textContent=money(items[index].qty*items[index].price);
+});
+$("itemsBody").addEventListener("click",event=>{
+  const button=event.target.closest("[data-remove]");
+  if(!button)return;
+  items.splice(Number(button.dataset.remove),1);
+  if(!items.length)items.push({description:"",qty:1,price:0});
+  renderItemEditor();
+  update();
+});
+
+document.querySelectorAll(".editor-panel input,.editor-panel select,.editor-panel textarea").forEach(el=>{
+  if(el.id==="businessLogo")return;
+  el.addEventListener("input",()=>{
+    update();
+    if(el.id.startsWith("business"))saveProfile();
+  });
+  el.addEventListener("change",()=>{
+    update();
+    if(el.id.startsWith("business"))saveProfile();
+  });
+});
+
+$("businessLogo").addEventListener("change",event=>{
+  const file=event.target.files?.[0];
+  if(!file)return;
+  if(!file.type.startsWith("image/")){
+    notify("Please select an image file.","error");
+    return;
   }
+  if(file.size>2*1024*1024){
+    notify("Please choose a logo smaller than 2 MB.","error");
+    return;
+  }
+  const reader=new FileReader();
+  reader.onload=()=>{
+    logoData=reader.result;
+    showLogo();
+    saveProfile();
+    update();
+    notify("Business logo added.");
+  };
+  reader.readAsDataURL(file);
+});
+$("removeLogo").addEventListener("click",()=>{
+  logoData="";
+  $("businessLogo").value="";
+  showLogo();
+  saveProfile();
+  update();
+});
+$("newBtn").addEventListener("click",fresh);
+$("saveBtn").addEventListener("click",saveDocument);
+$("printBtn").addEventListener("click",()=>window.print());
+$("previewPrintBtn").addEventListener("click",()=>window.print());
+$("exportBtn").addEventListener("click",exportBackup);
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",event=>{
+  const file=event.target.files?.[0];
+  if(file)importBackup(file);
+});
+$("savedList").addEventListener("click",event=>{
+  const open=event.target.closest("[data-open]");
+  const del=event.target.closest("[data-delete]");
+  if(open){
+    const doc=readSaved().find(d=>d.id===open.dataset.open);
+    if(doc){
+      applyDocument(doc);
+      notify("Saved document opened.");
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+  }
+  if(del){
+    const docs=readSaved().filter(d=>d.id!==del.dataset.delete);
+    writeSaved(docs);
+    renderSaved();
+    notify("Saved document deleted.");
+  }
+});
+$("clearSavedBtn").addEventListener("click",()=>{
+  if(!confirm("Delete all saved documents from this browser? This cannot be undone. Export a backup first if you want to keep them."))return;
+  writeSaved([]);
+  currentId=null;
+  renderSaved();
+  notify("Saved documents cleared.");
+});
 
-  $('issue').value = new Date().toISOString().slice(0,10);
-  $('number').value = nextNumber();
-
-  renderRows();
-  listSaved();
-  render();
-}
-
-try{
-  init();
-}catch(error){
-  console.error('Invoice Studio could not initialise:',error);
-  $('paper').innerHTML =
-    '<div style="padding:20px;color:#b42318;font-weight:700">The preview could not be loaded. Please refresh the page and check the browser console if the problem continues.</div>';
-  say('The invoice studio encountered an error while loading.','error');
-}
-
+$("year").textContent=new Date().getFullYear();
+loadProfile();
+items=[{description:"",qty:1,price:0}];
+fresh();
+renderSaved();
 })();
 </script>
-
 </body>
 </html>
