@@ -2,1277 +2,906 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="Business IT support, maintenance, networking, security and technology solutions from IT Elements South Africa.">
-  <title>IT Elements | Business IT Support</title>
-
-  <style>
-    :root {
-      color-scheme: light;
-      --bg: #ffffff;
-      --soft: #f7f7f8;
-      --border: #e5e5e8;
-      --text: #171717;
-      --muted: #55555e;
-      --red: #e00000;
-      --red-dark: #b00000;
-      --max: 1500px;
-    }
-
-    * { box-sizing: border-box; }
-
-    html {
-      scroll-behavior: smooth;
-      scroll-padding-top: 100px;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      overflow-x: hidden;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
-      line-height: 1.6;
-    }
-
-    a { color: inherit; text-decoration: none; }
-    button, input, select, textarea { font: inherit; }
-
-    /* CONTACT-MATCHING HEADER */
-    .nav {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      width: 100%;
-      min-height: 76px;
-      margin: 0;
-      padding: 12px 4%;
-      border: 0;
-      border-bottom: 1px solid var(--border);
-      border-radius: 0;
-      background: rgba(255,255,255,.98);
-      box-shadow: 0 3px 15px rgba(0,0,0,.045);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      backdrop-filter: blur(12px);
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #171717;
-      text-decoration: none;
-      font-size: 21px;
-      font-weight: 900;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .brand img {
-      display: block;
-      width: 46px;
-      height: 46px;
-      object-fit: contain;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      flex-shrink: 0;
-    }
-
-    .brand-support {
-      color: var(--red);
-      font-size: 14px;
-      font-weight: 700;
-      margin-left: -7px;
-    }
-
-    .links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 8px 15px;
-    }
-
-    .links a {
-      color: #292929;
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 700;
-      padding: 8px 0;
-      white-space: nowrap;
-      transition: color .2s ease;
-    }
-
-    .links a:hover,
-    .links a:focus-visible {
-      color: var(--red);
-    }
-
-    .links a.nav-cta {
-      color: #ffffff;
-      background: var(--red);
-      border: 1px solid var(--red);
-      border-radius: 8px;
-      padding: 10px 15px;
-    }
-
-    .links a.nav-cta:hover {
-      color: #ffffff;
-      background: var(--red-dark);
-      border-color: var(--red-dark);
-    }
-
-    .menu-toggle {
-      display: none;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      color: #171717;
-      border-radius: 8px;
-      padding: 7px 12px;
-      font-size: 21px;
-      cursor: pointer;
-    }
-
-    /* GENERAL LAYOUT */
-    .container {
-      width: min(var(--max), 92%);
-      margin: 0 auto;
-    }
-
-    section { padding: 75px 0; }
-
-    .eyebrow {
-      display: inline-block;
-      color: var(--red);
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 13px;
-    }
-
-    .red { color: var(--red); }
-
-    .hero {
-      position: relative;
-      overflow: hidden;
-      padding: 95px 0 85px;
-      background:
-        radial-gradient(ellipse at 90% 10%, rgba(224,0,0,.055), transparent 38%),
-        #ffffff;
-      border-bottom: 1px solid var(--border);
-      text-align: center;
-    }
-
-    .hero h1 {
-      max-width: 900px;
-      margin: 0 auto 20px;
-      color: #171717;
-      font-size: clamp(36px, 6vw, 65px);
-      font-weight: 900;
-      letter-spacing: -1.5px;
-      line-height: 1.12;
-      overflow-wrap: break-word;
-    }
-
-    .hero p {
-      max-width: 760px;
-      margin: 0 auto 28px;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.8;
-    }
-
-    .hero-actions {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 46px;
-      padding: 12px 21px;
-      border: 1px solid var(--red);
-      border-radius: 8px;
-      background: var(--red);
-      color: #ffffff;
-      font-size: 14px;
-      font-weight: 800;
-      text-align: center;
-      cursor: pointer;
-      transition: .2s ease;
-    }
-
-    .btn:hover {
-      background: var(--red-dark);
-      border-color: var(--red-dark);
-      color: #ffffff;
-      transform: translateY(-2px);
-      box-shadow: 0 7px 18px rgba(176,0,0,.13);
-    }
-
-    .btn-outline {
-      color: var(--red);
-      background: #ffffff;
-      border-color: var(--red);
-    }
-
-    .btn-outline:hover {
-      color: #ffffff;
-      background: var(--red);
-      border-color: var(--red);
-    }
-
-    .section-heading {
-      max-width: 780px;
-      margin: 0 auto 38px;
-      text-align: center;
-    }
-
-    .section-heading h2 {
-      color: #171717;
-      font-size: clamp(27px, 4vw, 40px);
-      line-height: 1.2;
-      letter-spacing: -.6px;
-      margin: 0 0 12px;
-    }
-
-    .section-heading p {
-      color: var(--muted);
-      font-size: 15px;
-      margin: 0 auto;
-      line-height: 1.8;
-    }
-
-    /* SERVICE CARDS */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 20px;
-    }
-
-    .card {
-      min-width: 0;
-      padding: 27px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 13px;
-      box-shadow: 0 6px 22px rgba(0,0,0,.035);
-      transition: .2s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(224,0,0,.45);
-      box-shadow: 0 12px 28px rgba(0,0,0,.075);
-    }
-
-    .card-icon {
-      width: 52px;
-      height: 52px;
-      display: grid;
-      place-items: center;
-      margin-bottom: 17px;
-      background: #fff4f4;
-      border: 1px solid #f2dada;
-      border-radius: 12px;
-      font-size: 24px;
-    }
-
-    .card h3 {
-      color: #171717;
-      font-size: 19px;
-      line-height: 1.3;
-      margin: 0 0 10px;
-    }
-
-    .card p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.75;
-      margin: 0;
-    }
-
-    /* PLAN SECTION */
-    .plans-section {
-      background: var(--soft);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .plan-card {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .plan-card .plan-description {
-      min-height: 68px;
-    }
-
-    .price {
-      color: var(--red);
-      font-size: 30px;
-      font-weight: 900;
-      letter-spacing: -.7px;
-      margin: 18px 0 13px;
-    }
-
-    .price small {
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0;
-    }
-
-    .plan-card ul {
-      flex: 1;
-      padding-left: 19px;
-      margin: 8px 0 20px;
-      color: #44444b;
-      font-size: 13px;
-    }
-
-    .plan-card li { margin: 8px 0; }
-
-    .plan-card .btn {
-      width: 100%;
-      margin-top: auto;
-    }
-
-    .note {
-      max-width: 850px;
-      margin: 25px auto 0;
-      padding: 15px 18px;
-      color: #55555e;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--red);
-      border-radius: 8px;
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    /* FEATURES */
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-    }
-
-    .feature {
-      min-width: 0;
-      padding: 23px;
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-    }
-
-    .feature h3 {
-      color: #171717;
-      font-size: 17px;
-      margin: 0 0 7px;
-    }
-
-    .feature p {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.75;
-      margin: 0;
-    }
-
-    /* BUSINESS ENQUIRY FORM */
-    .form-section { background: var(--soft); }
-
-    .form-wrap {
-      width: min(760px, 100%);
-      margin: 0 auto;
-      padding: clamp(21px, 4vw, 34px);
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 8px 28px rgba(0,0,0,.045);
-    }
-
-    .field { margin-bottom: 18px; }
-
-    .field label {
-      display: block;
-      color: #242424;
-      font-size: 14px;
-      font-weight: 800;
-      margin-bottom: 7px;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      display: block;
-      width: 100%;
-      min-width: 0;
-      padding: 13px 14px;
-      color: #171717;
-      background: #ffffff;
-      border: 1px solid #d9d9de;
-      border-radius: 8px;
-      font-size: 15px;
-      line-height: 1.5;
-      outline: none;
-      transition: border-color .2s ease, box-shadow .2s ease;
-    }
-
-    .field input::placeholder,
-    .field textarea::placeholder { color: #92929a; }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--red);
-      box-shadow: 0 0 0 3px rgba(224,0,0,.09);
-    }
-
-    .field textarea {
-      min-height: 125px;
-      resize: vertical;
-    }
-
-    .field select { cursor: pointer; }
-
-    .form-wrap .btn {
-      width: 100%;
-      min-height: 51px;
-      font-size: 15px;
-    }
-
-    .form-note {
-      color: #777780;
-      font-size: 12px;
-      line-height: 1.7;
-      text-align: center;
-      margin: 13px 0 0;
-    }
-
-    /* FINAL CTA */
-    .cta {
-      padding: 75px 0;
-      background:
-        radial-gradient(ellipse at center, rgba(224,0,0,.045), transparent 65%),
-        #ffffff;
-      text-align: center;
-      border-top: 1px solid var(--border);
-    }
-
-    .cta h2 {
-      color: #171717;
-      font-size: clamp(28px, 4vw, 42px);
-      line-height: 1.2;
-      margin: 0 0 12px;
-    }
-
-    .cta p {
-      max-width: 700px;
-      color: var(--muted);
-      margin: 0 auto 24px;
-    }
-
-    /* FOOTER */
-    footer {
-      padding: 42px 0 20px;
-      background: #ffffff;
-      border-top: 1px solid var(--border);
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      gap: 30px;
-      margin-bottom: 28px;
-    }
-
-    .footer-grid h3 {
-      color: #171717;
-      font-size: 15px;
-      margin: 0 0 13px;
-    }
-
-    .footer-grid p,
-    .footer-grid a:not(.brand) {
-      display: block;
-      color: #66666e;
-      font-size: 13px;
-      line-height: 1.8;
-      margin: 0 0 8px;
-    }
-
-    .footer-grid a:not(.brand):hover {
-      color: var(--red);
-    }
-
-    .footer-brand-copy {
-      max-width: 350px;
-      margin-top: 14px !important;
-    }
-
-    .copyright {
-      padding-top: 18px;
-      border-top: 1px solid var(--border);
-      color: #777780;
-      font-size: 12px;
-      text-align: center;
-    }
-
-    :focus-visible {
-      outline: 2px solid var(--red);
-      outline-offset: 3px;
-    }
-
-    /* TABLET */
-    @media (max-width: 1050px) {
-      .nav {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
-
-      .links {
-        width: 100%;
-        justify-content: flex-start;
-        gap: 8px 15px;
-      }
-
-      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
-
-    /* MOBILE */
-    @media (max-width: 650px) {
-      .nav {
-        position: sticky;
-        top: 0;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        padding: 10px 4%;
-        gap: 10px;
-      }
-
-      .brand {
-        font-size: 19px;
-        gap: 9px;
-      }
-
-      .brand img {
-        width: 40px;
-        height: 40px;
-      }
-
-      .brand-support {
-        font-size: 13px;
-        margin-left: -6px;
-      }
-
-      .menu-toggle {
-        display: block;
-        flex-shrink: 0;
-      }
-
-      .links {
-        display: none;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        width: 100%;
-        padding: 13px 4%;
-        background: #ffffff;
-        border-bottom: 1px solid var(--border);
-        box-shadow: 0 12px 20px rgba(0,0,0,.07);
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 7px;
-      }
-
-      .links.open { display: grid; }
-
-      .links a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 40px;
-        padding: 8px 5px;
-        border: 1px solid var(--border);
-        border-radius: 7px;
-        background: #f7f7f8;
-        font-size: 12px;
-        text-align: center;
-        white-space: normal;
-      }
-
-      .links a.nav-cta {
-        color: #ffffff;
-        background: var(--red);
-        border-color: var(--red);
-      }
-
-      section { padding: 52px 0; }
-
-      .hero { padding: 65px 0; }
-
-      .hero h1 {
-        font-size: clamp(34px, 9vw, 46px);
-        letter-spacing: -1px;
-      }
-
-      .hero p { font-size: 15px; }
-
-      .grid,
-      .feature-grid,
-      .footer-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .card { padding: 23px; }
-
-      .plan-card .plan-description { min-height: 0; }
-
-      .footer-grid { gap: 22px; }
-
-      .cta { padding: 55px 0; }
-    }
-
-    @media (max-width: 370px) {
-      .brand {
-        font-size: 17px;
-        gap: 7px;
-      }
-
-      .brand img {
-        width: 36px;
-        height: 36px;
-      }
-
-      .brand-support {
-        font-size: 12px;
-        margin-left: -5px;
-      }
-
-      .hero-actions .btn { width: 100%; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
-        scroll-behavior: auto !important;
-        transition-duration: .01ms !important;
-      }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Request remote IT assistance or enquire about on-site technical support from IT Elements.">
+<title>Request IT Support | IT Elements</title>
+
+<style>
+:root{
+  --red:#e00000;
+  --red-dark:#b00000;
+  --text:#171717;
+  --muted:#62626a;
+  --border:#e7e7ea;
+  --soft:#f7f7f8;
+  --white:#ffffff;
+  --shadow:0 12px 35px rgba(0,0,0,.055);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:#fff;
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+  line-height:1.6;
+}
+a{color:inherit}
+button,input,select,textarea{font:inherit}
+
+/* HEADER - MATCHES CONTACT PAGE */
+.nav{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  width:100%;
+  min-height:76px;
+  margin:0;
+  padding:12px 4%;
+  border:0;
+  border-bottom:1px solid var(--border);
+  border-radius:0;
+  background:rgba(255,255,255,.98);
+  box-shadow:0 3px 15px rgba(0,0,0,.045);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  backdrop-filter:blur(12px);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  color:#171717;
+  text-decoration:none;
+  font-size:21px;
+  font-weight:900;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.brand img{
+  display:block;
+  width:46px;
+  height:46px;
+  object-fit:contain;
+  border:0;
+  border-radius:0;
+  background:transparent;
+  flex-shrink:0;
+}
+.brand-support{
+  color:var(--red);
+  font-size:14px;
+  font-weight:700;
+  margin-left:-7px;
+}
+.links{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:21px;
+  flex-wrap:wrap;
+}
+.links a{
+  color:#36363b;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:700;
+  transition:color .2s;
+}
+.links a:hover,
+.links a[aria-current="page"]{color:var(--red)}
+.links .nav-cta{
+  background:var(--red);
+  color:#fff;
+  padding:10px 16px;
+  border-radius:6px;
+}
+.links .nav-cta:hover{
+  background:var(--red-dark);
+  color:#fff;
+}
+.menu-toggle{
+  display:none;
+  width:43px;
+  height:40px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:#fff;
+  color:#171717;
+  font-size:23px;
+  cursor:pointer;
+}
+
+/* GENERAL */
+.container{
+  width:min(1120px,92%);
+  margin:0 auto;
+}
+.hero{
+  padding:66px 0 55px;
+  background:linear-gradient(180deg,#fff 0%,#fafafa 100%);
+  border-bottom:1px solid var(--border);
+}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--red);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1.6px;
+  text-transform:uppercase;
+}
+.eyebrow:before{
+  content:"";
+  width:22px;
+  height:2px;
+  background:var(--red);
+}
+.hero h1{
+  max-width:780px;
+  margin:13px 0 15px;
+  font-size:clamp(34px,5vw,56px);
+  line-height:1.08;
+  letter-spacing:-1.8px;
+  font-weight:900;
+}
+.red{color:var(--red)}
+.hero p{
+  max-width:690px;
+  margin:0;
+  color:var(--muted);
+  font-size:16px;
+}
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:25px;
+}
+.btn{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  min-height:45px;
+  padding:11px 18px;
+  border:1px solid var(--red);
+  border-radius:6px;
+  background:var(--red);
+  color:#fff;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  transition:background .2s,border-color .2s,transform .2s;
+}
+.btn:hover{
+  background:var(--red-dark);
+  border-color:var(--red-dark);
+  transform:translateY(-1px);
+}
+.btn-outline{
+  background:#fff;
+  color:var(--red);
+}
+.btn-outline:hover{color:#fff}
+
+/* SUPPORT LAYOUT */
+.support-section{padding:55px 0 75px}
+.support-layout{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(260px,.75fr);
+  gap:25px;
+  align-items:start;
+}
+.form-card,.side-card{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  box-shadow:var(--shadow);
+}
+.form-card{padding:clamp(22px,4vw,38px)}
+.side-card{padding:25px;margin-bottom:17px}
+.form-heading{margin-bottom:25px}
+.form-heading h2{
+  margin:5px 0 8px;
+  font-size:25px;
+  line-height:1.2;
+}
+.form-heading p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+}
+.form-section-title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:27px 0 17px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--border);
+  font-size:15px;
+  font-weight:900;
+}
+.form-section-title:first-of-type{margin-top:0}
+.section-number{
+  display:grid;
+  place-items:center;
+  width:27px;
+  height:27px;
+  border-radius:50%;
+  background:#fff0f0;
+  color:var(--red);
+  font-size:12px;
+  font-weight:900;
+}
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.field{min-width:0}
+.field.full{grid-column:1/-1}
+label{
+  display:block;
+  margin-bottom:7px;
+  color:#252529;
+  font-size:13px;
+  font-weight:800;
+}
+.required{color:var(--red)}
+input,select,textarea{
+  display:block;
+  width:100%;
+  min-width:0;
+  min-height:45px;
+  padding:11px 12px;
+  border:1px solid #dcdce1;
+  border-radius:6px;
+  outline:none;
+  background:#fff;
+  color:#171717;
+  font-size:14px;
+  transition:border-color .2s,box-shadow .2s;
+}
+textarea{
+  min-height:125px;
+  resize:vertical;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--red);
+  box-shadow:0 0 0 3px rgba(224,0,0,.09);
+}
+input::placeholder,textarea::placeholder{color:#999}
+.field-help{
+  display:block;
+  margin-top:6px;
+  color:#777;
+  font-size:11px;
+  line-height:1.5;
+}
+.choice-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.choice{
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+  padding:15px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  cursor:pointer;
+  transition:border-color .2s,background .2s;
+}
+.choice:has(input:checked){
+  border-color:var(--red);
+  background:#fffafa;
+}
+.choice input{
+  width:17px;
+  min-height:17px;
+  height:17px;
+  margin:3px 0 0;
+  accent-color:var(--red);
+  flex-shrink:0;
+}
+.choice strong{
+  display:block;
+  margin-bottom:3px;
+  font-size:13px;
+}
+.choice span{
+  display:block;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+}
+.dynamic-fields{
+  margin-top:20px;
+  padding:19px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#fafafa;
+}
+.dynamic-fields[hidden]{display:none}
+.dynamic-fields h3{
+  margin:0 0 15px;
+  font-size:15px;
+}
+.dynamic-fields .form-grid{row-gap:15px}
+.security-note{
+  margin:20px 0;
+  padding:14px 15px;
+  border:1px solid #f0d7d7;
+  border-left:4px solid var(--red);
+  border-radius:6px;
+  background:#fffafa;
+  color:#555;
+  font-size:12px;
+}
+.security-note strong{color:#171717}
+.submit-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-top:23px;
+}
+.submit-row .btn{
+  min-width:190px;
+  min-height:49px;
+}
+.privacy-text{
+  max-width:300px;
+  color:#777;
+  font-size:11px;
+}
+.side-card h3{
+  margin:0 0 12px;
+  font-size:17px;
+}
+.side-card p{
+  margin:0 0 13px;
+  color:var(--muted);
+  font-size:13px;
+}
+.side-list{
+  display:grid;
+  gap:15px;
+  margin-top:17px;
+}
+.side-item{
+  display:flex;
+  align-items:flex-start;
+  gap:11px;
+}
+.side-icon{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  flex-shrink:0;
+  border-radius:7px;
+  background:#fff0f0;
+  color:var(--red);
+  font-size:16px;
+  font-weight:900;
+}
+.side-item strong{
+  display:block;
+  margin-bottom:2px;
+  font-size:13px;
+}
+.side-item span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+}
+.side-card a{
+  color:var(--red);
+  text-decoration:none;
+  font-weight:800;
+}
+.side-card a:hover{text-decoration:underline}
+.steps{
+  display:grid;
+  gap:14px;
+  margin-top:17px;
+}
+.step{
+  display:flex;
+  gap:11px;
+  align-items:flex-start;
+}
+.step b{
+  display:grid;
+  place-items:center;
+  width:26px;
+  height:26px;
+  flex-shrink:0;
+  border-radius:50%;
+  background:#fff0f0;
+  color:var(--red);
+  font-size:11px;
+}
+.step p{
+  margin:2px 0 0;
+  font-size:12px;
+}
+
+/* FOOTER */
+footer{
+  padding:23px 4%;
+  border-top:1px solid var(--border);
+  background:#fff;
+  color:#777;
+  text-align:center;
+  font-size:12px;
+}
+footer a{
+  color:var(--red);
+  text-decoration:none;
+  font-weight:700;
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .links{gap:13px}
+  .links a{font-size:12px}
+  .support-layout{grid-template-columns:1fr}
+  .side-column{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:15px;
+  }
+  .side-card{margin:0}
+}
+@media(max-width:650px){
+  .nav{
+    padding:10px 4%;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .brand{font-size:19px;gap:9px}
+  .brand img{width:40px;height:40px}
+  .brand-support{font-size:13px;margin-left:-6px}
+  .menu-toggle{display:block}
+  .links{
+    display:none;
+    position:absolute;
+    top:100%;
+    left:0;
+    right:0;
+    width:100%;
+    padding:13px 4% 18px;
+    border-bottom:1px solid var(--border);
+    background:#fff;
+    box-shadow:0 10px 18px rgba(0,0,0,.07);
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
+  }
+  .links.open{display:flex}
+  .links a{
+    display:block;
+    padding:11px 4px;
+    border-bottom:1px solid #f0f0f0;
+    font-size:13px;
+  }
+  .links .nav-cta{
+    margin-top:10px;
+    padding:11px 13px;
+    text-align:center;
+  }
+  .hero{padding:48px 0 40px}
+  .hero h1{letter-spacing:-1px}
+  .hero p{font-size:14px}
+  .support-section{padding:35px 0 50px}
+  .form-card{padding:21px 16px}
+  .side-column{grid-template-columns:1fr}
+  .form-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .choice-grid{grid-template-columns:1fr}
+  .submit-row{align-items:stretch}
+  .submit-row .btn{width:100%}
+  .privacy-text{max-width:none}
+}
+@media(max-width:370px){
+  .brand{font-size:17px;gap:7px}
+  .brand img{width:36px;height:36px}
+  .brand-support{font-size:12px;margin-left:-5px}
+  .menu-toggle{width:39px;height:37px}
+  .hero h1{font-size:32px}
+}
+</style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <nav class="nav" aria-label="Main navigation">
+<nav class="nav" aria-label="Main navigation">
+  <a class="brand" href="/" aria-label="IT Elements home">
+    <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo" width="46" height="46">
+    <span>IT Elements.</span>
+    <span class="brand-support">support</span>
+  </a>
 
-    <a class="brand" href="/" aria-label="IT Elements home">
-      <img
-        src="/assets/itel-support-icon.png?v=3"
-        alt="IT Elements logo"
-        width="46"
-        height="46"
-      >
-      <span>IT Elements.</span>
-      <span class="brand-support">support</span>
-    </a>
+  <button class="menu-toggle" id="menuToggle" type="button"
+    aria-label="Open navigation menu" aria-expanded="false"
+    aria-controls="mainLinks">☰</button>
 
-    <button
-      class="menu-toggle"
-      id="menuToggle"
-      type="button"
-      aria-label="Open navigation"
-      aria-expanded="false"
-      aria-controls="mainLinks"
-    >☰</button>
+  <div class="links" id="mainLinks">
+    <a href="/">Home</a>
+    <a href="/services">Services</a>
+    <a href="/onsite-support">On-site Support</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/about">About</a>
+    <a href="/faq">FAQ</a>
+    <a href="/contact">Contact</a>
+    <a href="/client/login">Client Portal</a>
+    <a href="/support" class="nav-cta" aria-current="page">Get Support</a>
+  </div>
+</nav>
 
-    <div class="links" id="mainLinks">
-      <a href="/">Home</a>
-      <a href="/services">Services</a>
-      <a href="/pricing">Pricing</a>
-      <a href="/onsite-support">On-site</a>
-      <a href="/business-support">Business IT</a>
-      <a href="/about">About</a>
-      <a href="/faq">FAQ</a>
-      <a href="/contact">Contact</a>
-      <a href="/client/login">Client Portal</a>
-      <a href="/support" class="nav-cta">Get Support</a>
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="eyebrow">IT ELEMENTS SUPPORT</div>
+      <h1>Let's Get Your <span class="red">Technology Working.</span></h1>
+      <p>
+        Tell us what is happening with your computer, device or network.
+        Request remote assistance or enquire about support at your location.
+        We will review your request and guide you through the next step.
+      </p>
+      <div class="hero-actions">
+        <a href="#support-form" class="btn">Submit a Support Request</a>
+        <a href="/client/login" class="btn btn-outline">Open Client Portal</a>
+      </div>
     </div>
+  </section>
 
-  </nav>
+  <section class="support-section">
+    <div class="container support-layout">
 
-  <main>
-
-    <!-- HERO -->
-    <section class="hero">
-      <div class="container">
-        <span class="eyebrow">IT Elements Business Solutions</span>
-
-        <h1>
-          Keep Your Business
-          <span class="red">Running Without IT Stress.</span>
-        </h1>
-
-        <p>
-          Reliable technology support for small businesses and growing
-          organisations. Get assistance with computers, networks, security,
-          backups and everyday IT operations.
-        </p>
-
-        <div class="hero-actions">
-          <a href="#packages" class="btn">Explore Business Plans</a>
-          <a href="#quote" class="btn btn-outline">Request a Business Quote</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- BUSINESS SERVICES -->
-    <section>
-      <div class="container">
-
-        <div class="section-heading">
-          <span class="eyebrow">Business Technology</span>
-          <h2>IT Support That Works For <span class="red">Your Business</span></h2>
-          <p>
-            Reduce technology disruption and get practical support for
-            the systems your business relies on.
-          </p>
+      <div class="form-card" id="support-form">
+        <div class="form-heading">
+          <div class="eyebrow">REQUEST ASSISTANCE</div>
+          <h2>Tell Us How We Can <span class="red">Help</span></h2>
+          <p>Complete the details below. Fields marked with an asterisk are required.</p>
         </div>
 
-        <div class="grid">
+        <form action="/support" method="POST" id="supportForm">
 
-          <article class="card">
-            <div class="card-icon">💻</div>
-            <h3>Computer Maintenance</h3>
-            <p>
-              Help with computer performance, software issues, updates
-              and general troubleshooting.
-            </p>
-          </article>
-
-          <article class="card">
-            <div class="card-icon">🌐</div>
-            <h3>Network Assistance</h3>
-            <p>
-              Support for connectivity, Wi-Fi, routers and basic
-              office network problems.
-            </p>
-          </article>
-
-          <article class="card">
-            <div class="card-icon">🔒</div>
-            <h3>Security Assistance</h3>
-            <p>
-              Security checks, malware assistance, safer configuration
-              and update guidance.
-            </p>
-          </article>
-
-          <article class="card">
-            <div class="card-icon">💾</div>
-            <h3>Backup Support</h3>
-            <p>
-              Backup setup, backup checks and recommendations for
-              protecting business files.
-            </p>
-          </article>
-
-          <article class="card">
-            <div class="card-icon">📧</div>
-            <h3>Business Email</h3>
-            <p>
-              Help configuring professional email accounts on
-              computers and mobile devices.
-            </p>
-          </article>
-
-          <article class="card">
-            <div class="card-icon">🤝</div>
-            <h3>Employee IT Assistance</h3>
-            <p>
-              Practical technical help for staff members using
-              business computers and software.
-            </p>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- BUSINESS PLANS -->
-    <section class="plans-section" id="packages">
-      <div class="container">
-
-        <div class="section-heading">
-          <span class="eyebrow">Monthly Support</span>
-          <h2>Choose Your <span class="red">Business Plan</span></h2>
-          <p>
-            Explore the IT Elements monthly plans. Confirm the included
-            service limits and applicable terms before purchasing.
-          </p>
-        </div>
-
-        <div class="grid">
-
-          <article class="card plan-card">
-            <div class="card-icon">🌱</div>
-            <h3>Basic</h3>
-            <p class="plan-description">
-              For individuals and very small operations needing
-              occasional IT assistance.
-            </p>
-
-            <div class="price">R299 <small>/ month</small></div>
-
-            <ul>
-              <li>Basic remote support access</li>
-              <li>General troubleshooting</li>
-              <li>Customer support requests</li>
-              <li>Standard response priority</li>
-            </ul>
-
-            <a class="btn" href="/subscribe/basic">Choose Basic</a>
-          </article>
-
-          <article class="card plan-card">
-            <div class="card-icon">⚙️</div>
-            <h3>Standard</h3>
-            <p class="plan-description">
-              For customers who need more regular technical assistance.
-            </p>
-
-            <div class="price">R599 <small>/ month</small></div>
-
-            <ul>
-              <li>Remote support access</li>
-              <li>Software troubleshooting</li>
-              <li>Computer maintenance guidance</li>
-              <li>Customer support requests</li>
-            </ul>
-
-            <a class="btn" href="/subscribe/standard">Choose Standard</a>
-          </article>
-
-          <article class="card plan-card">
-            <div class="card-icon">🚀</div>
-            <h3>Business Growth</h3>
-            <p class="plan-description">
-              For growing businesses requiring a more structured
-              support arrangement.
-            </p>
-
-            <div class="price">R2,499 <small>/ month</small></div>
-
-            <ul>
-              <li>Business IT support requests</li>
-              <li>Remote troubleshooting</li>
-              <li>Maintenance assistance</li>
-              <li>Priority handling as agreed</li>
-            </ul>
-
-            <a class="btn" href="/subscribe/business-growth">Choose Business Growth</a>
-          </article>
-
-          <article class="card plan-card">
-            <div class="card-icon">🏢</div>
-            <h3>Corporate SLA</h3>
-            <p class="plan-description">
-              For organisations requiring a formal support arrangement.
-            </p>
-
-            <div class="price">R4,999 <small>/ month</small></div>
-
-            <ul>
-              <li>Corporate support arrangement</li>
-              <li>Agreed service levels</li>
-              <li>Priority support as contracted</li>
-              <li>Business support coordination</li>
-            </ul>
-
-            <a class="btn" href="/subscribe/corporate-sla">Choose Corporate SLA</a>
-          </article>
-
-        </div>
-
-        <div class="note">
-          Plan benefits, support limits, response targets and on-site costs
-          must be confirmed in the applicable plan terms.
-        </div>
-
-      </div>
-    </section>
-
-    <!-- WHY IT ELEMENTS -->
-    <section>
-      <div class="container">
-
-        <div class="section-heading">
-          <span class="eyebrow">Why Businesses Choose Us</span>
-          <h2>More Than Just <span class="red">Technical Support</span></h2>
-          <p>
-            We aim to help your business use technology with
-            greater confidence.
-          </p>
-        </div>
-
-        <div class="feature-grid">
-
-          <article class="feature">
-            <h3>⚡ Practical Problem Solving</h3>
-            <p>
-              Get assistance focused on the issue affecting
-              your business operations.
-            </p>
-          </article>
-
-          <article class="feature">
-            <h3>🔐 Security Awareness</h3>
-            <p>
-              Get guidance on safer computer use, updates
-              and protecting important information.
-            </p>
-          </article>
-
-          <article class="feature">
-            <h3>📊 Maintenance Planning</h3>
-            <p>
-              Discuss routine maintenance and backup checks
-              suitable for your business.
-            </p>
-          </article>
-
-          <article class="feature">
-            <h3>🤝 Ongoing Support</h3>
-            <p>
-              Use the customer portal to submit requests
-              and follow support progress.
-            </p>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- BUSINESS QUOTE FORM -->
-    <section class="form-section" id="quote">
-      <div class="container">
-
-        <div class="section-heading">
-          <span class="eyebrow">Let's Talk Business</span>
-          <h2>Request a <span class="red">Business IT Quote</span></h2>
-          <p>
-            Tell us about your organisation and the support you need.
-            We will use your information to prepare a suitable response.
-          </p>
-        </div>
-
-        <form class="form-wrap" id="businessForm">
-
-          <div class="field">
-            <label for="businessName">Business Name *</label>
-            <input
-              id="businessName"
-              name="businessName"
-              type="text"
-              required
-              maxlength="150"
-              autocomplete="organization"
-              placeholder="Your business name"
-            >
+          <div class="form-section-title">
+            <span class="section-number">01</span>
+            Your contact details
           </div>
 
-          <div class="field">
-            <label for="contactName">Contact Person *</label>
-            <input
-              id="contactName"
-              name="contactName"
-              type="text"
-              required
-              maxlength="100"
-              autocomplete="name"
-              placeholder="Your full name"
-            >
+          <div class="form-grid">
+            <div class="field">
+              <label for="name">Full name <span class="required">*</span></label>
+              <input id="name" name="name" type="text"
+                maxlength="100" autocomplete="name"
+                placeholder="Your full name" required>
+            </div>
+
+            <div class="field">
+              <label for="email">Email address <span class="required">*</span></label>
+              <input id="email" name="email" type="email"
+                maxlength="254" autocomplete="email"
+                placeholder="you@example.com" required>
+            </div>
+
+            <div class="field full">
+              <label for="phone">Phone number <span class="required">*</span></label>
+              <input id="phone" name="phone" type="tel"
+                maxlength="30" autocomplete="tel"
+                placeholder="Your contact number" required>
+            </div>
           </div>
 
-          <div class="field">
-            <label for="email">Business Email *</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              maxlength="150"
-              autocomplete="email"
-              placeholder="name@company.co.za"
-            >
+          <div class="form-section-title">
+            <span class="section-number">02</span>
+            Choose your support type
           </div>
 
-          <div class="field">
-            <label for="phone">Contact Number *</label>
-            <input
-              id="phone"
-              name="phone"
-              type="tel"
-              required
-              maxlength="30"
-              autocomplete="tel"
-              placeholder="Your phone number"
-            >
+          <div class="choice-grid">
+            <label class="choice" for="remoteChoice">
+              <input id="remoteChoice" type="radio"
+                name="requestType" value="remote" checked>
+              <span>
+                <strong>Remote Support</strong>
+                <span>Get assistance with your computer or device remotely.</span>
+              </span>
+            </label>
+
+            <label class="choice" for="onsiteChoice">
+              <input id="onsiteChoice" type="radio"
+                name="requestType" value="onsite">
+              <span>
+                <strong>On-site Support</strong>
+                <span>Enquire about a technician visiting your location.</span>
+              </span>
+            </label>
           </div>
 
-          <div class="field">
-            <label for="employees">Number of Employees / Users</label>
-            <select id="employees" name="employees">
-              <option>1–5</option>
-              <option>6–10</option>
-              <option>11–25</option>
-              <option>26–50</option>
-              <option>More than 50</option>
-            </select>
+          <div class="dynamic-fields" id="remoteFields">
+            <h3>Remote support details</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="remoteId">Remote session ID</label>
+                <input id="remoteId" name="remoteId"
+                  type="text" maxlength="100"
+                  placeholder="If already available">
+                <span class="field-help">You can leave this blank if you do not have a session ID yet.</span>
+              </div>
+
+              <div class="field">
+                <label for="remotePassword">Temporary session password</label>
+                <input id="remotePassword" name="remotePassword"
+                  type="password" maxlength="200"
+                  autocomplete="off"
+                  placeholder="Optional">
+                <span class="field-help">Only provide this when an engineer is ready to connect.</span>
+              </div>
+
+              <div class="field full">
+                <label for="issue">Describe the problem <span class="required">*</span></label>
+                <textarea id="issue" name="issue"
+                  maxlength="2000" required
+                  placeholder="Tell us what is wrong, what you were doing when it happened, and any error messages you can see..."></textarea>
+              </div>
+            </div>
           </div>
 
-          <div class="field">
-            <label for="interest">Support Interest *</label>
-            <select id="interest" name="interest" required>
-              <option value="">Select your requirement</option>
-              <option>Monthly IT Maintenance</option>
-              <option>Business Growth Plan</option>
-              <option>Corporate SLA</option>
-              <option>Computer &amp; Employee Support</option>
-              <option>Network &amp; Wi-Fi Support</option>
-              <option>Security &amp; Backup Support</option>
-              <option>Business Email Setup</option>
-              <option>Custom IT Support</option>
-            </select>
+          <div class="dynamic-fields" id="onsiteFields" hidden>
+            <h3>On-site support details</h3>
+            <div class="form-grid">
+              <div class="field">
+                <label for="area">Your area or address <span class="required">*</span></label>
+                <input id="area" name="area"
+                  type="text" maxlength="250"
+                  placeholder="Suburb, town or address">
+              </div>
+
+              <div class="field">
+                <label for="serviceType">Type of service <span class="required">*</span></label>
+                <select id="serviceType" name="serviceType">
+                  <option value="">Choose a service</option>
+                  <option>Computer or laptop repair</option>
+                  <option>Computer setup and installation</option>
+                  <option>Network and Wi-Fi troubleshooting</option>
+                  <option>Printer setup and troubleshooting</option>
+                  <option>Software installation and support</option>
+                  <option>Business IT support</option>
+                  <option>Other technical assistance</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="preferredDate">Preferred date</label>
+                <input id="preferredDate" name="preferredDate" type="date">
+              </div>
+
+              <div class="field">
+                <label for="preferredTime">Preferred time</label>
+                <select id="preferredTime" name="preferredTime">
+                  <option value="">Flexible</option>
+                  <option>08:00–10:00</option>
+                  <option>10:00–12:00</option>
+                  <option>12:00–14:00</option>
+                  <option>14:00–17:00</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label for="details">Describe what you need help with <span class="required">*</span></label>
+                <textarea id="details" name="details"
+                  maxlength="2000"
+                  placeholder="Describe the problem and any equipment or systems that need attention..."></textarea>
+              </div>
+            </div>
           </div>
 
-          <div class="field">
-            <label for="details">Tell Us About Your Business IT Needs *</label>
-            <textarea
-              id="details"
-              name="details"
-              required
-              maxlength="3000"
-              placeholder="Describe your computers, network, current IT challenges and what assistance you need..."
-            ></textarea>
+          <div class="security-note">
+            <strong>Important security information:</strong>
+            Never send your normal computer password, banking details or account credentials.
+            A temporary remote session password should only be shared when an IT Elements
+            engineer is ready to connect. An on-site request is an enquiry, not a confirmed
+            appointment. Availability and any applicable costs will be discussed before booking.
           </div>
 
-          <button class="btn" type="submit">
-            Send Business Enquiry via WhatsApp
-          </button>
-
-          <p class="form-note">
-            Submitting this form sends an enquiry. It does not automatically
-            activate a subscription or confirm a service contract.
-          </p>
+          <div class="submit-row">
+            <div class="privacy-text">
+              Your request will be sent to IT Elements for review.
+              You can follow your support requests through your client dashboard.
+            </div>
+            <button class="btn" type="submit" id="submitButton">
+              Submit Support Request →
+            </button>
+          </div>
 
         </form>
       </div>
-    </section>
 
-    <!-- FINAL CTA -->
-    <section class="cta">
-      <div class="container">
-        <span class="eyebrow">Build a Stronger IT Foundation</span>
+      <aside class="side-column">
 
-        <h2>
-          Let's Support Your <span class="red">Business Growth.</span>
-        </h2>
+        <div class="side-card">
+          <h3>What happens next?</h3>
+          <p>We keep the support process straightforward.</p>
 
-        <p>
-          Talk to IT Elements about a support arrangement
-          that suits your organisation.
-        </p>
-
-        <div class="hero-actions">
-          <a href="#quote" class="btn">Request a Business Quote</a>
-          <a href="/contact" class="btn btn-outline">Contact IT Elements</a>
+          <div class="steps">
+            <div class="step">
+              <b>01</b>
+              <p><strong>Request received</strong><br>We receive your support request.</p>
+            </div>
+            <div class="step">
+              <b>02</b>
+              <p><strong>We review the details</strong><br>We assess the information and determine the next step.</p>
+            </div>
+            <div class="step">
+              <b>03</b>
+              <p><strong>We contact you</strong><br>We discuss assistance, availability and any applicable costs.</p>
+            </div>
+            <div class="step">
+              <b>04</b>
+              <p><strong>Follow your request</strong><br>Use your client dashboard to follow updates and replies.</p>
+            </div>
+          </div>
         </div>
-      </div>
-    </section>
 
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="container">
-
-      <div class="footer-grid">
-
-        <div>
-          <a href="/" class="brand" aria-label="IT Elements home">
-            <img
-              src="/assets/itel-support-icon.png?v=3"
-              alt="IT Elements logo"
-              width="46"
-              height="46"
-            >
-            <span>IT Elements.</span>
-            <span class="brand-support">support</span>
-          </a>
-
-          <p class="footer-brand-copy">
-            Professional IT support and technology solutions
-            for individuals and businesses.
+        <div class="side-card">
+          <h3>Need your client portal?</h3>
+          <p>
+            Sign in to follow ticket progress, read replies and keep track
+            of your support requests.
           </p>
+          <a href="/client/login">Open Client Portal →</a>
         </div>
 
-        <div>
-          <h3>Explore</h3>
-          <a href="/">Home</a>
-          <a href="/services">IT Services</a>
-          <a href="/pricing">Pricing</a>
-          <a href="/onsite-support">On-site Support</a>
-          <a href="/business-support">Business Support</a>
+        <div class="side-card">
+          <h3>Prefer to contact us?</h3>
+          <p>
+            If you have a question before submitting a support request,
+            visit our contact page.
+          </p>
+          <a href="/contact">Visit Contact Page →</a>
+
+          <div class="side-list">
+            <div class="side-item">
+              <div class="side-icon">✓</div>
+              <div>
+                <strong>Clear communication</strong>
+                <span>We explain the next steps before proceeding.</span>
+              </div>
+            </div>
+            <div class="side-item">
+              <div class="side-icon">⌂</div>
+              <div>
+                <strong>Remote or on-site</strong>
+                <span>Choose the support option that suits your situation.</span>
+              </div>
+            </div>
+            <div class="side-item">
+              <div class="side-icon">▣</div>
+              <div>
+                <strong>Request tracking</strong>
+                <span>Follow your requests through the client portal.</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <h3>Customer Area</h3>
-          <a href="/dashboard">Client Dashboard</a>
-          <a href="/support">Submit Support Request</a>
-          <a href="/client/login">Client Login</a>
-          <a href="/contact">Contact</a>
-        </div>
-
-      </div>
-
-      <div class="copyright">
-        © <span id="year"></span> IT Elements. All rights reserved.
-        <br>
-        <a href="mailto:bongani@itelements.co.za">bongani@itelements.co.za</a>
-        &nbsp;·&nbsp;
-        <a href="tel:+27606181229">+27 60 618 1229</a>
-      </div>
-
+      </aside>
     </div>
-  </footer>
+  </section>
+</main>
 
-  <script>
-    (function () {
-      "use strict";
+<footer>
+  © <span id="year"></span> IT Elements. All rights reserved.
+  &nbsp;|&nbsp;
+  <a href="/contact">Contact</a>
+  &nbsp;|&nbsp;
+  <a href="/client/login">Client Portal</a>
+</footer>
 
-      /* MOBILE NAVIGATION */
-      const menuToggle = document.getElementById("menuToggle");
-      const mainLinks = document.getElementById("mainLinks");
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
 
-      if (menuToggle && mainLinks) {
-        menuToggle.addEventListener("click", function () {
-          const isOpen = mainLinks.classList.toggle("open");
+/* MOBILE NAVIGATION */
+const menuToggle = document.getElementById("menuToggle");
+const mainLinks = document.getElementById("mainLinks");
 
-          menuToggle.setAttribute("aria-expanded", String(isOpen));
-          menuToggle.setAttribute(
-            "aria-label",
-            isOpen ? "Close navigation" : "Open navigation"
-          );
+menuToggle.addEventListener("click", function(){
+  const isOpen = mainLinks.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", String(isOpen));
+  menuToggle.setAttribute(
+    "aria-label",
+    isOpen ? "Close navigation menu" : "Open navigation menu"
+  );
+  menuToggle.textContent = isOpen ? "×" : "☰";
+});
 
-          menuToggle.textContent = isOpen ? "✕" : "☰";
-        });
+mainLinks.querySelectorAll("a").forEach(function(link){
+  link.addEventListener("click", function(){
+    mainLinks.classList.remove("open");
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", "Open navigation menu");
+    menuToggle.textContent = "☰";
+  });
+});
 
-        mainLinks.querySelectorAll("a").forEach(function (link) {
-          link.addEventListener("click", function () {
-            mainLinks.classList.remove("open");
-            menuToggle.setAttribute("aria-expanded", "false");
-            menuToggle.setAttribute("aria-label", "Open navigation");
-            menuToggle.textContent = "☰";
-          });
-        });
+/* SUPPORT TYPE SWITCHING */
+const remoteChoice = document.getElementById("remoteChoice");
+const onsiteChoice = document.getElementById("onsiteChoice");
+const remoteFields = document.getElementById("remoteFields");
+const onsiteFields = document.getElementById("onsiteFields");
 
-        window.addEventListener("resize", function () {
-          if (window.innerWidth > 650) {
-            mainLinks.classList.remove("open");
-            menuToggle.setAttribute("aria-expanded", "false");
-            menuToggle.setAttribute("aria-label", "Open navigation");
-            menuToggle.textContent = "☰";
-          }
-        });
-      }
+const issueField = document.getElementById("issue");
+const areaField = document.getElementById("area");
+const serviceField = document.getElementById("serviceType");
+const detailsField = document.getElementById("details");
+const remoteIdField = document.getElementById("remoteId");
+const remotePasswordField = document.getElementById("remotePassword");
+const preferredDateField = document.getElementById("preferredDate");
 
-      /* FOOTER YEAR */
-      const year = document.getElementById("year");
+function updateSupportType(){
+  const isOnsite = onsiteChoice.checked;
 
-      if (year) {
-        year.textContent = new Date().getFullYear();
-      }
+  remoteFields.hidden = isOnsite;
+  onsiteFields.hidden = !isOnsite;
 
-      /* BUSINESS ENQUIRY WHATSAPP SUBMISSION */
-      const businessForm = document.getElementById("businessForm");
+  issueField.required = !isOnsite;
+  areaField.required = isOnsite;
+  serviceField.required = isOnsite;
+  detailsField.required = isOnsite;
 
-      if (businessForm) {
-        businessForm.addEventListener("submit", function (event) {
-          event.preventDefault();
+  remoteIdField.disabled = isOnsite;
+  remotePasswordField.disabled = isOnsite;
+  issueField.disabled = isOnsite;
 
-          if (!businessForm.reportValidity()) {
-            return;
-          }
+  areaField.disabled = !isOnsite;
+  serviceField.disabled = !isOnsite;
+  detailsField.disabled = !isOnsite;
+  preferredDateField.disabled = !isOnsite;
+  document.getElementById("preferredTime").disabled = !isOnsite;
+}
 
-          const get = function (id) {
-            return document.getElementById(id).value.trim();
-          };
+remoteChoice.addEventListener("change", updateSupportType);
+onsiteChoice.addEventListener("change", updateSupportType);
 
-          const data = {
-            business: get("businessName"),
-            contact: get("contactName"),
-            email: get("email"),
-            phone: get("phone"),
-            employees: get("employees"),
-            interest: get("interest"),
-            details: get("details")
-          };
+/* PREVENT PAST ON-SITE PREFERRED DATES */
+const today = new Date();
+const localToday = new Date(
+  today.getTime() - today.getTimezoneOffset() * 60000
+).toISOString().split("T")[0];
 
-          if (
-            !data.business ||
-            !data.contact ||
-            !data.email ||
-            !data.phone ||
-            !data.interest ||
-            !data.details
-          ) {
-            alert("Please complete all required fields.");
-            return;
-          }
+preferredDateField.min = localToday;
 
-          const message = [
-            "IT ELEMENTS - BUSINESS IT ENQUIRY",
-            "",
-            "Business: " + data.business,
-            "Contact: " + data.contact,
-            "Email: " + data.email,
-            "Phone: " + data.phone,
-            "Employees/users: " + data.employees,
-            "Interested in: " + data.interest,
-            "",
-            "Business requirements:",
-            data.details
-          ].join("\n");
+/* INITIAL STATE */
+updateSupportType();
 
-          const url =
-            "https://wa.me/27606181229?text=" +
-            encodeURIComponent(message);
+/* SUBMIT BUTTON FEEDBACK */
+document.getElementById("supportForm").addEventListener("submit", function(event){
+  if (!this.checkValidity()) {
+    event.preventDefault();
+    this.reportValidity();
+    return;
+  }
 
-          window.open(url, "_blank", "noopener,noreferrer");
-        });
-      }
-    }());
-  </script>
+  const button = document.getElementById("submitButton");
+  button.disabled = true;
+  button.textContent = "Submitting Request...";
+});
+</script>
 
 </body>
 </html>
