@@ -1,110 +1,934 @@
+
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#ffffff">
-    <title>IT Elements - Request Support</title>
-    <style>
-        * { box-sizing:border-box; }
-        body { margin:0; padding:20px; background:#0d0d0d; color:#e5e5e5; font-family:'Segoe UI',Tahoma,sans-serif; }
-        .navbar { width:min(100%,1500px); margin:0 auto 34px; padding:15px 24px; display:flex; justify-content:space-between; align-items:center; gap:16px; background:#141414; border-bottom:2px solid #222; border-radius:6px; }
-        .brand { color:#ff3939; text-decoration:none; font-size:19px; font-weight:800; letter-spacing:.5px; }
-        .links { display:flex; flex-wrap:wrap; gap:10px 20px; }.links a { color:#bbb; text-decoration:none; font-size:13px; padding:8px 10px; border:1px solid transparent; border-radius:6px; transition:all .2s; }.links a:hover,.links a:focus-visible { color:#fff; background:#202020; border-color:#353535; }
-        main { width:100%; max-width:1500px; margin:0 auto; padding:clamp(18px,3vw,34px); background:#141414; border:1px solid #262626; border-radius:8px; }
-        .request-options { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; align-items:start; }
-        .request-card { min-width:0; padding:20px; border:1px solid #30343a; border-radius:8px; background:#111214; }
-        .remote-card { border-top:3px solid #4da6ff; }.onsite-card { border-top:3px solid #ff5555; }
-        .choice-heading { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
-        .choice-icon { width:38px; height:38px; display:grid; place-items:center; flex:none; border-radius:9px; background:#20242a; font-size:20px; }
-        .choice-kicker { margin:0 0 3px; color:#9ba6b5; font-size:10px; font-weight:800; letter-spacing:.8px; }
-        .request-card h2 { margin:0; color:#fff; font-size:18px; line-height:1.3; }
-        .choice-description { min-height:58px; margin:10px 0 16px; color:#929292; font-size:13px; line-height:1.6; }
-        .form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 12px; }
-        .remote-form { grid-template-columns:minmax(0,1fr); }
-        .field.full { grid-column:1/-1; }
-        .onsite-form { grid-template-columns:repeat(2,minmax(0,1fr)); }
-        .request-card .submit { grid-column:1/-1; min-height:44px; }
-        select { width:100%; padding:12px; border:1px solid #363636; border-radius:4px; background:#0d0d0d; color:#fff; font:inherit; font-size:14px; }
-        .hours-note { margin:14px 0 0; color:#858585; font-size:12px; line-height:1.55; }
-        h1 { margin:0 0 10px; color:#fff; font-size:27px; }.intro { margin:0 0 25px; color:#929292; font-size:14px; line-height:1.6; }
-        .notice { padding:12px 14px; margin-bottom:20px; border:1px solid #343434; border-radius:5px; color:#bfc7d1; background:#101216; font-size:13px; line-height:1.5; }
-        .field { margin:0 0 17px; }.field label { display:block; margin-bottom:7px; color:#aaa; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.3px; }
-        input,textarea { width:100%; padding:12px; border:1px solid #363636; border-radius:4px; background:#0d0d0d; color:#fff; font:inherit; font-size:14px; }
-        input:focus,textarea:focus { outline:2px solid #ff3939; outline-offset:1px; }.help { color:#737373; font-size:11px; margin:6px 0 0; }.submit { width:100%; border:0; border-radius:4px; padding:13px; color:white; background:#ff3333; font-weight:800; text-transform:uppercase; cursor:pointer; }.submit:hover { background:#cc0000; }
-        .password-wrap { position:relative; }.password-wrap input { padding-right:78px; }
-        .password-toggle { position:absolute; right:8px; top:50%; transform:translateY(-50%); border:0; background:transparent; color:#c1c1c1; padding:8px; font-size:12px; font-weight:700; cursor:pointer; }.password-toggle:hover { color:#ff5555; }
-        @media(max-width:900px) { .request-options { grid-template-columns:minmax(0,1fr); }.choice-description { min-height:0; } }
-        @media(max-width:560px) { body { padding:12px; }.navbar { align-items:flex-start; flex-direction:column; }.links { gap:10px 15px; }main { padding:18px 14px; }.request-card { padding:15px; }.form-grid { grid-template-columns:minmax(0,1fr); }.field.full,.request-card .submit { grid-column:auto; } }
-    .brand-support{color:#fff!important}</style>
-    <link rel="stylesheet" href="/assets/responsive.css?v=1">
-    <link rel="stylesheet" href="/assets/theme.css?v=13">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
 
-<link rel="stylesheet" href="/assets/white-overrides.css?v=1">
+  <title>Request IT Support | IT Elements</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --red: #e00000;
+      --red-dark: #b00000;
+      --black: #171717;
+      --text: #292929;
+      --muted: #666666;
+      --border: #e5e5e5;
+      --soft: #f7f7f7;
+      --panel: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: #ffffff;
+      color: var(--text);
+      font-family: "Inter", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--red);
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--red-dark);
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    /* HEADER */
+
+    .site-header {
+      position: relative;
+      width: 100%;
+      min-height: 96px;
+      padding: 15px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 25px;
+      background: #ffffff;
+      border-bottom: 1px solid #eeeeee;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .logo img {
+      display: block;
+      width: 205px;
+      height: auto;
+      max-height: 65px;
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      gap: 7px 19px;
+    }
+
+    .nav-links a {
+      color: #444444;
+      font-size: 12px;
+      font-weight: 700;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--red);
+    }
+
+    .nav-links .portal-link {
+      padding: 10px 15px;
+      border-radius: 5px;
+      background: var(--red);
+      color: #ffffff;
+    }
+
+    .nav-links .portal-link:hover {
+      background: var(--red-dark);
+      color: #ffffff;
+    }
+
+    /* PAGE INTRO */
+
+    .page-container {
+      width: 100%;
+      max-width: 1250px;
+      margin: 0 auto;
+      padding: 48px 25px 65px;
+    }
+
+    .page-intro {
+      max-width: 750px;
+      margin-bottom: 32px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 8px 12px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      background: var(--red);
+      color: #ffffff;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .page-intro h1 {
+      margin: 0 0 13px;
+      color: var(--black);
+      font-size: clamp(30px, 4vw, 42px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.2px;
+    }
+
+    .page-intro h1 span {
+      color: var(--red);
+    }
+
+    .page-intro p {
+      max-width: 680px;
+      margin: 0;
+      color: #666666;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    /* REQUEST CARDS */
+
+    .request-options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .request-card {
+      min-width: 0;
+      padding: 27px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #ffffff;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.045);
+    }
+
+    .request-card.remote-card {
+      border-top: 4px solid #222222;
+    }
+
+    .request-card.onsite-card {
+      border-top: 4px solid var(--red);
+    }
+
+    .choice-heading {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 12px;
+    }
+
+    .choice-icon {
+      width: 45px;
+      height: 45px;
+      flex: 0 0 45px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: #f2f2f2;
+      color: #222222;
+      font-size: 21px;
+    }
+
+    .onsite-card .choice-icon {
+      background: #fff0f0;
+      color: var(--red);
+    }
+
+    .choice-kicker {
+      margin: 0 0 4px;
+      color: #777777;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .request-card h2 {
+      margin: 0;
+      color: #171717;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .choice-description {
+      min-height: 65px;
+      margin: 10px 0 23px;
+      color: #666666;
+      font-size: 12px;
+      line-height: 1.75;
+    }
+
+    /* FORMS */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 13px;
+    }
+
+    .remote-form {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .field {
+      min-width: 0;
+      margin: 0 0 17px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      color: #292929;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      min-height: 46px;
+      padding: 11px 12px;
+      border: 1px solid #dedede;
+      border-radius: 5px;
+      outline: none;
+      background: #ffffff;
+      color: #222222;
+      font-size: 13px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: #999999;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(224, 0, 0, 0.08);
+    }
+
+    .field textarea {
+      min-height: 115px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .field select {
+      cursor: pointer;
+    }
+
+    .help {
+      display: block;
+      margin: 6px 0 0;
+      color: #777777;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .password-wrap {
+      position: relative;
+    }
+
+    .password-wrap input {
+      padding-right: 70px;
+    }
+
+    .password-toggle {
+      position: absolute;
+      top: 50%;
+      right: 8px;
+      transform: translateY(-50%);
+      padding: 7px 9px;
+      border: 0;
+      border-radius: 4px;
+      background: #f2f2f2;
+      color: #333333;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .password-toggle:hover {
+      background: #e8e8e8;
+      color: var(--red);
+    }
+
+    .submit {
+      display: flex;
+      width: 100%;
+      min-height: 47px;
+      grid-column: 1 / -1;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 5px;
+      background: var(--red);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .submit:hover {
+      background: var(--red-dark);
+    }
+
+    .submit:focus-visible,
+    .password-toggle:focus-visible,
+    .nav-links a:focus-visible {
+      outline: 3px solid rgba(224, 0, 0, 0.25);
+      outline-offset: 3px;
+    }
+
+    /* SUPPORT HOURS */
+
+    .hours-note {
+      margin: 25px 0 0;
+      padding: 16px 18px;
+      border: 1px solid #eeeeee;
+      border-left: 4px solid var(--red);
+      border-radius: 5px;
+      background: #fafafa;
+      color: #666666;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .hours-note strong {
+      color: #222222;
+    }
+
+    /* FOOTER */
+
+    .site-footer {
+      padding: 24px 20px;
+      border-top: 1px solid #eeeeee;
+      background: #ffffff;
+      color: #777777;
+      font-size: 11px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .site-footer strong {
+      color: #222222;
+    }
+
+    /* TABLET */
+
+    @media (max-width: 1050px) {
+      .site-header {
+        padding-left: 25px;
+        padding-right: 25px;
+      }
+
+      .nav-links {
+        gap: 9px 13px;
+      }
+
+      .nav-links a {
+        font-size: 11px;
+      }
+
+      .request-options {
+        gap: 16px;
+      }
+
+      .request-card {
+        padding: 21px;
+      }
+    }
+
+    @media (max-width: 850px) {
+      .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 15px;
+        padding: 17px 22px;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .request-options {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .choice-description {
+        min-height: 0;
+      }
+
+      .request-card {
+        padding: 25px;
+      }
+
+      .page-container {
+        padding-top: 38px;
+      }
+    }
+
+    /* MOBILE */
+
+    @media (max-width: 600px) {
+      .site-header {
+        min-height: auto;
+        padding: 14px 16px;
+        gap: 13px;
+      }
+
+      .logo img {
+        width: 155px;
+        max-height: 52px;
+      }
+
+      .nav-links {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .nav-links a {
+        display: flex;
+        min-height: 36px;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 5px;
+        border: 1px solid #eeeeee;
+        border-radius: 4px;
+        font-size: 10px;
+        text-align: center;
+      }
+
+      .nav-links .portal-link {
+        border-color: var(--red);
+      }
+
+      .page-container {
+        padding: 30px 15px 42px;
+      }
+
+      .page-intro {
+        margin-bottom: 24px;
+      }
+
+      .eyebrow {
+        margin-bottom: 12px;
+        font-size: 9px;
+      }
+
+      .page-intro h1 {
+        font-size: 31px;
+        letter-spacing: -0.8px;
+      }
+
+      .page-intro p {
+        font-size: 13px;
+        line-height: 1.7;
+      }
+
+      .request-options {
+        gap: 17px;
+      }
+
+      .request-card {
+        padding: 20px 16px;
+        border-radius: 8px;
+      }
+
+      .request-card h2 {
+        font-size: 16px;
+      }
+
+      .choice-description {
+        margin-bottom: 20px;
+        font-size: 12px;
+      }
+
+      .form-grid,
+      .onsite-form {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .field.full,
+      .request-card .submit {
+        grid-column: auto;
+      }
+
+      .field {
+        margin-bottom: 15px;
+      }
+
+      .field input,
+      .field select {
+        min-height: 46px;
+      }
+
+      .field textarea {
+        min-height: 105px;
+      }
+
+      .hours-note {
+        margin-top: 19px;
+        padding: 13px;
+        font-size: 11px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .logo img {
+        width: 135px;
+      }
+
+      .nav-links {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .page-intro h1 {
+        font-size: 27px;
+      }
+
+      .request-card {
+        padding: 17px 13px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <nav class="navbar" aria-label="Main navigation">
-        <a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="" width="32" height="32"><span>IT Elements.</span><span class="brand-support">support</span></a>
-        <div class="links"><a href="/tools/invoices">Invoice Studio</a><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="/dashboard">Client Portal</a></div>
+
+  <header class="site-header">
+    <a class="logo" href="/" aria-label="IT Elements Home">
+      <img
+        src="/assets/itel-support-logo-cropped.png"
+        alt="IT Elements"
+        onerror="this.onerror=null;this.src='/assets/itel-support-logo.png';"
+      >
+    </a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="/">Home</a>
+      <a href="/services">Services</a>
+      <a href="/onsite-support">On-site</a>
+      <a href="/pricing">Plans</a>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/contact">Contact</a>
+      <a href="/tools/invoices">Invoice Studio</a>
+      <a class="portal-link" href="/dashboard">Client Portal</a>
     </nav>
-    <main>
-        <h1>Request support</h1>
-        <p class="intro">Choose the type of help you need. Online remote support and an in-person visit are handled as separate requests.</p>
-        <div class="request-options">
-            <section class="request-card remote-card" aria-labelledby="remote-title">
-                <div class="choice-heading"><span class="choice-icon" aria-hidden="true">💻</span><div><p class="choice-kicker">ONLINE · REMOTE</p><h2 id="remote-title">AnyDesk or TeamViewer support</h2></div></div>
-                <p class="choice-description">For troubleshooting over the internet. Enter the connection ID shown in your remote support app. We’ll contact you to arrange a session.</p>
-                <form action="/support" method="post" class="form-grid remote-form">
-                    <input type="hidden" name="requestType" value="remote">
-                    <div class="field"><label for="remote-name">Your name</label><input id="remote-name" name="name" autocomplete="name" minlength="2" maxlength="100" required></div>
-                    <div class="field"><label for="remote-email">Email address</label><input id="remote-email" name="email" type="email" autocomplete="email" maxlength="254" required></div>
-                    <div class="field full"><label for="remote-id">AnyDesk / TeamViewer ID</label><input id="remote-id" name="remoteId" maxlength="100" autocomplete="off" required><p class="help">Enter the connection ID shown in your remote support app.</p></div>
-                    <div class="field full"><label for="remote-password">Temporary session password (if required)</label><div class="password-wrap"><input id="remote-password" name="remotePassword" type="password" maxlength="200" autocomplete="new-password"><button class="password-toggle" type="button" data-password-target="remote-password" aria-pressed="false">Show</button></div><p class="help">Optional. Provide it only when an engineer is ready to connect.</p></div>
-                    <div class="field full"><label for="remote-issue">Describe the problem</label><textarea id="remote-issue" name="issue" rows="5" maxlength="5000" required placeholder="What happened, when it started, and any error message you see"></textarea></div>
-                    <button class="submit" type="submit">Submit online support ticket</button>
-                </form>
-            </section>
-            <section class="request-card onsite-card" aria-labelledby="onsite-title">
-                <div class="choice-heading"><span class="choice-icon" aria-hidden="true">📍</span><div><p class="choice-kicker">IN-PERSON · ON-SITE</p><h2 id="onsite-title">Request a visit to your location</h2></div></div>
-                <p class="choice-description">For support that may need an in-person visit. This is an enquiry, not a confirmed appointment. We’ll check your area, availability, and any costs with you first.</p>
-                <form id="support-onsite-form" action="/support" method="post" class="form-grid onsite-form">
-                    <input type="hidden" name="requestType" value="onsite"><input type="hidden" name="remoteId" value=""><input type="hidden" name="remotePassword" value=""><input type="hidden" name="issue" id="support-onsite-issue">
-                    <div class="field"><label for="onsite-name">Your name</label><input id="onsite-name" name="name" autocomplete="name" required maxlength="100"></div>
-                    <div class="field"><label for="onsite-email">Email address</label><input id="onsite-email" name="email" type="email" autocomplete="email" required maxlength="254"></div>
-                    <div class="field"><label for="onsite-phone">Phone number</label><input id="onsite-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30"></div>
-                    <div class="field"><label for="onsite-area">Town or area</label><input id="onsite-area" name="area" autocomplete="address-level2" required maxlength="120" placeholder="e.g. Pretoria East"></div>
-                    <div class="field full"><label for="onsite-service">What needs attention?</label><select id="onsite-service" name="serviceType" required><option value="">Choose a service</option><option>Computer setup or troubleshooting</option><option>Wi-Fi or small-office network</option><option>Printer or accessories</option><option>Hardware assessment</option><option>Workplace technology</option><option>Other</option></select></div>
-                    <div class="field"><label for="onsite-date">Preferred date</label><input id="onsite-date" name="preferredDate" type="date"></div>
-                    <div class="field"><label for="onsite-time">Preferred time</label><input id="onsite-time" name="preferredTime" type="time"></div>
-                    <div class="field full"><label for="onsite-details">Describe what you need</label><textarea id="onsite-details" name="details" rows="5" required maxlength="3000" placeholder="What is happening, and which device or equipment needs attention?"></textarea><p class="help">Do not include account passwords, payment details, or remote-session passwords.</p></div>
-                    <button class="submit" type="submit">Send on-site visit enquiry</button>
-                </form>
-            </section>
+  </header>
+
+  <main class="page-container">
+
+    <section class="page-intro">
+      <div class="eyebrow">IT Elements Support</div>
+
+      <h1>
+        How can we <span>help you?</span>
+      </h1>
+
+      <p>
+        Choose the type of support you need. Online remote support and
+        an in-person visit are handled as separate requests. Our team
+        will review your information and contact you about the next step.
+      </p>
+    </section>
+
+    <div class="request-options">
+
+      <!-- ONLINE REMOTE SUPPORT -->
+
+      <section class="request-card remote-card" aria-labelledby="remote-title">
+
+        <div class="choice-heading">
+          <span class="choice-icon" aria-hidden="true">💻</span>
+
+          <div>
+            <p class="choice-kicker">ONLINE · REMOTE</p>
+            <h2 id="remote-title">AnyDesk or TeamViewer support</h2>
+          </div>
         </div>
-        <p class="hours-note"><strong>Support hours:</strong> Monday to Friday, 08:00–17:00 South African time (SAST). We’ll contact you before confirming an on-site visit or any call-out fee.</p>
-    </main>
-    <script>
-        document.getElementById('support-onsite-form').addEventListener('submit', function () {
-            const form = this;
-            document.getElementById('support-onsite-issue').value = [
-                'ON-SITE SUPPORT ENQUIRY',
-                'Phone: ' + form.phone.value.trim(),
-                'Area: ' + form.area.value.trim(),
-                'Service requested: ' + form.serviceType.value,
-                'Preferred date: ' + (form.preferredDate.value || 'Flexible'),
-                'Preferred time: ' + (form.preferredTime.value || 'Flexible'),
-                '', form.details.value.trim()
-            ].join('\n');
-        });
-        document.querySelectorAll('[data-password-target]').forEach(button => {
-            button.addEventListener('click', () => {
-                const input = document.getElementById(button.dataset.passwordTarget);
-                const isVisible = input.type === 'password';
-                input.type = isVisible ? 'text' : 'password';
-                button.textContent = isVisible ? 'Hide' : 'Show';
-                button.setAttribute('aria-pressed', String(isVisible));
-            });
-        });
-    </script>
+
+        <p class="choice-description">
+          For troubleshooting over the internet. Enter the connection
+          ID shown in your remote support application. We will contact
+          you to arrange a support session.
+        </p>
+
+        <form action="/support" method="post" class="form-grid remote-form">
+
+          <input type="hidden" name="requestType" value="remote">
+
+          <div class="field">
+            <label for="remote-name">Your name</label>
+            <input
+              id="remote-name"
+              name="name"
+              type="text"
+              autocomplete="name"
+              minlength="2"
+              maxlength="100"
+              required
+              placeholder="Enter your name"
+            >
+          </div>
+
+          <div class="field">
+            <label for="remote-email">Email address</label>
+            <input
+              id="remote-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              maxlength="254"
+              required
+              placeholder="you@example.com"
+            >
+          </div>
+
+          <div class="field full">
+            <label for="remote-id">AnyDesk / TeamViewer ID</label>
+            <input
+              id="remote-id"
+              name="remoteId"
+              type="text"
+              maxlength="100"
+              autocomplete="off"
+              required
+              placeholder="Enter your connection ID"
+            >
+            <small class="help">
+              Enter the connection ID shown in your remote support application.
+            </small>
+          </div>
+
+          <div class="field full">
+            <label for="remote-password">Temporary session password (if required)</label>
+
+            <div class="password-wrap">
+              <input
+                id="remote-password"
+                name="remotePassword"
+                type="password"
+                maxlength="200"
+                autocomplete="new-password"
+                placeholder="Only provide when requested"
+              >
+
+              <button
+                class="password-toggle"
+                type="button"
+                data-password-target="remote-password"
+                aria-pressed="false"
+              >Show</button>
+            </div>
+
+            <small class="help">
+              Optional. Only provide it when an engineer is ready to connect.
+            </small>
+          </div>
+
+          <div class="field full">
+            <label for="remote-issue">Describe the problem</label>
+            <textarea
+              id="remote-issue"
+              name="issue"
+              rows="5"
+              maxlength="5000"
+              required
+              placeholder="What happened, when it started, and any error message you see?"
+            ></textarea>
+          </div>
+
+          <button class="submit" type="submit">
+            Submit online support ticket
+          </button>
+
+        </form>
+      </section>
+
+      <!-- ON-SITE SUPPORT -->
+
+      <section class="request-card onsite-card" aria-labelledby="onsite-title">
+
+        <div class="choice-heading">
+          <span class="choice-icon" aria-hidden="true">📍</span>
+
+          <div>
+            <p class="choice-kicker">IN-PERSON · ON-SITE</p>
+            <h2 id="onsite-title">Request a visit to your location</h2>
+          </div>
+        </div>
+
+        <p class="choice-description">
+          For support that may need an in-person visit. This is an enquiry,
+          not a confirmed appointment. We will check your area, availability
+          and any costs with you first.
+        </p>
+
+        <form
+          id="support-onsite-form"
+          action="/support"
+          method="post"
+          class="form-grid onsite-form"
+        >
+
+          <input type="hidden" name="requestType" value="onsite">
+          <input type="hidden" name="remoteId" value="">
+          <input type="hidden" name="remotePassword" value="">
+          <input type="hidden" name="issue" id="support-onsite-issue">
+
+          <div class="field">
+            <label for="onsite-name">Your name</label>
+            <input
+              id="onsite-name"
+              name="name"
+              type="text"
+              autocomplete="name"
+              required
+              maxlength="100"
+              placeholder="Enter your name"
+            >
+          </div>
+
+          <div class="field">
+            <label for="onsite-email">Email address</label>
+            <input
+              id="onsite-email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              required
+              maxlength="254"
+              placeholder="you@example.com"
+            >
+          </div>
+
+          <div class="field">
+            <label for="onsite-phone">Phone number</label>
+            <input
+              id="onsite-phone"
+              name="phone"
+              type="tel"
+              autocomplete="tel"
+              required
+              maxlength="30"
+              placeholder="Your contact number"
+            >
+          </div>
+
+          <div class="field">
+            <label for="onsite-area">Town or area</label>
+            <input
+              id="onsite-area"
+              name="area"
+              type="text"
+              autocomplete="address-level2"
+              required
+              maxlength="120"
+              placeholder="e.g. Pretoria East"
+            >
+          </div>
+
+          <div class="field full">
+            <label for="onsite-service">What needs attention?</label>
+            <select id="onsite-service" name="serviceType" required>
+              <option value="">Choose a service</option>
+              <option>Computer setup or troubleshooting</option>
+              <option>Wi-Fi or small-office network</option>
+              <option>Printer or accessories</option>
+              <option>Hardware assessment</option>
+              <option>Workplace technology</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="onsite-date">Preferred date</label>
+            <input
+              id="onsite-date"
+              name="preferredDate"
+              type="date"
+            >
+          </div>
+
+          <div class="field">
+            <label for="onsite-time">Preferred time</label>
+            <input
+              id="onsite-time"
+              name="preferredTime"
+              type="time"
+            >
+          </div>
+
+          <div class="field full">
+            <label for="onsite-details">Describe what you need</label>
+            <textarea
+              id="onsite-details"
+              name="details"
+              rows="5"
+              required
+              maxlength="3000"
+              placeholder="What is happening, and which device or equipment needs attention?"
+            ></textarea>
+
+            <small class="help">
+              Do not include account passwords, payment details or remote-session passwords.
+            </small>
+          </div>
+
+          <button class="submit" type="submit">
+            Send on-site visit enquiry
+          </button>
+
+        </form>
+      </section>
+
+    </div>
+
+    <p class="hours-note">
+      <strong>Support hours:</strong>
+      Monday to Friday, 08:00–17:00 South African time (SAST).
+      We will contact you before confirming an on-site visit or any call-out fee.
+    </p>
+
+  </main>
+
+  <footer class="site-footer">
+    <strong>IT Elements</strong> · Professional IT Support
+    <br>
+    © <span id="current-year"></span> IT Elements. All rights reserved.
+  </footer>
+
+  <script>
+    document.getElementById('current-year').textContent =
+      new Date().getFullYear();
+
+    const onsiteForm = document.getElementById('support-onsite-form');
+
+    onsiteForm.addEventListener('submit', function () {
+      const form = this;
+
+      document.getElementById('support-onsite-issue').value = [
+        'ON-SITE SUPPORT ENQUIRY',
+        'Phone: ' + form.phone.value.trim(),
+        'Area: ' + form.area.value.trim(),
+        'Service requested: ' + form.serviceType.value,
+        'Preferred date: ' + (form.preferredDate.value || 'Flexible'),
+        'Preferred time: ' + (form.preferredTime.value || 'Flexible'),
+        '',
+        form.details.value.trim()
+      ].join('\n');
+    });
+
+    document.querySelectorAll('[data-password-target]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const input = document.getElementById(button.dataset.passwordTarget);
+        if (!input) return;
+
+        const isVisible = input.type === 'password';
+
+        input.type = isVisible ? 'text' : 'password';
+        button.textContent = isVisible ? 'Hide' : 'Show';
+        button.setAttribute('aria-pressed', String(isVisible));
+      });
+    });
+  </script>
+
 </body>
 </html>
