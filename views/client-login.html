@@ -1,76 +1,631 @@
+
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>IT Elements - Access Workspace Portal</title>
-    <style>
-        * { box-sizing:border-box; }
-        body { background:#0d0d0d; color:#e0e0e0; font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; margin:0; padding:20px; text-align:center; }
-        .navbar { background:#141414; border-bottom:2px solid #222; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; gap:16px; width:min(100%,1500px); margin:0 auto 35px; border-radius:6px; }
-        .nav-brand { display:flex; align-items:center; gap:9px; font-size:20px; font-weight:bold; color:#fff; letter-spacing:.5px; text-decoration:none; }
-        .brand-icon { width:46px; height:46px; object-fit:cover; border-radius:50%; border:2px solid #fff; box-shadow:0 0 0 2px rgba(255,255,255,.15); background:#fff; flex:none; }
-        .nav-links { display:flex; flex-wrap:wrap; gap:10px 20px; }
-        .nav-links a { color:#b3b3b3; text-decoration:none; font-size:13px; font-weight:bold; padding:8px 10px; border:1px solid transparent; border-radius:6px; transition:all .2s; }
-        .nav-links a:hover,.nav-links a:focus-visible { color:#fff; background:#202020; border-color:#353535; }
-        .login-box { background:#141414; border:1px solid #222; border-radius:8px; padding:40px 30px; width:100%; max-width:420px; margin:80px auto 0; box-shadow:0 4px 15px rgba(0,0,0,.6); }
-        .top-description { color:#777; font-size:13px; line-height:1.6; margin-bottom:25px; }
-        .form-group { text-align:left; margin-bottom:22px; position:relative; }
-        .form-label { font-size:12px; font-weight:bold; color:#fff; letter-spacing:.5px; margin-bottom:10px; display:block; text-transform:uppercase; }
-        .form-input { background:#ffffdd; color:#111; border:2px solid #1a73e8; padding:14px; border-radius:6px; width:100%; font-size:16px; font-weight:bold; }
-        .form-input:focus { outline:none; box-shadow:0 0 8px rgba(26,115,232,.4); }
-        .password-wrapper { position:relative; width:100%; }
-        .password-wrapper .form-input { padding-right:70px; }
-        .toggle-login-eye { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:0; color:#555; cursor:pointer; font-size:12px; font-weight:bold; text-transform:uppercase; }
-        .toggle-login-eye:hover { color:#1a73e8; }
-        .submit-btn { background:#1a73e8; color:#fff; border:0; padding:15px; width:100%; border-radius:6px; font-size:14px; font-weight:bold; text-transform:uppercase; letter-spacing:.5px; cursor:pointer; margin-top:10px; }
-        .submit-btn:hover { background:#155cb4; }
-        .link-footer { font-size:13px; color:#777; margin-top:20px; line-height:1.8; }
-        .link-footer a { color:#1a73e8; text-decoration:none; }
-        .link-footer a:hover { text-decoration:underline; }
-        @media(max-width:560px) { body { padding:12px; } .navbar { align-items:flex-start; flex-direction:column; padding:15px 18px; } .login-box { margin-top:45px; padding:30px 20px; } }
-    .brand-support{color:#fff!important}</style>
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Client Login | IT Elements</title>
+    <meta name="description" content="Sign in to your IT Elements customer portal to manage support requests, invoices and services.">
+
     <link rel="stylesheet" href="/assets/responsive.css?v=1">
     <link rel="stylesheet" href="/assets/theme.css?v=13">
+    <link rel="stylesheet" href="/assets/white-overrides.css?v=1">
 
-<link rel="stylesheet" href="/assets/white-overrides.css?v=1">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            color-scheme: light;
+            --red: #e00000;
+            --red-dark: #b00000;
+            --text: #171717;
+            --muted: #666;
+            --border: #e7e7ea;
+            --panel: #ffffff;
+            --background: #f7f7f8;
+        }
+
+        html {
+            min-height: 100%;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .navbar {
+            width: 100%;
+            min-height: 76px;
+            padding: 12px 5%;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .nav-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: #171717;
+            text-decoration: none;
+            font-size: 21px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+            white-space: nowrap;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            border-radius: 9px;
+            background: #fff;
+            flex: 0 0 auto;
+        }
+
+        .brand-support {
+            color: var(--red);
+            margin-left: -8px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .nav-links a {
+            padding: 9px 11px;
+            border-radius: 6px;
+            color: #444;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: background .2s, color .2s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus-visible {
+            color: var(--red);
+            background: #fff1f1;
+            outline: none;
+        }
+
+        .page-main {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 65px 20px;
+        }
+
+        .login-layout {
+            width: 100%;
+            max-width: 980px;
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            align-items: center;
+            gap: 55px;
+        }
+
+        .intro {
+            max-width: 460px;
+        }
+
+        .eyebrow {
+            display: inline-block;
+            margin-bottom: 17px;
+            padding: 7px 12px;
+            border-radius: 30px;
+            background: #fff0f0;
+            color: var(--red-dark);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .intro h1 {
+            margin: 0 0 17px;
+            color: #171717;
+            font-size: clamp(32px, 5vw, 46px);
+            line-height: 1.12;
+            letter-spacing: -1.5px;
+        }
+
+        .intro h1 span {
+            color: var(--red);
+        }
+
+        .intro > p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .benefit-list {
+            display: grid;
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .benefit {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            color: #444;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .benefit-icon {
+            width: 25px;
+            height: 25px;
+            flex: 0 0 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: #fff0f0;
+            color: var(--red);
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .login-box {
+            width: 100%;
+            padding: 36px 32px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, .06);
+        }
+
+        .login-heading {
+            margin-bottom: 27px;
+        }
+
+        .login-heading h2 {
+            margin: 0 0 8px;
+            color: #171717;
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .login-heading p {
+            margin: 0;
+            color: #777;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #292929;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .4px;
+        }
+
+        .form-input {
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 14px;
+            border: 1px solid #dcdce1;
+            border-radius: 7px;
+            background: #fff;
+            color: #171717;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 400;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form-input::placeholder {
+            color: #999;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(224, 0, 0, .09);
+        }
+
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .password-wrapper .form-input {
+            padding-right: 70px;
+        }
+
+        .toggle-login-eye {
+            position: absolute;
+            top: 50%;
+            right: 13px;
+            transform: translateY(-50%);
+            padding: 6px;
+            border: 0;
+            background: transparent;
+            color: #666;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .toggle-login-eye:hover {
+            color: var(--red);
+        }
+
+        .forgot-link {
+            display: block;
+            margin-top: -7px;
+            margin-bottom: 20px;
+            color: var(--red-dark);
+            text-align: right;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .submit-btn {
+            width: 100%;
+            min-height: 49px;
+            padding: 13px 18px;
+            border: 0;
+            border-radius: 7px;
+            background: var(--red);
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: .4px;
+            transition: background .2s, transform .2s;
+        }
+
+        .submit-btn:hover {
+            background: var(--red-dark);
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:focus-visible {
+            outline: 3px solid rgba(224, 0, 0, .25);
+            outline-offset: 3px;
+        }
+
+        .login-divider {
+            height: 1px;
+            margin: 25px 0 20px;
+            background: var(--border);
+        }
+
+        .register-text {
+            margin: 0;
+            color: #777;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .register-text a {
+            color: var(--red-dark);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .register-text a:hover {
+            text-decoration: underline;
+        }
+
+        .security-note {
+            margin: 23px 0 0;
+            color: #888;
+            text-align: center;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .page-footer {
+            width: 100%;
+            padding: 20px;
+            border-top: 1px solid var(--border);
+            background: #fff;
+            color: #777;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .page-footer strong {
+            color: #333;
+        }
+
+        @media (max-width: 900px) {
+            .navbar {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .nav-links {
+                justify-content: flex-start;
+            }
+
+            .login-layout {
+                max-width: 520px;
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .intro {
+                max-width: 100%;
+                text-align: center;
+            }
+
+            .benefit-list {
+                display: none;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .navbar {
+                padding: 12px 16px;
+            }
+
+            .nav-brand {
+                font-size: 19px;
+            }
+
+            .brand-icon {
+                width: 38px;
+                height: 38px;
+            }
+
+            .nav-links {
+                width: 100%;
+                gap: 3px;
+            }
+
+            .nav-links a {
+                padding: 8px;
+                font-size: 12px;
+            }
+
+            .page-main {
+                padding: 35px 14px;
+            }
+
+            .intro h1 {
+                font-size: 32px;
+            }
+
+            .intro > p {
+                font-size: 14px;
+            }
+
+            .login-box {
+                padding: 28px 20px;
+            }
+
+            .login-heading h2 {
+                font-size: 23px;
+            }
+        }
+    </style>
 </head>
+
 <body>
+
     <nav class="navbar" aria-label="Main navigation">
-        <a class="nav-brand" href="/"><img class="brand-icon" src="/assets/itel-support-icon.png?v=3" alt="" width="32" height="32"><span>IT Elements.</span><span class="brand-support">support</span></a>
-        <div class="nav-links"><a href="/tools/invoices">Invoice Studio</a><a href="/">Home</a><a href="/services">Services</a><a href="/onsite-support">On-site</a><a href="/pricing">Plans</a><a href="/about">About</a><a href="/faq">FAQ</a><a href="/contact">Contact</a><a href="/register">Register Account</a></div>
+        <a class="nav-brand" href="/">
+            <img
+                class="brand-icon"
+                src="/assets/itel-support-icon.png?v=3"
+                alt="IT Elements logo"
+                width="44"
+                height="44"
+            >
+            <span>IT Elements.</span>
+            <span class="brand-support">support</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/services">Services</a>
+            <a href="/onsite-support">On-site</a>
+            <a href="/pricing">Plans</a>
+            <a href="/business-support">Business</a>
+            <a href="/reviews">Reviews</a>
+            <a href="/about">About</a>
+            <a href="/faq">FAQ</a>
+            <a href="/contact">Contact</a>
+        </div>
     </nav>
 
-    <main class="login-box">
-        <form action="/client/login" method="POST">
-            <p class="top-description">Enter your registered account details to access your client portal.</p>
-            <div class="form-group">
-                <label class="form-label" for="login-email">Registered email address</label>
-                <input type="email" name="email" id="login-email" class="form-input" autocomplete="username" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="login-password">Account password</label>
-                <div class="password-wrapper">
-                    <input type="password" name="password" id="login-password" class="form-input" autocomplete="current-password" required>
-                    <button type="button" class="toggle-login-eye" id="toggle-password" aria-pressed="false">Show</button>
+    <main class="page-main">
+        <div class="login-layout">
+
+            <section class="intro">
+                <span class="eyebrow">Customer Portal</span>
+
+                <h1>
+                    Welcome back to
+                    <span>IT Elements.</span>
+                </h1>
+
+                <p>
+                    Sign in to your customer workspace to manage your support
+                    requests, follow service updates and access your business tools.
+                </p>
+
+                <div class="benefit-list">
+                    <div class="benefit">
+                        <span class="benefit-icon">✓</span>
+                        <span>View and follow your support requests.</span>
+                    </div>
+
+                    <div class="benefit">
+                        <span class="benefit-icon">✓</span>
+                        <span>Manage your support plans and account details.</span>
+                    </div>
+
+                    <div class="benefit">
+                        <span class="benefit-icon">✓</span>
+                        <span>Access your Invoice Maker and saved documents.</span>
+                    </div>
                 </div>
-            </div>
-            <button type="submit" class="submit-btn">Unlock Technical Workspace</button>
-            <div class="link-footer">
-                <a href="/client/forgot-password">Forgot your password? Reset it here →</a><br>
-                New subscriber? <a href="/register">Create an account here →</a>
-            </div>
-        </form>
+            </section>
+
+            <section class="login-box" aria-labelledby="login-title">
+
+                <div class="login-heading">
+                    <h2 id="login-title">Sign in to your account</h2>
+                    <p>Enter your registered email address and password below.</p>
+                </div>
+
+                <form action="/client/login" method="POST" id="login-form">
+
+                    <div class="form-group">
+                        <label class="form-label" for="login-email">
+                            Email address
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            id="login-email"
+                            class="form-input"
+                            placeholder="you@example.com"
+                            autocomplete="username"
+                            maxlength="254"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="login-password">
+                            Password
+                        </label>
+
+                        <div class="password-wrapper">
+                            <input
+                                type="password"
+                                name="password"
+                                id="login-password"
+                                class="form-input"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="toggle-login-eye"
+                                id="toggle-password"
+                                aria-controls="login-password"
+                                aria-pressed="false"
+                            >
+                                Show
+                            </button>
+                        </div>
+                    </div>
+
+                    <a class="forgot-link" href="/client/forgot-password">
+                        Forgot your password?
+                    </a>
+
+                    <button type="submit" class="submit-btn" id="login-button">
+                        Sign In to Your Workspace
+                    </button>
+
+                </form>
+
+                <div class="login-divider"></div>
+
+                <p class="register-text">
+                    Don't have a customer account?
+                    <a href="/register">Create an account</a>
+                </p>
+
+                <p class="security-note">
+                    Your account information is protected by IT Elements.
+                    Only sign in on a device you trust.
+                </p>
+
+            </section>
+
+        </div>
     </main>
 
+    <footer class="page-footer">
+        <strong>IT Elements.</strong> Professional IT Support.
+        <br>
+        &copy; <span id="current-year"></span> IT Elements. All rights reserved.
+    </footer>
+
     <script>
-        document.getElementById('toggle-password').addEventListener('click', function () {
+        (function () {
             const password = document.getElementById('login-password');
-            const showing = password.type === 'password';
-            password.type = showing ? 'text' : 'password';
-            this.textContent = showing ? 'Hide' : 'Show';
-            this.setAttribute('aria-pressed', String(showing));
-        });
+            const toggle = document.getElementById('toggle-password');
+            const form = document.getElementById('login-form');
+            const button = document.getElementById('login-button');
+
+            toggle.addEventListener('click', function () {
+                const showing = password.type === 'password';
+
+                password.type = showing ? 'text' : 'password';
+                toggle.textContent = showing ? 'Hide' : 'Show';
+                toggle.setAttribute('aria-pressed', String(showing));
+            });
+
+            form.addEventListener('submit', function () {
+                if (!form.checkValidity()) {
+                    return;
+                }
+
+                button.disabled = true;
+                button.textContent = 'Signing in...';
+            });
+
+            document.getElementById('current-year').textContent =
+                new Date().getFullYear();
+        })();
     </script>
+
 </body>
 </html>
