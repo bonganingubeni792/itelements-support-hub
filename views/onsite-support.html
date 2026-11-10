@@ -5,31 +5,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <meta name="description" content="Professional on-site computer, Wi-Fi, printer and business IT support from IT Elements in South Africa.">
+  <meta name="description" content="Explore on-site IT support from IT Elements in South Africa and request an appointment.">
   <title>IT Elements | On-site IT Support</title>
 
   <style>
     :root {
       color-scheme: light;
       --bg: #ffffff;
-      --panel: #ffffff;
       --soft: #f7f7f8;
-      --border: #e7e7ea;
+      --border: #e5e5e8;
       --text: #171717;
       --muted: #55555e;
-      --red: #ed2638;
-      --red-dark: #b50e24;
-      --green: #168d4d;
-      --max: 1320px;
+      --red: #e00000;
+      --red-dark: #b00000;
+      --max: 1500px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html {
       scroll-behavior: smooth;
-      scroll-padding-top: 95px;
+      scroll-padding-top: 100px;
     }
 
     body {
@@ -44,24 +40,20 @@
     }
 
     a { color: inherit; }
+    button { font: inherit; }
 
-    button, input, select, textarea {
-      font: inherit;
-    }
-
-    /* HEADER */
+    /* HEADER — MATCHES CONTACT PAGE */
     .nav {
       position: sticky;
       top: 0;
       z-index: 1000;
       width: 100%;
+      min-height: 76px;
       margin: 0;
       padding: 12px 4%;
-      min-height: 76px;
       border: 0;
       border-bottom: 1px solid var(--border);
-      border-radius: 0;
-      background: rgba(255,255,255,.97);
+      background: rgba(255,255,255,.98);
       box-shadow: 0 3px 15px rgba(0,0,0,.045);
       display: flex;
       justify-content: space-between;
@@ -90,6 +82,7 @@
       border: 0;
       border-radius: 0;
       background: transparent;
+      flex-shrink: 0;
     }
 
     .brand-support {
@@ -104,7 +97,7 @@
       flex-wrap: wrap;
       justify-content: flex-end;
       align-items: center;
-      gap: 10px 18px;
+      gap: 8px 15px;
     }
 
     .links a {
@@ -113,11 +106,8 @@
       font-size: 13px;
       font-weight: 700;
       padding: 8px 0;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
       white-space: nowrap;
-      transition: color .2s;
+      transition: color .2s ease;
     }
 
     .links a:hover,
@@ -127,59 +117,54 @@
     }
 
     .links a.nav-cta {
-      color: #fff;
+      color: #ffffff;
       background: var(--red);
       border: 1px solid var(--red);
       border-radius: 8px;
-      padding: 10px 16px;
+      padding: 10px 15px;
     }
 
     .links a.nav-cta:hover {
-      color: #fff;
+      color: #ffffff;
       background: var(--red-dark);
+      border-color: var(--red-dark);
     }
 
     .menu-toggle {
       display: none;
       border: 1px solid var(--border);
-      background: #fff;
+      background: #ffffff;
       color: #171717;
       border-radius: 8px;
-      padding: 8px 12px;
+      padding: 7px 12px;
       font-size: 21px;
       cursor: pointer;
     }
 
-    /* PAGE */
+    /* MAIN */
     main {
       width: min(var(--max), 92%);
       max-width: var(--max);
       margin: 0 auto;
-      padding-top: 24px;
-    }
-
-    .hero,
-    .panel {
-      color: var(--text);
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: clamp(25px, 5vw, 58px);
-      margin-bottom: 28px;
-      box-shadow: 0 10px 35px rgba(0,0,0,.045);
+      padding-top: 30px;
     }
 
     .hero {
       position: relative;
       overflow: hidden;
+      padding: clamp(28px, 5vw, 60px);
+      margin-bottom: 30px;
       background:
-        radial-gradient(ellipse at 90% 5%, rgba(237,38,56,.07), transparent 42%),
-        #fff;
+        radial-gradient(ellipse at 95% 5%, rgba(224,0,0,.055), transparent 42%),
+        #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      box-shadow: 0 9px 30px rgba(0,0,0,.045);
     }
 
     .eyebrow {
       display: inline-block;
-      color: #d71930;
+      color: var(--red);
       font-size: 12px;
       font-weight: 900;
       letter-spacing: 2px;
@@ -189,30 +174,26 @@
     .hero h1 {
       max-width: 900px;
       color: #171717;
-      font-size: clamp(34px, 5vw, 62px);
+      font-size: clamp(34px, 5vw, 60px);
       font-weight: 900;
       line-height: 1.1;
       letter-spacing: -1.5px;
-      margin: 13px 0 20px;
+      margin: 13px 0 18px;
       overflow-wrap: break-word;
     }
 
-    .muted,
     .hero-copy {
+      max-width: 780px;
       color: var(--muted);
-    }
-
-    .hero-copy {
-      max-width: 760px;
       font-size: 17px;
       line-height: 1.8;
+      margin: 0;
     }
 
-    /* BUTTONS */
     .actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 13px;
+      gap: 12px;
       margin-top: 27px;
     }
 
@@ -221,298 +202,262 @@
       align-items: center;
       justify-content: center;
       min-height: 48px;
-      padding: 13px 22px;
-      border: 1px solid transparent;
-      border-radius: 9px;
-      background: linear-gradient(135deg,#f12b40,#b30d23);
-      color: #fff;
+      padding: 12px 22px;
+      border: 1px solid var(--red);
+      border-radius: 8px;
+      background: var(--red);
+      color: #ffffff;
       text-decoration: none;
       font-size: 14px;
       font-weight: 800;
       text-align: center;
-      transition: .2s;
+      transition: .2s ease;
     }
 
     .btn:hover {
-      color: #fff;
+      color: #ffffff;
       background: var(--red-dark);
+      border-color: var(--red-dark);
       transform: translateY(-2px);
-      box-shadow: 0 8px 22px rgba(237,38,56,.16);
     }
 
     .btn.secondary {
       color: var(--red);
-      background: #fff;
-      border: 1px solid var(--red);
+      background: #ffffff;
+      border-color: var(--red);
     }
 
     .btn.secondary:hover {
-      color: var(--red-dark);
-      background: #fff1f3;
+      color: #ffffff;
+      background: var(--red);
     }
 
     /* SECTION HEADINGS */
-    .section-title {
+    .section-heading {
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
       gap: 20px;
-      margin: 45px 0 20px;
+      margin: 42px 0 22px;
     }
 
-    .section-title h2 {
+    .section-heading h2 {
       color: #171717;
-      font-size: clamp(24px, 3vw, 36px);
+      font-size: clamp(25px, 3vw, 36px);
       line-height: 1.2;
       margin: 8px 0 0;
       font-weight: 900;
     }
 
-    .section-title p {
-      color: #666;
+    .section-heading p {
+      color: #666666;
       font-size: 14px;
       margin: 0;
     }
 
     /* SERVICE CARDS */
-    .grid {
+    .service-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 22px;
-      width: 100%;
+      gap: 20px;
     }
 
-    .card {
+    .service-card {
+      display: flex;
+      flex-direction: column;
       min-width: 0;
       padding: 26px;
-      color: #171717;
-      background: #fff;
+      background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 14px;
-      box-shadow: 0 8px 25px rgba(0,0,0,.04);
+      border-radius: 13px;
+      box-shadow: 0 7px 24px rgba(0,0,0,.04);
       transition: .2s ease;
     }
 
-    .card:hover {
-      background: #fff;
-      border-color: #f0aab2;
+    .service-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 13px 30px rgba(0,0,0,.07);
+      border-color: #d99b9b;
+      box-shadow: 0 12px 28px rgba(0,0,0,.07);
     }
 
-    .card h2 {
+    .service-icon {
+      display: grid;
+      place-items: center;
+      width: 50px;
+      height: 50px;
+      margin-bottom: 17px;
+      border-radius: 11px;
+      background: #fff0f0;
+      color: var(--red);
+      font-size: 22px;
+      font-weight: 900;
+    }
+
+    .service-card h3 {
       color: #171717;
       font-size: 19px;
-      line-height: 1.4;
-      font-weight: 800;
-      margin: 13px 0 9px;
+      line-height: 1.35;
+      margin: 0 0 9px;
     }
 
-    .card p {
+    .service-card p {
+      color: #5b5b63;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0 0 17px;
+    }
+
+    .service-price {
+      margin-top: auto;
+      padding-top: 13px;
+      border-top: 1px solid var(--border);
+      color: var(--red);
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .service-price small {
+      display: block;
+      color: #777777;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    /* PROCESS */
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .process-card {
+      min-width: 0;
+      padding: 25px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .process-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 39px;
+      height: 39px;
+      margin-bottom: 15px;
+      border-radius: 9px;
+      background: var(--red);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .process-card h3 {
+      color: #171717;
+      font-size: 18px;
+      margin: 0 0 8px;
+    }
+
+    .process-card p {
+      color: #5b5b63;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 0;
+    }
+
+    /* SUPPORT TYPES */
+    .support-panel {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      margin-top: 35px;
+    }
+
+    .support-card {
+      padding: 27px;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .support-card h3 {
+      color: #171717;
+      font-size: 20px;
+      margin: 0 0 9px;
+    }
+
+    .support-card p {
       color: #5b5b63;
       font-size: 14px;
       line-height: 1.75;
       margin: 0;
     }
 
-    .service-card {
-      min-height: 190px;
-    }
-
-    .service-icon {
-      display: inline-grid;
-      place-items: center;
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      background: #fff0f2;
-      border: 1px solid #f4c5cc;
-      font-size: 24px;
-    }
-
-    .number {
-      display: inline-grid;
-      place-items: center;
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: #fff0f2;
-      color: var(--red);
-      font-size: 14px;
-      font-weight: 900;
-    }
-
-    /* ENQUIRY SECTION */
-    .form-panel {
-      display: grid;
-      grid-template-columns: minmax(0,.8fr) minmax(0,1.2fr);
-      align-items: start;
-      gap: 35px;
-      margin-top: 45px;
-      background: #fff;
-    }
-
-    .form-panel h2 {
-      color: #171717;
-      font-size: clamp(25px, 3vw, 35px);
-      line-height: 1.2;
-      margin: 10px 0 14px;
-    }
-
-    .form-panel > div > p {
-      color: #55555e;
-      font-size: 14px;
-    }
-
+    /* IMPORTANT NOTE */
     .notice {
-      margin-top: 24px;
-      padding: 17px;
-      border: 1px solid #f2c3ca;
-      border-left: 4px solid var(--red);
+      margin-top: 32px;
+      padding: 22px 24px;
+      background: #fffafa;
+      border: 1px solid #f0d5d5;
+      border-left: 5px solid var(--red);
       border-radius: 10px;
-      background: #fff5f6;
-      color: #444;
-      font-size: 14px;
-      line-height: 1.7;
     }
 
     .notice strong {
-      color: #171717;
-    }
-
-    .request-form {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
-      gap: 17px;
-      min-width: 0;
-    }
-
-    .field {
-      min-width: 0;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .field label {
       display: block;
-      margin-bottom: 7px;
-      color: #222;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      display: block;
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      min-height: 47px;
-      padding: 12px 13px;
-      border: 1px solid #dcdce1;
-      border-radius: 8px;
-      background: #fff;
       color: #171717;
-      -webkit-text-fill-color: #171717;
+      margin-bottom: 5px;
+    }
+
+    .notice p {
+      color: #5b5b63;
       font-size: 14px;
-      line-height: 1.4;
-      outline: none;
-      box-shadow: none;
+      margin: 0;
     }
 
-    .field input::placeholder,
-    .field textarea::placeholder {
-      color: #85858d;
-      -webkit-text-fill-color: #85858d;
-      opacity: 1;
+    /* FINAL CTA */
+    .final-cta {
+      margin-top: 38px;
+      padding: clamp(25px, 4vw, 42px);
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--red);
+      border-radius: 12px;
     }
 
-    .field select {
-      color-scheme: light;
-      cursor: pointer;
-    }
-
-    .field select option {
-      background: #fff;
+    .final-cta h2 {
       color: #171717;
+      font-size: clamp(23px, 3vw, 31px);
+      line-height: 1.25;
+      margin: 0 0 9px;
     }
 
-    .field textarea {
-      min-height: 130px;
-      resize: vertical;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: var(--red);
-      outline: 3px solid rgba(237,38,56,.12);
-    }
-
-    .form-help {
-      color: #666 !important;
-      font-size: 12px !important;
-      margin: 6px 0 0;
-    }
-
-    .submit {
-      grid-column: 1 / -1;
-      width: 100%;
-      min-height: 49px;
-      padding: 13px 18px;
-      border: 0;
-      border-radius: 9px;
-      background: linear-gradient(135deg,#f12b40,#b30d23);
-      color: #fff;
+    .final-cta p {
+      max-width: 720px;
+      color: #5b5b63;
       font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    .submit:hover {
-      background: var(--red-dark);
-    }
-
-    .submit:disabled {
-      opacity: .65;
-      cursor: wait;
-    }
-
-    .form-message {
-      display: none;
-      grid-column: 1 / -1;
-      padding: 14px;
-      border-radius: 9px;
-      color: #126b3a;
-      background: #edfaf2;
-      border: 1px solid #b9e7ca;
-      font-size: 14px;
-    }
-
-    .form-message.visible {
-      display: block;
+      margin: 0;
     }
 
     /* FOOTER */
     .footer {
-      padding: 35px 12px;
-      margin-top: 25px;
-      color: #666;
+      width: 100%;
+      margin-top: 45px;
+      padding: 30px 4%;
+      border-top: 1px solid var(--border);
+      color: #666666;
       text-align: center;
       font-size: 13px;
-      border-top: 1px solid var(--border);
     }
 
     .footer a {
       color: var(--red);
       text-decoration: none;
+      font-weight: 700;
     }
 
     .footer a:hover {
+      color: var(--red-dark);
       text-decoration: underline;
     }
 
@@ -522,7 +467,7 @@
     }
 
     /* TABLET */
-    @media (max-width: 1000px) {
+    @media (max-width: 1050px) {
       .nav {
         flex-direction: column;
         align-items: stretch;
@@ -532,38 +477,44 @@
       .links {
         width: 100%;
         justify-content: flex-start;
-        gap: 8px 16px;
+        gap: 8px 15px;
       }
 
-      .form-panel {
-        grid-template-columns: 1fr;
+      .service-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
     }
 
     @media (max-width: 760px) {
-      .grid {
-        grid-template-columns: repeat(2, minmax(0,1fr));
-      }
-
-      .section-title {
+      .section-heading {
         align-items: flex-start;
         flex-direction: column;
       }
+
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .support-panel {
+        grid-template-columns: 1fr;
+      }
     }
 
-    /* MOBILE */
+    /* MOBILE — MATCHES CONTACT PAGE */
     @media (max-width: 650px) {
       .nav {
         position: sticky;
         top: 0;
         flex-direction: row;
         align-items: center;
+        justify-content: space-between;
         padding: 10px 4%;
         gap: 10px;
       }
 
       .brand {
         font-size: 19px;
+        gap: 9px;
       }
 
       .brand img {
@@ -571,8 +522,14 @@
         height: 40px;
       }
 
+      .brand-support {
+        font-size: 13px;
+        margin-left: -6px;
+      }
+
       .menu-toggle {
         display: block;
+        flex-shrink: 0;
       }
 
       .links {
@@ -583,16 +540,14 @@
         right: 0;
         width: 100%;
         padding: 13px 4%;
-        background: #fff;
+        background: #ffffff;
         border-bottom: 1px solid var(--border);
         box-shadow: 0 12px 20px rgba(0,0,0,.07);
-        grid-template-columns: repeat(2,minmax(0,1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 7px;
       }
 
-      .links.open {
-        display: grid;
-      }
+      .links.open { display: grid; }
 
       .links a {
         display: flex;
@@ -609,20 +564,18 @@
       }
 
       .links a.nav-cta {
-        color: #fff;
+        color: #ffffff;
         background: var(--red);
         border-color: var(--red);
       }
 
       main {
         width: 92%;
-        margin: 0 auto;
-        padding-top: 18px;
+        padding-top: 19px;
       }
 
-      .hero,
-      .panel {
-        padding: 24px 18px;
+      .hero {
+        padding: 25px 19px;
         border-radius: 12px;
         margin-bottom: 20px;
       }
@@ -632,53 +585,55 @@
         letter-spacing: -1px;
       }
 
-      .hero-copy {
-        font-size: 15px;
-      }
+      .hero-copy { font-size: 15px; }
 
       .actions {
         flex-direction: column;
         gap: 10px;
       }
 
-      .actions .btn {
-        width: 100%;
-      }
+      .actions .btn { width: 100%; }
 
-      .section-title {
+      .section-heading {
         margin: 32px 0 17px;
       }
 
-      .section-title h2 {
-        font-size: 25px;
-      }
+      .section-heading h2 { font-size: 26px; }
 
-      .grid {
+      .service-grid {
         grid-template-columns: 1fr;
         gap: 14px;
       }
 
-      .card {
-        padding: 21px;
-      }
+      .service-card { padding: 23px; }
 
-      .form-panel {
-        gap: 22px;
-      }
+      .process-card,
+      .support-card { padding: 22px; }
 
-      .request-form {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
+      .notice { padding: 19px; }
 
-      .field.full,
-      .submit,
-      .form-message {
-        grid-column: 1;
-      }
+      .final-cta { padding: 23px 19px; }
 
       .footer {
         line-height: 2;
+        padding: 25px 5%;
+      }
+    }
+
+    @media (max-width: 370px) {
+      .brand {
+        font-size: 17px;
+        gap: 7px;
+      }
+
+      .brand img {
+        width: 36px;
+        height: 36px;
+      }
+
+      .brand-support {
+        font-size: 12px;
+        margin-left: -5px;
       }
     }
 
@@ -695,7 +650,9 @@
 
 <body>
 
+  <!-- HEADER -->
   <nav class="nav" aria-label="Main navigation">
+
     <a class="brand" href="/" aria-label="IT Elements home">
       <img
         src="/assets/itel-support-icon.png?v=3"
@@ -703,7 +660,7 @@
         width="46"
         height="46"
       >
-      <span>IT Elements</span>
+      <span>IT Elements.</span>
       <span class="brand-support">support</span>
     </a>
 
@@ -717,312 +674,250 @@
     >☰</button>
 
     <div class="links" id="mainLinks">
+      <a href="/tools/invoices">Invoice Studio</a>
       <a href="/">Home</a>
       <a href="/services">Services</a>
+      <a href="/onsite-support" aria-current="page">On-site</a>
       <a href="/pricing">Plans</a>
-      <a href="/business-support">Business Support</a>
-      <a href="/onsite-support" aria-current="page">On-site Support</a>
-      <a href="/reviews">Reviews</a>
-      <a href="/dashboard">Client Portal</a>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
       <a href="/contact">Contact</a>
-      <a href="/support" class="nav-cta">Request Help</a>
+      <a href="/client/login" class="nav-cta">Client Portal</a>
     </div>
+
   </nav>
 
   <main>
 
     <!-- HERO -->
     <section class="hero">
-      <span class="eyebrow">On-site IT support · South Africa</span>
+      <span class="eyebrow">On-site IT assistance</span>
 
-      <h1>
-        When a problem needs hands-on care, arrange support at your home or workplace.
-      </h1>
+      <h1>IT support where you need it.</h1>
 
-      <p class="muted hero-copy">
-        Start by telling us what needs attention and where the device is.
-        We’ll review the request, discuss whether an in-person visit is
-        the right option, and confirm availability and costs before
-        anything is booked.
+      <p class="hero-copy">
+        Tell us about your computer, network or business IT problem.
+        Choose on-site assistance or another support option, and
+        IT Elements will contact you to discuss the next step.
       </p>
 
       <div class="actions">
-        <a class="btn" href="#visit-enquiry">
-          Request an on-site assessment
-        </a>
-
-        <a class="btn secondary" href="tel:+27606181229">
-          Call +27 60 618 1229
-        </a>
+        <a class="btn" href="/booking">Request an appointment</a>
+        <a class="btn secondary" href="/contact">Contact IT Elements</a>
       </div>
     </section>
 
     <!-- SERVICES -->
-    <div class="section-title">
-      <div>
-        <span class="eyebrow">On-site service options</span>
-        <h2>Hands-on help for the equipment you rely on</h2>
-      </div>
-      <p>Tell us your location and we’ll confirm what is available.</p>
-    </div>
+    <section aria-labelledby="services-heading">
 
-    <section class="grid" aria-label="On-site support service options">
-
-      <article class="card service-card">
-        <span class="service-icon">🖥️</span>
-        <h2>Computer setup and troubleshooting</h2>
-        <p>
-          Help with device setup, recurring faults, slow performance,
-          software configuration, and an in-person assessment when
-          remote checks aren’t enough.
-        </p>
-      </article>
-
-      <article class="card service-card">
-        <span class="service-icon">📶</span>
-        <h2>Wi-Fi and small-office networks</h2>
-        <p>
-          Discuss coverage problems, router setup, device connectivity,
-          and network equipment that may need a physical look.
-        </p>
-      </article>
-
-      <article class="card service-card">
-        <span class="service-icon">🖨️</span>
-        <h2>Printers and accessories</h2>
-        <p>
-          Get help connecting or troubleshooting printers, monitors,
-          and other everyday computer accessories.
-        </p>
-      </article>
-
-      <article class="card service-card">
-        <span class="service-icon">🔧</span>
-        <h2>Hardware checks</h2>
-        <p>
-          Arrange an initial check when a computer or peripheral may
-          have a physical fault. Repair options depend on the device
-          and issue.
-        </p>
-      </article>
-
-      <article class="card service-card">
-        <span class="service-icon">🏢</span>
-        <h2>Workplace technology</h2>
-        <p>
-          Request help with computers and connected equipment used
-          by a small team. Share the number of devices and the site
-          location.
-        </p>
-      </article>
-
-      <article class="card service-card">
-        <span class="service-icon">🛡️</span>
-        <h2>Security and safe setup</h2>
-        <p>
-          Ask for help reviewing device settings and safer everyday
-          use. We’ll discuss the scope before the visit.
-        </p>
-      </article>
-
-    </section>
-
-    <!-- PROCESS -->
-    <div class="section-title">
-      <div>
-        <span class="eyebrow">A clear process</span>
-        <h2>From enquiry to confirmed visit</h2>
-      </div>
-    </div>
-
-    <section class="grid" aria-label="Visit process">
-
-      <article class="card">
-        <span class="number">01</span>
-        <h2>Send the details</h2>
-        <p>
-          Tell us the device, the issue, your area, and a suitable time.
-          Do not include passwords or payment details.
-        </p>
-      </article>
-
-      <article class="card">
-        <span class="number">02</span>
-        <h2>We assess the request</h2>
-        <p>
-          We may ask follow-up questions and determine whether remote
-          troubleshooting or an in-person visit makes sense.
-        </p>
-      </article>
-
-      <article class="card">
-        <span class="number">03</span>
-        <h2>Confirm before booking</h2>
-        <p>
-          We confirm whether your area can be served, the appointment
-          time, expected work, and any call-out or service cost before
-          you agree.
-        </p>
-      </article>
-
-    </section>
-
-    <!-- ENQUIRY FORM -->
-    <section class="panel form-panel" id="visit-enquiry">
-
-      <div>
-        <span class="eyebrow">Tell us what you need</span>
-
-        <h2>Request an on-site assessment</h2>
-
-        <p>
-          This is an enquiry, not a confirmed appointment. We’ll need
-          to review your area and availability before confirming a visit.
-        </p>
-
-        <div class="notice">
-          <strong>Support hours:</strong>
-          Monday to Friday, 08:00–17:00 South African time (SAST).
-          Any call-out fee or service cost will be discussed before
-          you book.
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">How we can help</span>
+          <h2 id="services-heading">IT support services</h2>
         </div>
+
+        <p>Starting prices shown where provided.</p>
       </div>
 
-      <form
-        class="request-form"
-        id="onsite-enquiry-form"
-        action="/support"
-        method="post"
-      >
+      <div class="service-grid">
 
-        <input type="hidden" name="requestType" value="onsite">
-        <input type="hidden" name="remoteId" value="">
-        <input type="hidden" name="remotePassword" value="">
-        <input type="hidden" name="issue" id="onsite-issue">
-
-        <div class="field">
-          <label for="onsite-name">Your name</label>
-          <input
-            id="onsite-name"
-            name="name"
-            type="text"
-            autocomplete="name"
-            required
-            maxlength="100"
-            placeholder="Enter your name"
-          >
-        </div>
-
-        <div class="field">
-          <label for="onsite-email">Email address</label>
-          <input
-            id="onsite-email"
-            name="email"
-            type="email"
-            autocomplete="email"
-            required
-            maxlength="254"
-            placeholder="you@example.com"
-          >
-        </div>
-
-        <div class="field">
-          <label for="onsite-phone">Phone number</label>
-          <input
-            id="onsite-phone"
-            name="phone"
-            type="tel"
-            autocomplete="tel"
-            required
-            maxlength="30"
-            placeholder="+27..."
-          >
-        </div>
-
-        <div class="field">
-          <label for="onsite-area">Town or area</label>
-          <input
-            id="onsite-area"
-            name="area"
-            type="text"
-            autocomplete="address-level2"
-            required
-            maxlength="120"
-            placeholder="e.g. Pretoria East"
-          >
-        </div>
-
-        <div class="field">
-          <label for="onsite-type">What needs attention?</label>
-          <select id="onsite-type" name="serviceType" required>
-            <option value="">Choose a service</option>
-            <option>Computer setup or troubleshooting</option>
-            <option>Wi-Fi or small-office network</option>
-            <option>Printer or accessories</option>
-            <option>Hardware assessment</option>
-            <option>Workplace technology</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="onsite-date">Preferred date</label>
-          <input
-            id="onsite-date"
-            name="preferredDate"
-            type="date"
-          >
-        </div>
-
-        <div class="field">
-          <label for="onsite-time">Preferred time</label>
-          <input
-            id="onsite-time"
-            name="preferredTime"
-            type="time"
-          >
-          <p class="form-help">
-            Choose a time that suits you; we’ll confirm the appointment with you.
+        <article class="service-card">
+          <div class="service-icon" aria-hidden="true">⌘</div>
+          <h3>PC Health Check</h3>
+          <p>
+            Request assistance with checking your computer's general
+            condition and identifying common issues.
           </p>
-        </div>
+          <div class="service-price">
+            R249
+            <small>Starting price</small>
+          </div>
+        </article>
 
-        <div class="field full">
-          <label for="onsite-details">Describe the issue</label>
-          <textarea
-            id="onsite-details"
-            name="details"
-            required
-            maxlength="3000"
-            placeholder="What is happening, which device is affected, and when did it start?"
-          ></textarea>
-          <p class="form-help">
-            Please don’t include account passwords, card details,
-            or remote-session passwords.
+        <article class="service-card">
+          <div class="service-icon" aria-hidden="true">✓</div>
+          <h3>Virus & Malware Removal</h3>
+          <p>
+            Get help with malware and virus-related problems affecting
+            your computer.
           </p>
-        </div>
+          <div class="service-price">
+            R450
+            <small>Starting price</small>
+          </div>
+        </article>
 
-        <div
-          class="form-message"
-          id="onsite-form-message"
-          role="status"
-          aria-live="polite"
-        ></div>
+        <article class="service-card">
+          <div class="service-icon" aria-hidden="true">⌁</div>
+          <h3>Wi-Fi & Network Support</h3>
+          <p>
+            Request help with Wi-Fi connectivity and common network
+            support requirements.
+          </p>
+          <div class="service-price">
+            R399
+            <small>Starting price</small>
+          </div>
+        </article>
 
-        <button class="submit" type="submit">
-          Send on-site support enquiry
-        </button>
+        <article class="service-card">
+          <div class="service-icon" aria-hidden="true">▣</div>
+          <h3>New Computer Setup</h3>
+          <p>
+            Get assistance with setting up a new computer and preparing
+            it for use.
+          </p>
+          <div class="service-price">
+            R450
+            <small>Starting price</small>
+          </div>
+        </article>
 
-      </form>
+        <article class="service-card">
+          <div class="service-icon" aria-hidden="true">▤</div>
+          <h3>Data Backup Setup</h3>
+          <p>
+            Request assistance with setting up a data backup solution
+            for your important files.
+          </p>
+          <div class="service-price">
+            R499
+            <small>Starting price</small>
+          </div>
+        </article>
+
+        <article class="service-card">
+          <div class="service-icon" aria-hidden="true">⌂</div>
+          <h3>Business IT Support</h3>
+          <p>
+            Discuss your business IT requirements and request a
+            quotation based on the support you need.
+          </p>
+          <div class="service-price">
+            Custom quotation
+            <small>Price depends on requirements</small>
+          </div>
+        </article>
+
+      </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-      IT Elements Support ·
-      <a href="tel:+27606181229">+27 60 618 1229</a> ·
-      <a href="mailto:bongani@itelements.co.za">bongani@itelements.co.za</a>
-    </footer>
+    <!-- HOW IT WORKS -->
+    <section aria-labelledby="process-heading">
+
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">The process</span>
+          <h2 id="process-heading">How to request support</h2>
+        </div>
+      </div>
+
+      <div class="process-grid">
+
+        <article class="process-card">
+          <span class="process-number">01</span>
+          <h3>Tell us about the problem</h3>
+          <p>
+            Complete the appointment request with your contact details,
+            selected service and a description of the issue.
+          </p>
+        </article>
+
+        <article class="process-card">
+          <span class="process-number">02</span>
+          <h3>We review your request</h3>
+          <p>
+            IT Elements will review the information and contact you
+            to discuss the service, availability and pricing.
+          </p>
+        </article>
+
+        <article class="process-card">
+          <span class="process-number">03</span>
+          <h3>Confirm the appointment</h3>
+          <p>
+            Your appointment is confirmed only after the details and
+            availability have been agreed with IT Elements.
+          </p>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- SUPPORT OPTIONS -->
+    <section aria-labelledby="support-heading">
+
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Choose your support type</span>
+          <h2 id="support-heading">Remote or on-site support</h2>
+        </div>
+      </div>
+
+      <div class="support-panel">
+
+        <article class="support-card">
+          <h3>On-site support</h3>
+          <p>
+            Request assistance at your location. Include your area or
+            address in the appointment request so the details can be
+            discussed before an appointment is confirmed.
+          </p>
+        </article>
+
+        <article class="support-card">
+          <h3>Remote support</h3>
+          <p>
+            If your issue may be handled remotely, select remote support
+            in the appointment request. IT Elements can discuss the
+            appropriate next step with you.
+          </p>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- IMPORTANT INFORMATION -->
+    <section class="notice">
+      <strong>Important appointment information</strong>
+      <p>
+        Submitting an appointment request does not confirm a booking.
+        IT Elements will contact you to confirm availability and the
+        final price. Starting prices may change depending on the work
+        required. Do not send passwords or remote-access credentials
+        through the appointment form.
+      </p>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="final-cta">
+      <h2>Ready to request IT support?</h2>
+
+      <p>
+        Send your appointment request with the details of the service
+        you need. IT Elements will contact you to discuss the next step.
+      </p>
+
+      <div class="actions">
+        <a class="btn" href="/booking">Request an appointment</a>
+        <a class="btn secondary" href="/pricing">View support plans</a>
+      </div>
+    </section>
 
   </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    IT Elements Support · South Africa
+    <br>
+    <a href="mailto:bongani@itelements.co.za">
+      bongani@itelements.co.za
+    </a>
+    &nbsp;·&nbsp;
+    <a href="tel:+27606181229">
+      +27 60 618 1229
+    </a>
+  </footer>
 
   <script>
     (function () {
@@ -1030,6 +925,8 @@
 
       const menuToggle = document.getElementById("menuToggle");
       const mainLinks = document.getElementById("mainLinks");
+
+      if (!menuToggle || !mainLinks) return;
 
       menuToggle.addEventListener("click", function () {
         const isOpen = mainLinks.classList.toggle("open");
@@ -1039,6 +936,7 @@
           "aria-label",
           isOpen ? "Close navigation" : "Open navigation"
         );
+
         menuToggle.textContent = isOpen ? "✕" : "☰";
       });
 
@@ -1059,51 +957,6 @@
           menuToggle.textContent = "☰";
         }
       });
-
-      const params = new URLSearchParams(window.location.search);
-      const form = document.getElementById("onsite-enquiry-form");
-      const message = document.getElementById("onsite-form-message");
-      const issueField = document.getElementById("onsite-issue");
-
-      if (params.get("sent") === "1") {
-        message.textContent =
-          "Thanks — your on-site support enquiry has been received. " +
-          "We will review your area and contact details to discuss " +
-          "availability and any costs before confirming a visit.";
-
-        message.classList.add("visible");
-
-        window.setTimeout(function () {
-          document.getElementById("visit-enquiry").scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-          });
-        }, 150);
-      }
-
-      /* Preserve the existing /support form submission. */
-      form.addEventListener("submit", function () {
-        const phone = document.getElementById("onsite-phone").value.trim();
-        const area = document.getElementById("onsite-area").value.trim();
-        const service = document.getElementById("onsite-type").value;
-        const date = document.getElementById("onsite-date").value;
-        const time = document.getElementById("onsite-time").value;
-        const details = document.getElementById("onsite-details").value.trim();
-
-        const summary = [
-          "ON-SITE SUPPORT ENQUIRY",
-          "Phone: " + phone,
-          "Area: " + area,
-          "Service requested: " + service,
-          "Preferred date: " + (date || "Flexible"),
-          "Preferred time: " + (time || "Flexible"),
-          "",
-          details
-        ].join("\n");
-
-        issueField.value = summary;
-      });
-
     }());
   </script>
 
