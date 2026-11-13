@@ -92,6 +92,78 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     invoiceProUntil: { type: Date, default: null }
 }, { collection: 'useraccounts' }));
 
+// ==========================================
+// IT ELEMENTS ONLINE STORE - PRODUCT MODEL
+// ==========================================
+
+const StoreProduct = mongoose.model(
+    'StoreProduct',
+    new mongoose.Schema({
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: 120
+        },
+        sku: {
+            type: String,
+            trim: true,
+            default: '',
+            maxlength: 60
+        },
+        category: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: 80
+        },
+        price: {
+            type: Number,
+            required: true,
+            min: 0
+        },
+        compareAtPrice: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        stock: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
+        status: {
+            type: String,
+            enum: ['active', 'draft'],
+            default: 'draft'
+        },
+        imageUrl: {
+            type: String,
+            default: '',
+            maxlength: 2048
+        },
+        description: {
+            type: String,
+            default: '',
+            maxlength: 2000
+        },
+        featured: {
+            type: Boolean,
+            default: false
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        },
+        updatedAt: {
+            type: Date,
+            default: Date.now
+        }
+    }, {
+        collection: 'storeproducts'
+    })
+);
+
 // PayFast purchases
 const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     paymentId: { type: String, required: true, unique: true },
@@ -116,6 +188,281 @@ const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     expiresAt: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
 }, { collection: 'payfastpurchases' }));
+
+// ==========================================
+// IT ELEMENTS ONLINE STORE - API
+// ==========================================
+
+const STORE_CATEGORIES = [
+    'Computers & Laptops',
+    'Storage & SSDs',
+    'Memory (RAM)',
+    'Networking',
+    'Keyboards & Mice',
+    'Monitors & Displays',
+    'Cables & Accessories',
+    'Software',
+    'Other'
+];
+
+// Validate and clean product information from the admin form.
+function cleanStoreProduct(body = {}) {
+    const name = String(body.name || '').trim();
+    const sku = String(body.sku || '').trim();
+    const category = String(body.category || '').trim();
+    const description = String(body.description || '').trim();
+    const imageUrl = String(body.imageUrl || '').trim();
+
+    const price = Number(body.price);
+    const compareAtPrice = Number(body.compareAtPrice || 0);
+    const stock = Number(body.stock || 0);
+
+    const status = body.status === 'active' ? 'active' : 'draft';
+
+    if (!name || name.length > 120) {
+        throw new Error('Enter a product name of no more than 120 characters.');
+    }
+
+    if (!sku || sku.length > 60) {
+        if (sku.length > 60) {
+            throw new Error('SKU must be 60 characters or fewer.');
+        }
+    }
+
+    if (!STORE_CATEGORIES.includes(category)) {
+        throw new Error('Choose a valid product category.');
+    }
+
+    if (!Number.isFinite(price) || price < 0 || price > 100000000) {
+        throw new Error('Enter a valid product price.');
+    }
+
+    if (
+        !Number.isFinite(compareAtPrice) ||
+        compareAtPrice < 0 ||
+        compareAtPrice > 100000000
+    ) {
+        throw new Error('Enter a valid comparison price.');
+    }
+
+    if (
+        !Number.isInteger(stock) ||
+        stock < 0 ||
+        stock > 1000000
+    ) {
+        throw new Error('Stock must be a whole number between 0 and 1,000,000.');
+    }
+
+    if (description.length > 2000) {
+        throw new Error('Description must be 2,000 characters or fewer.');
+    }
+
+    if (imageUrl.length > 2048) {
+        throw new Error('Image URL is too long.');
+    }
+
+    if (imageUrl) {
+        let parsedImageUrl;
+
+        try {
+            parsedImageUrl = new URL(imageUrl);
+        } catch (_) {
+            throw new Error('Enter a valid product image URL.');
+        }
+
+        if (parsedImageUrl.protocol !== 'https:') {
+            throw new Error('Product image URLs must use HTTPS.');
+        }
+    }
+
+    return {
+        name,
+        sku,
+        category,
+        price,
+        compareAtPrice,
+        stock,
+        status,
+        imageUrl,
+        description,
+        featured: body.featured === true || body.featured === 'true',
+        updatedAt: new Date()
+    };
+}
+
+
+// ------------------------------------------
+// PUBLIC STORE - ACTIVE PRODUCTS ONLY
+// ------------------------------------------
+
+app.get('/api/store/products', async (req, res) => {
+    try {
+        const products = await StoreProduct.find({
+            status: 'active'
+        })
+            .sort({
+                featured: -1,
+                createdAt: -1
+            })
+            .lean();
+
+        res.json({
+            success: true,
+            products
+        });
+    } catch (err) {
+        console.error('Public store products error:', err.message);
+
+        res.status(500).json({
+            success: false,
+            products: [],
+            message: 'Could not load store products.'
+        });
+    }
+});
+
+
+// ------------------------------------------
+// ADMIN - LOAD ALL PRODUCTS
+// ------------------------------------------
+
+app.get('/api/admin/store/products', checkAdminAuth, async (req, res) => {
+    try {
+        const products = await StoreProduct.find()
+            .sort({
+                createdAt: -1
+            })
+            .lean();
+
+        res.json({
+            success: true,
+            products
+        });
+    } catch (err) {
+        console.error('Admin store product load error:', err.message);
+
+        res.status(500).json({
+            success: false,
+            message: 'Could not load store products.'
+        });
+    }
+});
+
+
+// ------------------------------------------
+// ADMIN - ADD A PRODUCT
+// ------------------------------------------
+
+app.post('/api/admin/store/products', checkAdminAuth, async (req, res) => {
+    try {
+        const productData = cleanStoreProduct(req.body || {});
+
+        const product = await StoreProduct.create(productData);
+
+        res.status(201).json({
+            success: true,
+            message: 'Product added successfully.',
+            product
+        });
+    } catch (err) {
+        console.error('Add store product error:', err.message);
+
+        res.status(400).json({
+            success: false,
+            message: err.message || 'Could not add this product.'
+        });
+    }
+});
+
+
+// ------------------------------------------
+// ADMIN - UPDATE A PRODUCT
+// ------------------------------------------
+
+app.put('/api/admin/store/products/:id', checkAdminAuth, async (req, res) => {
+    const productId = req.params.id;
+
+    if (!mongoose.isValidObjectId(productId)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid product.'
+        });
+    }
+
+    try {
+        const productData = cleanStoreProduct(req.body || {});
+
+        const product = await StoreProduct.findByIdAndUpdate(
+            productId,
+            {
+                $set: productData
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found.'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Product updated successfully.',
+            product
+        });
+    } catch (err) {
+        console.error('Update store product error:', err.message);
+
+        res.status(400).json({
+            success: false,
+            message: err.message || 'Could not update this product.'
+        });
+    }
+});
+
+
+// ------------------------------------------
+// ADMIN - DELETE A PRODUCT
+// ------------------------------------------
+
+app.delete('/api/admin/store/products/:id', checkAdminAuth, async (req, res) => {
+    const productId = req.params.id;
+
+    if (!mongoose.isValidObjectId(productId)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid product.'
+        });
+    }
+
+    try {
+        const product = await StoreProduct.findByIdAndDelete(productId);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found.'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Product deleted successfully.'
+        });
+    } catch (err) {
+        console.error('Delete store product error:', err.message);
+
+        res.status(500).json({
+            success: false,
+            message: 'Could not delete this product.'
+        });
+    }
+});
 
 // Saved invoices and quotations
 const BusinessDocument = mongoose.model('BusinessDocument', new mongoose.Schema({
@@ -825,6 +1172,21 @@ app.get('/invoice-maker.html', (req, res) => {
 
 // Public website files
 app.use(express.static(viewsPath, { index: false }));
+
+// ==========================================
+// PRIVATE STORE MANAGER PAGE
+// ==========================================
+
+// Protect the Store Manager HTML file itself.
+// It must not be accessible to visitors without admin login.
+app.get('/store-admin.html', checkAdminAuth, (req, res) => {
+    res.sendFile(path.join(viewsPath, 'store-admin.html'));
+});
+
+// Private Store Manager URL
+app.get(['/admin/store', '/admin/store/'], checkAdminAuth, (req, res) => {
+    res.sendFile(path.join(viewsPath, 'store-admin.html'));
+});
 
 // Assets are stored directly inside public/, not public/assets/.
 app.use('/assets', express.static(path.join(__dirname, 'public')));
