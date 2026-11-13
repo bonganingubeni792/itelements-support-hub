@@ -493,13 +493,79 @@ const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'customerreviews' }));
 
+// IT Elements online store products
+const StoreProduct = mongoose.model('StoreProduct', new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 120
+    },
+    sku: {
+        type: String,
+        default: '',
+        trim: true,
+        maxlength: 60
+    },
+    category: {
+        type: String,
+        required: true,
+        trim: true,
+        maxlength: 80
+    },
+    price: {
+        type: Number,
+        required: true,
+        min: 0
+    },
+    compareAtPrice: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    stock: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
+    status: {
+        type: String,
+        enum: ['active', 'draft'],
+        default: 'draft'
+    },
+    imageUrl: {
+        type: String,
+        default: '',
+        maxlength: 2000
+    },
+    description: {
+        type: String,
+        default: '',
+        maxlength: 2000
+    },
+    featured: {
+        type: Boolean,
+        default: false
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    updatedAt: {
+        type: Date,
+        default: Date.now
+    }
+}, {
+    collection: 'storeproducts'
+}));
+
 // Middleware
 app.use(cors());
 
 app.use((req, res, next) => {
     res.setHeader(
         'Content-Security-Policy',
-        "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https://*.whatsapp.com; connect-src 'self'"
+       "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; connect-src 'self'"
     );
     next();
 });
@@ -814,6 +880,16 @@ app.get('/admin.html', checkAdminAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'admin.html'));
 });
 
+// Private IT Elements Store Manager
+app.get(['/admin/store', '/admin/store/'], checkAdminAuth, (req, res) => {
+    res.sendFile(path.join(viewsPath, 'store-admin.html'));
+});
+
+// Also protect direct access to the Store Manager HTML file
+app.get('/store-admin.html', checkAdminAuth, (req, res) => {
+    res.sendFile(path.join(viewsPath, 'store-admin.html'));
+});
+
 app.get('/dashboard.html', checkUserAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
@@ -870,6 +946,288 @@ app.get('/contact', (req, res) => {
 // IT Elements Online Store
 app.get(['/store', '/store/', '/store.html'], (req, res) => {
     res.sendFile(path.join(viewsPath, 'store.html'));
+});
+
+// ============================================
+// IT ELEMENTS ONLINE STORE API
+// ============================================
+
+// Clean and validate product information
+function cleanStoreProduct(body = {}) {
+    const name = String(body.name || '').trim();
+    const sku = String(body.sku || '').trim();
+    const category = String(body.category || '').trim();
+    const description = String(body.description || '').trim();
+    const imageUrl = String(body.imageUrl || '').trim();
+
+    const price = Number(body.price);
+    const compareAtPrice = body.compareAtPrice === '' ||
+        body.compareAtPrice === null ||
+        body.compareAtPrice === undefined
+        ? 0
+        : Number(body.compareAtPrice);
+
+    const stock = Number(body.stock);
+
+    const status = ['active', 'draft'].includes(body.status)
+        ? body.status
+        : 'draft';
+
+    let validImageUrl = '';
+
+    if (imageUrl) {
+        try {
+            const parsed = new URL(imageUrl);
+
+            if (!['http:', 'https:'].includes(parsed.protocol)) {
+                return {
+                    error: 'Product images must use an HTTP or HTTPS address.'
+                };
+            }
+
+            validImageUrl = parsed.href;
+        } catch (_) {
+            return {
+                error: 'Enter a valid product image URL.'
+            };
+        }
+    }
+
+    if (!name || name.length > 120) {
+        return {
+            error: 'Enter a product name between 1 and 120 characters.'
+        };
+    }
+
+    if (!category || category.length > 80) {
+        return {
+            error: 'Enter a product category.'
+        };
+    }
+
+    if (
+        !Number.isFinite(price) ||
+        price < 0 ||
+        price > 100000000
+    ) {
+        return {
+            error: 'Enter a valid selling price.'
+        };
+    }
+
+    if (
+        !Number.isFinite(compareAtPrice) ||
+        compareAtPrice < 0 ||
+        compareAtPrice > 100000000
+    ) {
+        return {
+            error: 'Enter a valid previous price.'
+        };
+    }
+
+    if (
+        !Number.isInteger(stock) ||
+        stock < 0 ||
+        stock > 10000000
+    ) {
+        return {
+            error: 'Stock must be a whole number of zero or more.'
+        };
+    }
+
+    if (sku.length > 60 || description.length > 2000) {
+        return {
+            error: 'The SKU or description is too long.'
+        };
+    }
+
+    return {
+        product: {
+            name,
+            sku,
+            category,
+            price,
+            compareAtPrice,
+            stock,
+            status,
+            imageUrl: validImageUrl,
+            description,
+            featured: body.featured === true ||
+                body.featured === 'true' ||
+                body.featured === 'on',
+            updatedAt: new Date()
+        }
+    };
+}
+
+// PUBLIC: Load active products for the online store
+app.get('/api/store/products', async (req, res) => {
+    try {
+        res.setHeader('Cache-Control', 'no-store');
+
+        const products = await StoreProduct.find({
+            status: 'active'
+        })
+            .select('-__v')
+            .sort({
+                featured: -1,
+                createdAt: -1
+            })
+            .lean();
+
+        return res.json({
+            success: true,
+            products
+        });
+    } catch (err) {
+        console.error('Public store products error:', err.message);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Could not load store products.',
+            products: []
+        });
+    }
+});
+
+// ADMIN: Load all products, including drafts
+app.get('/api/admin/store/products', checkAdminAuth, async (req, res) => {
+    try {
+        const products = await StoreProduct.find()
+            .select('-__v')
+            .sort({ createdAt: -1 })
+            .lean();
+
+        return res.json({
+            success: true,
+            products
+        });
+    } catch (err) {
+        console.error('Admin store products error:', err.message);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Could not load your products.'
+        });
+    }
+});
+
+// ADMIN: Add a new product
+app.post('/api/admin/store/products', checkAdminAuth, async (req, res) => {
+    const cleaned = cleanStoreProduct(req.body || {});
+
+    if (cleaned.error) {
+        return res.status(400).json({
+            success: false,
+            message: cleaned.error
+        });
+    }
+
+    try {
+        const product = await StoreProduct.create(cleaned.product);
+
+        return res.status(201).json({
+            success: true,
+            message: 'Product added successfully.',
+            product
+        });
+    } catch (err) {
+        console.error('Add store product error:', err.message);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Could not add this product.'
+        });
+    }
+});
+
+// ADMIN: Edit an existing product
+app.put('/api/admin/store/products/:id', checkAdminAuth, async (req, res) => {
+    const productId = String(req.params.id || '');
+
+    if (!mongoose.isValidObjectId(productId)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid product.'
+        });
+    }
+
+    const cleaned = cleanStoreProduct(req.body || {});
+
+    if (cleaned.error) {
+        return res.status(400).json({
+            success: false,
+            message: cleaned.error
+        });
+    }
+
+    try {
+        const product = await StoreProduct.findByIdAndUpdate(
+            productId,
+            {
+                $set: cleaned.product
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found.'
+            });
+        }
+
+        return res.json({
+            success: true,
+            message: 'Product updated successfully.',
+            product
+        });
+    } catch (err) {
+        console.error('Update store product error:', err.message);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Could not update this product.'
+        });
+    }
+});
+
+// ADMIN: Delete a product
+app.delete('/api/admin/store/products/:id', checkAdminAuth, async (req, res) => {
+    const productId = String(req.params.id || '');
+
+    if (!mongoose.isValidObjectId(productId)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid product.'
+        });
+    }
+
+    try {
+        const product = await StoreProduct.findByIdAndDelete(productId);
+
+        if (!product) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found.'
+            });
+        }
+
+        return res.json({
+            success: true,
+            message: 'Product deleted successfully.'
+        });
+    } catch (err) {
+        console.error('Delete store product error:', err.message);
+
+        return res.status(500).json({
+            success: false,
+            message: 'Could not delete this product.'
+        });
+    }
 });
 
 // Subscription links
