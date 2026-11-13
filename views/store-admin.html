@@ -81,6 +81,38 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
  .workspace-state{font-size:8px;padding:4px 6px}
 }
 
+
+/* Shopify-style catalogue operations */
+.import-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:15px}
+.import-card{min-width:0;padding:19px;border:1px solid var(--line);border-radius:12px;background:#fbfbfc}
+.import-card h3{margin:5px 0 5px;font-size:14px;font-weight:850}
+.import-card p{margin:0 0 14px;color:#777f8a;font-size:11px;line-height:1.6}
+.tool-icon{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:#fff0f0;color:var(--red);font-size:21px;font-weight:900}
+.file-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:92px;padding:15px;border:1px dashed #d8a5a5;border-radius:10px;background:#fff;cursor:pointer;text-align:center}
+.file-drop:hover{border-color:var(--red);background:#fffafa}
+.file-drop strong{font-size:12px;color:#333}.file-drop span{font-size:10px;color:#9298a1}
+.file-drop input{max-width:100%;font-size:10px;margin-top:6px}
+.import-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.import-status{margin-top:11px;color:#737b86;font-size:11px;line-height:1.6}
+.import-status.error{color:#b00000}.import-status.success{color:#16834b}
+.column-list{display:flex;flex-wrap:wrap;gap:6px;margin:9px 0 13px}
+.column-list span{padding:5px 8px;border:1px solid #e5e7eb;border-radius:6px;background:#fff;color:#454b55;font:10px ui-monospace,monospace}
+.import-guide small{color:#858b95;font-size:10px;line-height:1.6}
+.preview-heading{display:flex;justify-content:space-between;gap:10px;margin:20px 0 9px;font-size:12px}
+.preview-heading span{color:#858b95}
+.import-table-wrap{overflow:auto;border:1px solid var(--line);border-radius:9px}
+.import-table{width:100%;border-collapse:collapse;min-width:560px;font-size:11px}
+.import-table th,.import-table td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}
+.import-table th{background:#f3f4f6;color:#656c77;font-size:10px;text-transform:uppercase}
+.import-table td{color:#333}
+.category-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.category-chip{min-width:0;padding:10px 11px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;color:#4c535d;text-align:left;font-size:10px;font-weight:750;transition:.15s}
+.category-chip:hover{border-color:#e00000;background:#fff6f6;color:#b00000}
+.category-chip:focus-visible{outline:3px solid #e0000028}
+@media(max-width:1050px){.category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){.import-grid{grid-template-columns:1fr}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.category-grid{grid-template-columns:1fr 1fr}.import-card{padding:14px}.import-actions .btn{flex:1}}
+
 </style></head><body><div class="app">
 <aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
@@ -90,14 +122,44 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 </nav>
 <div class="content" id="overview"><section class="pagehead"><div><div class="eyebrow">IT Elements commerce</div><h1>Store Management</h1><p>Add products, control pricing and stock, and choose what customers can see in your online store.</p></div><button class="btn primary" id="newBtn">＋ Add new product</button></section>
 <section class="stats"><article class="stat"><small>Total products</small><strong id="totalCount">0</strong><em>All products in your catalogue</em></article><article class="stat"><small>Published in store</small><strong id="activeCount">0</strong><em>Visible to customers</em></article><article class="stat"><small>Private drafts</small><strong id="draftCount">0</strong><em>Only visible to administrators</em></article><article class="stat"><small>Low stock</small><strong id="lowCount">0</strong><em>Products with 5 or fewer units</em></article></section>
+
+<section class="panel import-panel" id="bulk-tools">
+  <div class="panelhead"><div><h2>Product import &amp; catalogue tools</h2><p class="sub">Bring in a complete product list using CSV or Excel, or download your catalogue for editing.</p></div><span class="eyebrow">BULK MANAGEMENT</span></div>
+  <div class="import-grid">
+    <div class="import-card">
+      <div class="tool-icon">⇧</div><h3>Import products</h3>
+      <p>Upload a <b>.CSV</b> file or an <b>.XLSX / .XLS</b> Excel spreadsheet. Each valid row will be added as a product.</p>
+      <label class="file-drop" for="productImportFile"><strong>Choose product file</strong><span>CSV or Excel · up to 5 MB</span><input id="productImportFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"></label>
+      <div class="import-actions"><button class="btn" type="button" id="downloadTemplate">Download CSV template</button><button class="btn" type="button" id="exportProducts">Export catalogue CSV</button></div>
+      <div id="importStatus" class="import-status" aria-live="polite">Choose a file to preview the rows before importing.</div>
+    </div>
+    <div class="import-card import-guide">
+      <div class="tool-icon">▤</div><h3>Spreadsheet columns</h3>
+      <p>Use these column headings. Product name, category and selling price are required. Other columns are optional.</p>
+      <div class="column-list"><span>name</span><span>sku</span><span>category</span><span>price</span><span>compareAtPrice</span><span>stock</span><span>description</span><span>imageUrl</span><span>status</span><span>featured</span></div>
+      <small>Tip: save your Excel workbook as .xlsx, or choose CSV UTF-8 when exporting from Excel.</small>
+    </div>
+  </div>
+  <div id="importPreviewWrap" hidden>
+    <div class="preview-heading"><strong id="importPreviewTitle">Import preview</strong><span id="importPreviewCount"></span></div>
+    <div class="import-table-wrap"><table class="import-table"><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead><tbody id="importPreviewRows"></tbody></table></div>
+    <div class="import-actions"><button class="btn primary" type="button" id="runImport">Import valid products</button><button class="btn" type="button" id="cancelImport">Cancel</button></div>
+  </div>
+</section>
+<section class="panel category-panel" id="categories">
+  <div class="panelhead"><div><h2>Shop categories</h2><p class="sub">Choose a category to start adding products in that department. Categories are stored on products and appear in the catalogue.</p></div><span class="eyebrow">PRODUCT DEPARTMENTS</span></div>
+  <div class="category-grid"><button type="button" class="category-chip" data-category="Computers & Laptops">Computers & Laptops</button><button type="button" class="category-chip" data-category="Gaming PCs">Gaming PCs</button><button type="button" class="category-chip" data-category="Gaming Laptops">Gaming Laptops</button><button type="button" class="category-chip" data-category="Gaming Components">Gaming Components</button><button type="button" class="category-chip" data-category="Graphics Cards">Graphics Cards</button><button type="button" class="category-chip" data-category="Processors (CPU)">Processors (CPU)</button><button type="button" class="category-chip" data-category="Motherboards">Motherboards</button><button type="button" class="category-chip" data-category="RAM & Memory">RAM & Memory</button><button type="button" class="category-chip" data-category="SSD & NVMe Storage">SSD & NVMe Storage</button><button type="button" class="category-chip" data-category="Hard Drives (HDD)">Hard Drives (HDD)</button><button type="button" class="category-chip" data-category="External Storage">External Storage</button><button type="button" class="category-chip" data-category="PC Cases">PC Cases</button><button type="button" class="category-chip" data-category="Power Supplies (PSU)">Power Supplies (PSU)</button><button type="button" class="category-chip" data-category="CPU Cooling & Fans">CPU Cooling & Fans</button><button type="button" class="category-chip" data-category="Monitors & Displays">Monitors & Displays</button><button type="button" class="category-chip" data-category="Gaming Monitors">Gaming Monitors</button><button type="button" class="category-chip" data-category="Keyboards">Keyboards</button><button type="button" class="category-chip" data-category="Gaming Keyboards">Gaming Keyboards</button><button type="button" class="category-chip" data-category="Mice & Gaming Mice">Mice & Gaming Mice</button><button type="button" class="category-chip" data-category="Headsets & Audio">Headsets & Audio</button><button type="button" class="category-chip" data-category="Controllers & Gamepads">Controllers & Gamepads</button><button type="button" class="category-chip" data-category="Webcams & Streaming">Webcams & Streaming</button><button type="button" class="category-chip" data-category="Networking & Wi-Fi">Networking & Wi-Fi</button><button type="button" class="category-chip" data-category="Routers & Mesh Wi-Fi">Routers & Mesh Wi-Fi</button><button type="button" class="category-chip" data-category="Network Switches">Network Switches</button><button type="button" class="category-chip" data-category="Cables & Adapters">Cables & Adapters</button><button type="button" class="category-chip" data-category="Docks & Hubs">Docks & Hubs</button><button type="button" class="category-chip" data-category="Printers & Scanners">Printers & Scanners</button><button type="button" class="category-chip" data-category="Printer Ink & Toner">Printer Ink & Toner</button><button type="button" class="category-chip" data-category="Software & Security">Software & Security</button><button type="button" class="category-chip" data-category="Operating Systems">Operating Systems</button><button type="button" class="category-chip" data-category="Office Accessories">Office Accessories</button><button type="button" class="category-chip" data-category="UPS & Power Protection">UPS & Power Protection</button><button type="button" class="category-chip" data-category="Refurbished Computers">Refurbished Computers</button><button type="button" class="category-chip" data-category="Special Offers">Special Offers</button><button type="button" class="category-chip" data-category="Other Accessories">Other Accessories</button></div>
+</section>
+
 <div class="workspace"><section class="panel" id="editor"><div class="panelhead"><div><h2 id="formTitle">Add new product</h2><p class="sub">Product details, image, pricing and availability</p></div><span class="eyebrow">PRODUCT EDITOR</span></div>
 <form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="2000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="imageUrl">Product image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint">Use a direct HTTPS image link. Image file uploads are not enabled by the current server API.</p></div></div>
-<div class="two"><div class="field"><label for="sku">SKU / Product code</label><input id="sku" maxlength="60" placeholder="ITE-SSD-001"></div><div class="field"><label for="category">Category *</label><input id="category" list="categoryOptions" maxlength="80" required placeholder="e.g. Storage & SSDs"><datalist id="categoryOptions"></datalist></div></div>
+<div class="two"><div class="field"><label for="sku">SKU / Product code</label><input id="sku" maxlength="60" placeholder="ITE-SSD-001"></div><div class="field"><label for="category">Category *</label><input id="category" list="categoryOptions" maxlength="80" required placeholder="Choose or type a category"><datalist id="categoryOptions"></datalist></div></div>
 <div class="two"><div class="field"><label for="price">Selling price (ZAR) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="1299.00"></div><div class="field"><label for="compareAtPrice">Previous price (ZAR)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="1499.00"></div></div>
 <div class="two"><div class="field"><label for="stock">Stock quantity</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div></div>
 <label class="check"><input type="checkbox" id="featured"> Feature this product in the public store</label><div class="formactions"><button class="btn primary" id="saveBtn" type="submit">Save product</button><button class="btn" type="button" id="resetBtn">Clear form</button></div><div id="message" aria-live="polite"></div></form></section>
 <section class="panel" id="catalogue"><div class="panelhead"><div><h2>Product catalogue</h2><p class="sub">Edit, publish, hide or remove products</p></div><button class="btn" id="refreshBtn">↻ Refresh</button></div><div class="toolbar"><input id="search" type="search" placeholder="Search product name, SKU or category..."><select id="filter"><option value="all">All products</option><option value="active">Published</option><option value="draft">Drafts</option></select></div><div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
 </div></main></div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);let products=[];const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
@@ -110,5 +172,109 @@ function render(){const q=$('search').value.toLowerCase(),f=$('filter').value;co
 window.editProduct=id=>{const p=products.find(x=>x._id===id);if(p)edit(p);};window.deleteProduct=async id=>{const p=products.find(x=>x._id===id);if(!p||!confirm(`Permanently delete ${p.name}?`))return;try{await api('/api/admin/store/products/'+id,{method:'DELETE'});await load();if($('productId').value===id)reset();}catch(e){notice(e.message,'error');}};
 async function load(){try{const d=await api('/api/admin/store/products');products=d.products||[];render();}catch(e){$('productList').innerHTML=`<div class="notice error">${escapeHtml(e.message)}. Check that you are signed in as an administrator and the store APIs are deployed.</div>`;}}
 $('productForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('productId').value,body={name:$('name').value,description:$('description').value,imageUrl:$('imageUrl').value,sku:$('sku').value,category:$('category').value,price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,status:$('status').value,featured:$('featured').checked};try{await api(id?'/api/admin/store/products/'+id:'/api/admin/store/products',{method:id?'PUT':'POST',body:JSON.stringify(body)});notice(id?'Product updated successfully.':'Product saved successfully.','ok');reset();await load();}catch(err){notice(err.message,'error');}});
+
+const IMPORT_CATEGORIES = ["Computers & Laptops", "Gaming PCs", "Gaming Laptops", "Gaming Components", "Graphics Cards", "Processors (CPU)", "Motherboards", "RAM & Memory", "SSD & NVMe Storage", "Hard Drives (HDD)", "External Storage", "PC Cases", "Power Supplies (PSU)", "CPU Cooling & Fans", "Monitors & Displays", "Gaming Monitors", "Keyboards", "Gaming Keyboards", "Mice & Gaming Mice", "Headsets & Audio", "Controllers & Gamepads", "Webcams & Streaming", "Networking & Wi-Fi", "Routers & Mesh Wi-Fi", "Network Switches", "Cables & Adapters", "Docks & Hubs", "Printers & Scanners", "Printer Ink & Toner", "Software & Security", "Operating Systems", "Office Accessories", "UPS & Power Protection", "Refurbished Computers", "Special Offers", "Other Accessories"];
+let importRows=[];
+function setImportStatus(message,type=''){const el=$('importStatus');el.textContent=message;el.className='import-status '+type;}
+function csvParse(text){
+ const rows=[];let row=[],cell='',quoted=false;
+ for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];
+  if(ch==='"'&&quoted&&next==='"'){cell+='"';i++;}
+  else if(ch==='"'){quoted=!quoted;}
+  else if(ch===','&&!quoted){row.push(cell);cell='';}
+  else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&next==='\n')i++;row.push(cell);if(row.some(v=>String(v).trim()!==''))rows.push(row);row=[];cell='';}
+  else cell+=ch;
+ }
+ row.push(cell);if(row.some(v=>String(v).trim()!==''))rows.push(row);
+ if(!rows.length)return [];
+ const headers=rows.shift().map(h=>String(h||'').replace(/^\uFEFF/,'').trim());
+ return rows.map(values=>Object.fromEntries(headers.map((h,i)=>[h,values[i]??''])));
+}
+function keyMap(row){
+ const out={};for(const [k,v] of Object.entries(row)){out[String(k).toLowerCase().replace(/[^a-z0-9]/g,'')]=v;}
+ const get=(...keys)=>{for(const k of keys){const key=k.toLowerCase().replace(/[^a-z0-9]/g,'');if(out[key]!==undefined)return out[key];}return '';};
+ const truth=v=>['true','yes','1','y','featured'].includes(String(v).trim().toLowerCase());
+ return {
+  name:String(get('name','product','productname','title')).trim(),
+  sku:String(get('sku','productcode','code')).trim(),
+  category:String(get('category','type','department')).trim(),
+  description:String(get('description','details','specifications')).trim(),
+  imageUrl:String(get('imageUrl','image','imageurl','image link','product image')).trim(),
+  price:Number(String(get('price','sellingprice','regularprice')).replace(/[R,\s]/g,'')),
+  compareAtPrice:Number(String(get('compareAtPrice','compare at price','oldprice','previousprice')).replace(/[R,\s]/g,''))||0,
+  stock:Number(String(get('stock','quantity','inventory','qty')).replace(/[,\s]/g,'' )||0),
+  status:['active','published','live'].includes(String(get('status','visibility')).trim().toLowerCase())?'active':'draft',
+  featured:truth(get('featured','highlight'))
+ };
+}
+function validateImportRow(p,index){
+ if(!p.name)return `Row ${index+2}: product name is missing.`;
+ if(p.name.length>120)return `Row ${index+2}: product name is too long.`;
+ if(!p.category)return `Row ${index+2}: category is missing.`;
+ if(p.category.length>80)return `Row ${index+2}: category is too long.`;
+ if(!Number.isFinite(p.price)||p.price<0)return `Row ${index+2}: selling price is invalid.`;
+ if(!Number.isFinite(p.compareAtPrice)||p.compareAtPrice<0)return `Row ${index+2}: previous price is invalid.`;
+ if(!Number.isInteger(p.stock)||p.stock<0)return `Row ${index+2}: stock must be a whole number of zero or more.`;
+ if(p.sku.length>60||p.description.length>2000)return `Row ${index+2}: SKU or description is too long.`;
+ if(p.imageUrl){try{const u=new URL(p.imageUrl);if(!['http:','https:'].includes(u.protocol))throw Error();}catch{return `Row ${index+2}: image URL must start with http:// or https://.`;}}
+ return '';
+}
+async function readImportFile(file){
+ if(!file)return;
+ if(file.size>5*1024*1024){setImportStatus('The selected file is larger than 5 MB.','error');return;}
+ try{
+  let records=[];
+  const ext=file.name.toLowerCase().split('.').pop();
+  if(ext==='csv'){records=csvParse(await file.text());}
+  else if(['xlsx','xls'].includes(ext)){
+   if(!window.XLSX)throw Error('Excel reader could not load. Try saving the workbook as CSV UTF-8 and importing again.');
+   const data=await file.arrayBuffer(),workbook=XLSX.read(data,{type:'array'});
+   const sheet=workbook.Sheets[workbook.SheetNames[0]];
+   records=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:false});
+  }else throw Error('Choose a CSV or Excel (.xlsx / .xls) file.');
+  if(!records.length)throw Error('No product rows were found in the first worksheet.');
+  importRows=records.map(keyMap);
+  const errors=importRows.map((p,i)=>validateImportRow(p,i)).filter(Boolean);
+  const valid=importRows.length-errors.length;
+  $('importPreviewWrap').hidden=false;
+  $('importPreviewTitle').textContent=`Preview: ${file.name}`;
+  $('importPreviewCount').textContent=`${valid} valid · ${errors.length} need attention`;
+  $('importPreviewRows').innerHTML=importRows.slice(0,12).map((p,i)=>`<tr><td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td><td>${escapeHtml(p.category||'—')}</td><td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td><td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td><td>${escapeHtml(p.status)}</td></tr>`).join('');
+  if(importRows.length>12){const tr=document.createElement('tr');tr.innerHTML=`<td colspan="5">And ${importRows.length-12} more rows…</td>`;$('importPreviewRows').appendChild(tr);}
+  $('runImport').disabled=valid===0;
+  setImportStatus(errors.length?`${valid} rows are ready. ${errors.length} rows contain errors and will be skipped. Correct them in your spreadsheet and re-upload if needed.`:`${valid} products are ready to import.` ,errors.length?'':'success');
+ }catch(err){importRows=[];$('importPreviewWrap').hidden=true;setImportStatus(err.message||'Could not read this file.','error');}
+}
+$('productImportFile').addEventListener('change',e=>readImportFile(e.target.files[0]));
+$('cancelImport').onclick=()=>{$('productImportFile').value='';importRows=[];$('importPreviewWrap').hidden=true;setImportStatus('Import cancelled.');};
+$('runImport').onclick=async()=>{
+ const valid=importRows.filter((p,i)=>!validateImportRow(p,i));
+ if(!valid.length)return;
+ $('runImport').disabled=true;let added=0,failed=0;
+ setImportStatus(`Importing ${valid.length} products…`);
+ for(const p of valid){
+  try{await api('/api/admin/store/products',{method:'POST',body:JSON.stringify(p)});added++;}
+  catch(e){failed++;}
+  setImportStatus(`Imported ${added} of ${valid.length} valid products${failed?` · ${failed} failed`:''}…`);
+ }
+ await load();
+ setImportStatus(`Import finished: ${added} added${failed?`, ${failed} failed`:''}. Invalid rows were skipped.`,failed?'error':'success');
+ $('productImportFile').value='';importRows=[];$('importPreviewWrap').hidden=true;
+};
+$('downloadTemplate').onclick=()=>{
+ const headers=['name','sku','category','price','compareAtPrice','stock','description','imageUrl','status','featured'];
+ const sample=['Kingston 1TB NVMe SSD','ITE-SSD-001','SSD & NVMe Storage','1299','1599','10','1TB NVMe solid state drive','https://example.com/product.jpg','draft','false'];
+ const csv=[headers,sample].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='it-elements-product-import-template.csv';a.click();URL.revokeObjectURL(a.href);
+};
+$('exportProducts').onclick=()=>{
+ const headers=['name','sku','category','price','compareAtPrice','stock','description','imageUrl','status','featured'];
+ const csv=[headers,...products.map(p=>headers.map(k=>k==='featured'?String(!!p[k]):(p[k]??'')))].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='it-elements-products-export.csv';a.click();URL.revokeObjectURL(a.href);
+};
+document.querySelectorAll('.category-chip').forEach(btn=>btn.addEventListener('click',()=>{
+ $('category').value=btn.dataset.category;$('editor').scrollIntoView({behavior:'smooth'});$('name').focus();
+}));
+
 $('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;$('refreshBtn').onclick=load;$('imageUrl').addEventListener('input',preview);load();
 </script></body></html>
