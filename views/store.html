@@ -103,6 +103,12 @@
     .remove{border:0;background:none;color:#999;font-size:11px;text-decoration:underline;margin-top:4px;padding:0}
     .drawer-foot{border-top:1px solid var(--line);padding:20px 22px}.total{display:flex;justify-content:space-between;font-weight:900;font-size:18px;margin-bottom:5px}.fine{color:#888;font-size:11px;margin:0 0 15px}
     .checkout{width:100%;border:0;border-radius:9px;background:var(--red);color:#fff;padding:14px;font-weight:900}.checkout:hover{background:var(--red-dark)}
+    .checkout-form{display:none;margin-top:14px;padding:15px;border:1px solid var(--line);border-radius:12px;background:#fff}
+    .checkout-form.show{display:grid;gap:10px}.checkout-form label{display:grid;gap:5px;color:#333;font-size:12px;font-weight:800}
+    .checkout-form input,.checkout-form select,.checkout-form textarea{width:100%;border:1px solid #ddd;border-radius:8px;padding:10px 11px;background:#fff;color:#222;font-size:14px}
+    .checkout-form textarea{min-height:75px;resize:vertical}.checkout-form .form-submit{width:100%;border:0;border-radius:9px;background:#159b55;color:#fff;padding:13px;font-weight:900}
+    .checkout-message{display:none;margin:10px 0;padding:11px 12px;border-radius:9px;background:#fff7e8;color:#704600;font-size:12px}.checkout-message.show{display:block}
+    .payment-banner{display:none;margin:18px 0;padding:15px 18px;border:1px solid #b8e5c9;border-radius:12px;background:#f0fff5;color:#155b32;font-weight:700}.payment-banner.show{display:block}
     .notice{margin:12px 0 0;padding:10px;background:#fff7e8;border-radius:8px;color:#79531b;font-size:11px}
     @media(max-width:1050px){
       .nav{flex-direction:column;align-items:stretch;gap:10px}
@@ -257,6 +263,7 @@
   </div></div>
 
   <main class="wrap" id="shop">
+    <div class="payment-banner" id="paymentBanner" role="status"></div>
     <div class="section-head"><div><div class="kicker">Browse the store</div><h2>Tech essentials, made easy.</h2><p>Find what you need or contact us for help choosing the right product.</p></div></div>
     <div class="tools">
       <label class="search"><input id="searchInput" type="search" placeholder="Search products..." aria-label="Search products"></label>
@@ -288,7 +295,22 @@
   <aside class="drawer" id="cartDrawer" aria-label="Shopping cart" aria-modal="true" role="dialog">
     <div class="drawer-head"><h2>Your shopping cart</h2><button class="close" id="closeCart" aria-label="Close cart">×</button></div>
     <div class="cart-items" id="cartItems"></div>
-    <div class="drawer-foot"><div class="total"><span>Estimated total</span><span id="cartTotal">R0.00</span></div><p class="fine">Final pricing, availability, delivery and any applicable fees will be confirmed by IT Elements.</p><button class="checkout" id="checkoutButton">Submit order on WhatsApp</button><p class="notice">This first store version sends an order request to WhatsApp. It does not take online payments or confirm stock automatically.</p></div>
+    <div class="drawer-foot">
+      <div class="total"><span>Order total</span><span id="cartTotal">R0.00</span></div>
+      <p class="fine">Delivery charges are not included. If you choose delivery, IT Elements will confirm the delivery cost separately before dispatch.</p>
+      <button class="checkout" id="checkoutButton" type="button">Continue to checkout</button>
+      <form class="checkout-form" id="storeCheckoutForm">
+        <label>Full name<input name="name" autocomplete="name" maxlength="100" required></label>
+        <label>Email address<input name="email" type="email" autocomplete="email" maxlength="180" required></label>
+        <label>Phone number<input name="phone" type="tel" autocomplete="tel" maxlength="30" required></label>
+        <label>Fulfilment<select name="deliveryMethod" id="deliveryMethod"><option value="collection">Collect from IT Elements (arrange collection)</option><option value="delivery">Delivery (fee quoted separately)</option></select></label>
+        <label id="deliveryAddressLabel" hidden>Delivery address<textarea name="address" id="deliveryAddress" autocomplete="street-address" maxlength="500" placeholder="Street, suburb, city, province and postal code"></textarea></label>
+        <p class="fine">You will be redirected to PayFast to complete your secure payment. Your order is confirmed only after PayFast verifies the payment.</p>
+        <button class="form-submit" type="submit" id="payfastSubmit">Pay securely with PayFast</button>
+      </form>
+      <div class="checkout-message" id="checkoutMessage" role="alert"></div>
+      <p class="notice">Product prices and stock must be confirmed by IT Elements. Online payment is enabled by the store owner after the catalogue is finalised.</p>
+    </div>
   </aside>
 
   <script>
@@ -356,14 +378,84 @@
     document.getElementById("openCart").addEventListener("click",openCart);
     document.getElementById("closeCart").addEventListener("click",closeCart);
     document.getElementById("overlay").addEventListener("click",closeCart);
+    const checkoutForm = document.getElementById("storeCheckoutForm");
+    const checkoutMessage = document.getElementById("checkoutMessage");
+    const deliveryMethod = document.getElementById("deliveryMethod");
+    const deliveryAddress = document.getElementById("deliveryAddress");
+    const deliveryAddressLabel = document.getElementById("deliveryAddressLabel");
     document.getElementById("checkoutButton").addEventListener("click",()=>{
-      const entries=[...cart.entries()];
-      if(!entries.length)return;
-      const lines=entries.map(([id,q])=>{const p=products.find(x=>x.id===id);return `• ${p.name} x ${q} — ${money(p.price*q)}`});
-      const total=entries.reduce((n,[id,q])=>n+products.find(p=>p.id===id).price*q,0);
-      const message=`Hi IT Elements, I would like to request an order:\n\n${lines.join("\n")}\n\nEstimated total: ${money(total)}\n\nPlease confirm stock, final pricing, delivery options and payment details.`;
-      window.open("https://wa.me/27606181229?text="+encodeURIComponent(message),"_blank","noopener");
+      if (!cart.size) return;
+      checkoutForm.classList.toggle("show");
+      document.getElementById("checkoutButton").textContent = checkoutForm.classList.contains("show") ? "Hide checkout details" : "Continue to checkout";
     });
+    deliveryMethod.addEventListener("change",()=>{
+      const needsAddress = deliveryMethod.value === "delivery";
+      deliveryAddressLabel.hidden = !needsAddress;
+      deliveryAddress.required = needsAddress;
+    });
+    checkoutForm.addEventListener("submit",async event=>{
+      event.preventDefault();
+      const submit = document.getElementById("payfastSubmit");
+      const entries = [...cart.entries()];
+      if (!entries.length) return;
+      submit.disabled = true;
+      submit.textContent = "Preparing secure checkout...";
+      checkoutMessage.classList.remove("show");
+      const formData = new FormData(checkoutForm);
+      const payload = {
+        customer: {
+          name: formData.get("name"), email: formData.get("email"), phone: formData.get("phone"),
+          deliveryMethod: formData.get("deliveryMethod"), address: formData.get("address")
+        },
+        items: entries.map(([id, quantity])=>({id:String(id), quantity}))
+      };
+      try {
+        const response = await fetch("/api/store/payfast-checkout", {
+          method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.message || "Could not start PayFast checkout.");
+        const payForm = document.createElement("form");
+        payForm.method = "POST";
+        payForm.action = result.action;
+        Object.entries(result.fields || {}).forEach(([name,value])=>{
+          const input = document.createElement("input"); input.type="hidden"; input.name=name; input.value=String(value); payForm.appendChild(input);
+        });
+        document.body.appendChild(payForm);
+        payForm.submit();
+      } catch (error) {
+        checkoutMessage.textContent = error.message || "Checkout could not be started. Please contact IT Elements.";
+        checkoutMessage.classList.add("show");
+        submit.disabled = false;
+        submit.textContent = "Pay securely with PayFast";
+      }
+    });
+
+    // PayFast return is only a customer-facing status check; the verified ITN updates the order.
+    (async function showPaymentReturn(){
+      const params = new URLSearchParams(window.location.search);
+      const paymentId = params.get("paymentId");
+      if (params.get("payment") !== "returned" || !paymentId) return;
+      const banner = document.getElementById("paymentBanner");
+      banner.textContent = "Thank you. We are checking your PayFast payment confirmation...";
+      banner.classList.add("show");
+      try {
+        let status = "pending";
+        for (let attempt=0; attempt<5; attempt++) {
+          const response = await fetch("/api/payment/payfast-status?paymentId="+encodeURIComponent(paymentId));
+          const result = await response.json();
+          status = result.checkout?.status || "pending";
+          if (status === "paid") break;
+          await new Promise(resolve=>setTimeout(resolve,2000));
+        }
+        banner.textContent = status === "paid"
+          ? "Payment confirmed! Thank you for ordering from IT Elements. We will contact you to arrange collection or delivery."
+          : "Your return was received, but PayFast has not confirmed payment yet. Please do not pay again. Contact IT Elements with reference " + paymentId + " if this message remains.";
+      } catch (_) {
+        banner.textContent = "We received your return from PayFast. Payment confirmation may take a moment; please contact IT Elements if you need help.";
+      }
+      window.history.replaceState({}, document.title, "/store");
+    })();
     (function () {
       const menuToggle = document.getElementById("menuButton");
       const mainLinks = document.getElementById("navLinks");
