@@ -511,72 +511,6 @@ const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'customerreviews' }));
 
-// IT Elements online store products
-const StoreProduct = mongoose.model('StoreProduct', new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true,
-        maxlength: 120
-    },
-    sku: {
-        type: String,
-        default: '',
-        trim: true,
-        maxlength: 60
-    },
-    category: {
-        type: String,
-        required: true,
-        trim: true,
-        maxlength: 80
-    },
-    price: {
-        type: Number,
-        required: true,
-        min: 0
-    },
-    compareAtPrice: {
-        type: Number,
-        default: 0,
-        min: 0
-    },
-    stock: {
-        type: Number,
-        default: 0,
-        min: 0
-    },
-    status: {
-        type: String,
-        enum: ['active', 'draft'],
-        default: 'draft'
-    },
-    imageUrl: {
-        type: String,
-        default: '',
-        maxlength: 2000
-    },
-    description: {
-        type: String,
-        default: '',
-        maxlength: 2000
-    },
-    featured: {
-        type: Boolean,
-        default: false
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now
-    }
-}, {
-    collection: 'storeproducts'
-}));
-
 // Middleware
 app.use(cors());
 
@@ -877,12 +811,6 @@ function checkAdminAuth(req, res, next) {
 
     return res.redirect('/client/login');
 }
-
-// Private IT Elements Store Manager
-app.get(['/admin/store', '/admin/store/'], checkAdminAuth, (req, res) => {
-    res.sendFile(path.join(viewsPath, 'store-admin.html'));
-});
-
 
 function checkUserAuth(req, res, next) {
     if (req.session && (req.session.isUser || req.session.isAdmin)) {
