@@ -867,6 +867,11 @@ app.get('/contact', (req, res) => {
     res.sendFile(path.join(viewsPath, 'contact.html'));
 });
 
+// IT Elements Online Store
+app.get(['/store', '/store/', '/store.html'], (req, res) => {
+    res.sendFile(path.join(viewsPath, 'store.html'));
+});
+
 // Subscription links
 app.get('/subscribe/:planId', (req, res) => {
     const planId = String(req.params.planId || '');
