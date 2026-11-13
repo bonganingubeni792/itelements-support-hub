@@ -216,6 +216,50 @@ body{background:#f5f6f8}
 }
 @media(max-width:560px){.side-nav a{height:35px;padding:0 9px}.main-shell{padding-inline:10px}.dashboard-card{padding:12px}.topbar h1{font-size:16px}.dashboard-intro h2{font-size:20px}}
 
+
+/* IT Elements WhatsApp support card */
+.help-box.whatsapp-help{display:block!important;visibility:visible!important;background:#f1fbf4;border:1px solid #c8e9d2;border-radius:13px;padding:14px;margin:14px 0 12px;color:#171717}
+.whatsapp-title{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.whatsapp-title strong{font-size:12px;font-weight:850;color:#1d2a21}
+.wa-mark{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#dcf7e5;color:#128c4a;font-size:17px}
+.help-box.whatsapp-help p{font-size:11px;color:#68756d;line-height:1.5;margin:0 0 11px}
+.help-box.whatsapp-help a{display:flex;align-items:center;justify-content:center;width:100%;background:#168c4a;color:#fff!important;text-decoration:none;border-radius:8px;padding:10px 9px;font-size:11px;font-weight:850}
+.help-box.whatsapp-help a:hover{background:#0d713a}
+@media(max-width:900px){.help-box.whatsapp-help{display:block!important}}
+
+/* Unified two-workspace switcher: Online Support / Store */
+.workspace-switch{
+  max-width:1720px;margin:18px auto 0;padding:0 clamp(20px,3vw,44px);
+  display:grid;grid-template-columns:1fr 1fr;gap:12px
+}
+.workspace-tab{
+  min-width:0;min-height:78px;display:flex;align-items:center;gap:14px;
+  padding:13px 17px;border:1px solid #e4e6eb;border-radius:13px;
+  background:#fff;color:#30343b;text-decoration:none;
+  box-shadow:0 4px 16px rgba(20,25,35,.035);transition:all .18s ease
+}
+.workspace-tab:hover{border-color:#f0aaaa;box-shadow:0 7px 20px rgba(30,30,40,.07);transform:translateY(-1px)}
+.workspace-tab.active{border:1.5px solid #e00000;background:linear-gradient(105deg,#fff8f8 0%,#fff 75%);box-shadow:0 5px 17px rgba(224,0,0,.07)}
+.workspace-symbol{
+  flex:none;width:43px;height:43px;border-radius:11px;display:grid;place-items:center;
+  background:#ffeded;color:#d00000;font-size:22px;font-weight:800
+}
+.workspace-symbol.store-symbol{background:#f0f2f5;color:#333b47}
+.workspace-tab.store-active .store-symbol{background:#ffeded;color:#d00000}
+.workspace-tab>span:nth-child(2){display:flex;flex-direction:column;gap:3px;min-width:0}
+.workspace-tab strong{font-size:14px;font-weight:850;letter-spacing:-.15px}
+.workspace-tab small{font-size:10px;color:#858b95;white-space:normal}
+.workspace-state{margin-left:auto!important;flex:none;background:#e9f8ef;color:#167b45;padding:5px 8px;border-radius:20px;font-size:9px;font-weight:900;letter-spacing:.5px}
+.workspace-arrow{margin-left:auto;color:#a1a6af;font-size:18px}
+@media(max-width:700px){
+ .workspace-switch{padding:0 13px;gap:8px;margin-top:12px}
+ .workspace-tab{min-height:68px;padding:10px;gap:8px}
+ .workspace-symbol{width:34px;height:34px;font-size:18px}
+ .workspace-tab strong{font-size:12px}
+ .workspace-tab small{font-size:9px}
+ .workspace-state{font-size:8px;padding:4px 6px}
+}
+
 </style>
 
 </head>
@@ -224,6 +268,7 @@ body{background:#f5f6f8}
   <div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"></div>
   <nav class="side-nav" aria-label="Admin navigation">
     <a class="active" href="#dashboard"><span class="nav-icon">⌂</span><span>Dashboard</span></a>
+    <a href="/admin/store"><span class="nav-icon">▣</span><span>Store Management</span></a>
     <a href="#tickets-section"><span class="nav-icon">♧</span><span>Support Tickets</span><span class="nav-count" id="side-ticket-count">0</span></a>
     <a href="#onsite-section"><span class="nav-icon">♦</span><span>On-Site Visits</span></a>
     <a href="#active-section"><span class="nav-icon">♟</span><span>Subscribers</span></a>
@@ -232,7 +277,11 @@ body{background:#f5f6f8}
     <a href="#reviews-section"><span class="nav-icon">★</span><span>Reviews</span></a>
     <a href="#settings-section"><span class="nav-icon">⚙</span><span>Settings</span></a>
   </nav>
-  <div class="help-box"><div class="headset">☏</div><strong>Need Help?</strong><p>Contact Support</p><a href="mailto:support@itelements.co.za">Live Chat</a></div>
+  <div class="help-box whatsapp-help">
+    <div class="whatsapp-title"><span class="wa-mark">◉</span><strong>WhatsApp Support</strong></div>
+    <p>Message IT Elements directly for assistance.</p>
+    <a href="https://wa.me/27606181229?text=Hello%20IT%20Elements%2C%20I%20need%20support." target="_blank" rel="noopener">Chat on WhatsApp</a>
+  </div>
   <div class="sidebar-foot">© 2026 IT Elements<br>Admin Console v2.0</div>
 </aside>
 <main class="main-shell" id="dashboard">
@@ -250,7 +299,10 @@ body{background:#f5f6f8}
       <a href="/client/logout" class="logout-btn">Log Out 🔒</a>
     </div>
   </header>
-
+<nav class="workspace-switch" aria-label="Admin workspaces">
+<a class="workspace-tab active" href="/admin" aria-current="page"><span class="workspace-symbol">⌂</span><span><strong>Online Support</strong><small>Tickets, clients &amp; service operations</small></span><span class="workspace-state">ACTIVE</span></a>
+<a class="workspace-tab" href="/admin/store"><span class="workspace-symbol store-symbol">▣</span><span><strong>Store</strong><small>Products, pricing &amp; inventory</small></span><span class="workspace-arrow">↗</span></a>
+</nav>
   <section class="dashboard-intro" aria-label="Dashboard heading">
     <div><h2>Dashboard Overview</h2><p>Your IT Elements support command centre at a glance.</p></div>
     <div class="intro-tools"><span class="live-pill" id="live-status">Live monitoring</span><input class="dashboard-search" id="global-search" type="search" placeholder="Search tickets and customers…" aria-label="Global dashboard search"><button class="refresh-btn" id="advanced-refresh" type="button">↻ Refresh</button></div>
