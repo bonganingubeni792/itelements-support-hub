@@ -1212,6 +1212,106 @@ footer {
   }
 }
 
+
+/* QUICK QUOTE REQUEST */
+.quote-section {
+  background: #fff;
+}
+.quote-panel {
+  display: grid;
+  grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr);
+  gap: 35px;
+  align-items: start;
+  padding: clamp(24px,4vw,42px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 38px rgba(0,0,0,.055);
+}
+.quote-intro h2 {
+  margin: 0 0 14px;
+  color: #171717;
+  font-size: clamp(28px,3.4vw,40px);
+  line-height: 1.2;
+}
+.quote-intro p {
+  color: var(--muted);
+  font-size: 15px;
+}
+.quote-points {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+.quote-points span {
+  color: #292929;
+  font-size: 13px;
+  font-weight: 700;
+}
+.quote-points b {
+  color: var(--red);
+  margin-right: 8px;
+}
+.quote-form {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 15px;
+}
+.quote-field {
+  min-width: 0;
+}
+.quote-field.full {
+  grid-column: 1 / -1;
+}
+.quote-field label {
+  display: block;
+  margin-bottom: 6px;
+  color: #292929;
+  font-size: 12px;
+  font-weight: 800;
+}
+.quote-field input,
+.quote-field select,
+.quote-field textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 12px;
+  border: 1px solid #d8d8dd;
+  border-radius: 8px;
+  background: #fff;
+  color: #171717;
+  font: inherit;
+  font-size: 14px;
+}
+.quote-field textarea {
+  min-height: 112px;
+  resize: vertical;
+}
+.quote-field input:focus,
+.quote-field select:focus,
+.quote-field textarea:focus {
+  outline: 2px solid rgba(224,0,0,.18);
+  border-color: var(--red);
+}
+.quote-form .btn {
+  width: 100%;
+  grid-column: 1 / -1;
+}
+.quote-disclaimer {
+  grid-column: 1 / -1;
+  margin: -5px 0 0;
+  color: #666;
+  font-size: 11px;
+}
+@media (max-width:850px) {
+  .quote-panel { grid-template-columns: 1fr; gap: 22px; }
+}
+@media (max-width:560px) {
+  .quote-form { grid-template-columns: 1fr; }
+  .quote-field.full { grid-column: auto; }
+  .quote-form .btn, .quote-disclaimer { grid-column: auto; }
+}
+
 /* ACCESSIBILITY */
 
 :focus-visible {
@@ -1436,6 +1536,76 @@ footer {
         <a class="card-link" href="/services">Backup Services →</a>
       </article>
 
+    </div>
+  </div>
+</section>
+
+
+<!-- QUICK QUOTE REQUEST -->
+<section class="content-section quote-section" id="quick-quote">
+  <div class="container">
+    <div class="quote-panel">
+      <div class="quote-intro">
+        <div class="eyebrow">START WITH THE RIGHT SUPPORT</div>
+        <h2>Tell Us What You <span class="red">Need Help With.</span></h2>
+        <p>Choose the type of assistance you need and send IT Elements a quote enquiry. We'll review the details and discuss the appropriate service and cost with you before any work is agreed.</p>
+        <div class="quote-points">
+          <span><b>✓</b> No payment is taken through this enquiry</span>
+          <span><b>✓</b> Explain the problem in your own words</span>
+          <span><b>✓</b> Confirm service availability and pricing with us</span>
+        </div>
+      </div>
+
+      <form class="quote-form" id="quickQuoteForm">
+        <div class="quote-field">
+          <label for="quoteService">What do you need help with?</label>
+          <select id="quoteService" required>
+            <option value="">Select a service</option>
+            <option>Computer troubleshooting or repair</option>
+            <option>Remote IT support</option>
+            <option>On-site technical assistance</option>
+            <option>Wi-Fi or network problems</option>
+            <option>Software installation or setup</option>
+            <option>Virus, malware or security assistance</option>
+            <option>Data backup or file assistance</option>
+            <option>Business IT support</option>
+            <option>Other IT issue</option>
+          </select>
+        </div>
+
+        <div class="quote-field">
+          <label for="quoteMethod">Preferred support method</label>
+          <select id="quoteMethod" required>
+            <option value="">Choose an option</option>
+            <option>Remote support</option>
+            <option>On-site support</option>
+            <option>Not sure - please advise</option>
+          </select>
+        </div>
+
+        <div class="quote-field">
+          <label for="quoteCustomer">Who needs support?</label>
+          <select id="quoteCustomer" required>
+            <option value="">Select one</option>
+            <option>Individual / home user</option>
+            <option>Small business</option>
+            <option>Medium or larger business</option>
+          </select>
+        </div>
+
+        <div class="quote-field">
+          <label for="quoteDevice">Device or equipment</label>
+          <input id="quoteDevice" type="text" maxlength="100" placeholder="e.g. Windows laptop, desktop, router">
+        </div>
+
+        <div class="quote-field full">
+          <label for="quoteDetails">Briefly describe the problem</label>
+          <textarea id="quoteDetails" maxlength="1200" required placeholder="Tell us what is happening, any error messages and what you need help with. Please do not include passwords."></textarea>
+        </div>
+
+        <button class="btn" type="submit">Send Quote Enquiry on WhatsApp →</button>
+        <p class="quote-disclaimer">This sends your enquiry to IT Elements via WhatsApp. It is not a confirmed booking or a final quotation. Pricing, availability and any travel costs will be confirmed separately.</p>
+      </form>
     </div>
   </div>
 </section>
@@ -1745,6 +1915,47 @@ footer {
       menuToggle.setAttribute("aria-label", "Open navigation");
       menuToggle.textContent = "☰";
     }
+  });
+}());
+</script>
+
+
+<script>
+(function () {
+  "use strict";
+  const form = document.getElementById("quickQuoteForm");
+  if (!form) return;
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const service = document.getElementById("quoteService").value.trim();
+    const method = document.getElementById("quoteMethod").value.trim();
+    const customer = document.getElementById("quoteCustomer").value.trim();
+    const device = document.getElementById("quoteDevice").value.trim();
+    const details = document.getElementById("quoteDetails").value.trim();
+
+    if (!service || !method || !customer || !details) {
+      form.reportValidity();
+      return;
+    }
+
+    const message = [
+      "Hello IT Elements, I would like to request a quote.",
+      "",
+      "Service needed: " + service,
+      "Preferred support: " + method,
+      "Customer type: " + customer,
+      "Device/equipment: " + (device || "Not specified"),
+      "",
+      "Problem details:",
+      details,
+      "",
+      "Please let me know the next steps, availability and pricing."
+    ].join("\\n");
+
+    const whatsappUrl = "https://wa.me/27606181229?text=" + encodeURIComponent(message);
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   });
 }());
 </script>
