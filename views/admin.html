@@ -1,3 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>IT Elements - Admin Core Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f5f6f8;--panel:#ffffff;--panel-soft:#fafafa;--line:#e5e7eb;
+  --text:#171717;--muted:#666b73;--red:#e00000;--red-dark:#b00000;
+  --green:#087443;--yellow:#956000;--blue:#1769aa;
+  --shadow:0 8px 24px rgba(20,20,20,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:110px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,'Segoe UI',system-ui,sans-serif;font-size:14px}
+button,input,select,textarea{font:inherit}
+button,a{-webkit-tap-highlight-color:transparent}
+.sidebar{
+ position:sticky;top:0;z-index:50;width:100%;min-height:76px;
+ display:flex;align-items:center;gap:26px;padding:10px 4%;
+ background:#fff;border-bottom:1px solid var(--line);
+ box-shadow:0 3px 14px rgba(0,0,0,.045)
+}
+.brand{height:auto;min-width:max-content;display:flex;align-items:center;justify-content:flex-start;gap:10px;margin:0;padding:0;border:0}
+.brand img{width:46px;height:46px;object-fit:contain;filter:none}
+.brand:after{content:"IT Elements.";font-size:19px;font-weight:900;letter-spacing:-.6px;color:#171717;white-space:nowrap}
+.side-nav{display:flex;align-items:center;justify-content:flex-end;gap:5px;flex:1;min-width:0}
+.side-nav a{height:42px;display:flex;align-items:center;gap:8px;padding:0 12px;border-radius:8px;color:#30343a;text-decoration:none;font-size:12px;font-weight:700;border:1px solid transparent;transition:.18s;white-space:nowrap}
+.side-nav a:hover{background:#fff1f1;color:var(--red-dark)}
+.side-nav a.active{background:#fff0f0;border-color:#ffd0d0;color:var(--red-dark)}
+.side-nav .nav-icon{width:auto;font-size:16px;color:var(--red)}
+.side-nav a.active .nav-icon{color:var(--red-dark)}
+.nav-count{margin-left:2px;background:var(--red);color:#fff;border-radius:20px;padding:3px 7px;font-size:10px;font-weight:800}
+.help-box,.sidebar-foot{display:none}
+.main-shell{margin:0 auto;padding:22px 4% 42px;max-width:1800px}
+.topbar{min-height:64px;display:flex;align-items:center;gap:14px;padding:10px 0;margin-bottom:22px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;box-shadow:none}
+.topbar-brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1}
+.brand-dot-logo{display:none!important}
+.topbar h1{font-size:clamp(19px,2vw,26px);line-height:1.2;margin:0;font-weight:900;letter-spacing:-.6px;color:#171717;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar h1:after{content:"";display:block;width:42px;height:3px;margin-top:8px;background:var(--red);border-radius:4px}
+.top-actions{display:flex;align-items:center;gap:12px}
+.admin-user{color:#343434;font-weight:700;white-space:nowrap}
+.logout-btn{background:var(--red);border:1px solid var(--red);color:#fff;padding:10px 15px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:800;white-space:nowrap;transition:.18s}
+.logout-btn:hover{background:var(--red-dark);border-color:var(--red-dark)}
+.notification-widget{position:relative}
+.notification-toggle{position:relative;width:40px;height:40px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#333;font-size:19px;cursor:pointer}
+.notification-count{position:absolute;right:-5px;top:-5px;min-width:19px;height:19px;border-radius:20px;background:var(--red);color:#fff;border:2px solid #fff;font-size:10px;font-weight:800;display:grid;place-items:center}
+.notification-center{position:absolute;right:0;top:48px;z-index:80;width:min(390px,calc(100vw - 30px));max-height:65vh;display:flex;flex-direction:column;overflow:hidden;background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px;box-shadow:0 16px 45px #0002}
+.notification-center[hidden]{display:none!important}
+.notification-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:10px}
+.notification-head h2{font-size:14px;margin:0;color:#171717}
+.notification-tools{display:flex;gap:6px}
+.notification-button{background:#fff;border:1px solid var(--line);color:#333;border-radius:7px;padding:7px;font-size:10px;font-weight:700;cursor:pointer}
+.notification-list{display:grid;gap:7px;overflow:auto}
+.notification-item{background:#fafafa;border:1px solid var(--line);border-radius:8px;color:#333;text-align:left;padding:10px;cursor:pointer}
+.notification-item.unread{border-left:3px solid var(--red)}
+.notification-item strong,.notification-item span,.notification-item time{display:block}
+.notification-item strong{font-size:12px;color:#171717;margin-bottom:4px}
+.notification-item span{font-size:11px;color:#555;line-height:1.4}
+.notification-item time{font-size:10px;color:#777;margin-top:5px}
+.notification-empty{color:#666;padding:12px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:20px}
+.stat-card{min-height:112px;position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;padding:18px;border-radius:12px;border:1px solid var(--line);background:#fff;box-shadow:var(--shadow)}
+.stat-card:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--accent)}
+.stat-card:after{content:"";position:absolute;width:130px;height:65px;right:-18px;bottom:-30px;border:1px solid color-mix(in srgb,var(--accent),transparent 75%);border-radius:50%;transform:rotate(-14deg)}
+.stat-card.tickets{--accent:#e00000}.stat-card.subs{--accent:#087443}.stat-card.canceled{--accent:#b77900}.stat-card.rev{--accent:#1769aa}
+.stat-icon{font-size:29px;color:var(--accent);width:42px;text-align:center;flex:none}
+.stat-label{font-size:12px;color:#666;font-weight:600;margin-top:5px}
+.stat-value{font-size:29px;line-height:1.1;font-weight:900;color:#171717;overflow-wrap:anywhere}
+.dashboard-card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;margin-bottom:16px;box-shadow:var(--shadow);min-width:0}
+.card-title{font-size:16px;font-weight:850;color:#171717;margin:0 0 12px;padding:2px 0;display:flex;align-items:center;gap:10px}
+.card-title:before{content:"";width:5px;height:23px;border-radius:4px;background:var(--red);flex:none}
+.card-title.green:before{background:#087443}.card-title.yellow:before{background:#b77900}.card-title.gray:before{background:#737780}.card-title.blue:before{background:#1769aa}
+.note{color:#666;font-size:12px;line-height:1.6;margin:0 0 12px}
+.toolbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:10px}
+.toolbar input,.toolbar select,.list-size select{min-height:39px;background:#fff;border:1px solid #d5d8de;color:#222;border-radius:8px;padding:8px 11px}
+.toolbar input{flex:1;min-width:210px}.toolbar select{min-width:210px}
+.refresh-btn{min-height:39px;background:var(--red);border:1px solid var(--red);color:#fff;border-radius:8px;padding:8px 14px;font-weight:800;cursor:pointer}
+.refresh-btn:hover{background:var(--red-dark)}
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+.table-header,.data-row{min-width:850px;display:grid;grid-template-columns:1.05fr 1.1fr 1.15fr 1.55fr .9fr 1.55fr;align-items:center;gap:8px}
+.table-header{background:#f5f5f5;padding:12px;font-size:11px;color:#333;font-weight:800;border-bottom:1px solid var(--line)}
+.data-row{padding:10px 12px;border-top:1px solid #eee;font-size:12px;min-height:48px}
+.data-row:hover,.subscriber-row:hover{background:#fff8f8}
+.cell{min-width:0;overflow-wrap:anywhere;color:#333}
+.client-name{color:#171717;font-weight:800}.mono{color:#765000;font-family:Consolas,monospace}
+.status-badge{display:inline-flex;align-items:center;justify-content:center;padding:5px 9px;border-radius:7px;font-size:10px;font-weight:800;text-transform:uppercase;white-space:nowrap;background:#fff0f0;color:#a00000;border:1px solid #ffcaca}
+.badge-open{background:#fff0f0;color:#a00000;border-color:#e00000}.badge-onhold{background:#fff7e6;color:#805500;border-color:#e3a51c}.badge-resolved{background:#eaf8f0;color:#087443;border-color:#8bd4ad}.badge-confirmed,.badge-contacted{background:#eef6ff;color:#155b91;border-color:#9bc8f0}.badge-active{color:#087443}.badge-expired{color:#956000}
+.action-list,.copy-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.action-btn,.copy-btn{padding:7px 10px;border-radius:7px;font-size:11px;font-weight:800;cursor:pointer;background:#fff;text-transform:none}
+.btn-hold{color:#805500;border:1px solid #e3a51c}.btn-unhold{color:#155b91;border:1px solid #78b6e8}.btn-resolve{color:#087443;border:1px solid #67c494}.btn-reopen{color:#b00000;border:1px solid #e00000}.btn-contacted{color:#155b91;border:1px solid #78b6e8}.copy-btn{color:#333;border:1px solid #d5d8de}
+.credential-value{color:#555;font-family:Consolas,monospace;display:inline-block;margin-right:5px}
+.list-size{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px;color:#555;font-size:11px}
+.subscriber-header,.subscriber-row{min-width:760px;display:grid;grid-template-columns:1.1fr 1.5fr .9fr 1.2fr 1fr;align-items:center;gap:10px}
+.subscriber-header.has-actions,.subscriber-row.has-actions{min-width:900px;grid-template-columns:1.1fr 1.5fr .9fr 1.2fr 1fr auto}
+.subscriber-header{background:#f5f5f5;padding:11px;border-radius:7px;font-weight:800;font-size:10px;color:#333}
+.subscriber-row{padding:11px;border-bottom:1px solid #eee;font-size:11px;color:#333}
+.onsite-list{display:grid;gap:10px}
+.onsite-request{display:grid;grid-template-columns:1fr 1.2fr 1fr 1.3fr auto;align-items:start;gap:12px;padding:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.onsite-request h3{color:#171717;font-size:13px;margin:0 0 5px}
+.onsite-request p{color:#444;font-size:12px;margin:3px 0;overflow-wrap:anywhere}
+.onsite-request .field-label{color:#777;font-size:10px;text-transform:uppercase;font-weight:800}
+.onsite-request .action-list{justify-content:flex-start}
+.visit-confirm-form{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;align-items:end;gap:9px;padding-top:12px;border-top:1px solid var(--line)}
+.visit-confirm-form label{display:grid;gap:5px;color:#555;font-size:10px;text-transform:uppercase;font-weight:700}
+.visit-confirm-form input{min-width:0;width:100%;padding:9px;border:1px solid #d5d8de;border-radius:7px;background:#fff;color:#222}
+.confirmed-visit{color:#155b91!important;margin-top:6px!important}
+.review-list{display:grid;gap:10px}
+.review-item{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;padding:13px;border:1px solid var(--line);border-radius:10px;background:#fff}
+.review-item h3{color:#171717;margin:0 0 4px;font-size:13px}.review-item p{color:#444;font-size:12px;margin:4px 0;overflow-wrap:anywhere}
+.review-actions{display:flex;flex-wrap:wrap;gap:6px}
+.ticket-conversation{margin-top:8px;padding:9px;border:1px solid var(--line);border-radius:8px;background:#fafafa}
+.ticket-conversation summary{color:var(--red-dark);font-size:11px;font-weight:800;cursor:pointer}
+.ticket-thread{display:grid;gap:8px;max-height:260px;overflow:auto;margin:8px 0}
+.ticket-message{padding:9px;border-radius:7px;background:#f2f3f5;border:1px solid #e7e7e7}
+.ticket-message strong{color:#171717;font-size:11px}.ticket-message time{color:#777;font-size:10px;margin-left:7px}
+.ticket-message p{color:#333;font-size:12px;margin:4px 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.ticket-reply-form{display:grid;gap:7px}
+.ticket-reply-form textarea{width:100%;min-height:65px;padding:9px;border:1px solid #d5d8de;border-radius:7px;background:#fff;color:#222;font:inherit;font-size:12px}
+.ticket-reply-form button{justify-self:start;padding:8px 11px;border:1px solid var(--red);border-radius:7px;color:#fff;background:var(--red);font-weight:800;cursor:pointer}
+.ticket-reply-error{color:#b00000;font-size:11px;margin:0}
+.loading-text,.empty-text,.error-text{text-align:center;padding:22px;color:#777;font-size:12px}
+.error-text{color:#b00000}
+.toast{position:fixed;right:20px;bottom:20px;z-index:100;padding:11px 15px;border-radius:9px;background:#222;color:#fff;border:1px solid #444;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.content-grid>.dashboard-card{margin:0}
+#onsite-section{border-color:#d8e7f4}#active-section,#reviews-section{border-color:#dceee4}#inactive-section{border-color:#f0e4c8}
+input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid #e00000;outline-offset:2px}
+@media(max-width:1100px){
+ .sidebar{gap:14px;padding-inline:2%}.side-nav{justify-content:flex-start;overflow-x:auto}
+ .side-nav a{padding:0 9px}.main-shell{padding:18px 2% 32px}.stats-grid{gap:10px}
+ .stat-card{padding:14px;gap:10px}.stat-value{font-size:25px}
+}
+@media(max-width:850px){
+ .sidebar{align-items:flex-start;flex-direction:column;gap:7px;padding:9px 4%}
+ .brand{height:43px}.brand img{width:40px;height:40px}
+ .side-nav{width:100%;justify-content:flex-start}
+ .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.content-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+ .sidebar{padding:8px 12px}.brand:after{font-size:17px}
+ .side-nav{gap:4px;padding:2px 0 4px}
+ .side-nav a{height:36px;min-width:39px;padding:0 9px;font-size:11px}
+ .side-nav a span:not(.nav-icon){display:none}.nav-count{display:inline-block}
+ .main-shell{padding:12px 10px 26px}
+ .topbar{min-height:54px;margin-bottom:14px;gap:5px}
+ .topbar h1{font-size:16px;white-space:normal}
+ .top-actions{gap:6px}.admin-user{display:none}
+ .logout-btn{padding:8px 10px;font-size:10px}
+ .stats-grid{gap:8px;margin-bottom:13px}
+ .stat-card{min-height:88px;padding:10px;gap:7px}
+ .stat-icon{width:27px;font-size:21px}.stat-value{font-size:21px}.stat-label{font-size:10px}
+ .dashboard-card{padding:11px;margin-bottom:11px}.card-title{font-size:14px}
+ .toolbar{gap:7px}.toolbar input,.toolbar select{min-width:0;width:100%}.refresh-btn{width:100%}
+ .onsite-request{grid-template-columns:1fr 1fr}.visit-confirm-form{grid-template-columns:1fr}
+ .review-item{grid-template-columns:1fr}.notification-center{right:-58px}
+ .list-size{align-items:flex-start;flex-direction:column}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+<body>
+<aside class="sidebar">
+  <div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"></div>
+  <nav class="side-nav" aria-label="Admin navigation">
+    <a class="active" href="#dashboard"><span class="nav-icon">⌂</span><span>Dashboard</span></a>
+    <a href="#tickets-section"><span class="nav-icon">♧</span><span>Support Tickets</span><span class="nav-count" id="side-ticket-count">0</span></a>
+    <a href="#onsite-section"><span class="nav-icon">♦</span><span>On-Site Visits</span></a>
+    <a href="#active-section"><span class="nav-icon">♟</span><span>Subscribers</span></a>
+    <a href="#inactive-section"><span class="nav-icon">⊗</span><span>Accounts</span></a>
+    <a href="#history-section"><span class="nav-icon">◷</span><span>Job History</span></a>
+    <a href="#reviews-section"><span class="nav-icon">★</span><span>Reviews</span></a>
+    <a href="#settings-section"><span class="nav-icon">⚙</span><span>Settings</span></a>
+  </nav>
+  <div class="help-box"><div class="headset">☏</div><strong>Need Help?</strong><p>Contact Support</p><a href="mailto:support@itelements.co.za">Live Chat</a></div>
+  <div class="sidebar-foot">© 2026 IT Elements<br>Admin Console v2.0</div>
+</aside>
+<main class="main-shell" id="dashboard">
+  <header class="topbar">
+    <div class="topbar-brand"><img class="brand-dot brand-dot-logo" src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><h1>IT Elements Administration Console</h1></div>
+    <div class="top-actions">
+      <div class="notification-widget" id="notification-widget">
+        <button class="notification-toggle" id="notification-toggle" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notification-panel">🔔<span id="notification-count" class="notification-count">0</span></button>
+        <section class="notification-center" id="notification-panel" aria-label="Admin notifications" hidden>
+          <div class="notification-head"><h2>Admin notifications</h2><div class="notification-tools"><button class="notification-button" id="notification-permission" type="button">Enable alerts</button><button class="notification-button" id="notification-close" type="button">Close</button></div></div>
+          <div class="notification-list" id="notification-list"><div class="notification-empty">Loading notifications…</div></div>
+        </section>
+      </div>
+      <span class="admin-user">● Admin⌄</span>
+      <a href="/client/logout" class="logout-btn">Log Out 🔒</a>
+    </div>
+  </header>
+
+  <section class="stats-grid" aria-label="Business overview">
+    <article class="stat-card tickets"><div class="stat-icon">♧</div><div><div class="stat-value" id="stat-active-tickets">—</div><div class="stat-label">Active Support Tickets</div></div></article>
+    <article class="stat-card subs"><div class="stat-icon">♟</div><div><div class="stat-value" id="stat-active-subs">—</div><div class="stat-label">Active Paid Subscribers</div></div></article>
+    <article class="stat-card canceled"><div class="stat-icon">⊗</div><div><div class="stat-value" id="stat-inactive-subs">—</div><div class="stat-label">Inactive Accounts</div></div></article>
+    <article class="stat-card rev"><div class="stat-icon">▣</div><div><div class="stat-value" id="stat-total-revenue">—</div><div class="stat-label">Confirmed Plan Payments (ZAR)</div></div></article>
+  </section>
+
+  <section class="dashboard-card" id="tickets-section">
+    <h2 class="card-title">Priority Engineering Escalation Queue</h2>
+    <p class="note">Connection IDs and session keys are sensitive. Reveal only when needed; copy buttons do not show the value.</p>
+    <div class="toolbar">
+      <input type="search" id="ticket-search" placeholder="⌕  Search client, remote ID, or issue…" aria-label="Search tickets">
+      <select id="ticket-status-filter" aria-label="Filter tickets by status"><option value="all">All requests</option><option value="active">Active queue + resolved history</option><option value="Open">Open</option><option value="Contacted">Contacted</option><option value="Session Confirmed">Session confirmed</option><option value="Visit Confirmed">Visit confirmed</option><option value="Completed">Completed</option><option value="On Hold">On hold</option><option value="Resolved">Resolved</option></select>
+      <button class="refresh-btn" id="refresh-button" type="button">⟳ Refresh Data</button>
+    </div>
+    <div class="table-scroll">
+      <div class="table-header"><div>Client</div><div>AnyDesk / TeamViewer ID</div><div>Session Key</div><div>Incident / Issue</div><div>Status</div><div style="text-align:right">Actions</div></div>
+      <div class="list-size"><label>Show <select id="ticket-page-size"><option value="5" selected>5</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="all">All</option></select> tickets</label><span id="ticket-list-count"></span></div>
+      <div id="priority-queue-body"><div class="loading-text">Loading support tickets…</div></div>
+    </div>
+  </section>
+
+  <section class="dashboard-card" id="onsite-section">
+    <h2 class="card-title blue">On-Site Visit Enquiries</h2>
+    <p class="note">Review the requested area and preferred time. Enter the agreed appointment and call-out fee below; “Confirm visit” emails the customer and updates their dashboard.</p>
+    <div id="onsite-requests-body" class="onsite-list"><div class="loading-text">Loading on-site enquiries…</div></div>
+  </section>
+
+  <div class="content-grid">
+    <section class="dashboard-card" id="active-section">
+      <h2 class="card-title green">Active Paid SLA Subscribers</h2>
+      <div class="table-scroll"><div class="subscriber-header has-actions"><div>Client</div><div>Email</div><div>Phone</div><div>Plan</div><div>Paid Through / Status</div><div>Action</div></div><div id="active-subscribers-body"><div class="loading-text">Loading subscribers…</div></div></div>
+    </section>
+    <section class="dashboard-card" id="inactive-section">
+      <h2 class="card-title yellow">Canceled / Inactive Users</h2>
+      <div class="table-scroll"><div class="subscriber-header"><div>Client</div><div>Email</div><div>Phone</div><div>Plan</div><div>Status</div></div><div id="canceled-subscribers-body"><div class="loading-text">Loading accounts…</div></div></div>
+    </section>
+    <section class="dashboard-card" id="history-section">
+      <h2 class="card-title gray">Job Resolution History</h2>
+      <div class="table-scroll">
+        <div class="table-header"><div>Client</div><div>AnyDesk / TeamViewer ID</div><div>Session Key</div><div>Closed Issue</div><div>Status</div><div style="text-align:right">Actions</div></div>
+        <div class="list-size"><label>Show <select id="history-page-size"><option value="5" selected>5</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="all">All</option></select> resolved tickets</label><span id="history-list-count"></span></div>
+        <div id="history-ledger-body"><div class="loading-text">Loading resolved tickets…</div></div>
+      </div>
+    </section>
+    <section class="dashboard-card" id="reviews-section">
+      <h2 class="card-title green">Customer Feedback Review</h2>
+      <p class="note">Only publish feedback where the customer agreed to public display. Published reviews appear on the home page.</p>
+      <div id="customer-reviews-body" class="review-list"><div class="loading-text">Loading customer feedback…</div></div>
+    </section>
+  </div>
+  <section class="dashboard-card" id="settings-section">
+    <h2 class="card-title gray">Admin Settings</h2>
+    <p class="note">Use the controls above to refresh dashboard data, manage notifications, and sign out securely.</p>
+    <button class="refresh-btn" type="button" onclick="document.getElementById('refresh-button').click()">Refresh Dashboard Data</button>
+  </section>
+</main>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (() => {
