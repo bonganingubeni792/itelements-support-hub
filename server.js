@@ -511,6 +511,7 @@ const CustomerReview = mongoose.model('CustomerReview', new mongoose.Schema({
     date: { type: Date, default: Date.now }
 }, { collection: 'customerreviews' }));
 
+
 // Middleware
 app.use(cors());
 
@@ -811,6 +812,12 @@ function checkAdminAuth(req, res, next) {
 
     return res.redirect('/client/login');
 }
+
+// Private IT Elements Store Manager
+app.get(['/admin/store', '/admin/store/'], checkAdminAuth, (req, res) => {
+    res.sendFile(path.join(viewsPath, 'store-admin.html'));
+});
+
 
 function checkUserAuth(req, res, next) {
     if (req.session && (req.session.isUser || req.session.isAdmin)) {
@@ -1144,6 +1151,66 @@ app.put('/api/admin/store/products/:id', checkAdminAuth, async (req, res) => {
             success: false,
             message: 'Could not update this product.'
         });
+    }
+});
+
+
+// ADMIN: Import products in batches after the admin has reviewed the images and selected rows.
+app.post('/api/admin/store/products/bulk', checkAdminAuth, async (req, res) => {
+    const incoming = Array.isArray(req.body && req.body.products) ? req.body.products : [];
+    if (!incoming.length || incoming.length > 500) {
+        return res.status(400).json({ success: false, message: 'Choose between 1 and 500 products per import.' });
+    }
+    const cleaned = [];
+    const errors = [];
+    incoming.forEach((item, index) => {
+        const result = cleanStoreProduct(item || {});
+        if (result.error) errors.push({ row: index + 1, message: result.error });
+        else cleaned.push(result.product);
+    });
+    if (!cleaned.length) {
+        return res.status(400).json({ success: false, message: 'No valid products were supplied.', errors });
+    }
+    try {
+        const created = await StoreProduct.insertMany(cleaned, { ordered: true });
+        return res.status(201).json({ success: true, message: 'Product import completed.', created: created.length, skipped: errors.length, errors });
+    } catch (err) {
+        console.error('Bulk store product import error:', err.message);
+        return res.status(500).json({ success: false, message: 'Import stopped because a product could not be saved. Check the catalogue before retrying.', created: 0, skipped: errors.length });
+    }
+});
+
+// ADMIN: Bulk publish, draft or delete selected product IDs.
+app.post('/api/admin/store/products/bulk-action', checkAdminAuth, async (req, res) => {
+    const action = String(req.body && req.body.action || '');
+    const ids = Array.isArray(req.body && req.body.ids) ? [...new Set(req.body.ids.map(String))] : [];
+    if (!['publish', 'draft', 'delete'].includes(action)) return res.status(400).json({ success: false, message: 'Invalid bulk action.' });
+    if (!ids.length || ids.length > 2000 || ids.some(id => !mongoose.isValidObjectId(id))) return res.status(400).json({ success: false, message: 'Select valid products for this action.' });
+    try {
+        if (action === 'delete') {
+            const result = await StoreProduct.deleteMany({ _id: { $in: ids } });
+            return res.json({ success: true, deleted: result.deletedCount || 0 });
+        }
+        const result = await StoreProduct.updateMany(
+            { _id: { $in: ids } },
+            { $set: { status: action === 'publish' ? 'active' : 'draft', updatedAt: new Date() } }
+        );
+        return res.json({ success: true, updated: result.modifiedCount || 0 });
+    } catch (err) {
+        console.error('Bulk store action error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not complete the bulk action.' });
+    }
+});
+
+// ADMIN: Permanently delete every product after a typed confirmation.
+app.delete('/api/admin/store/products', checkAdminAuth, async (req, res) => {
+    if (!req.body || req.body.confirm !== 'DELETE ALL') return res.status(400).json({ success: false, message: 'Confirmation required.' });
+    try {
+        const result = await StoreProduct.deleteMany({});
+        return res.json({ success: true, deleted: result.deletedCount || 0 });
+    } catch (err) {
+        console.error('Delete all store products error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not delete the product catalogue.' });
     }
 });
 
