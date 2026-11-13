@@ -105,8 +105,8 @@ button,a{-webkit-tap-highlight-color:transparent}
 .onsite-list{display:grid;gap:10px}
 .onsite-request{display:grid;grid-template-columns:1fr 1.2fr 1fr 1.3fr auto;align-items:start;gap:12px;padding:14px;border:1px solid var(--line);border-radius:10px;background:#fff}
 .onsite-request h3{color:#171717;font-size:13px;margin:0 0 5px}
-.onsite-request p{font-size:11px;color:#555;margin:4px 0;overflow-wrap:anywhere}
-.field-label{font-size:9px!important;text-transform:uppercase;letter-spacing:.5px;color:#888!important;font-weight:800}
+.onsite-request p{color:#444;font-size:12px;margin:3px 0;overflow-wrap:anywhere}
+.onsite-request .field-label{color:#777;font-size:10px;text-transform:uppercase;font-weight:800}
 .onsite-request .action-list{justify-content:flex-start}
 .visit-confirm-form{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) auto;align-items:end;gap:9px;padding-top:12px;border-top:1px solid var(--line)}
 .visit-confirm-form label{display:grid;gap:5px;color:#555;font-size:10px;text-transform:uppercase;font-weight:700}
@@ -134,525 +134,202 @@ button,a{-webkit-tap-highlight-color:transparent}
 .content-grid>.dashboard-card{margin:0}
 #onsite-section{border-color:#d8e7f4}#active-section,#reviews-section{border-color:#dceee4}#inactive-section{border-color:#f0e4c8}
 input:focus,select:focus,textarea:focus,button:focus-visible,a:focus-visible{outline:2px solid #e00000;outline-offset:2px}
-
-/* Responsive layout: desktop, tablet and mobile */
 @media(max-width:1100px){
- .sidebar{gap:14px;padding-inline:2%}
- .side-nav{justify-content:flex-start;overflow-x:auto}
- .side-nav a{padding:0 9px}
- .main-shell{padding:18px 2% 32px}
- .stats-grid{gap:10px}
- .stat-card{padding:14px;gap:10px}
- .stat-value{font-size:25px}
+ .sidebar{gap:14px;padding-inline:2%}.side-nav{justify-content:flex-start;overflow-x:auto}
+ .side-nav a{padding:0 9px}.main-shell{padding:18px 2% 32px}.stats-grid{gap:10px}
+ .stat-card{padding:14px;gap:10px}.stat-value{font-size:25px}
 }
 @media(max-width:850px){
  .sidebar{align-items:flex-start;flex-direction:column;gap:7px;padding:9px 4%}
- .brand{height:43px}
- .brand img{width:40px;height:40px}
+ .brand{height:43px}.brand img{width:40px;height:40px}
  .side-nav{width:100%;justify-content:flex-start}
- .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
- .content-grid{grid-template-columns:1fr}
+ .stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.content-grid{grid-template-columns:1fr}
 }
 @media(max-width:560px){
- .sidebar{padding:8px 12px}
- .brand:after{font-size:17px}
+ .sidebar{padding:8px 12px}.brand:after{font-size:17px}
  .side-nav{gap:4px;padding:2px 0 4px}
  .side-nav a{height:36px;min-width:39px;padding:0 9px;font-size:11px}
- .side-nav a span:not(.nav-icon){display:none}
- .nav-count{display:inline-block}
+ .side-nav a span:not(.nav-icon){display:none}.nav-count{display:inline-block}
  .main-shell{padding:12px 10px 26px}
  .topbar{min-height:54px;margin-bottom:14px;gap:5px}
  .topbar h1{font-size:16px;white-space:normal}
- .top-actions{gap:6px}
- .admin-user{display:none}
+ .top-actions{gap:6px}.admin-user{display:none}
  .logout-btn{padding:8px 10px;font-size:10px}
  .stats-grid{gap:8px;margin-bottom:13px}
  .stat-card{min-height:88px;padding:10px;gap:7px}
- .stat-icon{width:27px;font-size:21px}
- .stat-value{font-size:21px}
- .stat-label{font-size:10px}
- .dashboard-card{padding:11px;margin-bottom:11px}
- .card-title{font-size:14px}
- .toolbar{gap:7px}
- .toolbar input,.toolbar select{min-width:0;width:100%}
- .refresh-btn{width:100%}
- .onsite-request{grid-template-columns:1fr 1fr}
- .visit-confirm-form{grid-template-columns:1fr}
- .review-item{grid-template-columns:1fr}
- .notification-center{right:-58px}
+ .stat-icon{width:27px;font-size:21px}.stat-value{font-size:21px}.stat-label{font-size:10px}
+ .dashboard-card{padding:11px;margin-bottom:11px}.card-title{font-size:14px}
+ .toolbar{gap:7px}.toolbar input,.toolbar select{min-width:0;width:100%}.refresh-btn{width:100%}
+ .onsite-request{grid-template-columns:1fr 1fr}.visit-confirm-form{grid-template-columns:1fr}
+ .review-item{grid-template-columns:1fr}.notification-center{right:-58px}
  .list-size{align-items:flex-start;flex-direction:column}
 }
-@media(prefers-reduced-motion:reduce){
- *{scroll-behavior:auto!important;transition:none!important}
-}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
 /* Advanced command-centre additions */
-.dashboard-intro{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 0 18px}
-.dashboard-intro h2{font-size:24px;letter-spacing:-.7px;margin:0;color:#171717}
-.dashboard-intro p{margin:5px 0 0;color:#70757d;font-size:12px}
-.intro-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.live-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #ccebd8;border-radius:30px;background:#effaf3;color:#087443;font-size:11px;font-weight:800}
-.live-pill:before{content:"";width:7px;height:7px;border-radius:50%;background:#13a35b;box-shadow:0 0 0 3px #13a35b22}
-.overview-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.85fr);gap:16px;margin:0 0 18px}
-.overview-panel{background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;box-shadow:var(--shadow);min-width:0}
-.overview-panel h3{font-size:14px;margin:0 0 13px;color:#171717}
-.panel-subtitle{font-size:11px;color:#777;margin:-7px 0 12px}
-.status-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.status-tile{border:1px solid var(--line);border-radius:9px;padding:12px;background:#fff}
-.status-tile span{display:block;font-size:10px;color:#777;font-weight:700}
-.status-tile strong{display:block;font-size:23px;color:#171717;margin-top:5px}
-.status-tile.open{border-top:3px solid #e00000}
-.status-tile.progress{border-top:3px solid #1769aa}
-.status-tile.hold{border-top:3px solid #b77900}
-.status-tile.done{border-top:3px solid #087443}
-.status-bars{display:grid;gap:10px;margin-top:15px}
-.status-bar-row{display:grid;grid-template-columns:85px 1fr 30px;align-items:center;gap:8px;font-size:11px;color:#555}
-.status-track{height:9px;border-radius:10px;background:#f0f1f3;overflow:hidden}
-.status-fill{height:100%;border-radius:10px;background:#e00000;min-width:0}
-.status-fill.blue{background:#3687ca}
-.status-fill.green{background:#15965b}
-.status-fill.gold{background:#d29a23}
-.recent-list{display:grid;gap:0}
-.recent-entry{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid #eee}
-.recent-entry:last-child{border-bottom:0}
-.recent-dot{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:#fff0f0;color:#b00000;font-weight:900}
-.recent-entry strong{display:block;font-size:11px;color:#222;overflow-wrap:anywhere}
-.recent-entry small{display:block;color:#777;font-size:10px;margin-top:3px}
-.recent-entry time{font-size:10px;color:#777;white-space:nowrap}
-.quick-actions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
-.quick-actions a,.quick-actions button{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #e5caca;border-radius:8px;background:#fff;color:#a00000;text-decoration:none;font-size:11px;font-weight:800;cursor:pointer}
-.quick-actions a:hover,.quick-actions button:hover{background:#fff0f0;border-color:#e00000}
-.dashboard-search{width:min(320px,100%);min-height:38px;border:1px solid #d5d8de;border-radius:8px;padding:8px 11px;background:#fff;color:#222}
-.system-meta{font-size:10px;color:#777;margin-top:10px}
-.stat-card .stat-trend{font-size:10px;color:#777;margin-top:5px}
-.stat-card .stat-trend strong{color:#087443}
-.priority-chip{display:inline-flex;padding:3px 7px;border-radius:20px;font-size:9px;font-weight:800;background:#f1f2f4;color:#555}
-.priority-chip.critical,.priority-chip.high{background:#fff0f0;color:#b00000}
-.priority-chip.medium{background:#fff6e6;color:#946000}
-.priority-chip.low{background:#eaf8f0;color:#087443}
-@media(max-width:950px){
- .overview-grid{grid-template-columns:1fr}
- .status-overview{grid-template-columns:repeat(4,minmax(0,1fr))}
-}
-@media(max-width:650px){
- .dashboard-intro{align-items:flex-start;flex-direction:column}
- .dashboard-intro h2{font-size:21px}
- .status-overview{grid-template-columns:repeat(2,minmax(0,1fr))}
- .recent-entry{grid-template-columns:28px minmax(0,1fr)}
- .recent-entry time{grid-column:2}
- .intro-tools{width:100%}
- .dashboard-search{flex:1;width:100%}
-}
+.dashboard-intro{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin:4px 0 18px}.dashboard-intro h2{font-size:24px;letter-spacing:-.7px;margin:0;color:#171717}.dashboard-intro p{margin:5px 0 0;color:#70757d;font-size:12px}.intro-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.live-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #ccebd8;border-radius:30px;background:#effaf3;color:#087443;font-size:11px;font-weight:800}.live-pill:before{content:"";width:7px;height:7px;border-radius:50%;background:#13a35b;box-shadow:0 0 0 3px #13a35b22}.overview-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.85fr);gap:16px;margin:0 0 18px}.overview-panel{background:#fff;border:1px solid var(--line);border-radius:13px;padding:17px;box-shadow:var(--shadow);min-width:0}.overview-panel h3{font-size:14px;margin:0 0 13px;color:#171717}.panel-subtitle{font-size:11px;color:#777;margin:-7px 0 12px}.status-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.status-tile{border:1px solid var(--line);border-radius:9px;padding:12px;background:#fff}.status-tile span{display:block;font-size:10px;color:#777;font-weight:700}.status-tile strong{display:block;font-size:23px;color:#171717;margin-top:5px}.status-tile.open{border-top:3px solid #e00000}.status-tile.progress{border-top:3px solid #1769aa}.status-tile.hold{border-top:3px solid #b77900}.status-tile.done{border-top:3px solid #087443}.status-bars{display:grid;gap:10px;margin-top:15px}.status-bar-row{display:grid;grid-template-columns:85px 1fr 30px;align-items:center;gap:8px;font-size:11px;color:#555}.status-track{height:9px;border-radius:10px;background:#f0f1f3;overflow:hidden}.status-fill{height:100%;border-radius:10px;background:#e00000;min-width:0}.status-fill.blue{background:#3687ca}.status-fill.green{background:#15965b}.status-fill.gold{background:#d29a23}.recent-list{display:grid;gap:0}.recent-entry{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid #eee}.recent-entry:last-child{border-bottom:0}.recent-dot{width:29px;height:29px;display:grid;place-items:center;border-radius:9px;background:#fff0f0;color:#b00000;font-weight:900}.recent-entry strong{display:block;font-size:11px;color:#222;overflow-wrap:anywhere}.recent-entry small{display:block;color:#777;font-size:10px;margin-top:3px}.recent-entry time{font-size:10px;color:#777;white-space:nowrap}.quick-actions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}.quick-actions a,.quick-actions button{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #e5caca;border-radius:8px;background:#fff;color:#a00000;text-decoration:none;font-size:11px;font-weight:800;cursor:pointer}.quick-actions a:hover,.quick-actions button:hover{background:#fff0f0;border-color:#e00000}.dashboard-search{width:min(320px,100%);min-height:38px;border:1px solid #d5d8de;border-radius:8px;padding:8px 11px;background:#fff;color:#222}.system-meta{font-size:10px;color:#777;margin-top:10px}.stat-card .stat-trend{font-size:10px;color:#777;margin-top:5px}.stat-card .stat-trend strong{color:#087443}.priority-chip{display:inline-flex;padding:3px 7px;border-radius:20px;font-size:9px;font-weight:800;background:#f1f2f4;color:#555}.priority-chip.critical,.priority-chip.high{background:#fff0f0;color:#b00000}.priority-chip.medium{background:#fff6e6;color:#946000}.priority-chip.low{background:#eaf8f0;color:#087443}
+@media(max-width:950px){.overview-grid{grid-template-columns:1fr}.status-overview{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:650px){.dashboard-intro{align-items:flex-start;flex-direction:column}.dashboard-intro h2{font-size:21px}.status-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.recent-entry{grid-template-columns:28px minmax(0,1fr)}.recent-entry time{grid-column:2}.intro-tools{width:100%}.dashboard-search{flex:1;width:100%}}
+
 </style>
+
 </head>
 <body>
-  <script>
+<aside class="sidebar">
+  <div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"></div>
+  <nav class="side-nav" aria-label="Admin navigation">
+    <a class="active" href="#dashboard"><span class="nav-icon">⌂</span><span>Dashboard</span></a>
+    <a href="#tickets-section"><span class="nav-icon">♧</span><span>Support Tickets</span><span class="nav-count" id="side-ticket-count">0</span></a>
+    <a href="#onsite-section"><span class="nav-icon">♦</span><span>On-Site Visits</span></a>
+    <a href="#active-section"><span class="nav-icon">♟</span><span>Subscribers</span></a>
+    <a href="#inactive-section"><span class="nav-icon">⊗</span><span>Accounts</span></a>
+    <a href="#history-section"><span class="nav-icon">◷</span><span>Job History</span></a>
+    <a href="#reviews-section"><span class="nav-icon">★</span><span>Reviews</span></a>
+    <a href="#settings-section"><span class="nav-icon">⚙</span><span>Settings</span></a>
+  </nav>
+  <div class="help-box"><div class="headset">☏</div><strong>Need Help?</strong><p>Contact Support</p><a href="mailto:support@itelements.co.za">Live Chat</a></div>
+  <div class="sidebar-foot">© 2026 IT Elements<br>Admin Console v2.0</div>
+</aside>
+<main class="main-shell" id="dashboard">
+  <header class="topbar">
+    <div class="topbar-brand"><img class="brand-dot brand-dot-logo" src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><h1>IT Elements Administration Console</h1></div>
+    <div class="top-actions">
+      <div class="notification-widget" id="notification-widget">
+        <button class="notification-toggle" id="notification-toggle" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notification-panel">🔔<span id="notification-count" class="notification-count">0</span></button>
+        <section class="notification-center" id="notification-panel" aria-label="Admin notifications" hidden>
+          <div class="notification-head"><h2>Admin notifications</h2><div class="notification-tools"><button class="notification-button" id="notification-permission" type="button">Enable alerts</button><button class="notification-button" id="notification-close" type="button">Close</button></div></div>
+          <div class="notification-list" id="notification-list"><div class="notification-empty">Loading notifications…</div></div>
+        </section>
+      </div>
+      <span class="admin-user">● Admin⌄</span>
+      <a href="/client/logout" class="logout-btn">Log Out 🔒</a>
+    </div>
+  </header>
+
+  <section class="dashboard-intro" aria-label="Dashboard heading">
+    <div><h2>Dashboard Overview</h2><p>Your IT Elements support command centre at a glance.</p></div>
+    <div class="intro-tools"><span class="live-pill" id="live-status">Live monitoring</span><input class="dashboard-search" id="global-search" type="search" placeholder="Search tickets and customers…" aria-label="Global dashboard search"><button class="refresh-btn" id="advanced-refresh" type="button">↻ Refresh</button></div>
+  </section>
+  <section class="quick-actions" aria-label="Quick actions">
+    <a href="#tickets-section">＋ Manage tickets</a><a href="#onsite-section">⌖ On-site requests</a><a href="#active-section">♟ Subscribers</a><a href="#reviews-section">★ Customer reviews</a><button type="button" id="export-tickets">⇩ Export ticket report</button>
+  </section>
+  <section class="overview-grid" aria-label="Support analytics">
+    <article class="overview-panel"><h3>Ticket performance</h3><p class="panel-subtitle">Live breakdown calculated from the tickets currently returned by your server.</p>
+      <div class="status-overview">
+        <div class="status-tile open"><span>Open queue</span><strong id="metric-open">—</strong></div>
+        <div class="status-tile progress"><span>In progress</span><strong id="metric-progress">—</strong></div>
+        <div class="status-tile hold"><span>On hold</span><strong id="metric-hold">—</strong></div>
+        <div class="status-tile done"><span>Resolved</span><strong id="metric-resolved">—</strong></div>
+      </div>
+      <div class="status-bars" id="status-breakdown"><div class="loading-text">Waiting for ticket data…</div></div>
+      <div class="system-meta" id="dashboard-updated">Waiting for first data refresh…</div>
+    </article>
+    <article class="overview-panel"><h3>Recent support activity</h3><p class="panel-subtitle">Latest tickets and requests.</p><div class="recent-list" id="recent-activity"><div class="loading-text">Loading recent activity…</div></div></article>
+  </section>
+  <section class="stats-grid" aria-label="Business overview">
+    <article class="stat-card tickets"><div class="stat-icon">♧</div><div><div class="stat-value" id="stat-active-tickets">—</div><div class="stat-label">Active Support Tickets</div></div></article>
+    <article class="stat-card subs"><div class="stat-icon">♟</div><div><div class="stat-value" id="stat-active-subs">—</div><div class="stat-label">Active Paid Subscribers</div></div></article>
+    <article class="stat-card canceled"><div class="stat-icon">⊗</div><div><div class="stat-value" id="stat-inactive-subs">—</div><div class="stat-label">Inactive Accounts</div></div></article>
+    <article class="stat-card rev"><div class="stat-icon">▣</div><div><div class="stat-value" id="stat-total-revenue">—</div><div class="stat-label">Confirmed Plan Payments (ZAR)</div></div></article>
+  </section>
+
+  <section class="dashboard-card" id="tickets-section">
+    <h2 class="card-title">Priority Engineering Escalation Queue</h2>
+    <p class="note">Connection IDs and session keys are sensitive. Reveal only when needed; copy buttons do not show the value.</p>
+    <div class="toolbar">
+      <input type="search" id="ticket-search" placeholder="⌕  Search client, remote ID, or issue…" aria-label="Search tickets">
+      <select id="ticket-date-filter" aria-label="Filter tickets by date"><option value="all">Any date</option><option value="today">Today</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option></select><select id="ticket-status-filter" aria-label="Filter tickets by status"><option value="all">All requests</option><option value="active">Active queue + resolved history</option><option value="Open">Open</option><option value="Contacted">Contacted</option><option value="Session Confirmed">Session confirmed</option><option value="Visit Confirmed">Visit confirmed</option><option value="Completed">Completed</option><option value="On Hold">On hold</option><option value="Resolved">Resolved</option></select>
+      <button class="refresh-btn" id="refresh-button" type="button">⟳ Refresh Data</button>
+    </div>
+    <div class="table-scroll">
+      <div class="table-header"><div>Client</div><div>AnyDesk / TeamViewer ID</div><div>Session Key</div><div>Incident / Issue</div><div>Status</div><div style="text-align:right">Actions</div></div>
+      <div class="list-size"><label>Show <select id="ticket-page-size"><option value="5" selected>5</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="all">All</option></select> tickets</label><span id="ticket-list-count"></span></div>
+      <div id="priority-queue-body"><div class="loading-text">Loading support tickets…</div></div>
+    </div>
+  </section>
+
+  <section class="dashboard-card" id="onsite-section">
+    <h2 class="card-title blue">On-Site Visit Enquiries</h2>
+    <p class="note">Review the requested area and preferred time. Enter the agreed appointment and call-out fee below; “Confirm visit” emails the customer and updates their dashboard.</p>
+    <div id="onsite-requests-body" class="onsite-list"><div class="loading-text">Loading on-site enquiries…</div></div>
+  </section>
+
+  <div class="content-grid">
+    <section class="dashboard-card" id="active-section">
+      <h2 class="card-title green">Active Paid SLA Subscribers</h2>
+      <div class="table-scroll"><div class="subscriber-header has-actions"><div>Client</div><div>Email</div><div>Phone</div><div>Plan</div><div>Paid Through / Status</div><div>Action</div></div><div id="active-subscribers-body"><div class="loading-text">Loading subscribers…</div></div></div>
+    </section>
+    <section class="dashboard-card" id="inactive-section">
+      <h2 class="card-title yellow">Canceled / Inactive Users</h2>
+      <div class="table-scroll"><div class="subscriber-header"><div>Client</div><div>Email</div><div>Phone</div><div>Plan</div><div>Status</div></div><div id="canceled-subscribers-body"><div class="loading-text">Loading accounts…</div></div></div>
+    </section>
+    <section class="dashboard-card" id="history-section">
+      <h2 class="card-title gray">Job Resolution History</h2>
+      <div class="table-scroll">
+        <div class="table-header"><div>Client</div><div>AnyDesk / TeamViewer ID</div><div>Session Key</div><div>Closed Issue</div><div>Status</div><div style="text-align:right">Actions</div></div>
+        <div class="list-size"><label>Show <select id="history-page-size"><option value="5" selected>5</option><option value="10">10</option><option value="20">20</option><option value="30">30</option><option value="all">All</option></select> resolved tickets</label><span id="history-list-count"></span></div>
+        <div id="history-ledger-body"><div class="loading-text">Loading resolved tickets…</div></div>
+      </div>
+    </section>
+    <section class="dashboard-card" id="reviews-section">
+      <h2 class="card-title green">Customer Feedback Review</h2>
+      <p class="note">Only publish feedback where the customer agreed to public display. Published reviews appear on the home page.</p>
+      <div id="customer-reviews-body" class="review-list"><div class="loading-text">Loading customer feedback…</div></div>
+    </section>
+  </div>
+  <section class="dashboard-card" id="settings-section">
+    <h2 class="card-title gray">Admin Settings</h2>
+    <p class="note">Use the controls above to refresh dashboard data, manage notifications, and sign out securely.</p>
+    <button class="refresh-btn" type="button" onclick="document.getElementById('refresh-button').click()">Refresh Dashboard Data</button>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
 (() => {
   const $ = id => document.getElementById(id);
   const queueBody=$('priority-queue-body'),historyBody=$('history-ledger-body'),activeSubBody=$('active-subscribers-body'),inactiveSubBody=$('canceled-subscribers-body'),onsiteBody=$('onsite-requests-body'),reviewsBody=$('customer-reviews-body');
   const searchInput=$('ticket-search'),statusFilter=$('ticket-status-filter'),toast=$('toast'),ticketPageSize=$('ticket-page-size'),historyPageSize=$('history-page-size'),ticketListCount=$('ticket-list-count'),historyListCount=$('history-list-count');
   let tickets=[],subscribers=[],inactiveUsers=[],toastTimer,knownNotificationIds=new Set(),firstNotificationLoad=true;
-
   function announce(message){toast.textContent=message;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2300)}
   function showMessage(container,message,isError=false){container.replaceChildren();const el=document.createElement('div');el.className=isError?'error-text':'empty-text';el.textContent=message;container.appendChild(el)}
   function makeCell(className,value){const el=document.createElement('div');el.className=`cell ${className||''}`.trim();el.textContent=value==null||value===''?'—':String(value);return el}
-
-  async function copyText(value,label){
-    if(!value)return announce(`No ${label} was provided.`);
-    try{await navigator.clipboard.writeText(String(value));announce(`${label} copied.`)}
-    catch(_){
-      const t=document.createElement('textarea');t.value=String(value);t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();
-      const ok=document.execCommand('copy');t.remove();announce(ok?`${label} copied.`:'Copy failed.')
-    }
-  }
-
-  function addCredentialCell(row,value,label){
-    const cell=document.createElement('div');cell.className='cell';
-    const display=document.createElement('span');display.className='credential-value';display.textContent=value?'••••••••':'Not provided';
-    const reveal=document.createElement('button');reveal.type='button';reveal.className='copy-btn';reveal.textContent='◉';reveal.disabled=!value;reveal.title='Reveal or hide';
-    reveal.addEventListener('click',()=>{const hidden=display.textContent==='••••••••';display.textContent=hidden?String(value):'••••••••';reveal.textContent=hidden?'Hide':'◉'});
-    const copy=document.createElement('button');copy.type='button';copy.className='copy-btn';copy.textContent='Copy';copy.disabled=!value;copy.addEventListener('click',()=>copyText(value,label));
-    const controls=document.createElement('div');controls.className='copy-list';controls.append(reveal,copy);cell.append(display,controls);row.appendChild(cell)
-  }
-
-  function appendTicketConversation(container,ticket){
-    const details=document.createElement('details');details.className='ticket-conversation';
-    const summary=document.createElement('summary');summary.textContent=`Conversation (${Array.isArray(ticket.messages)?ticket.messages.length:0})`;details.appendChild(summary);
-    const thread=document.createElement('div');thread.className='ticket-thread';
-    for(const msg of(Array.isArray(ticket.messages)?ticket.messages:[])){
-      const item=document.createElement('article');item.className='ticket-message';
-      const heading=document.createElement('strong');heading.textContent=msg.name||(msg.sender==='admin'?'IT Elements Support':'Customer');
-      const time=document.createElement('time');time.textContent=msg.date?new Date(msg.date).toLocaleString():'';
-      const body=document.createElement('p');body.textContent=msg.body||'';item.append(heading,time,body);thread.appendChild(item)
-    }
-    if(!thread.children.length){const empty=document.createElement('p');empty.className='note';empty.textContent='No replies yet.';thread.appendChild(empty)}
-    const form=document.createElement('form');form.className='ticket-reply-form';
-    const area=document.createElement('textarea');area.required=true;area.minLength=2;area.maxLength=2000;area.placeholder='Reply to the customer (no passwords or payment details)…';
-    const error=document.createElement('p');error.className='ticket-reply-error';
-    const send=document.createElement('button');send.type='submit';send.textContent='Send Customer Reply';form.append(area,error,send);
-    form.addEventListener('submit',async e=>{
-      e.preventDefault();send.disabled=true;error.textContent='';
-      try{
-        const response=await fetch(`/api/admin/tickets/${encodeURIComponent(ticket._id)}/messages`,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({message:area.value})});
-        const result=await response.json();if(!response.ok||!result.success)throw new Error(result.message||'Could not send reply.');
-        ticket.messages=result.messages;appendTicketConversation(container,ticket);details.remove()
-      }catch(err){error.textContent=err.message||'Could not send reply.';send.disabled=false}
-    });
-    details.append(thread,form);container.appendChild(details)
-  }
-
-  function makeTicketRow(ticket,isHistory){
-    const row=document.createElement('div');row.className='data-row';
-    row.appendChild(makeCell('client-name',ticket.name||'N/A'));
-    const idCell=document.createElement('div');idCell.className='cell';idCell.appendChild(makeCell('mono',ticket.remoteId||'Not provided'));
-    const copyId=document.createElement('button');copyId.type='button';copyId.className='copy-btn';copyId.textContent='Copy ID';copyId.disabled=!ticket.remoteId;copyId.addEventListener('click',()=>copyText(ticket.remoteId,'Remote ID'));
-    idCell.appendChild(copyId);row.appendChild(idCell);
-    addCredentialCell(row,ticket.remotePassword,'session key');
-    const issue=makeCell('',ticket.issue||'No issue description');row.appendChild(issue);
-    if(ticket.confirmedVisitAt){
-      const appt=document.createElement('small');appt.style.cssText='display:block;color:#9bd5ff;margin-top:4px';
-      appt.textContent=`${ticket.requestType==='onsite'?'Visit':'Session'}: ${new Date(ticket.confirmedVisitAt).toLocaleString('en-ZA')}${ticket.requestType==='onsite'?` · Fee R${Number(ticket.callOutFee||0).toFixed(2)}`:''}`;
-      issue.appendChild(appt)
-    }
-    appendTicketConversation(issue,ticket);
-    const statusCell=document.createElement('div');statusCell.className='cell';const status=ticket.status||'Open';
-    const badge=document.createElement(status==='Resolved'?'button':'span');
-    if(status==='Resolved'){badge.type='button';badge.title='Click to reopen';badge.addEventListener('click',()=>updateTicketStatus(ticket._id,'Open',badge))}
-    badge.className=`status-badge ${status==='Resolved'?'badge-resolved':status==='On Hold'?'badge-onhold':status==='Session Confirmed'?'badge-confirmed':'badge-open'}`;
-    badge.textContent=status==='Resolved'?'RESOLVED · REOPEN':status;statusCell.appendChild(badge);row.appendChild(statusCell);
-    const actions=document.createElement('div');actions.className='cell action-list';
-    const actionNames=isHistory?[['Open','Reopen']]:status==='On Hold'?[['Open','Unhold'],['Resolved','Resolve']]:[['Contacted','Contact'],...(status==='Session Confirmed'?[]:[['Session Confirmed','Confirm Session']]),['On Hold','Hold'],['Resolved','Resolve']];
-    for(const[next,label]of actionNames){
-      const btn=document.createElement('button');btn.type='button';
-      btn.className=`action-btn ${next==='Resolved'?'btn-resolve':next==='On Hold'?'btn-hold':next==='Contacted'?'btn-contacted':isHistory?'btn-reopen':'btn-unhold'}`;
-      btn.textContent=label;
-      btn.addEventListener('click',()=>{
-        if(next!=='Session Confirmed')return updateTicketStatus(ticket._id,next,btn);
-        const suggested=ticket.preferredDate?`${ticket.preferredDate}T${ticket.preferredTime||'09:00'}`:'';
-        const agreed=window.prompt('Enter agreed remote session date and time (YYYY-MM-DDTHH:mm):',suggested);
-        if(!agreed)return;
-        const date=new Date(agreed);
-        if(Number.isNaN(date.getTime())||date<=new Date())return announce('Enter a valid future date and time.');
-        updateTicketStatus(ticket._id,next,btn,{confirmedVisitAt:date.toISOString()})
-      });
-      actions.appendChild(btn)
-    }
-    row.appendChild(actions);return row
-  }
+  async function copyText(value,label){if(!value)return announce(`No ${label} was provided.`);try{await navigator.clipboard.writeText(String(value));announce(`${label} copied.`)}catch(_){const t=document.createElement('textarea');t.value=String(value);t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();const ok=document.execCommand('copy');t.remove();announce(ok?`${label} copied.`:'Copy failed.')}}
+  function addCredentialCell(row,value,label){const cell=document.createElement('div');cell.className='cell';const display=document.createElement('span');display.className='credential-value';display.textContent=value?'••••••••':'Not provided';const reveal=document.createElement('button');reveal.type='button';reveal.className='copy-btn';reveal.textContent='◉';reveal.disabled=!value;reveal.title='Reveal or hide';reveal.addEventListener('click',()=>{const hidden=display.textContent==='••••••••';display.textContent=hidden?String(value):'••••••••';reveal.textContent=hidden?'Hide':'◉'});const copy=document.createElement('button');copy.type='button';copy.className='copy-btn';copy.textContent='Copy';copy.disabled=!value;copy.addEventListener('click',()=>copyText(value,label));const controls=document.createElement('div');controls.className='copy-list';controls.append(reveal,copy);cell.append(display,controls);row.appendChild(cell)}
+  function appendTicketConversation(container,ticket){const details=document.createElement('details');details.className='ticket-conversation';const summary=document.createElement('summary');summary.textContent=`Conversation (${Array.isArray(ticket.messages)?ticket.messages.length:0})`;details.appendChild(summary);const thread=document.createElement('div');thread.className='ticket-thread';for(const msg of(Array.isArray(ticket.messages)?ticket.messages:[])){const item=document.createElement('article');item.className='ticket-message';const heading=document.createElement('strong');heading.textContent=msg.name||(msg.sender==='admin'?'IT Elements Support':'Customer');const time=document.createElement('time');time.textContent=msg.date?new Date(msg.date).toLocaleString():'';const body=document.createElement('p');body.textContent=msg.body||'';item.append(heading,time,body);thread.appendChild(item)}if(!thread.children.length){const empty=document.createElement('p');empty.className='note';empty.textContent='No replies yet.';thread.appendChild(empty)}const form=document.createElement('form');form.className='ticket-reply-form';const area=document.createElement('textarea');area.required=true;area.minLength=2;area.maxLength=2000;area.placeholder='Reply to the customer (no passwords or payment details)…';const error=document.createElement('p');error.className='ticket-reply-error';const send=document.createElement('button');send.type='submit';send.textContent='Send Customer Reply';form.append(area,error,send);form.addEventListener('submit',async e=>{e.preventDefault();send.disabled=true;error.textContent='';try{const response=await fetch(`/api/admin/tickets/${encodeURIComponent(ticket._id)}/messages`,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({message:area.value})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.message||'Could not send reply.');ticket.messages=result.messages;appendTicketConversation(container,ticket);details.remove()}catch(err){error.textContent=err.message||'Could not send reply.';send.disabled=false}});details.append(thread,form);container.appendChild(details)}
+  function makeTicketRow(ticket,isHistory){const row=document.createElement('div');row.className='data-row';row.appendChild(makeCell('client-name',ticket.name||'N/A'));const idCell=document.createElement('div');idCell.className='cell';idCell.appendChild(makeCell('mono',ticket.remoteId||'Not provided'));const copyId=document.createElement('button');copyId.type='button';copyId.className='copy-btn';copyId.textContent='Copy ID';copyId.disabled=!ticket.remoteId;copyId.addEventListener('click',()=>copyText(ticket.remoteId,'Remote ID'));idCell.appendChild(copyId);row.appendChild(idCell);addCredentialCell(row,ticket.remotePassword,'session key');const issue=makeCell('',ticket.issue||'No issue description');row.appendChild(issue);if(ticket.confirmedVisitAt){const appt=document.createElement('small');appt.style.cssText='display:block;color:#9bd5ff;margin-top:4px';appt.textContent=`${ticket.requestType==='onsite'?'Visit':'Session'}: ${new Date(ticket.confirmedVisitAt).toLocaleString('en-ZA')}${ticket.requestType==='onsite'?` · Fee R${Number(ticket.callOutFee||0).toFixed(2)}`:''}`;issue.appendChild(appt)}appendTicketConversation(issue,ticket);
+    const statusCell=document.createElement('div');statusCell.className='cell';const status=ticket.status||'Open';const badge=document.createElement(status==='Resolved'?'button':'span');if(status==='Resolved'){badge.type='button';badge.title='Click to reopen';badge.addEventListener('click',()=>updateTicketStatus(ticket._id,'Open',badge))}badge.className=`status-badge ${status==='Resolved'?'badge-resolved':status==='On Hold'?'badge-onhold':status==='Session Confirmed'?'badge-confirmed':'badge-open'}`;badge.textContent=status==='Resolved'?'RESOLVED · REOPEN':status;statusCell.appendChild(badge);row.appendChild(statusCell);
+    const actions=document.createElement('div');actions.className='cell action-list';const actionNames=isHistory?[['Open','Reopen']]:status==='On Hold'?[['Open','Unhold'],['Resolved','Resolve']]:[['Contacted','Contact'],...(status==='Session Confirmed'?[]:[['Session Confirmed','Confirm Session']]),['On Hold','Hold'],['Resolved','Resolve']];for(const[next,label]of actionNames){const btn=document.createElement('button');btn.type='button';btn.className=`action-btn ${next==='Resolved'?'btn-resolve':next==='On Hold'?'btn-hold':next==='Contacted'?'btn-contacted':isHistory?'btn-reopen':'btn-unhold'}`;btn.textContent=label;btn.addEventListener('click',()=>{if(next!=='Session Confirmed')return updateTicketStatus(ticket._id,next,btn);const suggested=ticket.preferredDate?`${ticket.preferredDate}T${ticket.preferredTime||'09:00'}`:'';const agreed=window.prompt('Enter agreed remote session date and time (YYYY-MM-DDTHH:mm):',suggested);if(!agreed)return;const date=new Date(agreed);if(Number.isNaN(date.getTime())||date<=new Date())return announce('Enter a valid future date and time.');updateTicketStatus(ticket._id,next,btn,{confirmedVisitAt:date.toISOString()})});actions.appendChild(btn)}row.appendChild(actions);return row}
 
   const globalSearch=$('global-search'),dateFilter=$('ticket-date-filter');
+  function ticketDate(ticket){const value=ticket.createdAt||ticket.date||ticket.submittedAt||ticket.updatedAt;const date=value?new Date(value):null;return date&&!Number.isNaN(date.getTime())?date:null}
+  function dateMatches(ticket){const mode=dateFilter?.value||'all';if(mode==='all')return true;const date=ticketDate(ticket);if(!date)return false;const now=new Date();if(mode==='today')return date.toDateString()===now.toDateString();const days=Number(mode);return date>=new Date(now.getTime()-days*86400000)&&date<=now}
+  function renderAdvancedOverview(){const normal=tickets.filter(t=>!(t.requestType==='onsite'||String(t.issue||'').startsWith('ON-SITE SUPPORT ENQUIRY')));const status=t=>String(t.status||'Open').toLowerCase();const resolved=normal.filter(t=>['resolved','completed'].includes(status(t))).length;const hold=normal.filter(t=>status(t)==='on hold').length;const progress=normal.filter(t=>['contacted','session confirmed','visit confirmed','in progress'].includes(status(t))).length;const open=Math.max(0,normal.length-resolved-hold-progress);$('metric-open').textContent=open;$('metric-progress').textContent=progress;$('metric-hold').textContent=hold;$('metric-resolved').textContent=resolved;const max=Math.max(1,normal.length);const rows=[['Open',open,''],['In progress',progress,'blue'],['On hold',hold,'gold'],['Resolved',resolved,'green']];const bars=$('status-breakdown');bars.replaceChildren();rows.forEach(([label,count,color])=>{const row=document.createElement('div');row.className='status-bar-row';const name=document.createElement('span');name.textContent=label;const track=document.createElement('div');track.className='status-track';const fill=document.createElement('div');fill.className=`status-fill ${color}`;fill.style.width=`${Math.round(count/max*100)}%`;track.appendChild(fill);const number=document.createElement('strong');number.textContent=count;row.append(name,track,number);bars.appendChild(row)});const recent=$('recent-activity');recent.replaceChildren();const latest=[...tickets].sort((a,b)=>(ticketDate(b)?.getTime()||0)-(ticketDate(a)?.getTime()||0)).slice(0,5);if(!latest.length){showMessage(recent,'No recent support activity found.');}else latest.forEach(ticket=>{const entry=document.createElement('div');entry.className='recent-entry';const dot=document.createElement('span');dot.className='recent-dot';dot.textContent=ticket.requestType==='onsite'?'⌖':'✓';const info=document.createElement('div');const title=document.createElement('strong');title.textContent=ticket.name||'Customer support request';const detail=document.createElement('small');detail.textContent=`${ticket.status||'Open'} · ${String(ticket.issue||'Support request').slice(0,75)}`;info.append(title,detail);const time=document.createElement('time');const d=ticketDate(ticket);time.textContent=d?d.toLocaleDateString():'Date unavailable';entry.append(dot,info,time);recent.appendChild(entry)});$('dashboard-updated').textContent=`Last refreshed: ${new Date().toLocaleString()}`}
+  function exportTicketReport(){const rows=[['Customer','Email','Status','Issue','Request type','Created'] ,...tickets.map(t=>[t.name||'',t.email||'',t.status||'Open',t.issue||'',t.requestType||'',ticketDate(t)?.toISOString()||''])];const csv=rows.map(row=>row.map(value=>`"${String(value).replace(/"/g,'""')}"`).join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);const link=document.createElement('a');link.href=url;link.download=`it-elements-ticket-report-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);announce('Ticket report exported.')}
+  $('advanced-refresh').addEventListener('click',loadAdminData);$('export-tickets').addEventListener('click',exportTicketReport);globalSearch.addEventListener('input',()=>{searchInput.value=globalSearch.value;renderTickets()});dateFilter.addEventListener('change',renderTickets);
 
-  function ticketDate(ticket){
-    const value=ticket.createdAt||ticket.date||ticket.submittedAt||ticket.updatedAt;
-    const date=value?new Date(value):null;
-    return date&&!Number.isNaN(date.getTime())?date:null
-  }
-
-  function dateMatches(ticket){
-    const mode=dateFilter?.value||'all';if(mode==='all')return true;
-    const date=ticketDate(ticket);if(!date)return false;
-    const now=new Date();if(mode==='today')return date.toDateString()===now.toDateString();
-    const days=Number(mode);return date>=new Date(now.getTime()-days*86400000)&&date<=now
-  }
-
-  function renderAdvancedOverview(){
-    const normal=tickets.filter(t=>!(t.requestType==='onsite'||String(t.issue||'').startsWith('ON-SITE SUPPORT ENQUIRY')));
-    const status=t=>String(t.status||'Open').toLowerCase();
-    const resolved=normal.filter(t=>['resolved','completed'].includes(status(t))).length;
-    const hold=normal.filter(t=>status(t)==='on hold').length;
-    const progress=normal.filter(t=>['contacted','session confirmed','visit confirmed','in progress'].includes(status(t))).length;
-    const open=Math.max(0,normal.length-resolved-hold-progress);
-    $('metric-open').textContent=open;$('metric-progress').textContent=progress;$('metric-hold').textContent=hold;$('metric-resolved').textContent=resolved;
-    const max=Math.max(1,normal.length);
-    const rows=[['Open',open,''],['In progress',progress,'blue'],['On hold',hold,'gold'],['Resolved',resolved,'green']];
-    const bars=$('status-breakdown');bars.replaceChildren();
-    rows.forEach(([label,count,color])=>{
-      const row=document.createElement('div');row.className='status-bar-row';
-      const name=document.createElement('span');name.textContent=label;
-      const track=document.createElement('div');track.className='status-track';
-      const fill=document.createElement('div');fill.className=`status-fill ${color}`;fill.style.width=`${Math.round(count/max*100)}%`;track.appendChild(fill);
-      const number=document.createElement('strong');number.textContent=count;row.append(name,track,number);bars.appendChild(row)
-    });
-    const recent=$('recent-activity');recent.replaceChildren();
-    const latest=[...tickets].sort((a,b)=>(ticketDate(b)?.getTime()||0)-(ticketDate(a)?.getTime()||0)).slice(0,5);
-    if(!latest.length)showMessage(recent,'No recent support activity found.');
-    else latest.forEach(ticket=>{
-      const entry=document.createElement('div');entry.className='recent-entry';
-      const dot=document.createElement('span');dot.className='recent-dot';dot.textContent=ticket.requestType==='onsite'?'⌖':'✓';
-      const info=document.createElement('div');const title=document.createElement('strong');title.textContent=ticket.name||'Customer support request';
-      const detail=document.createElement('small');detail.textContent=`${ticket.status||'Open'} · ${String(ticket.issue||'Support request').slice(0,75)}`;
-      info.append(title,detail);const time=document.createElement('time');const d=ticketDate(ticket);time.textContent=d?d.toLocaleDateString():'Date unavailable';
-      entry.append(dot,info,time);recent.appendChild(entry)
-    });
-    $('dashboard-updated').textContent=`Last refreshed: ${new Date().toLocaleString()}`
-  }
-
-  function exportTicketReport(){
-    const rows=[['Customer','Email','Status','Issue','Request type','Created'],...tickets.map(t=>[t.name||'',t.email||'',t.status||'Open',t.issue||'',t.requestType||'',ticketDate(t)?.toISOString()||''])];
-    const csv=rows.map(row=>row.map(value=>`"${String(value).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-    const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob);
-    const link=document.createElement('a');link.href=url;link.download=`it-elements-ticket-report-${new Date().toISOString().slice(0,10)}.csv`;
-    document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);announce('Ticket report exported.')
-  }
-
-  $('advanced-refresh').addEventListener('click',loadAdminData);
-  $('export-tickets').addEventListener('click',exportTicketReport);
-  globalSearch.addEventListener('input',()=>{searchInput.value=globalSearch.value;renderTickets()});
-  dateFilter.addEventListener('change',renderTickets);
-    function renderTickets(){
-    queueBody.replaceChildren();historyBody.replaceChildren();onsiteBody.replaceChildren();
-    const query=searchInput.value.trim().toLowerCase(),filter=statusFilter.value;
-    const onsite=tickets.filter(t=>t.requestType==='onsite'||String(t.issue||'').startsWith('ON-SITE SUPPORT ENQUIRY'));
-    const matchingOnsite=onsite.filter(t=>{
-      const s=t.status||'Open';
-      const txt=[t.name,t.email,t.phone,t.area,t.serviceType,t.preferredDate,t.issue].join(' ').toLowerCase();
-      const ok=filter==='all'||(filter==='active'?!['Completed','Resolved'].includes(s):filter==='Resolved'?['Resolved','Completed'].includes(s):s===filter);
-      return(!query||txt.includes(query))&&ok&&dateMatches(t)
-    });
-
-    for(const ticket of matchingOnsite){
-      const card=document.createElement('article');card.className='onsite-request';
-      const person=document.createElement('div');const name=document.createElement('h3');name.textContent=ticket.name||'Customer';person.appendChild(name);
-      const email=document.createElement(ticket.email?'a':'p');email.textContent=ticket.email||'Email not provided';
-      if(ticket.email){email.href=`mailto:${ticket.email}`;email.style.color='#155b91'}person.appendChild(email);
-      const phone=document.createElement(ticket.phone?'a':'p');phone.textContent=ticket.phone||'Phone not provided';
-      if(ticket.phone){phone.href=`tel:${String(ticket.phone).replace(/[^+\\d]/g,'')}`;phone.style.display='block';phone.style.color='#155b91'}person.appendChild(phone);
-
-      const location=document.createElement('div');const ll=document.createElement('p');ll.className='field-label';ll.textContent='Area / Time';
-      const lv=document.createElement('p');lv.textContent=`${ticket.area||'Area not provided'} · ${ticket.preferredDate||'Flexible date'} ${ticket.preferredTime||''}`;location.append(ll,lv);
-      if(ticket.confirmedVisitAt){const c=document.createElement('p');c.className='confirmed-visit';c.textContent=`Confirmed: ${new Date(ticket.confirmedVisitAt).toLocaleString('en-ZA')} · Call-out fee R${Number(ticket.callOutFee||0).toFixed(2)}`;location.appendChild(c)}
-
-      const service=document.createElement('div');const sl=document.createElement('p');sl.className='field-label';sl.textContent='Service';
-      const sv=document.createElement('p');sv.textContent=ticket.serviceType||'On-site assessment';service.append(sl,sv);
-      const issue=document.createElement('div');const il=document.createElement('p');il.className='field-label';il.textContent='Issue';
-      const iv=document.createElement('p');iv.textContent=ticket.issue||'No details provided';issue.append(il,iv);
-
-      const controls=document.createElement('div');const status=ticket.status||'Open';
-      const badge=document.createElement('span');
-      badge.className=`status-badge ${['Resolved','Completed'].includes(status)?'badge-resolved':status==='On Hold'?'badge-onhold':status==='Visit Confirmed'?'badge-confirmed':status==='Contacted'?'badge-contacted':'badge-open'}`;
-      badge.textContent=status;controls.appendChild(badge);
-      const actions=document.createElement('div');actions.className='action-list';actions.style.marginTop='8px';
-      const options=['Resolved','Completed'].includes(status)?[['Open','Reopen']]:status==='On Hold'?[['Open','Unhold'],['Resolved','Close']]:status==='Open'?[['Contacted','Contact'],['On Hold','Hold'],['Resolved','Close']]:status==='Contacted'?[['On Hold','Hold'],['Resolved','Close']]:[['Completed','Completed'],['On Hold','Hold'],['Resolved','Close']];
-      for(const[next,label]of options){
-        const btn=document.createElement('button');btn.type='button';
-        btn.className=`action-btn ${['Resolved','Completed'].includes(next)?'btn-resolve':next==='On Hold'?'btn-hold':next==='Open'?'btn-unhold':'btn-contacted'}`;
-        btn.textContent=label;btn.addEventListener('click',()=>updateTicketStatus(ticket._id,next,btn));actions.appendChild(btn)
-      }
-      controls.appendChild(actions);card.append(person,location,service,issue,controls);
-
-      if(!['Resolved','Completed'].includes(status)){
-        const form=document.createElement('form');form.className='visit-confirm-form';
-        const dateObj=ticket.confirmedVisitAt?new Date(ticket.confirmedVisitAt):null;
-        const dateValue=dateObj?`${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`:ticket.preferredDate||'';
-        const timeValue=dateObj?`${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`:ticket.preferredTime||'';
-        const fields=[['Agreed visit date','date',dateValue],['Agreed visit time','time',timeValue],['Call-out fee (R)','number',ticket.callOutFee==null?'':String(ticket.callOutFee)]];
-        const inputs=[];
-        for(const[label,type,value]of fields){
-          const wrap=document.createElement('label');wrap.textContent=label;
-          const input=document.createElement('input');input.type=type;input.value=value;input.required=true;
-          if(type==='number'){input.min='0';input.step='0.01'}wrap.appendChild(input);form.appendChild(wrap);inputs.push(input)
-        }
-        const confirm=document.createElement('button');confirm.type='submit';confirm.className='action-btn btn-contacted';confirm.textContent='Confirm Visit';form.appendChild(confirm);
-        form.addEventListener('submit',e=>{
-          e.preventDefault();const when=new Date(`${inputs[0].value}T${inputs[1].value}`);
-          if(Number.isNaN(when.getTime())||when<=new Date())return announce('Choose a future appointment date and time.');
-          updateTicketStatus(ticket._id,'Visit Confirmed',confirm,{confirmedVisitAt:when.toISOString(),callOutFee:Number(inputs[2].value)})
-        });
-        card.appendChild(form)
-      }
-      onsiteBody.appendChild(card)
-    }
+  function renderTickets(){queueBody.replaceChildren();historyBody.replaceChildren();onsiteBody.replaceChildren();const query=searchInput.value.trim().toLowerCase(),filter=statusFilter.value;const onsite=tickets.filter(t=>t.requestType==='onsite'||String(t.issue||'').startsWith('ON-SITE SUPPORT ENQUIRY'));const matchingOnsite=onsite.filter(t=>{const s=t.status||'Open',txt=[t.name,t.email,t.phone,t.area,t.serviceType,t.preferredDate,t.issue].join(' ').toLowerCase();const ok=filter==='all'||(filter==='active'?!['Completed','Resolved'].includes(s):filter==='Resolved'?['Resolved','Completed'].includes(s):s===filter);return(!query||txt.includes(query))&&ok&&dateMatches(t)});
+    for(const ticket of matchingOnsite){const card=document.createElement('article');card.className='onsite-request';const person=document.createElement('div');const name=document.createElement('h3');name.textContent=ticket.name||'Customer';person.appendChild(name);const email=document.createElement(ticket.email?'a':'p');email.textContent=ticket.email||'Email not provided';if(ticket.email){email.href=`mailto:${ticket.email}`;email.style.color='#b9d8f8'}person.appendChild(email);const phone=document.createElement(ticket.phone?'a':'p');phone.textContent=ticket.phone||'Phone not provided';if(ticket.phone){phone.href=`tel:${String(ticket.phone).replace(/[^+\\d]/g,'')}`;phone.style.display='block';phone.style.color='#b9d8f8'}person.appendChild(phone);
+      const location=document.createElement('div');const ll=document.createElement('p');ll.className='field-label';ll.textContent='Area / Time';const lv=document.createElement('p');lv.textContent=`${ticket.area||'Area not provided'} · ${ticket.preferredDate||'Flexible date'} ${ticket.preferredTime||''}`;location.append(ll,lv);if(ticket.confirmedVisitAt){const c=document.createElement('p');c.className='confirmed-visit';c.textContent=`Confirmed: ${new Date(ticket.confirmedVisitAt).toLocaleString('en-ZA')} · Call-out fee R${Number(ticket.callOutFee||0).toFixed(2)}`;location.appendChild(c)}
+      const service=document.createElement('div');const sl=document.createElement('p');sl.className='field-label';sl.textContent='Service';const sv=document.createElement('p');sv.textContent=ticket.serviceType||'On-site assessment';service.append(sl,sv);const issue=document.createElement('div');const il=document.createElement('p');il.className='field-label';il.textContent='Issue';const iv=document.createElement('p');iv.textContent=ticket.issue||'No details provided';issue.append(il,iv);
+      const controls=document.createElement('div');const status=ticket.status||'Open';const badge=document.createElement('span');badge.className=`status-badge ${['Resolved','Completed'].includes(status)?'badge-resolved':status==='On Hold'?'badge-onhold':status==='Visit Confirmed'?'badge-confirmed':status==='Contacted'?'badge-contacted':'badge-open'}`;badge.textContent=status;controls.appendChild(badge);const actions=document.createElement('div');actions.className='action-list';actions.style.marginTop='8px';const options=['Resolved','Completed'].includes(status)?[['Open','Reopen']]:status==='On Hold'?[['Open','Unhold'],['Resolved','Close']]:status==='Open'?[['Contacted','Contact'],['On Hold','Hold'],['Resolved','Close']]:status==='Contacted'?[['On Hold','Hold'],['Resolved','Close']]:[['Completed','Completed'],['On Hold','Hold'],['Resolved','Close']];for(const[next,label]of options){const btn=document.createElement('button');btn.type='button';btn.className=`action-btn ${['Resolved','Completed'].includes(next)?'btn-resolve':next==='On Hold'?'btn-hold':next==='Open'?'btn-unhold':'btn-contacted'}`;btn.textContent=label;btn.addEventListener('click',()=>updateTicketStatus(ticket._id,next,btn));actions.appendChild(btn)}controls.appendChild(actions);card.append(person,location,service,issue,controls);
+      if(!['Resolved','Completed'].includes(status)){const form=document.createElement('form');form.className='visit-confirm-form';const dateObj=ticket.confirmedVisitAt?new Date(ticket.confirmedVisitAt):null;const dateValue=dateObj?`${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`:ticket.preferredDate||'';const timeValue=dateObj?`${String(dateObj.getHours()).padStart(2,'0')}:${String(dateObj.getMinutes()).padStart(2,'0')}`:ticket.preferredTime||'';const fields=[['Agreed visit date','date',dateValue],['Agreed visit time','time',timeValue],['Call-out fee (R)','number',ticket.callOutFee==null?'':String(ticket.callOutFee)]];const inputs=[];for(const[label,type,value]of fields){const wrap=document.createElement('label');wrap.textContent=label;const input=document.createElement('input');input.type=type;input.value=value;input.required=true;if(type==='number'){input.min='0';input.step='0.01'}wrap.appendChild(input);form.appendChild(wrap);inputs.push(input)}const confirm=document.createElement('button');confirm.type='submit';confirm.className='action-btn btn-contacted';confirm.textContent='Confirm Visit';form.appendChild(confirm);form.addEventListener('submit',e=>{e.preventDefault();const when=new Date(`${inputs[0].value}T${inputs[1].value}`);if(Number.isNaN(when.getTime())||when<=new Date())return announce('Choose a future appointment date and time.');updateTicketStatus(ticket._id,'Visit Confirmed',confirm,{confirmedVisitAt:when.toISOString(),callOutFee:Number(inputs[2].value)})});card.appendChild(form)}onsiteBody.appendChild(card)}
     if(!onsiteBody.children.length)showMessage(onsiteBody,'No on-site enquiries match this filter.');
-
-    const normal=tickets.filter(t=>!(t.requestType==='onsite'||String(t.issue||'').startsWith('ON-SITE SUPPORT ENQUIRY'))).filter(t=>(!query||[t.name,t.email,t.remoteId,t.preferredDate,t.preferredTime,t.issue].join(' ').toLowerCase().includes(query))&&dateMatches(t));
-    const active=normal.filter(t=>!['Resolved','Completed'].includes(t.status||'Open')&&(filter==='all'||filter==='active'||(t.status||'Open')===filter));
-    const resolved=normal.filter(t=>['Resolved','Completed'].includes(t.status||'Open')&&(filter==='all'||filter==='active'||filter==='Resolved'||(t.status||'Open')===filter));
-    const visibleA=ticketPageSize.value==='all'?active:active.slice(0,Number(ticketPageSize.value));
-    const visibleR=historyPageSize.value==='all'?resolved:resolved.slice(0,Number(historyPageSize.value));
-    visibleA.forEach(t=>queueBody.appendChild(makeTicketRow(t,false)));
-    visibleR.forEach(t=>historyBody.appendChild(makeTicketRow(t,true)));
-    ticketListCount.textContent=`Showing ${visibleA.length} of ${active.length}`;
-    historyListCount.textContent=`Showing ${visibleR.length} of ${resolved.length}`;
-    if(!queueBody.children.length)showMessage(queueBody,'No tickets match this filter.');
-    if(!historyBody.children.length)showMessage(historyBody,'No resolved tickets match this filter.');
-    $('side-ticket-count').textContent=String(active.length)
-  }
-
-  function renderUsers(container,users,active){
-    container.replaceChildren();
-    if(!users.length)return showMessage(container,active?'No active subscribers found.':'No inactive accounts recorded.');
-    for(const user of users){
-      const row=document.createElement('div');row.className='subscriber-row';
-      row.appendChild(makeCell('client-name',user.fullName||'N/A'));
-      row.appendChild(makeCell('',user.email||'—'));
-      row.appendChild(makeCell('',user.phone||'—'));
-      row.appendChild(makeCell('',user.subscriptionTier||'None'));
-      const expiry=user.subscriptionExpiresAt?new Date(user.subscriptionExpiresAt).toLocaleDateString():'—';
-      row.appendChild(makeCell(active?'badge-active':'badge-expired',`${user.subscriptionStatus||'Inactive'}${active?` · until ${expiry}`:''}`));
-      if(active){
-        row.classList.add('has-actions');
-        const cell=document.createElement('div');cell.className='cell';
-        const btn=document.createElement('button');btn.type='button';btn.className='action-btn btn-reopen reset-plan-btn';
-        btn.dataset.userId=user._id;btn.textContent='Reset Test Plan';
-        btn.setAttribute('aria-label',`Reset test plan for ${user.fullName||user.email}`);
-        cell.appendChild(btn);row.appendChild(cell)
-      }
-      container.appendChild(row)
-    }
-  }
-
-  activeSubBody.addEventListener('click',async e=>{
-    const btn=e.target.closest('.reset-plan-btn');if(!btn)return;
-    if(!window.confirm('Reset this account to None (Unpaid) / Inactive? This will not delete payment history.'))return;
-    btn.disabled=true;
-    try{
-      const response=await fetch('/api/admin/subscriptions/reset',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({userId:btn.dataset.userId})});
-      const result=await response.json();if(!response.ok||!result.success)throw new Error(result.message||'Could not reset plan.');
-      announce('Account plan reset. Payment history was kept.');await loadAdminData()
-    }catch(err){announce(err.message||'Could not reset plan.');btn.disabled=false}
-  });
-
-  async function updateTicketStatus(ticketId,newStatus,button,extra={}){
-    button.disabled=true;
-    try{
-      const response=await fetch('/api/tickets/update-status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticketId,newStatus,...extra})});
-      const result=await response.json();if(!response.ok||!result.success)throw new Error(result.message||'Ticket update failed.');
-      announce(`Ticket marked ${newStatus.toLowerCase()}.`);await loadAdminData()
-    }catch(err){announce(err.message||'Ticket update failed.');button.disabled=false}
-  }
-
-  async function loadAdminData(){
-    try{
-      const[tr,or]=await Promise.all([
-        fetch('/api/tickets',{headers:{Accept:'application/json'}}),
-        fetch('/api/admin/overview-data',{headers:{Accept:'application/json'}})
-      ]);
-      if(tr.redirected||or.redirected)return window.location.assign('/client/login');
-      if(!tr.ok||!or.ok)throw new Error('Could not load admin data. Please sign in again or refresh.');
-      tickets=await tr.json();if(!Array.isArray(tickets))tickets=[];
-      renderAdvancedOverview();
-      const overview=await or.json();
-      subscribers=overview.activeSubscribers||[];inactiveUsers=overview.inactiveUsers||[];
-      const stats=overview.stats||{};
-      $('stat-active-tickets').textContent=stats.activeTickets??0;
-      $('stat-active-subs').textContent=stats.activeSubscribers??subscribers.length;
-      $('stat-inactive-subs').textContent=stats.inactiveUsers??inactiveUsers.length;
-      $('stat-total-revenue').textContent=new Intl.NumberFormat('en-ZA',{style:'currency',currency:'ZAR'}).format(stats.confirmedPlanRevenue||0);
-      renderTickets();renderUsers(activeSubBody,subscribers,true);renderUsers(inactiveSubBody,inactiveUsers,false);loadCustomerReviews()
-    }catch(err){
-      showMessage(queueBody,err.message||'Could not load tickets.',true);
-      showMessage(activeSubBody,'Could not load subscribers.',true);
-      showMessage(inactiveSubBody,'Could not load accounts.',true);
-      showMessage(historyBody,'Could not load ticket history.',true)
-    }
-  }
-
-  async function loadCustomerReviews(){
-    try{
-      const response=await fetch('/api/admin/reviews',{headers:{Accept:'application/json'}});
-      if(!response.ok)throw new Error('Could not load customer feedback.');
-      const reviews=await response.json();reviewsBody.replaceChildren();
-      if(!reviews.length)return showMessage(reviewsBody,'No feedback has been submitted yet.');
-      for(const review of reviews){
-        const card=document.createElement('article');card.className='review-item';
-        const content=document.createElement('div');const heading=document.createElement('h3');
-        heading.textContent=`${review.name||'Customer'} · ${'★'.repeat(Number(review.rating)||0)}${'☆'.repeat(5-(Number(review.rating)||0))}`;
-        content.appendChild(heading);
-        const meta=document.createElement('p');meta.textContent=`${review.email||'No email'} · ${review.date?new Date(review.date).toLocaleDateString():'Date unavailable'} · ${review.status||'Pending'}`;
-        content.appendChild(meta);
-        const message=document.createElement('p');message.textContent=review.message||'';content.appendChild(message);
-        const actions=document.createElement('div');actions.className='review-actions';
-        for(const[status,label]of(review.status==='Published'?[['Hidden','Hide from home']]:[['Published','Approve and publish'],['Hidden','Hide']])){
-          const btn=document.createElement('button');btn.type='button';btn.className=`action-btn ${status==='Published'?'btn-resolve':'btn-hold'}`;btn.textContent=label;
-          btn.addEventListener('click',async()=>{
-            btn.disabled=true;
-            try{
-              const update=await fetch('/api/admin/reviews/update-status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reviewId:review._id,status})});
-              const result=await update.json();if(!update.ok||!result.success)throw new Error(result.message||'Could not update review.');
-              announce(status==='Published'?'Review published on the home page.':'Review hidden.');loadCustomerReviews()
-            }catch(err){announce(err.message);btn.disabled=false}
-          });
-          actions.appendChild(btn)
-        }
-        card.append(content,actions);reviewsBody.appendChild(card)
-      }
-    }catch(err){showMessage(reviewsBody,err.message||'Could not load customer feedback.',true)}
-  }
-
-  searchInput.addEventListener('input',renderTickets);
-  statusFilter.addEventListener('change',renderTickets);
-  dateFilter.addEventListener('change',renderTickets);
-  ticketPageSize.addEventListener('change',renderTickets);
-  historyPageSize.addEventListener('change',renderTickets);
-  $('refresh-button').addEventListener('click',loadAdminData);
-
+    const normal=tickets.filter(t=>!(t.requestType==='onsite'||String(t.issue||'').startsWith('ON-SITE SUPPORT ENQUIRY'))).filter(t=>(!query||[t.name,t.email,t.remoteId,t.preferredDate,t.preferredTime,t.issue].join(' ').toLowerCase().includes(query))&&dateMatches(t));const active=normal.filter(t=>!['Resolved','Completed'].includes(t.status||'Open')&&(filter==='all'||filter==='active'||(t.status||'Open')===filter));const resolved=normal.filter(t=>['Resolved','Completed'].includes(t.status||'Open')&&(filter==='all'||filter==='active'||filter==='Resolved'||(t.status||'Open')===filter));const visibleA=ticketPageSize.value==='all'?active:active.slice(0,Number(ticketPageSize.value)),visibleR=historyPageSize.value==='all'?resolved:resolved.slice(0,Number(historyPageSize.value));visibleA.forEach(t=>queueBody.appendChild(makeTicketRow(t,false)));visibleR.forEach(t=>historyBody.appendChild(makeTicketRow(t,true)));ticketListCount.textContent=`Showing ${visibleA.length} of ${active.length}`;historyListCount.textContent=`Showing ${visibleR.length} of ${resolved.length}`;if(!queueBody.children.length)showMessage(queueBody,'No tickets match this filter.');if(!historyBody.children.length)showMessage(historyBody,'No resolved tickets match this filter.');$('side-ticket-count').textContent=String(active.length)}
+  function renderUsers(container,users,active){container.replaceChildren();if(!users.length)return showMessage(container,active?'No active subscribers found.':'No inactive accounts recorded.');for(const user of users){const row=document.createElement('div');row.className='subscriber-row';row.appendChild(makeCell('client-name',user.fullName||'N/A'));row.appendChild(makeCell('',user.email||'—'));row.appendChild(makeCell('',user.phone||'—'));row.appendChild(makeCell('',user.subscriptionTier||'None'));const expiry=user.subscriptionExpiresAt?new Date(user.subscriptionExpiresAt).toLocaleDateString():'—';row.appendChild(makeCell(active?'badge-active':'badge-expired',`${user.subscriptionStatus||'Inactive'}${active?` · until ${expiry}`:''}`));if(active){row.classList.add('has-actions');const cell=document.createElement('div');cell.className='cell';const btn=document.createElement('button');btn.type='button';btn.className='action-btn btn-reopen reset-plan-btn';btn.dataset.userId=user._id;btn.textContent='Reset Test Plan';btn.setAttribute('aria-label',`Reset test plan for ${user.fullName||user.email}`);cell.appendChild(btn);row.appendChild(cell)}container.appendChild(row)}}
+  activeSubBody.addEventListener('click',async e=>{const btn=e.target.closest('.reset-plan-btn');if(!btn)return;if(!window.confirm('Reset this account to None (Unpaid) / Inactive? This will not delete payment history.'))return;btn.disabled=true;try{const response=await fetch('/api/admin/subscriptions/reset',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({userId:btn.dataset.userId})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.message||'Could not reset plan.');announce('Account plan reset. Payment history was kept.');await loadAdminData()}catch(err){announce(err.message||'Could not reset plan.');btn.disabled=false}});
+  async function updateTicketStatus(ticketId,newStatus,button,extra={}){button.disabled=true;try{const response=await fetch('/api/tickets/update-status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ticketId,newStatus,...extra})});const result=await response.json();if(!response.ok||!result.success)throw new Error(result.message||'Ticket update failed.');announce(`Ticket marked ${newStatus.toLowerCase()}.`);await loadAdminData()}catch(err){announce(err.message||'Ticket update failed.');button.disabled=false}}
+  async function loadAdminData(){try{const[tr,or]=await Promise.all([fetch('/api/tickets',{headers:{Accept:'application/json'}}),fetch('/api/admin/overview-data',{headers:{Accept:'application/json'}})]);if(tr.redirected||or.redirected)return window.location.assign('/client/login');if(!tr.ok||!or.ok)throw new Error('Could not load admin data. Please sign in again or refresh.');tickets=await tr.json();if(!Array.isArray(tickets))tickets=[];renderAdvancedOverview();const overview=await or.json();subscribers=overview.activeSubscribers||[];inactiveUsers=overview.inactiveUsers||[];const stats=overview.stats||{};$('stat-active-tickets').textContent=stats.activeTickets??0;$('stat-active-subs').textContent=stats.activeSubscribers??subscribers.length;$('stat-inactive-subs').textContent=stats.inactiveUsers??inactiveUsers.length;$('stat-total-revenue').textContent=new Intl.NumberFormat('en-ZA',{style:'currency',currency:'ZAR'}).format(stats.confirmedPlanRevenue||0);renderTickets();renderUsers(activeSubBody,subscribers,true);renderUsers(inactiveSubBody,inactiveUsers,false);loadCustomerReviews()}catch(err){showMessage(queueBody,err.message||'Could not load tickets.',true);showMessage(activeSubBody,'Could not load subscribers.',true);showMessage(inactiveSubBody,'Could not load accounts.',true);showMessage(historyBody,'Could not load ticket history.',true)}}
+  async function loadCustomerReviews(){try{const response=await fetch('/api/admin/reviews',{headers:{Accept:'application/json'}});if(!response.ok)throw new Error('Could not load customer feedback.');const reviews=await response.json();reviewsBody.replaceChildren();if(!reviews.length)return showMessage(reviewsBody,'No feedback has been submitted yet.');for(const review of reviews){const card=document.createElement('article');card.className='review-item';const content=document.createElement('div');const heading=document.createElement('h3');heading.textContent=`${review.name||'Customer'} · ${'★'.repeat(Number(review.rating)||0)}${'☆'.repeat(5-(Number(review.rating)||0))}`;content.appendChild(heading);const meta=document.createElement('p');meta.textContent=`${review.email||'No email'} · ${review.date?new Date(review.date).toLocaleDateString():'Date unavailable'} · ${review.status||'Pending'}`;content.appendChild(meta);const message=document.createElement('p');message.textContent=review.message||'';content.appendChild(message);const actions=document.createElement('div');actions.className='review-actions';for(const[status,label]of(review.status==='Published'?[['Hidden','Hide from home']]:[['Published','Approve and publish'],['Hidden','Hide']])){const btn=document.createElement('button');btn.type='button';btn.className=`action-btn ${status==='Published'?'btn-resolve':'btn-hold'}`;btn.textContent=label;btn.addEventListener('click',async()=>{btn.disabled=true;try{const update=await fetch('/api/admin/reviews/update-status',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reviewId:review._id,status})});const result=await update.json();if(!update.ok||!result.success)throw new Error(result.message||'Could not update review.');announce(status==='Published'?'Review published on the home page.':'Review hidden.');loadCustomerReviews()}catch(err){announce(err.message);btn.disabled=false}});actions.appendChild(btn)}card.append(content,actions);reviewsBody.appendChild(card)}}catch(err){showMessage(reviewsBody,err.message||'Could not load customer feedback.',true)}}
+  searchInput.addEventListener('input',renderTickets);statusFilter.addEventListener('change',renderTickets);dateFilter.addEventListener('change',renderTickets);ticketPageSize.addEventListener('change',renderTickets);historyPageSize.addEventListener('change',renderTickets);$('refresh-button').addEventListener('click',loadAdminData);
   const notificationList=$('notification-list'),notificationCount=$('notification-count'),permissionButton=$('notification-permission'),toggle=$('notification-toggle'),panel=$('notification-panel'),widget=$('notification-widget'),close=$('notification-close');
-
   function closePanel(){panel.hidden=true;toggle.setAttribute('aria-expanded','false')}
-  toggle.addEventListener('click',()=>{const opening=panel.hidden;panel.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));if(opening)loadNotifications()});
-  close.addEventListener('click',closePanel);
-  document.addEventListener('click',e=>{if(!widget.contains(e.target))closePanel()});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanel()});
-
+  toggle.addEventListener('click',()=>{const opening=panel.hidden;panel.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));if(opening)loadNotifications()});close.addEventListener('click',closePanel);document.addEventListener('click',e=>{if(!widget.contains(e.target))closePanel()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanel()});
   function formatDate(value){const date=new Date(value);return Number.isNaN(date.getTime())?'':date.toLocaleString()}
-
-  async function loadNotifications(){
-    try{
-      const response=await fetch('/api/notifications',{headers:{Accept:'application/json'}});
-      if(response.redirected||response.status===401)return window.location.assign('/client/login');
-      if(!response.ok)throw new Error('Could not load notifications.');
-      const result=await response.json();
-      const items=Array.isArray(result.notifications)?result.notifications:[];
-      const unread=items.filter(item=>!item.read);
-      notificationCount.textContent=String(unread.length);
-      toggle.setAttribute('aria-label',`${unread.length} unread notifications`);
-      notificationList.replaceChildren();
-      if(!items.length){
-        const empty=document.createElement('div');empty.className='notification-empty';
-        empty.textContent='You’re all caught up. New tickets and customer messages will appear here.';
-        notificationList.appendChild(empty)
-      }
-      for(const item of items){
-        if(!firstNotificationLoad&&!knownNotificationIds.has(item.id)&&!item.read&&'Notification'in window&&Notification.permission==='granted'){
-          new Notification(item.title,{body:`${item.actorName}: ${item.body}`,tag:item.id})
-        }
-        knownNotificationIds.add(item.id);
-        const btn=document.createElement('button');btn.type='button';
-        btn.className=`notification-item${item.read?'':' unread'}`;
-        btn.dataset.notificationId=item.id;btn.dataset.ticketId=item.ticketId;
-        const title=document.createElement('strong');title.textContent=item.title;
-        const body=document.createElement('span');body.textContent=`${item.actorName}: ${item.body}`;
-        const time=document.createElement('time');time.dateTime=item.createdAt;time.textContent=formatDate(item.createdAt);
-        btn.append(title,body,time);notificationList.appendChild(btn)
-      }
-      firstNotificationLoad=false
-    }catch(err){
-      notificationList.replaceChildren();const msg=document.createElement('div');
-      msg.className='notification-empty';msg.textContent=err.message;notificationList.appendChild(msg)
-    }
-  }
-
-  notificationList.addEventListener('click',async e=>{
-    const btn=e.target.closest('[data-notification-id]');if(!btn)return;
-    await fetch(`/api/notifications/${encodeURIComponent(btn.dataset.notificationId)}/read`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
-    await loadNotifications();closePanel();
-    $('tickets-section').scrollIntoView({behavior:'smooth',block:'start'});loadAdminData()
-  });
-
-  permissionButton.addEventListener('click',async()=>{
-    if(!('Notification'in window)){announce('This browser does not support desktop notifications.');return}
-    const permission=await Notification.requestPermission();
-    permissionButton.textContent=permission==='granted'?'Alerts Enabled':'Enable alerts';
-    announce(permission==='granted'?'Desktop alerts are enabled while this page is open.':'Notification permission was not granted.')
-  });
-  if('Notification'in window&&Notification.permission==='granted')permissionButton.textContent='Alerts Enabled';
-
-  document.querySelectorAll('.side-nav a').forEach(link=>link.addEventListener('click',()=>{
-    document.querySelectorAll('.side-nav a').forEach(a=>a.classList.remove('active'));link.classList.add('active')
-  }));
-
-  loadNotifications();setInterval(loadNotifications,20000);
-  loadAdminData();setInterval(loadAdminData,30000);
+  async function loadNotifications(){try{const response=await fetch('/api/notifications',{headers:{Accept:'application/json'}});if(response.redirected||response.status===401)return window.location.assign('/client/login');if(!response.ok)throw new Error('Could not load notifications.');const result=await response.json(),items=Array.isArray(result.notifications)?result.notifications:[],unread=items.filter(item=>!item.read);notificationCount.textContent=String(unread.length);toggle.setAttribute('aria-label',`${unread.length} unread notifications`);notificationList.replaceChildren();if(!items.length){const empty=document.createElement('div');empty.className='notification-empty';empty.textContent='You’re all caught up. New tickets and customer messages will appear here.';notificationList.appendChild(empty)}for(const item of items){if(!firstNotificationLoad&&!knownNotificationIds.has(item.id)&&!item.read&&'Notification'in window&&Notification.permission==='granted')new Notification(item.title,{body:`${item.actorName}: ${item.body}`,tag:item.id});knownNotificationIds.add(item.id);const btn=document.createElement('button');btn.type='button';btn.className=`notification-item${item.read?'':' unread'}`;btn.dataset.notificationId=item.id;btn.dataset.ticketId=item.ticketId;const title=document.createElement('strong');title.textContent=item.title;const body=document.createElement('span');body.textContent=`${item.actorName}: ${item.body}`;const time=document.createElement('time');time.dateTime=item.createdAt;time.textContent=formatDate(item.createdAt);btn.append(title,body,time);notificationList.appendChild(btn)}firstNotificationLoad=false}catch(err){notificationList.replaceChildren();const msg=document.createElement('div');msg.className='notification-empty';msg.textContent=err.message;notificationList.appendChild(msg)}}
+  notificationList.addEventListener('click',async e=>{const btn=e.target.closest('[data-notification-id]');if(!btn)return;await fetch(`/api/notifications/${encodeURIComponent(btn.dataset.notificationId)}/read`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});await loadNotifications();closePanel();$('tickets-section').scrollIntoView({behavior:'smooth',block:'start'});loadAdminData()});
+  permissionButton.addEventListener('click',async()=>{if(!('Notification'in window)){announce('This browser does not support desktop notifications.');return}const permission=await Notification.requestPermission();permissionButton.textContent=permission==='granted'?'Alerts Enabled':'Enable alerts';announce(permission==='granted'?'Desktop alerts are enabled while this page is open.':'Notification permission was not granted.')});if('Notification'in window&&Notification.permission==='granted')permissionButton.textContent='Alerts Enabled';
+  document.querySelectorAll('.side-nav a').forEach(link=>link.addEventListener('click',()=>{document.querySelectorAll('.side-nav a').forEach(a=>a.classList.remove('active'));link.classList.add('active')}));
+  loadNotifications();setInterval(loadNotifications,20000);loadAdminData();setInterval(loadAdminData,30000);
 })();
 </script>
 </body>
