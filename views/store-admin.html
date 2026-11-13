@@ -105,13 +105,27 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .import-table th,.import-table td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}
 .import-table th{background:#f3f4f6;color:#656c77;font-size:10px;text-transform:uppercase}
 .import-table td{color:#333}
-.category-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.department-browser{display:grid;gap:21px}
+.department-group{padding:16px;border:1px solid var(--line);border-radius:13px;background:#fbfbfc}
+.department-group-title{display:flex;align-items:center;gap:9px;margin:0 0 12px}
+.department-group-title>span:first-child{display:grid;place-items:center;width:31px;height:31px;border-radius:9px;background:#fff0f0;font-size:16px}
+.department-group-title h3{margin:0;font-size:13px;font-weight:850}
+.department-count{margin-left:auto;color:#9aa0a9;font-size:10px;font-weight:700}
+.department-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.department-card{display:flex;align-items:center;gap:10px;min-width:0;min-height:70px;padding:11px;border:1px solid #e8e9ed;border-radius:10px;background:#fff;text-align:left;transition:.16s}
+.department-card:hover{border-color:#e00000;background:#fffafa;transform:translateY(-1px);box-shadow:0 5px 14px #00000008}
+.department-icon{flex:none;display:grid;place-items:center;width:37px;height:37px;border-radius:9px;background:#f5f6f8;font-size:19px}
+.department-copy{display:flex;flex-direction:column;gap:3px;min-width:0}
+.department-copy strong{font-size:10px;font-weight:850;color:#252a32}
+.department-copy small{font-size:9px;color:#9298a1;line-height:1.35}
+.department-arrow{margin-left:auto;color:#c1c5cc;font-size:16px}
+
 .category-chip{min-width:0;padding:10px 11px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;color:#4c535d;text-align:left;font-size:10px;font-weight:750;transition:.15s}
 .category-chip:hover{border-color:#e00000;background:#fff6f6;color:#b00000}
 .category-chip:focus-visible{outline:3px solid #e0000028}
-@media(max-width:1050px){.category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:720px){.import-grid{grid-template-columns:1fr}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:420px){.category-grid{grid-template-columns:1fr 1fr}.import-card{padding:14px}.import-actions .btn{flex:1}}
+@media(max-width:1050px){.department-cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:720px){.import-grid{grid-template-columns:1fr}.department-cards{grid-template-columns:1fr}}
+@media(max-width:420px){.import-card{padding:14px}.import-actions .btn{flex:1}.department-group{padding:11px}}
 
 </style></head><body><div class="app">
 <aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
@@ -148,7 +162,79 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 </section>
 <section class="panel category-panel" id="categories">
   <div class="panelhead"><div><h2>Shop categories</h2><p class="sub">Choose a category to start adding products in that department. Categories are stored on products and appear in the catalogue.</p></div><span class="eyebrow">PRODUCT DEPARTMENTS</span></div>
-  <div class="category-grid"><button type="button" class="category-chip" data-category="Computers & Laptops">Computers & Laptops</button><button type="button" class="category-chip" data-category="Gaming PCs">Gaming PCs</button><button type="button" class="category-chip" data-category="Gaming Laptops">Gaming Laptops</button><button type="button" class="category-chip" data-category="Gaming Components">Gaming Components</button><button type="button" class="category-chip" data-category="Graphics Cards">Graphics Cards</button><button type="button" class="category-chip" data-category="Processors (CPU)">Processors (CPU)</button><button type="button" class="category-chip" data-category="Motherboards">Motherboards</button><button type="button" class="category-chip" data-category="RAM & Memory">RAM & Memory</button><button type="button" class="category-chip" data-category="SSD & NVMe Storage">SSD & NVMe Storage</button><button type="button" class="category-chip" data-category="Hard Drives (HDD)">Hard Drives (HDD)</button><button type="button" class="category-chip" data-category="External Storage">External Storage</button><button type="button" class="category-chip" data-category="PC Cases">PC Cases</button><button type="button" class="category-chip" data-category="Power Supplies (PSU)">Power Supplies (PSU)</button><button type="button" class="category-chip" data-category="CPU Cooling & Fans">CPU Cooling & Fans</button><button type="button" class="category-chip" data-category="Monitors & Displays">Monitors & Displays</button><button type="button" class="category-chip" data-category="Gaming Monitors">Gaming Monitors</button><button type="button" class="category-chip" data-category="Keyboards">Keyboards</button><button type="button" class="category-chip" data-category="Gaming Keyboards">Gaming Keyboards</button><button type="button" class="category-chip" data-category="Mice & Gaming Mice">Mice & Gaming Mice</button><button type="button" class="category-chip" data-category="Headsets & Audio">Headsets & Audio</button><button type="button" class="category-chip" data-category="Controllers & Gamepads">Controllers & Gamepads</button><button type="button" class="category-chip" data-category="Webcams & Streaming">Webcams & Streaming</button><button type="button" class="category-chip" data-category="Networking & Wi-Fi">Networking & Wi-Fi</button><button type="button" class="category-chip" data-category="Routers & Mesh Wi-Fi">Routers & Mesh Wi-Fi</button><button type="button" class="category-chip" data-category="Network Switches">Network Switches</button><button type="button" class="category-chip" data-category="Cables & Adapters">Cables & Adapters</button><button type="button" class="category-chip" data-category="Docks & Hubs">Docks & Hubs</button><button type="button" class="category-chip" data-category="Printers & Scanners">Printers & Scanners</button><button type="button" class="category-chip" data-category="Printer Ink & Toner">Printer Ink & Toner</button><button type="button" class="category-chip" data-category="Software & Security">Software & Security</button><button type="button" class="category-chip" data-category="Operating Systems">Operating Systems</button><button type="button" class="category-chip" data-category="Office Accessories">Office Accessories</button><button type="button" class="category-chip" data-category="UPS & Power Protection">UPS & Power Protection</button><button type="button" class="category-chip" data-category="Refurbished Computers">Refurbished Computers</button><button type="button" class="category-chip" data-category="Special Offers">Special Offers</button><button type="button" class="category-chip" data-category="Other Accessories">Other Accessories</button></div>
+  <div class="department-browser"><section class="department-group"><div class="department-group-title"><span>💻</span><h3>Computers & systems</h3><span class="department-count">4 departments</span></div><div class="department-cards"><button type="button" class="department-card" data-category="Computers & Laptops">
+          <span class="department-icon">💻</span><span class="department-copy"><strong>Computers & Laptops</strong><small>Ready-to-work systems and everyday computing</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Gaming PCs">
+          <span class="department-icon">🖥️</span><span class="department-copy"><strong>Gaming PCs</strong><small>High-performance desktop gaming systems</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Gaming Laptops">
+          <span class="department-icon">🎮</span><span class="department-copy"><strong>Gaming Laptops</strong><small>Portable power for gaming and creation</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Refurbished Computers">
+          <span class="department-icon">♻️</span><span class="department-copy"><strong>Refurbished Computers</strong><small>Value-focused refurbished devices</small></span><span class="department-arrow">→</span>
+        </button></div></section><section class="department-group"><div class="department-group-title"><span>⚙️</span><h3>PC components</h3><span class="department-count">11 departments</span></div><div class="department-cards"><button type="button" class="department-card" data-category="Gaming Components">
+          <span class="department-icon">⚙️</span><span class="department-copy"><strong>Gaming Components</strong><small>Build or upgrade your own PC</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Graphics Cards">
+          <span class="department-icon">🎨</span><span class="department-copy"><strong>Graphics Cards</strong><small>GPUs for gaming, design and rendering</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Processors (CPU)">
+          <span class="department-icon">🧠</span><span class="department-copy"><strong>Processors (CPU)</strong><small>The brains behind your computer</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Motherboards">
+          <span class="department-icon">▦</span><span class="department-copy"><strong>Motherboards</strong><small>Core boards and platform upgrades</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="RAM & Memory">
+          <span class="department-icon">▤</span><span class="department-copy"><strong>RAM & Memory</strong><small>Faster multitasking and system memory</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="SSD & NVMe Storage">
+          <span class="department-icon">💾</span><span class="department-copy"><strong>SSD & NVMe Storage</strong><small>Fast storage and boot drives</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Hard Drives (HDD)">
+          <span class="department-icon">🗄️</span><span class="department-copy"><strong>Hard Drives (HDD)</strong><small>High-capacity storage solutions</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="External Storage">
+          <span class="department-icon">📀</span><span class="department-copy"><strong>External Storage</strong><small>Portable drives and backup storage</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="PC Cases">
+          <span class="department-icon">🧰</span><span class="department-copy"><strong>PC Cases</strong><small>Cases, airflow and build accessories</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Power Supplies (PSU)">
+          <span class="department-icon">🔌</span><span class="department-copy"><strong>Power Supplies (PSU)</strong><small>Reliable power for every build</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="CPU Cooling & Fans">
+          <span class="department-icon">❄️</span><span class="department-copy"><strong>CPU Cooling & Fans</strong><small>Keep your system cool and quiet</small></span><span class="department-arrow">→</span>
+        </button></div></section><section class="department-group"><div class="department-group-title"><span>🎮</span><h3>Gaming & peripherals</h3><span class="department-count">8 departments</span></div><div class="department-cards"><button type="button" class="department-card" data-category="Monitors & Displays">
+          <span class="department-icon">🖥️</span><span class="department-copy"><strong>Monitors & Displays</strong><small>Screens for work and entertainment</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Gaming Monitors">
+          <span class="department-icon">🎯</span><span class="department-copy"><strong>Gaming Monitors</strong><small>High refresh-rate gaming displays</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Keyboards">
+          <span class="department-icon">⌨️</span><span class="department-copy"><strong>Keyboards</strong><small>Everyday and productivity keyboards</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Gaming Keyboards">
+          <span class="department-icon">⌨️</span><span class="department-copy"><strong>Gaming Keyboards</strong><small>Mechanical and performance keyboards</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Mice & Gaming Mice">
+          <span class="department-icon">🖱️</span><span class="department-copy"><strong>Mice & Gaming Mice</strong><small>Precision pointing and gaming control</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Headsets & Audio">
+          <span class="department-icon">🎧</span><span class="department-copy"><strong>Headsets & Audio</strong><small>Headsets, speakers and sound</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Controllers & Gamepads">
+          <span class="department-icon">🎮</span><span class="department-copy"><strong>Controllers & Gamepads</strong><small>Game controllers and accessories</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Webcams & Streaming">
+          <span class="department-icon">📷</span><span class="department-copy"><strong>Webcams & Streaming</strong><small>Cameras, capture and streaming gear</small></span><span class="department-arrow">→</span>
+        </button></div></section><section class="department-group"><div class="department-group-title"><span>📡</span><h3>Networking & office</h3><span class="department-count">11 departments</span></div><div class="department-cards"><button type="button" class="department-card" data-category="Networking & Wi-Fi">
+          <span class="department-icon">📶</span><span class="department-copy"><strong>Networking & Wi-Fi</strong><small>Connect devices and improve coverage</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Routers & Mesh Wi-Fi">
+          <span class="department-icon">📡</span><span class="department-copy"><strong>Routers & Mesh Wi-Fi</strong><small>Routers and whole-home wireless</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Network Switches">
+          <span class="department-icon">🔀</span><span class="department-copy"><strong>Network Switches</strong><small>Expand wired network connections</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Cables & Adapters">
+          <span class="department-icon">🔗</span><span class="department-copy"><strong>Cables & Adapters</strong><small>Connectors for every setup</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Docks & Hubs">
+          <span class="department-icon">🔌</span><span class="department-copy"><strong>Docks & Hubs</strong><small>Expand ports and workstation setups</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Printers & Scanners">
+          <span class="department-icon">🖨️</span><span class="department-copy"><strong>Printers & Scanners</strong><small>Printing and document equipment</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Printer Ink & Toner">
+          <span class="department-icon">🖋️</span><span class="department-copy"><strong>Printer Ink & Toner</strong><small>Ink, toner and printer supplies</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Software & Security">
+          <span class="department-icon">🛡️</span><span class="department-copy"><strong>Software & Security</strong><small>Productivity, protection and utilities</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Operating Systems">
+          <span class="department-icon">💿</span><span class="department-copy"><strong>Operating Systems</strong><small>Operating systems and licences</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Office Accessories">
+          <span class="department-icon">🗂️</span><span class="department-copy"><strong>Office Accessories</strong><small>Useful tools for your workspace</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="UPS & Power Protection">
+          <span class="department-icon">🔋</span><span class="department-copy"><strong>UPS & Power Protection</strong><small>Backup power and surge protection</small></span><span class="department-arrow">→</span>
+        </button></div></section><section class="department-group"><div class="department-group-title"><span>🏷️</span><h3>Deals & more</h3><span class="department-count">2 departments</span></div><div class="department-cards"><button type="button" class="department-card" data-category="Special Offers">
+          <span class="department-icon">🏷️</span><span class="department-copy"><strong>Special Offers</strong><small>Limited deals and featured savings</small></span><span class="department-arrow">→</span>
+        </button><button type="button" class="department-card" data-category="Other Accessories">
+          <span class="department-icon">🧩</span><span class="department-copy"><strong>Other Accessories</strong><small>More useful tech essentials</small></span><span class="department-arrow">→</span>
+        </button></div></section></div>
 </section>
 
 <div class="workspace"><section class="panel" id="editor"><div class="panelhead"><div><h2 id="formTitle">Add new product</h2><p class="sub">Product details, image, pricing and availability</p></div><span class="eyebrow">PRODUCT EDITOR</span></div>
@@ -272,7 +358,7 @@ $('exportProducts').onclick=()=>{
  const csv=[headers,...products.map(p=>headers.map(k=>k==='featured'?String(!!p[k]):(p[k]??'')))].map(row=>row.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='it-elements-products-export.csv';a.click();URL.revokeObjectURL(a.href);
 };
-document.querySelectorAll('.category-chip').forEach(btn=>btn.addEventListener('click',()=>{
+document.querySelectorAll('.department-card').forEach(btn=>btn.addEventListener('click',()=>{
  $('category').value=btn.dataset.category;$('editor').scrollIntoView({behavior:'smooth'});$('name').focus();
 }));
 
