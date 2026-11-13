@@ -41,6 +41,26 @@ a{color:inherit;text-decoration:none}header{height:76px;border-bottom:1px solid 
 @media(max-width:760px){.filter-row{grid-template-columns:repeat(2,minmax(0,1fr))}.shop-filters{padding:13px}}
 @media(max-width:430px){.search-row{flex-direction:column}.searchbox{width:100%}.filter-reset{height:38px}.filter-row{gap:8px}.filter-field select{font-size:10px}}
 
+
+.product-modal{display:none;position:fixed;inset:0;z-index:1200;align-items:center;justify-content:center;padding:20px}
+.product-modal.open{display:flex}
+.product-modal-backdrop{position:absolute;inset:0;background:#101114b8;backdrop-filter:blur(3px)}
+.product-modal-panel{position:relative;z-index:1;width:min(900px,100%);max-height:90vh;overflow:auto;border-radius:17px;background:#fff;box-shadow:0 25px 80px #0005}
+.product-modal-close{position:sticky;top:10px;float:right;margin:10px 10px -48px 0;z-index:3;width:38px;height:38px;border:0;border-radius:50%;background:#f1f2f4;font-size:24px}
+.product-modal-content{display:grid;grid-template-columns:1fr 1fr;gap:26px;padding:28px}
+.product-detail-image{display:grid;place-items:center;min-height:320px;border:1px solid #eceef1;border-radius:12px;background:#fafafa}
+.product-detail-image img{width:100%;height:100%;max-height:420px;object-fit:contain}
+.product-detail-copy{padding:15px 4px}
+.product-detail-copy .category{color:#e00000;font-size:11px;font-weight:900;text-transform:uppercase}
+.product-detail-copy h2{margin:9px 0 12px;font-size:25px;line-height:1.25}
+.product-detail-copy p{color:#686e78;font-size:13px;line-height:1.7;white-space:pre-line}
+.product-detail-price{margin:17px 0;font-size:27px;font-weight:900}
+.product-detail-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.product-detail-actions button{min-height:43px;padding:0 16px;border:0;border-radius:8px;background:#e00000;color:#fff;font-size:12px;font-weight:850}
+.product-detail-actions .secondary{background:#22252b}
+.card{cursor:pointer}.card button{cursor:pointer}
+@media(max-width:680px){.product-modal-content{grid-template-columns:1fr;gap:12px;padding:17px}.product-detail-image{min-height:220px}.product-detail-copy{padding:0}.product-detail-copy h2{font-size:21px}}
+
 </style></head><body>
 <header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Shop carefully selected computer hardware, storage, networking equipment and everyday IT essentials.</p></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
@@ -58,6 +78,15 @@ a{color:inherit;text-decoration:none}header{height:76px;border-bottom:1px solid 
 <section class="products" id="products"><div class="empty">Loading products...</div></section></main>
 <footer class="foot"><div>© <span id="year"></span> IT Elements. Your Technology, Our Support.</div><div>Need help choosing? <a style="color:#ff5555" href="https://wa.me/27606181229">Chat to our team on WhatsApp</a></div></footer>
 <div class="drawer" id="drawer"><aside class="cartpanel"><div class="carthead"><h2>Your cart</h2><button class="x" id="closeCart">✕</button></div><div id="cartItems"></div><div class="total"><span>Total</span><span id="cartTotal">R 0.00</span></div><button class="checkout" id="checkout">Order via WhatsApp</button><p class="muted" style="font-size:12px">Your order request will be sent to IT Elements on WhatsApp. Payment and delivery will be confirmed by our team.</p></aside></div>
+
+<div class="product-modal" id="productModal" aria-hidden="true">
+ <div class="product-modal-backdrop" data-close-product></div>
+ <section class="product-modal-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
+  <button class="product-modal-close" type="button" data-close-product aria-label="Close product details">×</button>
+  <div class="product-modal-content" id="productModalContent"></div>
+ </section>
+</div>
+
 <script>
 const $=id=>document.getElementById(id);let products=[],cart=[];
 const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -86,10 +115,26 @@ function render(){
  if(sort==='featured')list.sort((a,b)=>Number(!!b.featured)-Number(!!a.featured));
  if(sort==='newest')list.sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
  $('resultCount').textContent=`${list.length} product${list.length===1?'':'s'} found`;
- $('products').innerHTML=list.length?list.map(p=>`<article class="card"><div class="photo">${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" loading="lazy">`:'💻'}</div><div class="cardbody"><div class="category">${esc(p.category)}</div><h3>${esc(p.name)}</h3><p class="desc">${esc(p.description||'Contact us for more product information.')}</p><div><span class="price">${money(p.price)}</span>${p.compareAtPrice>p.price?`<span class="old">${money(p.compareAtPrice)}</span>`:''}</div><div class="stock">${p.stock>0?`${p.stock} available`:'Contact us to confirm availability'}</div><button class="add" onclick="addToCart('${p._id}')" ${p.stock<=0?'disabled':''}>${p.stock>0?'Add to cart':'Check availability'}</button></div></article>`).join(''):'<div class="empty">No products match those filters. Try another department or clear your search.</div>';
+ $('products').innerHTML=list.length?list.map(p=>`<article class="card" role="button" tabindex="0" onclick="showProduct('${p._id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showProduct('${p._id}')}"><div class="photo">${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" loading="lazy">`:'💻'}</div><div class="cardbody"><div class="category">${esc(p.category)}</div><h3>${esc(p.name)}</h3><p class="desc">${esc(p.description||'Contact us for more product information.')}</p><div><span class="price">${money(p.price)}</span>${p.compareAtPrice>p.price?`<span class="old">${money(p.compareAtPrice)}</span>`:''}</div><div class="stock">${p.stock>0?`${p.stock} available`:'Contact us to confirm availability'}</div><button class="add" onclick="event.stopPropagation();addToCart('${p._id}')" ${p.stock<=0?'disabled':''}>${p.stock>0?'Add to cart':'Check availability'}</button><button class="add secondary" style="margin-top:7px;background:#26282d" onclick="event.stopPropagation();showProduct('${p._id}')">View product</button></div></article>`).join(''):'<div class="empty">No products match those filters. Try another department or clear your search.</div>';
  document.querySelectorAll('.department-chip').forEach(b=>b.classList.toggle('active',b.dataset.category===cat));
 }
 function addToCart(id){const p=products.find(x=>x._id===id);if(!p)return;const item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1});renderCart();}
+
+window.showProduct=id=>{
+ const p=products.find(x=>x._id===id);if(!p)return;
+ const image=p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}">`:'<span style="font-size:80px">💻</span>';
+ $('productModalContent').innerHTML=`<div class="product-detail-image">${image}</div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><p>${esc(p.description||'Contact IT Elements for full specifications and compatibility information.')}</p><p><b>SKU:</b> ${esc(p.sku||'Available on request')}<br><b>Availability:</b> ${Number(p.stock)>0?`${Number(p.stock)} in stock`:'Contact us to confirm availability'}</p><div class="product-detail-actions"><button type="button" onclick="addToCart('${p._id}');closeProduct()">Add to cart</button><button type="button" class="secondary" onclick="orderProduct('${p._id}')">Order / enquire on WhatsApp</button></div></div>`;
+ $('productModal').classList.add('open');$('productModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+};
+window.closeProduct=()=>{$('productModal').classList.remove('open');$('productModal').setAttribute('aria-hidden','true');document.body.style.overflow='';};
+window.orderProduct=id=>{
+ const p=products.find(x=>x._id===id);if(!p)return;
+ const message=`Hello IT Elements, I am interested in: ${p.name}\\nSKU: ${p.sku||'N/A'}\\nListed price: ${money(p.price)}\\nPlease confirm availability, specifications, payment and delivery.`;
+ window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank');
+};
+document.querySelectorAll('[data-close-product]').forEach(x=>x.addEventListener('click',closeProduct));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProduct();});
+
 function renderCart(){$('cartCount').textContent=cart.reduce((n,x)=>n+x.qty,0);$('cartItems').innerHTML=cart.length?cart.map(x=>{const p=products.find(z=>z._id===x.id);return p?`<div class="cartline"><div><strong>${esc(p.name)}</strong><div class="muted">${money(p.price)} each</div><div class="qty"><button onclick="changeQty('${p._id}',-1)">−</button>${x.qty}<button onclick="changeQty('${p._id}',1)">+</button></div></div><strong>${money(p.price*x.qty)}</strong></div>`:''}).join(''):'<p class="muted">Your cart is empty.</p>';$('cartTotal').textContent=money(cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0));}
 window.addToCart=addToCart;window.changeQty=(id,d)=>{const x=cart.find(z=>z.id===id);if(x){x.qty+=d;if(x.qty<=0)cart=cart.filter(z=>z.id!==id);}renderCart();};
 $('openCart').onclick=()=>$('drawer').classList.add('open');$('closeCart').onclick=()=>$('drawer').classList.remove('open');$('drawer').onclick=e=>{if(e.target===$('drawer'))$('drawer').classList.remove('open')};
