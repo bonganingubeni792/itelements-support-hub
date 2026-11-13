@@ -1,4 +1,5 @@
 
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -800,6 +801,78 @@ textarea.form-control,
   .portal-label{font-size:9px}
   .header-actions a{font-size:10px}
 }
+
+/* Customer dashboard: clear Support and Store workspaces */
+.client-workspaces{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+  margin:0 0 30px;
+}
+.client-workspace{
+  min-width:0;
+  min-height:190px;
+  display:flex;
+  align-items:flex-start;
+  gap:17px;
+  padding:23px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#fff;
+  color:var(--text);
+  text-decoration:none;
+  box-shadow:0 5px 18px rgba(20,20,30,.045);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.client-workspace:hover{
+  transform:translateY(-2px);
+  border-color:#e7b4b4;
+  box-shadow:0 12px 28px rgba(20,20,30,.085);
+}
+.support-workspace{border-top:4px solid var(--red)}
+.store-workspace{border-top:4px solid #292929}
+.client-workspace-icon{
+  flex:none;
+  width:51px;height:51px;
+  display:grid;place-items:center;
+  border-radius:13px;
+  background:#fff0f0;
+  color:var(--red);
+  font-size:27px;font-weight:900;
+}
+.store-workspace .client-workspace-icon{background:#f1f2f4;color:#252932}
+.client-workspace-copy{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.client-workspace-kicker{
+  margin:1px 0 6px;
+  color:var(--red);
+  font-size:9px;font-weight:900;letter-spacing:1px;
+}
+.store-workspace .client-workspace-kicker{color:#626873}
+.client-workspace-copy>strong{
+  color:#171717;font-size:20px;font-weight:850;line-height:1.25;
+}
+.client-workspace-copy>span:nth-of-type(2){
+  margin-top:8px;color:#62626b;font-size:12px;line-height:1.65;
+}
+.client-workspace-action{
+  display:inline-flex;align-items:center;gap:9px;
+  margin-top:16px;padding:9px 13px;
+  border-radius:7px;background:var(--red);color:#fff;
+  font-size:11px;font-weight:850;
+}
+.store-workspace .client-workspace-action{background:#202127}
+.client-workspace-action b{font-size:16px;line-height:10px}
+.client-workspace:focus-visible{outline:3px solid #e0000033;outline-offset:3px}
+@media(max-width:760px){
+  .client-workspaces{grid-template-columns:1fr;gap:12px;margin-bottom:24px}
+  .client-workspace{min-height:0;padding:19px}
+}
+@media(max-width:420px){
+  .client-workspace{gap:12px;padding:16px}
+  .client-workspace-icon{width:42px;height:42px;font-size:23px}
+  .client-workspace-copy>strong{font-size:18px}
+}
+
 </style>
 
 <link rel="stylesheet" href="/assets/responsive.css?v=1">
@@ -825,7 +898,8 @@ textarea.form-control,
     <a href="/pricing">Plans</a>
     <a href="/faq">FAQ</a>
     <a href="/contact">Contact</a>
-    <a href="#ticket-request">Request help</a>
+    <a href="/store">Visit Store</a>
+     <a href="#ticket-request">Request help</a>
     <a href="/client/logout" class="logout-link">Log out</a>
   </nav>
 </header>
@@ -852,6 +926,28 @@ textarea.form-control,
 
 <h2 class="welcome" id="welcome-title">Welcome to your support portal</h2>
 <p class="welcome-subtitle">Manage your plan, submit a support request, and follow your ticket progress here.</p>
+
+<section class="client-workspaces" aria-label="Choose what you want to do">
+  <a class="client-workspace support-workspace" href="#ticket-request">
+    <span class="client-workspace-icon" aria-hidden="true">⌁</span>
+    <span class="client-workspace-copy">
+      <span class="client-workspace-kicker">IT ELEMENTS CUSTOMER SERVICES</span>
+      <strong>Online Support</strong>
+      <span>Submit a support ticket, request remote assistance, arrange an on-site visit and follow your existing requests.</span>
+      <span class="client-workspace-action">Go to Online Support <b aria-hidden="true">→</b></span>
+    </span>
+  </a>
+  <a class="client-workspace store-workspace" href="/store">
+    <span class="client-workspace-icon" aria-hidden="true">▣</span>
+    <span class="client-workspace-copy">
+      <span class="client-workspace-kicker">IT ELEMENTS ONLINE SHOP</span>
+      <strong>Visit Store</strong>
+      <span>Explore computers, laptops, storage, memory, networking equipment, accessories and available special offers.</span>
+      <span class="client-workspace-action">Explore Products <b aria-hidden="true">→</b></span>
+    </span>
+  </a>
+</section>
+
 
 <section class="quick-stats" aria-label="Your support overview">
   <article class="quick-stat">
