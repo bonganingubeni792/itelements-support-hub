@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffffff"><title>Store Manager | IT Elements</title>
+<style>
+:root{--red:#e00000;--dark:#171717;--muted:#707070;--line:#e8e8e8;--bg:#f6f7f9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--dark);font:15px/1.5 Arial,sans-serif}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px 4%;display:flex;align-items:center;justify-content:space-between;gap:15px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:800}.brand img{width:42px;height:42px;object-fit:contain}.brand span{color:var(--red)}
+a{color:var(--red);text-decoration:none;font-weight:700}.wrap{max-width:1250px;margin:30px auto;padding:0 20px}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:22px}.eyebrow{color:var(--red);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:1.5px}
+h1{font-size:clamp(28px,4vw,38px);margin:5px 0}.muted{color:var(--muted)}button{border:0;border-radius:9px;padding:11px 16px;font-weight:800;cursor:pointer;font-size:14px}
+.primary{background:var(--red);color:white}.secondary{background:#f0f0f0;color:#222}.danger{background:#fff0f0;color:#c00}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px}
+.stat,.panel{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}.stat strong{font-size:27px;display:block}.stat span{color:var(--muted);font-size:13px}
+.layout{display:grid;grid-template-columns:minmax(300px,390px) 1fr;gap:18px;align-items:start}.panel h2{font-size:19px;margin:0 0 15px}
+label{display:block;font-weight:700;font-size:13px;margin:12px 0 5px}input,textarea,select{width:100%;border:1px solid #dcdcdc;border-radius:8px;padding:11px 12px;font:inherit;background:#fff}textarea{min-height:90px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.checkrow{display:flex;gap:9px;align-items:center;margin:14px 0}.checkrow input{width:auto}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.notice{padding:11px 13px;border-radius:9px;background:#f2f2f2;margin:12px 0;font-size:13px}.notice.error{background:#fff0f0;color:#a00}.notice.ok{background:#edfff3;color:#176b35}
+.toolbar{display:flex;gap:10px;margin-bottom:13px}.toolbar input{flex:1}.list{display:grid;gap:10px}.product{display:grid;grid-template-columns:76px 1fr auto;gap:13px;align-items:center;border:1px solid var(--line);border-radius:11px;padding:11px}
+.thumb{width:76px;height:76px;background:#f5f5f5;border-radius:8px;display:grid;place-items:center;overflow:hidden;color:#aaa;font-size:12px}.thumb img{width:100%;height:100%;object-fit:cover}
+.pname{font-weight:800}.meta{font-size:12px;color:var(--muted)}.price{font-weight:800;color:var(--red)}.tag{display:inline-block;background:#f1f1f1;padding:3px 7px;border-radius:20px;font-size:11px;margin-top:4px}.tag.draft{background:#fff3d9;color:#8a5a00}
+.rowactions{display:flex;gap:6px}.rowactions button{padding:8px 10px;font-size:12px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.stats{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:560px){header{padding:11px 4%}.wrap{padding:0 13px;margin:20px auto}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:22px}.product{grid-template-columns:58px 1fr}.thumb{width:58px;height:58px}.rowactions{grid-column:2}.grid2{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><div>IT Elements<span>.</span> <small style="font-size:12px;color:#777;font-weight:500">Store Manager</small></div></div><div><a href="/store" target="_blank">View public store ↗</a> &nbsp; · &nbsp; <a href="/admin">Admin dashboard</a></div></header>
+<main class="wrap">
+<div class="top"><div><div class="eyebrow">Private administration</div><h1>Product manager</h1><div class="muted">Add products here. Active products automatically appear in your public store.</div></div><button class="secondary" id="newBtn">＋ Add new product</button></div>
+<div class="stats"><div class="stat"><strong id="totalCount">0</strong><span>Total products</span></div><div class="stat"><strong id="activeCount">0</strong><span>Visible in store</span></div><div class="stat"><strong id="draftCount">0</strong><span>Hidden drafts</span></div></div>
+<div class="layout">
+<section class="panel" id="editor"><h2 id="formTitle">Add a product</h2><div class="muted" style="font-size:13px">Only signed-in administrators can access this page.</div>
+<form id="productForm">
+<input type="hidden" id="productId">
+<label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. 500GB SATA SSD">
+<div class="grid2"><div><label for="sku">SKU / product code</label><input id="sku" placeholder="ITE-SSD-001"></div><div><label for="category">Category *</label><select id="category" required><option value="">Choose category</option><option>Computers & Laptops</option><option>Storage & SSDs</option><option>Memory (RAM)</option><option>Networking</option><option>Keyboards & Mice</option><option>Monitors & Displays</option><option>Cables & Accessories</option><option>Software</option><option>Other</option></select></div></div>
+<div class="grid2"><div><label for="price">Selling price (R) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="899.00"></div><div><label for="compareAtPrice">Previous price (R)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="999.00"></div></div>
+<div class="grid2"><div><label for="stock">Stock quantity</label><input id="stock" type="number" min="0" step="1" value="0"></div><div><label for="status">Store visibility</label><select id="status"><option value="active">Active — show in store</option><option value="draft">Draft — keep private</option></select></div></div>
+<label for="imageUrl">Product image URL</label><input id="imageUrl" type="url" placeholder="https://example.com/product-image.jpg"><div class="muted" style="font-size:12px">Paste a direct image link. Leave blank to show a clean placeholder.</div>
+<label for="description">Description</label><textarea id="description" maxlength="2000" placeholder="Describe the product, specifications and what's included..."></textarea>
+<label class="checkrow"><input type="checkbox" id="featured"> Feature this product at the top of the store</label>
+<div class="actions"><button class="primary" type="submit" id="saveBtn">Save product</button><button class="secondary" type="button" id="resetBtn">Clear form</button></div><div id="message" aria-live="polite"></div>
+</form></section>
+<section class="panel"><h2>Your products</h2><div class="toolbar"><input id="search" placeholder="Search products..."><select id="filter" style="max-width:160px"><option value="all">All products</option><option value="active">Active</option><option value="draft">Drafts</option></select></div><div id="productList" class="list"><div class="muted">Loading products...</div></div></section>
+</div></main>
+<script>
+const $=id=>document.getElementById(id);let products=[];
+const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
+function msg(t,type=''){ $('message').innerHTML=t?`<div class="notice ${type}">${t}</div>`:''; }
+async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});if(r.redirected||r.status===401||r.status===403){location.href='/client/login';throw Error('Please sign in as an administrator.');}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.message||'Something went wrong.');return d;}
+function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('formTitle').textContent='Add a product';$('saveBtn').textContent='Save product';msg('');}
+function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('sku').value=p.sku||'';$('category').value=p.category||'Other';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock||0;$('status').value=p.status||'active';$('imageUrl').value=p.imageUrl||'';$('description').value=p.description||'';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';msg('');window.scrollTo({top:0,behavior:'smooth'});}
+function render(){const q=$('search').value.toLowerCase(),f=$('filter').value;const shown=products.filter(p=>(f==='all'||p.status===f)&&[p.name,p.sku,p.category].join(' ').toLowerCase().includes(q));$('totalCount').textContent=products.length;$('activeCount').textContent=products.filter(p=>p.status==='active').length;$('draftCount').textContent=products.filter(p=>p.status==='draft').length;$('productList').innerHTML=shown.length?shown.map(p=>`<article class="product"><div class="thumb">${p.imageUrl?`<img src="${escapeAttr(p.imageUrl)}" alt="">`:'No image'}</div><div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''} · Stock: ${p.stock||0}</div><div class="price">${money(p.price)}</div><span class="tag ${p.status==='draft'?'draft':''}">${p.status==='draft'?'DRAFT':'ACTIVE'}</span>${p.featured?' <span class="tag">FEATURED</span>':''}</div><div class="rowactions"><button class="secondary" onclick="editById('${p._id}')">Edit</button><button class="danger" onclick="deleteById('${p._id}')">Delete</button></div></article>`).join(''):'<div class="muted">No products match this search.</div>';}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function escapeAttr(s){return escapeHtml(s);}
+window.editById=id=>{const p=products.find(x=>x._id===id);if(p)edit(p);};
+window.deleteById=async id=>{const p=products.find(x=>x._id===id);if(!p||!confirm(`Delete "${p.name}" permanently?`))return;try{await api('/api/admin/store/products/'+id,{method:'DELETE'});await load();if($('productId').value===id)reset();}catch(e){msg(e.message,'error');}};
+async function load(){try{const d=await api('/api/admin/store/products');products=d.products||[];render();}catch(e){$('productList').textContent=e.message;}}
+$('productForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('productId').value;const body={name:$('name').value,sku:$('sku').value,category:$('category').value,price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,status:$('status').value,imageUrl:$('imageUrl').value,description:$('description').value,featured:$('featured').checked};try{await api(id?'/api/admin/store/products/'+id:'/api/admin/store/products',{method:id?'PUT':'POST',body:JSON.stringify(body)});msg(id?'Product updated.':'Product added to your store.','ok');reset();await load();}catch(e){msg(e.message,'error');}});
+$('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;load();
+</script></body></html>
