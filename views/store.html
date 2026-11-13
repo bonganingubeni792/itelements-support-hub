@@ -10,18 +10,23 @@
     :root{color-scheme:light;--red:#e00000;--red-dark:#b00000;--ink:#171717;--muted:#6b7280;--line:#e8e8e8;--soft:#f7f7f7;--white:#fff;--shadow:0 12px 35px rgba(0,0,0,.07)}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#fff;color:var(--ink);font:15px/1.55 Arial,Helvetica,sans-serif}
     a{color:inherit;text-decoration:none}button,input,select{font:inherit}button{cursor:pointer}
-    .wrap{width:min(1180px,calc(100% - 36px));margin:auto}
-    .topbar{background:#171717;color:#fff;text-align:center;padding:8px 12px;font-size:12px;letter-spacing:.2px}
-    header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-    .nav{height:78px;display:flex;align-items:center;gap:28px}
-    .brand{display:flex;align-items:center;gap:10px;min-width:205px;font-size:21px;font-weight:800;letter-spacing:-.8px}
-    .brand img{width:46px;height:46px;object-fit:contain}.brand .support{color:var(--red)}
-    .links{display:flex;align-items:center;gap:23px;margin-left:auto;font-size:13px;font-weight:700;color:#444}
-    .links a:hover{color:var(--red)}.nav-actions{display:flex;align-items:center;gap:10px}
-    .cart-button,.primary,.outline{border:0;border-radius:9px;padding:12px 16px;font-weight:800}
-    .cart-button{background:#171717;color:#fff;display:flex;gap:9px;align-items:center}
-    .count{background:var(--red);border-radius:30px;min-width:21px;height:21px;display:grid;place-items:center;font-size:11px}
-    .menu{display:none;border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px}
+    .wrap{width:min(1500px,92%);max-width:1500px;margin-left:auto;margin-right:auto}
+    /* Header and navigation: matched to the Contact page */
+    .topbar{display:none}
+    header{position:sticky;top:0;z-index:1000;width:100%;background:rgba(255,255,255,.98);backdrop-filter:blur(12px);border-bottom:1px solid #e5e5e8;box-shadow:0 3px 15px rgba(0,0,0,.045)}
+    .nav{position:relative;width:100%;min-height:76px;height:auto;margin:0;padding:12px 4%;border:0;border-radius:0;background:transparent;box-shadow:none;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:10px;min-width:0;color:#171717;text-decoration:none;font-size:21px;font-weight:900;letter-spacing:0;white-space:nowrap;flex-shrink:0;margin-right:auto}
+    .brand img{display:block;width:46px;height:46px;object-fit:contain;border:0;border-radius:0;background:transparent;flex-shrink:0}
+    .brand-support{color:#e00000;font-size:14px;font-weight:700;margin-left:-7px}
+    .links{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px 15px;margin-left:0;font-size:13px;font-weight:700;color:#292929}
+    .links a{color:#292929;text-decoration:none;font-size:13px;font-weight:700;padding:8px 0;border:0;border-radius:0;background:transparent;white-space:nowrap;transition:color .2s ease}
+    .links a:hover,.links a:focus-visible,.links a[aria-current="page"]{color:#e00000}
+    .links a.nav-cta{color:#fff;background:#e00000;border:1px solid #e00000;border-radius:8px;padding:10px 15px}
+    .links a.nav-cta:hover{color:#fff;background:#b00000;border-color:#b00000}
+    .nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .cart-button{border:1px solid #e5e5e8;border-radius:8px;background:#fff;color:#171717;display:flex;gap:9px;align-items:center;padding:10px 12px;font-size:13px;font-weight:800}
+    .cart-button:hover{border-color:#e00000;color:#e00000}
+    .menu{display:none;border:1px solid #e5e5e8;background:#fff;color:#171717;border-radius:8px;padding:7px 12px;font-size:21px;cursor:pointer}
     .hero{background:linear-gradient(115deg,#171717 0%,#252525 62%,#3a0909 100%);color:#fff;padding:62px 0 58px;overflow:hidden}
     .hero-inner{display:grid;grid-template-columns:1.2fr .8fr;gap:35px;align-items:center}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;color:#ffdede;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}
@@ -77,27 +82,126 @@
     .drawer-foot{border-top:1px solid var(--line);padding:20px 22px}.total{display:flex;justify-content:space-between;font-weight:900;font-size:18px;margin-bottom:5px}.fine{color:#888;font-size:11px;margin:0 0 15px}
     .checkout{width:100%;border:0;border-radius:9px;background:var(--red);color:#fff;padding:14px;font-weight:900}.checkout:hover{background:var(--red-dark)}
     .notice{margin:12px 0 0;padding:10px;background:#fff7e8;border-radius:8px;color:#79531b;font-size:11px}
-    @media(max-width:900px){.links{gap:13px}.products{grid-template-columns:repeat(3,1fr)}.hero-inner{grid-template-columns:1fr .7fr}}
-    @media(max-width:700px){.nav{height:68px;gap:10px}.brand{min-width:0;font-size:18px;margin-right:auto}.brand img{width:40px;height:40px}.menu{display:block}.links{display:none;position:absolute;top:68px;left:0;right:0;background:#fff;border-bottom:1px solid var(--line);padding:16px 22px;flex-direction:column;align-items:stretch;gap:0}.links.show{display:flex}.links a{padding:11px 0;border-bottom:1px solid #f2f2f2}.nav-actions{gap:7px}.cart-button{padding:10px 11px;font-size:12px}.hero{padding:45px 0}.hero-inner{grid-template-columns:1fr}.hero-art{display:none}.trust-row{grid-template-columns:repeat(2,1fr);row-gap:15px}.trust-item{justify-content:flex-start}.products{grid-template-columns:repeat(2,1fr);gap:12px}.product-image{height:145px}.product-image .emoji{font-size:54px}.product-body{padding:12px}.product h3{font-size:13px}.description{font-size:11px}.product-bottom{align-items:flex-start;flex-direction:column}.add{width:100%}.section-head{align-items:flex-start;flex-direction:column}.info-band{grid-template-columns:1fr}.footer-row{align-items:flex-start;flex-direction:column}}
+    @media(max-width:1050px){
+      .nav{flex-direction:column;align-items:stretch;gap:10px}
+      .brand{margin-right:0}
+      .nav-actions{position:absolute;right:4%;top:17px}
+      .links{width:100%;justify-content:flex-start;gap:8px 15px;padding-right:0}
+      .products{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .hero-inner{grid-template-columns:1fr .7fr}
+    }
+    @media(max-width:760px){
+      .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+      .section-head{align-items:flex-start;flex-direction:column}
+    }
+    @media(max-width:650px){
+      .nav{position:relative;min-height:0;flex-direction:row;align-items:center;justify-content:space-between;padding:10px 4%;gap:10px}
+      .brand{font-size:19px;gap:9px;margin-right:auto}
+      .brand img{width:40px;height:40px}
+      .brand-support{font-size:13px;margin-left:-6px}
+      .menu{display:block;flex-shrink:0}
+      .nav-actions{position:static;margin-left:0}
+      .links{display:none;position:absolute;top:100%;left:0;right:0;width:100%;padding:13px 4%;background:#fff;border-bottom:1px solid #e5e5e8;box-shadow:0 12px 20px rgba(0,0,0,.07);grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;z-index:30}
+      .links.show{display:grid}
+      .links a{display:flex;align-items:center;justify-content:center;min-height:40px;padding:8px 5px;border:1px solid #e5e5e8;border-radius:7px;background:#f7f7f8;font-size:12px;text-align:center;white-space:normal}
+      .links a.nav-cta{color:#fff;background:#e00000;border-color:#e00000}
+      .cart-button{padding:9px 10px;font-size:12px}
+      .hero{padding:45px 0}
+      .hero-inner{grid-template-columns:1fr}
+      .hero-art{display:none}
+      .trust-row{grid-template-columns:repeat(2,1fr);row-gap:15px}
+      .trust-item{justify-content:flex-start}
+      .product-image{height:145px}
+      main{padding:32px 0 55px}
+      .info-band{grid-template-columns:1fr}
+      .footer-row{flex-direction:column;align-items:flex-start}
+    }
+    @media(max-width:370px){
+      .brand{font-size:17px;gap:7px}
+      .brand img{width:36px;height:36px}
+      .brand-support{font-size:12px;margin-left:-5px}
+      .cart-label{display:none}
+    }
     @media(max-width:390px){.wrap{width:calc(100% - 24px)}.brand{font-size:16px}.brand img{width:36px;height:36px}.products{grid-template-columns:1fr 1fr}.product-image{height:125px}.product-image .emoji{font-size:46px}.price{font-size:17px}.cart-button{padding:9px}.cart-button .cart-label{display:none}}
+
+    /* IT Elements site-wide layout alignment */
+    .topbar{display:none}
+    header{width:100%;background:#fff;border-bottom:1px solid #e8e8e8}
+    .nav{width:92%;max-width:1600px;height:78px;margin:0 auto;gap:22px}
+    .brand{min-width:max-content;gap:7px;margin-right:auto;font-size:21px;letter-spacing:-.7px;white-space:nowrap}
+    .brand img{width:46px;height:46px;flex:0 0 46px}
+    .brand-name{color:#171717}
+    .brand-support{color:#e00000;font-size:14px;font-weight:800;margin-left:-4px}
+    .links{gap:clamp(10px,1.15vw,20px);margin-left:0;white-space:nowrap;font-size:13px}
+    .links a[aria-current="page"]{color:#e00000}
+    .nav-actions{gap:9px;flex:0 0 auto}
+    .cart-button{padding:10px 12px;border-radius:8px}
+    .portal-link{display:inline-flex;align-items:center;justify-content:center;background:#e00000;color:#fff;padding:12px 15px;border-radius:8px;font-size:13px;font-weight:800;white-space:nowrap}
+    .portal-link:hover{background:#b00000}
+    .hero{width:100%;padding:68px 0 64px}
+    .hero-inner{width:92%;max-width:1600px;margin:0 auto;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);gap:clamp(35px,6vw,100px)}
+    main.wrap{width:92%;max-width:1600px;padding-top:54px}
+    .trust .wrap{width:92%;max-width:1600px}
+    footer .wrap{width:92%;max-width:1600px}
+    @media(max-width:1250px){
+      .nav{gap:12px}
+      .links{gap:10px;font-size:12px}
+      .brand{font-size:19px}
+      .portal-link{padding:10px 11px;font-size:12px}
+    }
+    @media(max-width:1050px){
+      .nav{height:72px}
+      .links{gap:8px;font-size:11px}
+      .brand{font-size:18px}
+      .brand img{width:42px;height:42px;flex-basis:42px}
+      .portal-link{display:none}
+    }
+    @media(max-width:700px){
+      .nav{width:92%;height:68px;gap:10px}
+      .brand{font-size:18px}
+      .brand img{width:40px;height:40px;flex-basis:40px}
+      .brand-support{font-size:12px}
+      .links{top:68px;left:0;right:0;width:100%;padding:16px 4%;background:#fff;box-shadow:0 12px 20px rgba(0,0,0,.07);z-index:25}
+      .links.show{display:flex}
+      .nav-actions{margin-left:auto}
+      .cart-button{padding:9px 10px}
+      .hero-inner{width:92%;grid-template-columns:1fr}
+      main.wrap{width:92%}
+    }
+
   </style>
 </head>
 <body>
-  <div class="topbar">IT ELEMENTS ONLINE STORE &nbsp; | &nbsp; Technology made simple. Support you can trust.</div>
   <header>
-    <div class="wrap nav">
+    <nav class="nav" aria-label="Main navigation">
       <a class="brand" href="/" aria-label="IT Elements home">
-        <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo" onerror="this.style.display='none'">
-        <span>IT Elements<span class="support">.support</span></span>
+        <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo" width="46" height="46">
+        <span>IT Elements.</span>
+        <span class="brand-support">support</span>
       </a>
-      <nav class="links" id="navLinks">
-        <a href="/">Home</a><a href="/services">Services</a><a href="/pricing">Plans</a><a href="/contact">Contact</a>
-      </nav>
-      <div class="nav-actions">
-        <button class="cart-button" id="openCart" type="button"><span class="cart-label">My cart</span> <span class="count" id="cartCount">0</span></button>
-        <button class="menu" id="menuButton" type="button" aria-label="Open menu">☰</button>
+
+      <button class="menu" id="menuButton" type="button"
+        aria-label="Open navigation" aria-expanded="false" aria-controls="navLinks">☰</button>
+
+      <div class="links" id="navLinks">
+        <a href="/tools/invoices">Invoice Studio</a>
+        <a href="/">Home</a>
+        <a href="/services">Services</a>
+        <a href="/store" aria-current="page">Store</a>
+        <a href="/onsite-support">On-site</a>
+        <a href="/pricing">Plans</a>
+        <a href="/about">About</a>
+        <a href="/faq">FAQ</a>
+        <a href="/contact">Contact</a>
+        <a href="/client/login" class="nav-cta">Client Portal</a>
       </div>
-    </div>
+
+      <div class="nav-actions">
+        <button class="cart-button" id="openCart" type="button" aria-label="Open shopping cart">
+          <span class="cart-label">My cart</span><span class="count" id="cartCount">0</span>
+        </button>
+      </div>
+    </nav>
   </header>
 
   <section class="hero">
@@ -222,7 +326,36 @@
       const message=`Hi IT Elements, I would like to request an order:\n\n${lines.join("\n")}\n\nEstimated total: ${money(total)}\n\nPlease confirm stock, final pricing, delivery options and payment details.`;
       window.open("https://wa.me/27606181229?text="+encodeURIComponent(message),"_blank","noopener");
     });
-    document.getElementById("menuButton").addEventListener("click",()=>document.getElementById("navLinks").classList.toggle("show"));
+    (function () {
+      const menuToggle = document.getElementById("menuButton");
+      const mainLinks = document.getElementById("navLinks");
+      if (!menuToggle || !mainLinks) return;
+
+      menuToggle.addEventListener("click", function () {
+        const isOpen = mainLinks.classList.toggle("show");
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+        menuToggle.setAttribute("aria-label", isOpen ? "Close navigation" : "Open navigation");
+        menuToggle.textContent = isOpen ? "✕" : "☰";
+      });
+
+      mainLinks.querySelectorAll("a").forEach(function (link) {
+        link.addEventListener("click", function () {
+          mainLinks.classList.remove("show");
+          menuToggle.setAttribute("aria-expanded", "false");
+          menuToggle.setAttribute("aria-label", "Open navigation");
+          menuToggle.textContent = "☰";
+        });
+      });
+
+      window.addEventListener("resize", function () {
+        if (window.innerWidth > 650) {
+          mainLinks.classList.remove("show");
+          menuToggle.setAttribute("aria-expanded", "false");
+          menuToggle.setAttribute("aria-label", "Open navigation");
+          menuToggle.textContent = "☰";
+        }
+      });
+    }());
     document.getElementById("year").textContent=new Date().getFullYear();
     renderProducts();renderCart();
   </script>
