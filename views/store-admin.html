@@ -172,6 +172,9 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .stock-admin-edit input,.stock-admin-edit select{width:100px;min-width:0;padding:7px;border:1px solid #dfe2e7;border-radius:7px;background:#fff;font-size:11px}
 .stock-admin-edit select{width:115px}
 .stock-admin-edit .btn{padding:7px 10px;font-size:10px}
+
+.bulk-stock-qty{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;color:#707782}
+.bulk-stock-qty input{width:76px;padding:8px;border:1px solid #dfe2e7;border-radius:8px;font-size:11px}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body><div class="app">
 <aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#orders"><span class="ico">▣</span>Orders <span id="orderNavCount" style="margin-left:auto;color:#e00000;font-weight:900"></span></a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
@@ -320,6 +323,11 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
   <button class="btn softred" type="button" id="deleteSelected">Delete selected</button>
   <button class="btn" type="button" id="publishAll">Publish ALL products</button>
   <button class="btn" type="button" id="draftAll">Set ALL to draft</button>
+  <label class="bulk-stock-qty">Units per product <input id="bulkStockQty" type="number" min="1" step="1" value="1"></label>
+  <button class="btn" type="button" id="stockAllIn">Set ALL IN STOCK</button>
+  <button class="btn softred" type="button" id="stockAllOut">Set ALL OUT OF STOCK</button>
+  <button class="btn" type="button" id="stockSelectedIn">Set selected IN STOCK</button>
+  <button class="btn softred" type="button" id="stockSelectedOut">Set selected OUT OF STOCK</button>
 </div><div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
 </div></main></div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -407,6 +415,39 @@ $('productList').addEventListener('change',e=>{
  const id=mode.dataset.stockMode,qty=document.querySelector(`[data-stock-qty="${id}"]`);
  if(!qty)return;if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
 });
+
+async function setBulkStock(ids,qty,label){
+ ids=[...new Set(ids)].filter(id=>products.some(p=>p._id===id));
+ if(!ids.length){notice('There are no products to update.','error');return;}
+ if(!confirm(`Set ${ids.length} product(s) to ${qty>0?qty+' unit(s) in stock':'out of stock'}?`))return;
+ const buttons=['stockAllIn','stockAllOut','stockSelectedIn','stockSelectedOut'].map(id=>$(id)).filter(Boolean);
+ buttons.forEach(b=>b.disabled=true);
+ notice(`Updating ${label}…`);
+ let done=0,failed=[];
+ try{
+  for(const id of ids){
+   const p=products.find(x=>x._id===id);if(!p)continue;
+   const body={name:p.name,description:p.description||'',imageUrl:p.imageUrl||'',images:Array.isArray(p.images)?p.images:[],sku:p.sku||'',category:p.category,price:p.price,compareAtPrice:p.compareAtPrice||0,stock:qty,status:p.status,featured:!!p.featured};
+   try{await api('/api/admin/store/products/'+encodeURIComponent(id),{method:'PUT',body:JSON.stringify(body)});done++;}
+   catch(e){failed.push(p.name+': '+(e.message||'save failed'));}
+  }
+  await load();
+  if(failed.length)notice(`${done} updated; ${failed.length} failed. ${failed.slice(0,3).join(' | ')}`,'error');
+  else notice(`${done} product(s) ${qty>0?'set to '+qty+' in stock':'set to out of stock'}.`,'ok');
+ }finally{buttons.forEach(b=>b.disabled=false);}
+}
+$('stockAllIn').addEventListener('click',()=>{
+ const qty=Math.floor(Number($('bulkStockQty').value));
+ if(!Number.isInteger(qty)||qty<1||qty>10000000){notice('Enter a valid quantity of at least 1.','error');return;}
+ setBulkStock(products.map(p=>p._id),qty,'all products');
+});
+$('stockAllOut').addEventListener('click',()=>setBulkStock(products.map(p=>p._id),0,'all products'));
+$('stockSelectedIn').addEventListener('click',()=>{
+ const qty=Math.floor(Number($('bulkStockQty').value));
+ if(!Number.isInteger(qty)||qty<1||qty>10000000){notice('Enter a valid quantity of at least 1.','error');return;}
+ setBulkStock(selectedProductIds(),qty,'selected products');
+});
+$('stockSelectedOut').addEventListener('click',()=>setBulkStock(selectedProductIds(),0,'selected products'));
 function selectedProductIds(){return [...document.querySelectorAll('.product-check:checked')].map(x=>x.value);}
 function updateSelectedCount(){$('selectedCount').textContent=`${selectedProductIds().length} selected`;}
 document.addEventListener('change',e=>{if(e.target.matches('.product-check'))updateSelectedCount();});
