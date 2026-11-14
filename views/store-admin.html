@@ -395,7 +395,33 @@ function render(){
  <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products match these filters.</div>';
  $('selectAllProducts').checked=false;updateSelectedCount();
 }
+function updateStockPreviewForControl(control){
+ const card=control.closest('.product');
+ if(!card)return;
+ const qtyInput=card.querySelector('[data-stock-qty]');
+ const modeSelect=card.querySelector('[data-stock-mode]');
+ if(!qtyInput||!modeSelect)return;
+ const qty=modeSelect.value==='out'?0:Math.max(0,Math.floor(Number(qtyInput.value)||0));
+ const state=card.querySelector('.stock-admin-state');
+ const left=card.querySelector('.stock-admin-line strong');
+ if(state){state.textContent=qty>0?'IN STOCK':'OUT OF STOCK';state.classList.toggle('available',qty>0);state.classList.toggle('unavailable',qty<=0);}
+ if(left)left.textContent=`${qty} left`;
+}
+
+$('productList').addEventListener('input',e=>{
+ const input=e.target.closest('[data-stock-qty]');if(!input)return;
+ const card=input.closest('.product');const mode=card?.querySelector('[data-stock-mode]');
+ if(mode)mode.value=Number(input.value)>0?'in':'out';
+ updateStockPreviewForControl(input);
+});
 $('productList').addEventListener('change',e=>{
+ const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
+ const card=mode.closest('.product');const qty=card?.querySelector('[data-stock-qty]');
+ if(!qty)return;
+ if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
+ updateStockPreviewForControl(mode);
+});
+
  const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
  const id=mode.dataset.stockMode,qty=document.querySelector(`[data-stock-qty="${id}"]`);
  if(!qty)return;if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
