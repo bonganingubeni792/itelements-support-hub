@@ -323,6 +323,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
   <button class="btn softred" type="button" id="deleteSelected">Delete selected</button>
   <button class="btn" type="button" id="publishAll">Publish ALL products</button>
   <button class="btn" type="button" id="draftAll">Set ALL to draft</button>
+  <button class="btn primary" type="button" id="savePageStock">Save all 50 stock changes</button>
   <label class="bulk-stock-qty">Units per product <input id="bulkStockQty" type="number" min="1" step="1" value="1"></label>
   <button class="btn" type="button" id="stockAllIn">Set ALL IN STOCK</button>
   <button class="btn softred" type="button" id="stockAllOut">Set ALL OUT OF STOCK</button>
@@ -388,28 +389,12 @@ function render(){
  <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" decoding="async">`:'No image'}</div>
  <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''}</div>
  <div class="stock-admin-line"><span class="stock-admin-state ${Number(p.stock)>0?'available':'unavailable'}">${Number(p.stock)>0?'IN STOCK':'OUT OF STOCK'}</span><strong>${Number(p.stock)||0} left</strong></div>
- <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label><button class="btn" type="button" data-stock-save="${p._id}">Save stock</button></div>
+ <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label></div>
  <div class="price">${money(p.price)}${Number(p.compareAtPrice)>Number(p.price)?` <s style="color:#999;font-weight:500">${money(p.compareAtPrice)}</s>`:''}</div>
  <span class="pill ${p.status==='draft'?'draft':''}">${p.status==='draft'?'DRAFT':'PUBLISHED'}</span>${p.featured?' <span class="pill">FEATURED</span>':''}</div>
  <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products match these filters.</div>';
  $('selectAllProducts').checked=false;updateSelectedCount();
 }
-$('productList').addEventListener('click',async e=>{
- const btn=e.target.closest('[data-stock-save]');if(!btn)return;
- const id=btn.dataset.stockSave,p=products.find(x=>x._id===id);if(!p)return;
- const qtyInput=document.querySelector(`[data-stock-qty="${id}"]`),modeSelect=document.querySelector(`[data-stock-mode="${id}"]`);
- if(!qtyInput||!modeSelect){notice('Could not find the stock controls. Refresh the page and try again.','error');return;} 
- let qty=Math.floor(Number(qtyInput.value));
- if(modeSelect.value==='out')qty=0;
- else if(!Number.isInteger(qty)||qty<1){notice('For In stock, enter at least 1 unit.','error');qtyInput.focus();return;}
- if(!Number.isInteger(qty)||qty<0){notice('Enter a valid whole-number stock quantity.','error');return;}
- btn.disabled=true;btn.textContent='Saving…';
- try{
-  const body={name:p.name,description:p.description||'',imageUrl:p.imageUrl||'',images:Array.isArray(p.images)?p.images:[],sku:p.sku||'',category:p.category,price:p.price,compareAtPrice:p.compareAtPrice||0,stock:qty,status:p.status,featured:!!p.featured};
-  await api('/api/admin/store/products/'+encodeURIComponent(id),{method:'PUT',body:JSON.stringify(body)});
-  notice(`${p.name}: ${qty>0?qty+' unit(s) in stock':'marked out of stock'}.`,'ok');await load();
- }catch(err){notice(err.message||'Could not update stock.','error');btn.disabled=false;btn.textContent='Save stock';}
-});
 $('productList').addEventListener('change',e=>{
  const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
  const id=mode.dataset.stockMode,qty=document.querySelector(`[data-stock-qty="${id}"]`);
@@ -420,22 +405,40 @@ async function setBulkStock(ids,qty,label){
  ids=[...new Set(ids)].filter(id=>products.some(p=>p._id===id));
  if(!ids.length){notice('There are no products to update.','error');return;}
  if(!confirm(`Set ${ids.length} product(s) to ${qty>0?qty+' unit(s) in stock':'out of stock'}?`))return;
- const buttons=['stockAllIn','stockAllOut','stockSelectedIn','stockSelectedOut'].map(id=>$(id)).filter(Boolean);
+ const buttons=['stockAllIn','stockAllOut','stockSelectedIn','stockSelectedOut','savePageStock'].map(id=>$(id)).filter(Boolean);
  buttons.forEach(b=>b.disabled=true);
  notice(`Updating ${label}…`);
- let done=0,failed=[];
  try{
-  for(const id of ids){
-   const p=products.find(x=>x._id===id);if(!p)continue;
-   const body={name:p.name,description:p.description||'',imageUrl:p.imageUrl||'',images:Array.isArray(p.images)?p.images:[],sku:p.sku||'',category:p.category,price:p.price,compareAtPrice:p.compareAtPrice||0,stock:qty,status:p.status,featured:!!p.featured};
-   try{await api('/api/admin/store/products/'+encodeURIComponent(id),{method:'PUT',body:JSON.stringify(body)});done++;}
-   catch(e){failed.push(p.name+': '+(e.message||'save failed'));}
-  }
+  const result=await api('/api/admin/store/products/stock',{method:'PATCH',body:JSON.stringify({updates:ids.map(id=>({id,stock:qty}))})});
   await load();
-  if(failed.length)notice(`${done} updated; ${failed.length} failed. ${failed.slice(0,3).join(' | ')}`,'error');
-  else notice(`${done} product(s) ${qty>0?'set to '+qty+' in stock':'set to out of stock'}.`,'ok');
- }finally{buttons.forEach(b=>b.disabled=false);}
+  notice(`${result.updated ?? ids.length} product(s) updated. ${qty>0?'Stock set to '+qty+'.':'All set to out of stock.'}`,'ok');
+ }catch(e){notice(e.message||'Could not save stock quantities.','error');}
+ finally{buttons.forEach(b=>b.disabled=false);}
 }
+$('savePageStock').addEventListener('click',async()=>{
+ const visibleIds=products.filter(p=>document.querySelector(`[data-stock-qty="${p._id}"]`)).map(p=>p._id);
+ const updates=[];
+ for(const id of visibleIds){
+  const input=document.querySelector(`[data-stock-qty="${id}"]`);
+  const mode=document.querySelector(`[data-stock-mode="${id}"]`);
+  if(!input||!mode)continue;
+  const qty=Math.floor(Number(input.value));
+  const stock=mode.value==='out'?0:qty;
+  if(!Number.isInteger(stock)||stock<0||stock>10000000||(mode.value==='in'&&stock<1)){
+   notice(`Enter a valid quantity for ${products.find(p=>p._id===id)?.name||'a product'}. In-stock products need at least 1 unit.`,'error');
+   input.focus();return;
+  }
+  updates.push({id,stock});
+ }
+ if(!updates.length){notice('No products are shown on this page.','error');return;}
+ if(!confirm(`Save stock quantities for all ${updates.length} products shown on this page?`))return;
+ const btn=$('savePageStock');btn.disabled=true;btn.textContent='Saving…';
+ try{
+  const result=await api('/api/admin/store/products/stock',{method:'PATCH',body:JSON.stringify({updates})});
+  await load();notice(`Saved stock for ${result.updated ?? updates.length} products on this page.`,'ok');
+ }catch(e){notice(e.message||'Could not save the stock changes.','error');}
+ finally{btn.disabled=false;btn.textContent='Save all 50 stock changes';}
+});
 $('stockAllIn').addEventListener('click',()=>{
  const qty=Math.floor(Number($('bulkStockQty').value));
  if(!Number.isInteger(qty)||qty<1||qty>10000000){notice('Enter a valid quantity of at least 1.','error');return;}
