@@ -88,7 +88,8 @@ const UserAccount = mongoose.model('UserAccount', new mongoose.Schema({
     subscriptionTier: { type: String, default: 'None (Unpaid)' },
     subscriptionStatus: { type: String, default: 'Inactive' },
     subscriptionPaidAt: { type: Date, default: null },
-    subscriptionExpiresAt: { type: Date, default: null }
+    subscriptionExpiresAt: { type: Date, default: null },
+    invoiceProUntil: { type: Date, default: null }
 }, { collection: 'useraccounts' }));
 
 
@@ -116,17 +117,13 @@ const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     userEmail: { type: String, default: '', lowercase: true, trim: true },
     purchaseType: {
         type: String,
-        enum: ['plan', 'quickfix', 'productOrder'],
+        enum: ['plan', 'quickfix', 'invoicePro', 'storeOrder'],
         required: true
     },
     planId: { type: String, default: '' },
     planName: { type: String, default: '' },
     durationOption: { type: String, default: '' },
-    orderItems: { type: [Object], default: [] },
-    customerName: { type: String, default: '' },
-    customerPhone: { type: String, default: '' },
-    deliveryAddress: { type: String, default: '' },
-    deliveryMethod: { type: String, default: 'delivery' },
+    orderDetails: { type: mongoose.Schema.Types.Mixed, default: null },
     amount: { type: Number, required: true },
     mode: { type: String, enum: ['test', 'live'], default: 'live' },
     status: {
@@ -140,6 +137,43 @@ const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 }, { collection: 'payfastpurchases' }));
 
+// Saved invoices and quotations
+const BusinessDocument = mongoose.model('BusinessDocument', new mongoose.Schema({
+    ownerEmail: {
+        type: String,
+        required: true,
+        lowercase: true,
+        trim: true,
+        index: true
+    },
+    kind: {
+        type: String,
+        enum: ['invoice', 'quote'],
+        required: true
+    },
+    number: { type: String, required: true },
+    business: { type: Object, default: {} },
+    customer: { type: Object, default: {} },
+    layout: {
+        type: String,
+        enum: ['modern', 'classic', 'compact', 'ledger'],
+        default: 'modern'
+    },
+    discountRate: { type: Number, min: 0, max: 100, default: 0 },
+    discountCents: { type: Number, min: 0, default: 0 },
+    issueDate: { type: String, default: '' },
+    dueDate: { type: String, default: '' },
+    reference: { type: String, default: '' },
+    paymentTerms: { type: String, default: '' },
+    items: { type: [Object], default: [] },
+    vatRate: { type: Number, enum: [0, 15], default: 0 },
+    subtotalCents: { type: Number, required: true },
+    vatCents: { type: Number, required: true },
+    totalCents: { type: Number, required: true },
+    notes: { type: String, default: '' },
+    paymentInstructions: { type: String, default: '' },
+    createdAt: { type: Date, default: Date.now }
+}, { collection: 'businessdocuments' }));
 
 // Password resets
 const PasswordReset = mongoose.model('PasswordReset', new mongoose.Schema({
@@ -606,54 +640,23 @@ async function markPayFastPurchasePaid(fields) {
         update.expiresAt = new Date(
             paidAt.getTime() + 30 * 24 * 60 * 60 * 1000
         );
+    } else if (purchase.purchaseType === 'invoicePro') {
+        const user = await UserAccount.findOne({
+            email: purchase.userEmail
+        });
+
+        update.expiresAt = new Date(
+            Math.max(
+                paidAt.getTime(),
+                user?.invoiceProUntil?.getTime() || 0
+            ) + 30 * 24 * 60 * 60 * 1000
+        );
     }
 
     const saved = await PayFastPurchase.updateOne(
         { _id: purchase._id, status: 'pending' },
         { $set: update }
     );
-
-    if (saved.modifiedCount && purchase.purchaseType === 'productOrder') {
-        // Deduct inventory only after PayFast's verified COMPLETE notification.
-        // Conditional updates prevent stock from going negative if inventory changed during checkout.
-        for (const line of (purchase.orderItems || [])) {
-            const result = await StoreProduct.updateOne(
-                { _id: line.productId, status: 'active', stock: { $gte: line.quantity } },
-                { $inc: { stock: -line.quantity }, $set: { updatedAt: paidAt } }
-            );
-            if (!result.modifiedCount) {
-                console.error('Paid store order requires stock review:', purchase.paymentId, line.productId);
-            }
-        }
-        await sendCustomerEmail(
-            purchase.userEmail,
-            'IT Elements order payment received',
-            [
-                `PayFast confirmed your product order ${purchase.paymentId}.`,
-                ...(purchase.orderItems || []).map(line => `${line.quantity} x ${line.name} (${line.sku || 'No SKU'})`),
-                `Paid amount: R ${(purchase.amount / 100).toFixed(2)}.`,
-                `Delivery method: ${purchase.deliveryMethod || 'delivery'}.`,
-                purchase.deliveryAddress ? `Delivery address: ${purchase.deliveryAddress}` : 'Our team will contact you to confirm delivery or collection.',
-                'IT Elements will contact you with the order and delivery update.'
-            ]
-        );
-        const adminEmail = String(process.env.SUPPORT_EMAIL || process.env.ADMIN_EMAIL || '').trim();
-        if (adminEmail) {
-            await sendCustomerEmail(
-                adminEmail,
-                `New paid IT Elements store order ${purchase.paymentId}`,
-                [
-                    `Customer: ${purchase.customerName || 'Not provided'}`,
-                    `Email: ${purchase.userEmail}`,
-                    `Phone: ${purchase.customerPhone || 'Not provided'}`,
-                    `Paid total: R ${(purchase.amount / 100).toFixed(2)}`,
-                    `Delivery method: ${purchase.deliveryMethod || 'delivery'}`,
-                    purchase.deliveryAddress ? `Delivery address: ${purchase.deliveryAddress}` : 'Collection requested.',
-                    ...(purchase.orderItems || []).map(line => `${line.quantity} x ${line.name} | SKU ${line.sku || 'N/A'} | R ${(line.lineTotalCents / 100).toFixed(2)}`)
-                ]
-            );
-        }
-    }
 
     if (saved.modifiedCount && purchase.purchaseType === 'plan') {
         await UserAccount.findOneAndUpdate(
@@ -667,6 +670,32 @@ async function markPayFastPurchasePaid(fields) {
                 }
             }
         );
+    }
+
+    if (saved.modifiedCount && purchase.purchaseType === 'invoicePro') {
+        await UserAccount.findOneAndUpdate(
+            { email: purchase.userEmail },
+            { $set: { invoiceProUntil: update.expiresAt } }
+        );
+
+        await sendCustomerEmail(
+            purchase.userEmail,
+            'IT Elements Invoice Pro is active',
+            [
+                'PayFast confirmed your Invoice Pro payment.',
+                `Your extra document allowance is active until ${update.expiresAt.toLocaleDateString('en-ZA', { timeZone: 'Africa/Johannesburg' })}.`,
+                'Open the Invoice Maker from your customer portal to create invoices and quotes.'
+            ]
+        );
+    }
+
+    if (saved.modifiedCount && purchase.purchaseType === 'storeOrder' && Array.isArray(purchase.orderDetails?.items)) {
+        for (const item of purchase.orderDetails.items) {
+            await StoreProduct.updateOne(
+                { _id: item.productId, stock: { $gte: item.quantity } },
+                { $inc: { stock: -item.quantity }, $set: { updatedAt: paidAt } }
+            );
+        }
     }
 
     if (purchase.purchaseType === 'plan' && saved.modifiedCount) {
@@ -806,6 +835,13 @@ function checkUserAuth(req, res, next) {
         return next();
     }
 
+    if (
+        req.path === '/tools/invoices' ||
+        req.path === '/invoice-maker.html'
+    ) {
+        req.session.returnTo = '/tools/invoices';
+    }
+
     return res.redirect('/client/login');
 }
 
@@ -828,6 +864,10 @@ app.get('/dashboard.html', checkUserAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
 
+// Invoice Maker is public. Customer dashboards remain protected.
+app.get('/invoice-maker.html', (req, res) => {
+    res.sendFile(path.join(viewsPath, 'invoice-maker.html'));
+});
 
 // Public website files
 app.use(express.static(viewsPath, { index: false }));
@@ -1029,6 +1069,11 @@ app.post('/api/admin/store/upload-image', checkAdminAuth, async (req, res) => {
 });
 
 // PUBLIC: Load active products for the online store
+app.get('/api/store/auth-status', (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    res.json({ authenticated: !!(req.session && (req.session.isUser || req.session.isAdmin)), email: req.session?.userEmail || '' });
+});
+
 app.get('/api/store/products', async (req, res) => {
     try {
         // Product catalogue data changes infrequently. A short browser cache
@@ -1302,6 +1347,7 @@ app.get('/admin/login', (req, res) => {
 });
 
 app.get('/client/login', (req, res) => {
+    if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
     res.sendFile(path.join(viewsPath, 'client-login.html'));
 });
 
@@ -1314,6 +1360,7 @@ app.get('/reset-password', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
+    if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
     res.sendFile(path.join(viewsPath, 'register.html'));
 });
 
@@ -1321,6 +1368,10 @@ app.get('/dashboard', checkUserAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
 
+// Invoice Maker must require a signed-in customer.
+app.get('/tools/invoices', checkUserAuth, (req, res) => {
+    res.sendFile(path.join(viewsPath, 'invoice-maker.html'));
+});
 
 // Admin page
 app.get('/admin', checkAdminAuth, (req, res) => {
@@ -1334,7 +1385,8 @@ async function createPayFastCheckout({
     purchaseType,
     planId = '',
     planName = '',
-    durationOption = ''
+    durationOption = '',
+    orderDetails = null
 }) {
     const config = payfastConfig();
 
@@ -1367,16 +1419,23 @@ async function createPayFastCheckout({
         planId,
         planName,
         durationOption,
+        orderDetails,
         amount,
         mode: config.mode
     });
 
-    const returnPath = purchaseType === 'plan' ? '/dashboard' : '/';
+    const returnPath = purchaseType === 'plan'
+        ? '/dashboard'
+        : purchaseType === 'invoicePro'
+            ? '/tools/invoices'
+            : purchaseType === 'storeOrder'
+                ? '/store'
+                : '/';
 
     const fields = {
         merchant_id: config.merchantId,
         merchant_key: config.merchantKey,
-        return_url: `${publicBaseUrl}${returnPath}?payment=returned&${purchaseType === 'plan' ? 'payfastId' : 'paymentId'}=${encodeURIComponent(paymentId)}`,
+        return_url: `${publicBaseUrl}${returnPath}?payment=returned&${purchaseType === 'plan' || purchaseType === 'invoicePro' ? 'payfastId' : 'paymentId'}=${encodeURIComponent(paymentId)}`,
         cancel_url: `${publicBaseUrl}${returnPath}?payment=cancelled`,
         notify_url: `${publicBaseUrl}/webhooks/payfast`,
         email_address: email,
@@ -1384,10 +1443,18 @@ async function createPayFastCheckout({
         amount: (amount / 100).toFixed(2),
         item_name: purchaseType === 'plan'
             ? `IT Elements ${planName} 30-day support plan`
-            : `IT Elements ${QUICK_FIX_OPTIONS[durationOption]?.label || 'remote support session'}`,
+            : purchaseType === 'invoicePro'
+                ? 'IT Elements Invoice Pro 30-day access'
+                : purchaseType === 'storeOrder'
+                    ? 'IT Elements Online Store Order'
+                    : `IT Elements ${QUICK_FIX_OPTIONS[durationOption]?.label || 'remote support session'}`,
         item_description: purchaseType === 'plan'
             ? 'One-time payment for 30 days of support; renew manually.'
-            : 'One-time remote support session.'
+            : purchaseType === 'invoicePro'
+                ? 'One-time payment for 30 days of additional invoice and quote creation.'
+                : purchaseType === 'storeOrder'
+                    ? 'IT Elements products purchased through the online store.'
+                    : 'One-time remote support session.'
     };
 
     fields.signature = payfastSignature(
@@ -1401,113 +1468,6 @@ async function createPayFastCheckout({
         paymentId
     };
 }
-
-// Customer product checkout — prices and stock are always re-read from MongoDB.
-app.post('/api/payment/payfast-product-checkout', async (req, res) => {
-    const customerName = String(req.body.customerName || '').trim().slice(0, 100);
-    const email = String(req.body.email || '').trim().toLowerCase();
-    const phone = String(req.body.phone || '').trim().slice(0, 40);
-    const deliveryAddress = String(req.body.deliveryAddress || '').trim().slice(0, 500);
-    const deliveryMethod = ['delivery', 'collection'].includes(req.body.deliveryMethod)
-        ? req.body.deliveryMethod : 'delivery';
-    const incoming = Array.isArray(req.body.items) ? req.body.items : [];
-
-    if (!customerName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !phone) {
-        return res.status(400).json({ success: false, message: 'Enter your name, valid email address and phone number.' });
-    }
-    if (deliveryMethod === 'delivery' && deliveryAddress.length < 8) {
-        return res.status(400).json({ success: false, message: 'Enter your delivery address, or choose collection.' });
-    }
-    if (!incoming.length || incoming.length > 30) {
-        return res.status(400).json({ success: false, message: 'Your cart is empty or contains too many different products.' });
-    }
-
-    try {
-        const merged = new Map();
-        for (const row of incoming) {
-            const id = String(row && row.id || '');
-            const quantity = Number(row && row.qty);
-            if (!mongoose.isValidObjectId(id) || !Number.isInteger(quantity) || quantity < 1 || quantity > 100) {
-                return res.status(400).json({ success: false, message: 'One of the cart items has an invalid quantity.' });
-            }
-            merged.set(id, (merged.get(id) || 0) + quantity);
-        }
-        const ids = [...merged.keys()];
-        const products = await StoreProduct.find({ _id: { $in: ids }, status: 'active' })
-            .select('name sku price stock')
-            .lean();
-        if (products.length !== ids.length) {
-            return res.status(409).json({ success: false, message: 'A product in your cart is no longer available. Please refresh your cart.' });
-        }
-
-        const orderItems = [];
-        let amount = 0;
-        for (const product of products) {
-            const quantity = merged.get(String(product._id));
-            if (!Number.isFinite(product.price) || product.price <= 0) {
-                return res.status(400).json({ success: false, message: `${product.name} is not currently available for online payment. Please contact IT Elements.` });
-            }
-            if (quantity > Number(product.stock || 0)) {
-                return res.status(409).json({ success: false, message: `Only ${Number(product.stock || 0)} unit(s) of ${product.name} are currently available.` });
-            }
-            const unitCents = Math.round(Number(product.price) * 100);
-            amount += unitCents * quantity;
-            orderItems.push({
-                productId: String(product._id),
-                name: product.name,
-                sku: product.sku || '',
-                quantity,
-                unitPriceCents: unitCents,
-                lineTotalCents: unitCents * quantity
-            });
-        }
-        if (!Number.isSafeInteger(amount) || amount < 100 || amount > 1000000000) {
-            return res.status(400).json({ success: false, message: 'The order total is outside the supported payment range.' });
-        }
-
-        const config = payfastConfig();
-        if (!config) {
-            return res.status(503).json({ success: false, message: 'PayFast is not configured yet. Please contact IT Elements.' });
-        }
-        const publicBaseUrl = String(process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
-        if (!publicBaseUrl.startsWith('https://')) {
-            return res.status(503).json({ success: false, message: 'The secure checkout address is not configured. Please contact IT Elements.' });
-        }
-
-        const paymentId = `ite-${randomUUID()}`;
-        await PayFastPurchase.create({
-            paymentId,
-            userEmail: email,
-            purchaseType: 'productOrder',
-            orderItems,
-            customerName,
-            customerPhone: phone,
-            deliveryAddress,
-            deliveryMethod,
-            amount,
-            mode: config.mode
-        });
-
-        const description = orderItems.map(line => `${line.quantity}x ${line.name}`).join(', ');
-        const fields = {
-            merchant_id: config.merchantId,
-            merchant_key: config.merchantKey,
-            return_url: `${publicBaseUrl}/store?payment=returned&paymentId=${encodeURIComponent(paymentId)}`,
-            cancel_url: `${publicBaseUrl}/store?payment=cancelled&paymentId=${encodeURIComponent(paymentId)}`,
-            notify_url: `${publicBaseUrl}/webhooks/payfast`,
-            email_address: email,
-            m_payment_id: paymentId,
-            amount: (amount / 100).toFixed(2),
-            item_name: `IT Elements product order ${paymentId.slice(-8)}`,
-            item_description: description.slice(0, 255)
-        };
-        fields.signature = payfastSignature(fields, process.env.PAYFAST_PASSPHRASE || '');
-        return res.json({ success: true, action: config.endpoint, fields, paymentId });
-    } catch (err) {
-        console.error('Product checkout error:', err.message);
-        return res.status(500).json({ success: false, message: 'Could not start secure checkout. Please try again or contact IT Elements.' });
-    }
-});
 
 // Quick-fix checkout
 app.post('/api/payment/payfast-quickfix', async (req, res) => {
@@ -1544,6 +1504,75 @@ app.post('/api/payment/payfast-quickfix', async (req, res) => {
             success: false,
             message: err.message || 'Could not start PayFast checkout. Please try again.'
         });
+    }
+});
+
+// Online store checkout: account required; all prices and stock are verified server-side.
+app.post('/api/payment/payfast-product-checkout', checkUserAuth, async (req, res) => {
+    try {
+        const email = String(req.session.userEmail || '').trim().toLowerCase();
+        const customerName = String(req.body.customerName || '').trim().slice(0, 100);
+        const phone = String(req.body.phone || '').trim().slice(0, 30);
+        const deliveryMethod = req.body.deliveryMethod === 'collection' ? 'collection' : 'delivery';
+        const deliveryAddress = String(req.body.deliveryAddress || '').trim().slice(0, 500);
+        const rawItems = Array.isArray(req.body.items) ? req.body.items : [];
+
+        if (!email || !customerName || phone.length < 7 || phone.length > 30) {
+            return res.status(400).json({ success: false, message: 'Please provide your name and a valid phone number.' });
+        }
+        if (deliveryMethod === 'delivery' && deliveryAddress.length < 8) {
+            return res.status(400).json({ success: false, message: 'Please enter your delivery address.' });
+        }
+        if (!rawItems.length || rawItems.length > 30) {
+            return res.status(400).json({ success: false, message: 'Your cart is empty or contains too many items.' });
+        }
+
+        const quantities = new Map();
+        for (const row of rawItems) {
+            const id = String(row.id || row.productId || '');
+            const qty = Math.floor(Number(row.qty ?? row.quantity));
+            if (!mongoose.isValidObjectId(id) || !Number.isInteger(qty) || qty < 1 || qty > 99) {
+                return res.status(400).json({ success: false, message: 'One of the cart items has an invalid quantity.' });
+            }
+            quantities.set(id, (quantities.get(id) || 0) + qty);
+        }
+
+        const ids = [...quantities.keys()];
+        const products = await StoreProduct.find({ _id: { $in: ids }, status: 'active' }).lean();
+        if (products.length !== ids.length) {
+            return res.status(409).json({ success: false, message: 'A product in your cart is no longer available. Please refresh the store.' });
+        }
+
+        let totalCents = 0;
+        const orderItems = products.map(product => {
+            const quantity = quantities.get(String(product._id));
+            const stock = Math.max(0, Number(product.stock) || 0);
+            if (stock < quantity) throw Object.assign(new Error(`${product.name} has only ${stock} available.`), { statusCode: 409 });
+            const unitPriceCents = Math.round(Number(product.price) * 100);
+            if (!Number.isSafeInteger(unitPriceCents) || unitPriceCents < 1) throw Object.assign(new Error(`Invalid price for ${product.name}.`), { statusCode: 400 });
+            totalCents += unitPriceCents * quantity;
+            return { productId: String(product._id), name: product.name, sku: product.sku || '', quantity, unitPriceCents };
+        });
+
+        if (!Number.isSafeInteger(totalCents) || totalCents < 1) {
+            return res.status(400).json({ success: false, message: 'The order total is invalid.' });
+        }
+
+        const checkout = await createPayFastCheckout({
+            email,
+            amount: totalCents,
+            purchaseType: 'storeOrder',
+            orderDetails: {
+                customerName,
+                phone,
+                deliveryMethod,
+                deliveryAddress: deliveryMethod === 'delivery' ? deliveryAddress : '',
+                items: orderItems
+            }
+        });
+        return res.json({ success: true, ...checkout });
+    } catch (err) {
+        return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout.' });
     }
 });
 
@@ -1586,6 +1615,34 @@ app.post('/api/payment/payfast-plan-checkout', checkUserAuth, async (req, res) =
     }
 });
 
+// Invoice Pro checkout
+app.post('/api/payment/payfast-invoice-checkout', checkUserAuth, async (req, res) => {
+    const email = String(req.session.userEmail || '').trim().toLowerCase();
+
+    if (!email) {
+        return res.status(403).json({
+            success: false,
+            message: 'Sign in to enable Invoice Pro.'
+        });
+    }
+
+    try {
+        return res.json({
+            success: true,
+            ...(await createPayFastCheckout({
+                email,
+                amount: 4900,
+                purchaseType: 'invoicePro'
+            }))
+        });
+    } catch (err) {
+        return res.status(err.statusCode || 502).json({
+            success: false,
+            message: err.message || 'Could not start PayFast checkout.'
+        });
+    }
+});
+
 // Payment status
 app.get('/api/payment/payfast-status', async (req, res) => {
     const paymentId = String(req.query.paymentId || '');
@@ -1603,26 +1660,321 @@ app.get('/api/payment/payfast-status', async (req, res) => {
         return res.status(404).json({ success: false });
     }
 
-    if (purchase.purchaseType === 'productOrder') {
-        return res.json({
-            success: true,
-            checkout: {
-                paymentId: purchase.paymentId,
-                purchaseType: purchase.purchaseType,
-                status: purchase.status,
-                amount: purchase.amount,
-                paidAt: purchase.paidAt
-            }
-        });
-    }
-
     return res.json({
         success: true,
         checkout: purchase
     });
 });
 
+app.get('/api/payment/payfast-invoice-status', checkUserAuth, async (req, res) => {
+    const paymentId = String(
+        req.query.payfastId || req.query.paymentId || ''
+    );
 
+    if (!/^ite-[a-f0-9-]{36}$/i.test(paymentId)) {
+        return res.status(400).json({ success: false });
+    }
+
+    const purchase = await PayFastPurchase.findOne({
+        paymentId,
+        userEmail: invoiceOwner(req),
+        purchaseType: 'invoicePro'
+    }, {
+        status: 1,
+        expiresAt: 1,
+        createdAt: 1
+    }).lean();
+
+    if (!purchase) {
+        return res.status(404).json({ success: false });
+    }
+
+    return res.json({
+        success: true,
+        status: purchase.status,
+        expiresAt: purchase.expiresAt
+    });
+});
+
+// Invoice Maker helpers
+function invoiceOwner(req) {
+    return String(req.session.userEmail || '').trim().toLowerCase();
+}
+
+function cleanInvoiceText(value, max = 180) {
+    return String(value || '').trim().slice(0, max);
+}
+
+function cleanInvoiceLogo(value) {
+    const logo = String(value || '');
+
+    return logo.length <= 60000 &&
+        /^data:image\/webp;base64,[A-Za-z0-9+/]+={0,2}$/.test(logo)
+        ? logo
+        : '';
+}
+
+async function invoiceAllowance(email) {
+    const now = new Date();
+    const monthStart = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        1
+    );
+
+    const [user, used] = await Promise.all([
+        UserAccount.findOne({ email }, { invoiceProUntil: 1 }),
+        BusinessDocument.countDocuments({
+            ownerEmail: email,
+            createdAt: { $gte: monthStart }
+        })
+    ]);
+
+    const proUntil = user?.invoiceProUntil || null;
+    const pro = Boolean(proUntil && new Date(proUntil) > now);
+
+    return {
+        pro,
+        proUntil,
+        used,
+        freeLimit: 3,
+        remaining: pro ? null : Math.max(0, 3 - used)
+    };
+}
+
+// Invoice Maker access
+app.get('/api/invoice-tools/status', checkUserAuth, async (req, res) => {
+    try {
+        res.json({
+            success: true,
+            ...(await invoiceAllowance(invoiceOwner(req)))
+        });
+    } catch (_) {
+        res.status(500).json({
+            success: false,
+            message: 'Could not load Invoice Maker access.'
+        });
+    }
+});
+
+// Load saved invoices and quotes
+app.get('/api/invoices', checkUserAuth, async (req, res) => {
+    try {
+        const documents = await BusinessDocument.find(
+            { ownerEmail: invoiceOwner(req) },
+            { ownerEmail: 0, __v: 0 }
+        )
+            .sort({ createdAt: -1 })
+            .limit(100)
+            .lean();
+
+        res.json({
+            success: true,
+            documents
+        });
+    } catch (_) {
+        res.status(500).json({
+            success: false,
+            message: 'Could not load your saved documents.'
+        });
+    }
+});
+
+// Save an invoice or quotation
+app.post('/api/invoices', checkUserAuth, async (req, res) => {
+    try {
+        const ownerEmail = invoiceOwner(req);
+        const allowance = await invoiceAllowance(ownerEmail);
+
+        if (!allowance.pro && allowance.remaining <= 0) {
+            return res.status(402).json({
+                success: false,
+                code: 'UPGRADE_REQUIRED',
+                message: 'Your three free documents for this month have been used. Enable Invoice Pro for R49 per 30 days, or return next month.'
+            });
+        }
+
+        const body = req.body || {};
+
+        const kind = body.kind === 'quote'
+            ? 'quote'
+            : body.kind === 'invoice'
+                ? 'invoice'
+                : '';
+
+        if (!kind) {
+            return res.status(400).json({
+                success: false,
+                message: 'Choose invoice or quote.'
+            });
+        }
+
+        const layout = [
+            'modern',
+            'classic',
+            'compact',
+            'ledger'
+        ].includes(body.layout)
+            ? body.layout
+            : 'modern';
+
+        const vatRate = Number(body.vatRate) === 15 ? 15 : 0;
+        const discountRate = Number(body.discountRate || 0);
+
+        if (
+            !Number.isFinite(discountRate) ||
+            discountRate < 0 ||
+            discountRate > 100
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'Discount must be between 0% and 100%.'
+            });
+        }
+
+        const itemsInput = Array.isArray(body.items)
+            ? body.items.slice(0, 30)
+            : [];
+
+        const items = itemsInput.map(item => {
+            const description = cleanInvoiceText(item?.description, 160);
+            const quantity = Number(item?.quantity);
+            const unitPriceCents = Math.round(Number(item?.unitPrice) * 100);
+
+            if (
+                !description ||
+                !Number.isFinite(quantity) ||
+                quantity <= 0 ||
+                quantity > 100000 ||
+                !Number.isSafeInteger(unitPriceCents) ||
+                unitPriceCents < 0 ||
+                unitPriceCents > 100000000
+            ) {
+                return null;
+            }
+
+            return {
+                description,
+                quantity,
+                unitPriceCents,
+                lineTotalCents: Math.round(quantity * unitPriceCents)
+            };
+        });
+
+        if (!items.length || items.some(item => !item)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Add at least one valid item with a description, quantity, and non-negative price.'
+            });
+        }
+
+        const subtotalCents = items.reduce(
+            (sum, item) => sum + item.lineTotalCents,
+            0
+        );
+
+        const discountCents = Math.round(
+            subtotalCents * discountRate / 100
+        );
+
+        const taxableSubtotalCents = subtotalCents - discountCents;
+        const vatCents = Math.round(taxableSubtotalCents * vatRate / 100);
+        const totalCents = taxableSubtotalCents + vatCents;
+
+        if (
+            !Number.isSafeInteger(totalCents) ||
+            totalCents > 1000000000
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'The document total is too large.'
+            });
+        }
+
+        const now = new Date();
+        const prefix = kind === 'invoice' ? 'INV' : 'QUO';
+
+        const number = `${prefix}-${now.toISOString().slice(0, 10).replaceAll('-', '')}-${crypto.randomBytes(2).toString('hex').toUpperCase()}`;
+
+        const saved = await BusinessDocument.create({
+            ownerEmail,
+            kind,
+            number,
+            layout,
+            business: {
+                name: cleanInvoiceText(body.business?.name, 100),
+                email: cleanInvoiceText(body.business?.email, 120),
+                phone: cleanInvoiceText(body.business?.phone, 40),
+                address: cleanInvoiceText(body.business?.address, 240),
+                vatNumber: cleanInvoiceText(body.business?.vatNumber, 40),
+                logoText: cleanInvoiceText(body.business?.logoText, 40),
+                logoImage: cleanInvoiceLogo(body.business?.logoImage)
+            },
+            customer: {
+                name: cleanInvoiceText(body.customer?.name, 100),
+                email: cleanInvoiceText(body.customer?.email, 120),
+                phone: cleanInvoiceText(body.customer?.phone, 40),
+                address: cleanInvoiceText(body.customer?.address, 240)
+            },
+            issueDate: /^\d{4}-\d{2}-\d{2}$/.test(String(body.issueDate || ''))
+                ? body.issueDate
+                : now.toISOString().slice(0, 10),
+            dueDate: /^\d{4}-\d{2}-\d{2}$/.test(String(body.dueDate || ''))
+                ? body.dueDate
+                : '',
+            reference: cleanInvoiceText(body.reference, 100),
+            paymentTerms: cleanInvoiceText(body.paymentTerms, 500),
+            items,
+            vatRate,
+            discountRate,
+            discountCents,
+            subtotalCents,
+            vatCents,
+            totalCents,
+            notes: cleanInvoiceText(body.notes, 1200),
+            paymentInstructions: cleanInvoiceText(body.paymentInstructions, 500)
+        });
+
+        res.status(201).json({
+            success: true,
+            document: {
+                ...saved.toObject(),
+                ownerEmail: undefined,
+                __v: undefined
+            },
+            ...(await invoiceAllowance(ownerEmail))
+        });
+    } catch (_) {
+        res.status(500).json({
+            success: false,
+            message: 'Could not save this document. Please try again.'
+        });
+    }
+});
+
+// Delete a saved invoice or quote
+app.delete('/api/invoices/:id', checkUserAuth, async (req, res) => {
+    try {
+        const removed = await BusinessDocument.deleteOne({
+            _id: req.params.id,
+            ownerEmail: invoiceOwner(req)
+        });
+
+        if (!removed.deletedCount) {
+            return res.status(404).json({
+                success: false,
+                message: 'Document not found.'
+            });
+        }
+
+        res.json({ success: true });
+    } catch (_) {
+        res.status(400).json({
+            success: false,
+            message: 'Could not remove that document.'
+        });
+    }
+});
 
 // Customer registration
 app.post('/client/register', async (req, res) => {
@@ -1683,9 +2035,13 @@ app.post('/client/register', async (req, res) => {
         req.session.isUser = true;
         req.session.userEmail = newUser.email;
 
-        const nextUrl = req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
-            ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-            : '/dashboard';
+        const nextUrl = req.session.returnTo === '/tools/invoices'
+            ? '/tools/invoices'
+            : req.session.returnTo === '/store?resumeCart=1'
+                ? '/store?resumeCart=1'
+            : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+                ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+                : '/dashboard';
 
         delete req.session.returnTo;
 
@@ -1724,9 +2080,13 @@ app.post('/client/login', async (req, res) => {
             req.session.isUser = true;
             req.session.userEmail = user.email;
 
-            const nextUrl = req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
-                ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-                : '/dashboard';
+            const nextUrl = req.session.returnTo === '/tools/invoices'
+                ? '/tools/invoices'
+                : req.session.returnTo === '/store?resumeCart=1'
+                    ? '/store?resumeCart=1'
+                : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
+                    ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
+                    : '/dashboard';
 
             delete req.session.returnTo;
 
