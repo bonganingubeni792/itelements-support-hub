@@ -1471,7 +1471,7 @@ async function createPayFastCheckout({
 
     if (!publicBaseUrl.startsWith('https://')) {
         throw Object.assign(
-            new Error('Secure checkout needs the website's HTTPS address to be configured. Please contact IT Elements.'),
+            new Error("Secure checkout needs the website HTTPS address to be configured. Please contact IT Elements."),
             { statusCode: 503 }
         );
     }
