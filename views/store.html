@@ -237,8 +237,19 @@ function addToCart(id){
  renderCart();
 }
 
-window.showProduct=id=>{
- const p=products.find(x=>x._id===id);if(!p)return;
+window.showProduct=async id=>{
+ let p=products.find(x=>x._id===id);if(!p)return;
+ try{
+  const response=await fetch('/api/store/products/'+encodeURIComponent(id));
+  const detail=await response.json();
+  if(!response.ok||!detail.product)throw Error(detail.message||'Product details could not be loaded.');
+  p={...p,...detail.product};
+  const index=products.findIndex(x=>x._id===id);
+  if(index>=0)products[index]=p;
+ }catch(error){
+  alert(error.message||'Product details could not be loaded. Please try again.');
+  return;
+ }
  const gallery=[...new Set([p.imageUrl,...(Array.isArray(p.images)?p.images:[])].filter(Boolean))];
  const image=gallery.length?`<div class="product-gallery-main"><img id="productGalleryMain" src="${esc(gallery[0])}" alt="${esc(p.name)}"></div>${gallery.length>1?`<div class="product-gallery-thumbs">${gallery.map((url,i)=>`<button type="button" class="product-gallery-thumb${i===0?' active':''}" onclick="selectProductImage(${i})" aria-label="View product image ${i+1}"><img src="${esc(url)}" alt=""></button>`).join('')}</div>`:''}`:'<span style="font-size:80px">💻</span>';
  window.selectProductImage=index=>{
