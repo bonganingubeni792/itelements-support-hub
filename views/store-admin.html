@@ -42,7 +42,15 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .hint{font-size:10px;color:#9298a1;line-height:1.55;margin-top:7px}
 .notice{margin-top:12px;padding:11px 13px;border-radius:9px;background:#f3f4f6;color:#444b55;font-size:12px}.notice.error{background:#fff0f0;color:#a00000}.notice.ok{background:#edfff3;color:#176b35}
 #catalogue{margin-top:18px}.toolbar{display:flex;gap:9px;margin:14px 0}.toolbar input{flex:1;min-width:130px;background:#fff}.toolbar select{max-width:165px;background:#fff}
-.catalogue{display:grid;gap:9px}.product{display:grid;grid-template-columns:72px minmax(0,1fr) auto;align-items:center;gap:14px;border:1px solid #eceef1;border-radius:11px;padding:11px;transition:.16s}.product:hover{border-color:#d7dbe1;box-shadow:0 4px 14px #11100008}
+.catalogue{display:grid;gap:9px}
+.admin-filterbar{display:grid;grid-template-columns:minmax(230px,2fr) repeat(3,minmax(135px,1fr)) auto;align-items:end;gap:10px;padding:14px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.admin-filterbar label{display:grid;gap:5px;color:#777f8a;font-size:10px;font-weight:800}
+.admin-filterbar input,.admin-filterbar select{width:100%;min-width:0;border:1px solid #dfe2e7;border-radius:8px;padding:11px 12px;background:#fff;color:#303640;font-size:12px}
+.catalogue-pager{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 2px;color:#7c838e;font-size:11px}
+.catalogue-pager>div{display:flex;align-items:center;gap:10px}
+.catalogue-pager .btn{padding:8px 11px;font-size:10px}
+@media(max-width:1050px){.admin-filterbar{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.admin-filterbar{grid-template-columns:1fr}.catalogue-pager{align-items:flex-start;flex-direction:column}.catalogue-pager>div{width:100%;justify-content:space-between}}.product{display:grid;grid-template-columns:72px minmax(0,1fr) auto;align-items:center;gap:14px;border:1px solid #eceef1;border-radius:11px;padding:11px;transition:.16s}.product:hover{border-color:#d7dbe1;box-shadow:0 4px 14px #11100008}
 .thumb{width:72px;height:72px;background:#f5f6f8;border-radius:9px;overflow:hidden;display:grid;place-items:center;color:#a2a7af;font-size:10px}.thumb img{width:100%;height:100%;object-fit:contain}.pname{font-weight:850;font-size:12px;color:#282d35}.meta{font-size:10px;color:#9298a2;margin-top:4px}.price{font-size:13px;font-weight:900;color:#252a32;margin-top:5px}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#eaf8ef;color:#087443;font-size:9px;font-weight:900;margin-top:6px}.pill.draft{background:#fff4df;color:#8a5a00}.rowactions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.rowactions .btn{padding:8px 10px;font-size:10px}.empty{padding:32px;text-align:center;color:#9298a2;font-size:12px;border:1px dashed #e1e4e8;border-radius:11px;background:#fbfbfc}
 @media(max-width:1050px){.app{grid-template-columns:218px minmax(0,1fr)}.stats{grid-template-columns:repeat(2,1fr)}#productForm{grid-template-columns:minmax(0,1fr)}#productForm>.formlayout{grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr)}}
 @media(max-width:720px){#productForm>.formlayout{grid-template-columns:1fr}.app{display:block}aside{height:auto;position:relative;padding:12px 14px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:0 4px 11px}.nav{display:flex;overflow:auto;gap:4px}.navlabel{display:none}.nav a{white-space:nowrap;padding:9px 11px}.sidefoot{display:none}.topbar{height:58px;padding:0 14px}.content{padding:20px 13px 36px}.pagehead{align-items:flex-start;flex-direction:column}.pagehead h1{font-size:25px}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:22px}.panel{padding:15px}#productForm{display:block}.two{grid-template-columns:1fr;gap:0}.product{grid-template-columns:55px minmax(0,1fr)}.thumb{width:55px;height:55px}.rowactions{grid-column:2;justify-content:flex-start}.toolbar{flex-direction:column}.toolbar select{max-width:none}.topright{gap:8px}.topright a:first-child{display:none}}
@@ -266,7 +274,13 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 <div class="two"><div class="field"><label for="price">Selling price (ZAR) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="1299.00"></div><div class="field"><label for="compareAtPrice">Previous price (ZAR)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="1499.00"></div></div>
 <div class="two"><div class="field"><label for="stock">Stock quantity</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div></div>
 <label class="check"><input type="checkbox" id="featured"> Feature this product in the public store</label><div class="formactions"><button class="btn primary" id="saveBtn" type="submit">Save product</button><button class="btn" type="button" id="resetBtn">Clear form</button></div><div id="message" aria-live="polite"></div></form></section>
-<section class="panel" id="catalogue"><div class="panelhead"><div><h2>Product catalogue</h2><p class="sub">Edit, publish, hide or remove products</p></div><button class="btn" id="refreshBtn">↻ Refresh</button></div><div class="toolbar"><input id="search" type="search" placeholder="Search product name, SKU or category..."><select id="filter"><option value="all">All products</option><option value="active">Published</option><option value="draft">Drafts</option></select></div>
+<section class="panel" id="catalogue"><div class="panelhead"><div><h2>Product catalogue</h2><p class="sub">Edit, publish, hide or remove products</p></div><button class="btn" id="refreshBtn">↻ Refresh</button></div><div class="toolbar admin-filterbar">
+<input id="search" type="search" placeholder="⌕  Search products, brands, model, SKU or category...">
+<label>Price range<select id="priceFilter"><option value="all">Any price</option><option value="0-500">Under R500</option><option value="500-1500">R500 – R1,500</option><option value="1500-5000">R1,500 – R5,000</option><option value="5000-10000">R5,000 – R10,000</option><option value="10000+">R10,000+</option></select></label>
+<label>Availability<select id="filter"><option value="all">All products</option><option value="active">Published</option><option value="draft">Drafts</option><option value="in">In stock</option><option value="out">Out of stock</option></select></label>
+<label>Sort by<select id="sortFilter"><option value="featured">Featured first</option><option value="newest">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="name">Product name</option></select></label>
+<button class="btn" type="button" id="clearAdminFilters">Clear filters</button></div>
+<div class="catalogue-pager"><span id="adminResultCount">Showing 0 products</span><div><button class="btn" id="adminPrev" type="button">Previous</button><span id="adminPageLabel">Page 1 of 1</span><button class="btn" id="adminNext" type="button">Next 50</button></div></div>
 <div class="bulk-toolbar">
   <label class="bulk-select-all"><input type="checkbox" id="selectAllProducts"> Select all shown</label>
   <span id="selectedCount">0 selected</span>
@@ -279,7 +293,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 </div></main></div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
-const $=id=>document.getElementById(id);let products=[];const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
+const $=id=>document.getElementById(id);let products=[];let adminPage=1;const ADMIN_PAGE_SIZE=50;const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function notice(t,type=''){ $('message').innerHTML=t?`<div class="notice ${type}">${escapeHtml(t)}</div>`:''; }
 async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});if(r.redirected||r.status===401||r.status===403){location.href='/client/login';throw Error('Administrator sign-in required.');}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.message||'Request failed.');return d;}
@@ -295,23 +309,51 @@ async function uploadProductImage(file){
 function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
 function preview(){const u=$('imageUrl').value.trim(),box=$('imagePreview');box.replaceChildren();if(!u){box.textContent='Paste an image URL below';return;}const img=document.createElement('img');img.src=u;img.alt='Product preview';img.onerror=()=>{box.textContent='Image could not be loaded';};box.appendChild(img);}
 function render(){
- const q=$('search').value.toLowerCase(),f=$('filter').value;
- const shown=products.filter(p=>(f==='all'||p.status===f)&&[p.name,p.sku,p.category].join(' ').toLowerCase().includes(q));
+ const q=$('search').value.trim().toLowerCase(),f=$('filter').value,price=$('priceFilter').value,sort=$('sortFilter').value;
+ let shown=products.filter(p=>{
+  const hay=[p.name,p.sku,p.category,p.brand,p.model].join(' ').toLowerCase();
+  if(q&&!hay.includes(q))return false;
+  if(f==='active'&&p.status!=='active')return false;
+  if(f==='draft'&&p.status!=='draft')return false;
+  if(f==='in'&&Number(p.stock)<=0)return false;
+  if(f==='out'&&Number(p.stock)>0)return false;
+  const n=Number(p.price||0);
+  if(price==='0-500'&&n>=500)return false;
+  if(price==='500-1500'&&(n<500||n>1500))return false;
+  if(price==='1500-5000'&&(n<1500||n>5000))return false;
+  if(price==='5000-10000'&&(n<5000||n>10000))return false;
+  if(price==='10000+'&&n<=10000)return false;
+  return true;
+ });
+ if(sort==='price-low')shown.sort((a,b)=>Number(a.price||0)-Number(b.price||0));
+ if(sort==='price-high')shown.sort((a,b)=>Number(b.price||0)-Number(a.price||0));
+ if(sort==='name')shown.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+ if(sort==='featured')shown.sort((a,b)=>Number(!!b.featured)-Number(!!a.featured));
+ if(sort==='newest')shown.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+ const pages=Math.max(1,Math.ceil(shown.length/ADMIN_PAGE_SIZE));adminPage=Math.min(adminPage,pages);
+ const pageItems=shown.slice((adminPage-1)*ADMIN_PAGE_SIZE,adminPage*ADMIN_PAGE_SIZE);
  $('totalCount').textContent=products.length;$('activeCount').textContent=products.filter(p=>p.status==='active').length;$('draftCount').textContent=products.filter(p=>p.status==='draft').length;$('lowCount').textContent=products.filter(p=>Number(p.stock)<=5).length;
  const cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
  $('categoryOptions').innerHTML=cats.map(c=>`<option value="${escapeHtml(c)}"></option>`).join('');
- $('productList').innerHTML=shown.length?shown.map(p=>`<article class="product">
+ $('adminResultCount').textContent=shown.length?`Showing ${(adminPage-1)*ADMIN_PAGE_SIZE+1}–${Math.min(adminPage*ADMIN_PAGE_SIZE,shown.length)} of ${shown.length} products`:'No products found';
+ $('adminPageLabel').textContent=`Page ${adminPage} of ${pages}`;$('adminPrev').disabled=adminPage<=1;$('adminNext').disabled=adminPage>=pages;
+ $('productList').innerHTML=pageItems.length?pageItems.map(p=>`<article class="product">
  <label class="product-select"><input class="product-check" type="checkbox" value="${escapeHtml(p._id)}"> Select</label>
  <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" decoding="async">`:'No image'}</div>
  <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''} · Stock: ${Number(p.stock)||0}</div>
  <div class="price">${money(p.price)}${Number(p.compareAtPrice)>Number(p.price)?` <s style="color:#999;font-weight:500">${money(p.compareAtPrice)}</s>`:''}</div>
  <span class="pill ${p.status==='draft'?'draft':''}">${p.status==='draft'?'DRAFT':'PUBLISHED'}</span>${p.featured?' <span class="pill">FEATURED</span>':''}</div>
- <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products found. Add your first product using the editor.</div>';
+ <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products match these filters.</div>';
  $('selectAllProducts').checked=false;updateSelectedCount();
 }
 function selectedProductIds(){return [...document.querySelectorAll('.product-check:checked')].map(x=>x.value);}
 function updateSelectedCount(){$('selectedCount').textContent=`${selectedProductIds().length} selected`;}
 document.addEventListener('change',e=>{if(e.target.matches('.product-check'))updateSelectedCount();});
+['search','filter','priceFilter','sortFilter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',()=>{adminPage=1;render();}));
+$('clearAdminFilters').onclick=()=>{$('search').value='';$('filter').value='all';$('priceFilter').value='all';$('sortFilter').value='featured';adminPage=1;render();};
+$('adminPrev').onclick=()=>{if(adminPage>1){adminPage--;render();}};
+$('adminNext').onclick=()=>{adminPage++;render();};
+
 $('selectAllProducts').addEventListener('change',e=>{document.querySelectorAll('.product-check').forEach(x=>x.checked=e.target.checked);updateSelectedCount();});
 async function bulkAction(action,ids){
  if(!ids.length){notice('Select at least one product first.','error');return;}
