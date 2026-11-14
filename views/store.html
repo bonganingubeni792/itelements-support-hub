@@ -185,6 +185,121 @@ header{height:62px;padding:0 max(18px,calc((100% - 1440px)/2));box-shadow:0 1px 
 @media(max-width:760px){header{height:auto;min-height:58px;gap:8px}.store-benefits{justify-content:space-around;gap:7px;padding:6px 8px}.store-benefits small{display:none}.store-benefits>div{gap:4px}.benefit-icon{width:19px;height:19px;font-size:11px}.store-benefits strong{font-size:8px}.wrap{padding:13px 10px 35px}.shop-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:9px}.searchbox{grid-column:1/-1}.filter-reset{grid-column:2;grid-row:2}.filter-row{display:contents}.department-nav{grid-column:1/-1}.filter-field select{height:36px}.department-picker-label{flex-direction:row;align-items:center}.department-picker-title{white-space:nowrap}.department-picker-label select{max-width:70%}.products{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.photo{height:112px;margin:5px 5px 0}.cardbody{padding:7px}.card h3{font-size:10px;min-height:40px}.price{font-size:13px}.stock{font-size:8px}.add{font-size:9px;padding:8px 4px}.product-modal-content{grid-template-columns:1fr;gap:18px;padding:16px 14px 40px}.product-detail-image{position:static;padding:8px}.product-gallery-main{height:280px}.product-detail-copy h2{font-size:21px}.product-detail-actions{grid-template-columns:1fr}.product-detail-price{font-size:25px}}
 @media(max-width:430px){nav{gap:13px;font-size:11px}.brand{font-size:15px}.brand img{width:31px;height:31px}.cartbtn{padding:8px 10px;font-size:10px}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.photo{height:138px}.card h3{font-size:11px;min-height:43px}.stock{font-size:9px}.add{font-size:10px}.store-benefits>div{padding:2px}.product-gallery-main{height:240px}}
 
+/* CORRECTED IT ELEMENTS STORE LAYOUT — KEEP ALL ORIGINAL SECTIONS */
+/* Restore the hero and catalogue heading; make them more compact rather than removing them. */
+.hero{display:grid!important;min-height:250px;padding:36px clamp(22px,5vw,72px);grid-template-columns:minmax(0,1.1fr) minmax(280px,.9fr);gap:28px}
+.hero h1{font-size:clamp(31px,4vw,46px);margin:8px 0}.hero p{font-size:13px;line-height:1.6;margin:8px 0 15px}.hero-art{height:185px;padding:19px}.hero-art-tile{min-height:60px}
+.store-benefits{max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:10px 20px;border-bottom:1px solid #eceef1}
+.store-benefits>div{display:flex;align-items:center;justify-content:center;gap:8px;padding:7px 10px;min-width:0;border:1px solid #eceef1;border-radius:8px;background:#fff}
+.benefit-icon{flex:0 0 25px;width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:#fff0f0;color:#d00000;font-size:13px}
+.store-benefits strong{display:block;font-size:10px;line-height:1.25;white-space:nowrap}.store-benefits small{display:block;margin-top:2px;font-size:9px;line-height:1.25;color:#737985;white-space:normal}
+.wrap{max-width:1440px;padding:20px clamp(14px,2.2vw,30px) 48px}
+.intro{margin:0 0 10px;align-items:center}.intro h2{font-size:22px}.intro .eyebrow{font-size:9px}.intro .muted{font-size:10px}#resultCount{display:none!important}
+.shop-filters{display:grid;grid-template-columns:minmax(230px,1.8fr) repeat(3,minmax(115px,.75fr)) minmax(165px,1fr) auto;gap:8px;align-items:end;margin:0 0 13px;padding:10px 12px;border:1px solid #e6e8eb;border-radius:9px;box-shadow:none}
+.search-row,.filter-row{display:contents}.searchbox{height:36px;padding:0 9px;border-radius:7px}.searchbox>span{font-size:18px}.searchbox input{height:34px;font-size:11px}.searchbox kbd{display:none}
+.filter-field{gap:2px;font-size:9px}.filter-field select,.department-picker-label select{height:35px;padding:0 8px;border:1px solid #e1e3e7;border-radius:7px;font-size:10px}
+.filter-reset{height:35px;padding:0 10px;border-radius:7px;font-size:10px;white-space:nowrap}
+.department-nav{margin:0;padding:0;border:0;min-width:0}.department-picker-label{display:flex;flex-direction:column;align-items:stretch;gap:2px}.department-picker-title{font-size:9px;white-space:nowrap}
+.catalogue-toolbar{display:flex!important;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 10px;padding:0 1px}.catalogue-toolbar>div{display:flex;align-items:baseline;gap:9px}.catalogue-toolbar strong{font-size:14px}.toolbar-kicker{font-size:8px;letter-spacing:1px}.catalogue-note{font-size:10px}
+/* Takealot-inspired product tiles: compact cards in a neat side-by-side grid. */
+.products{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.card{min-width:0;border:1px solid #e6e8eb;border-radius:8px;box-shadow:none;transition:border-color .18s,box-shadow .18s}.card:hover{transform:translateY(-2px);border-color:#d9dde3;box-shadow:0 5px 14px #0000000c}
+.photo{height:155px;margin:7px 7px 0;border-radius:6px;background:#fff}.photo img{object-fit:contain}.cardbody{padding:9px 10px 10px}.category{font-size:8px;letter-spacing:.4px}.card h3{font-size:11px;line-height:1.35;margin:5px 0 7px;min-height:44px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.desc{display:none}.card-price-row{margin-top:auto}.price{font-size:15px}.old{font-size:9px}.stock{font-size:9px;margin:5px 0 8px}.add{padding:8px 7px;font-size:10px;border-radius:6px}.card .add.secondary{display:none!important}
+/* Product details: gallery on the left, buying information on the right, with back navigation. */
+.product-modal{padding:0;align-items:stretch}.product-modal-backdrop{background:#fff;backdrop-filter:none}.product-modal-panel{width:100%;height:100%;max-height:none;overflow:auto;border:0;border-radius:0;box-shadow:none;background:#fff}
+.product-modal-close{position:sticky;top:0;float:none;display:flex;align-items:center;gap:8px;width:100%;height:50px;margin:0;padding:0 max(18px,calc((100% - 1260px)/2));border:0;border-bottom:1px solid #e9ebef;border-radius:0;background:#fff;color:#222;font-size:13px;font-weight:800;text-align:left;cursor:pointer}
+.product-modal-close:before{content:'←';font-size:22px;color:var(--red);line-height:1}
+.product-modal-content{max-width:1260px;margin:0 auto;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:34px;padding:24px 24px 50px;align-items:start}
+.product-detail-image{position:sticky;top:65px;display:block;min-height:0;padding:12px;border:1px solid #e9ebef;border-radius:10px;background:#fff}
+.product-gallery-main{height:390px;min-height:0}.product-gallery-main img{width:100%;height:100%;max-height:390px;object-fit:contain;cursor:zoom-in}
+.product-gallery-thumbs{display:flex;justify-content:flex-start;gap:8px;margin-top:10px;flex-wrap:wrap}.product-gallery-thumb{width:64px;height:62px;border:1px solid #e1e4e8;border-radius:6px;background:#fff;padding:3px;cursor:pointer}.product-gallery-thumb.active{border:2px solid var(--red)}.product-gallery-thumb img{width:100%;height:100%;object-fit:contain}
+.product-detail-copy{padding:5px 0}.product-detail-copy h2{font-size:24px;line-height:1.3}.product-detail-price{font-size:27px}.product-detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.detail-section{margin-top:18px}
+@media(max-width:1100px){.products{grid-template-columns:repeat(4,minmax(0,1fr))}.shop-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.searchbox{grid-column:span 2}.filter-reset{grid-column:auto}.department-nav{grid-column:auto}}
+@media(max-width:760px){.hero{grid-template-columns:1fr;min-height:0;padding:27px 20px}.hero-art{display:none}.store-benefits{grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:7px 9px}.store-benefits>div{justify-content:flex-start;gap:5px;padding:5px 4px}.benefit-icon{width:20px;height:20px;flex-basis:20px;font-size:10px}.store-benefits strong{font-size:8px;white-space:normal}.store-benefits small{display:none}.wrap{padding:14px 10px 34px}.shop-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:9px}.searchbox{grid-column:1/-1}.filter-reset{grid-column:2;grid-row:2}.filter-row{display:contents}.department-nav{grid-column:1/-1}.department-picker-label{flex-direction:row;align-items:center;justify-content:space-between}.department-picker-label select{max-width:65%}.products{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.photo{height:115px;margin:5px 5px 0}.cardbody{padding:7px}.card h3{font-size:10px;min-height:40px}.price{font-size:13px}.stock{font-size:8px}.add{font-size:9px;padding:8px 4px}.catalogue-toolbar strong{font-size:12px}.catalogue-note{display:none}.product-modal-content{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px;padding:16px 12px 35px}.product-detail-image{position:static;padding:7px}.product-gallery-main{height:250px}.product-detail-copy h2{font-size:18px}.product-detail-price{font-size:22px}.product-detail-actions{grid-template-columns:1fr}.detail-meta{gap:5px}.detail-pill{font-size:9px;padding:5px 6px}}
+@media(max-width:520px){.products{grid-template-columns:repeat(2,minmax(0,1fr))}.photo{height:135px}.store-benefits{gap:3px}.store-benefits>div{border:0;background:#fafafa}.hero h1{font-size:32px}.product-modal-content{grid-template-columns:1fr;gap:13px}.product-gallery-main{height:260px}.product-detail-copy h2{font-size:20px}.product-detail-actions{grid-template-columns:1fr 1fr}}
+
+
+/* PRODUCT IMAGE FIT FIX — images stay inside their own area and never overlap text */
+.products{align-items:stretch}
+.card{display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.photo{
+  position:relative;
+  flex:0 0 112px;
+  height:112px;
+  min-height:112px;
+  margin:7px 7px 0;
+  padding:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:#fff;
+}
+.photo img{
+  position:static!important;
+  display:block;
+  width:auto!important;
+  height:auto!important;
+  max-width:82%!important;
+  max-height:96%!important;
+  object-fit:contain!important;
+  object-position:center;
+  margin:auto;
+  mix-blend-mode:normal!important;
+  transform:none!important;
+}
+.card:hover .photo img{transform:none!important}
+.cardbody{position:relative;z-index:1;display:flex;flex-direction:column;flex:1;min-width:0;background:#fff}
+.card h3{
+  display:block!important;
+  min-height:0!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+  -webkit-line-clamp:unset!important;
+  -webkit-box-orient:initial!important;
+  white-space:normal;
+  overflow-wrap:anywhere;
+  word-break:normal;
+  line-height:1.35;
+  margin:5px 0 8px;
+}
+.product-ribbon{z-index:2}
+/* Product detail gallery also uses contained, smaller images */
+.product-detail-image{overflow:hidden}
+.product-gallery-main{
+  height:310px!important;
+  min-height:0!important;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  background:#fff;
+}
+.product-gallery-main img{
+  display:block;
+  position:static!important;
+  width:auto!important;
+  height:auto!important;
+  max-width:86%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center;
+  margin:auto;
+}
+.product-gallery-thumbs{align-items:center}
+.product-gallery-thumb{display:flex;align-items:center;justify-content:center;overflow:hidden}
+.product-gallery-thumb img{display:block;max-width:100%;max-height:100%;object-fit:contain!important}
+@media(max-width:760px){
+  .photo{flex-basis:96px;height:96px;min-height:96px;padding:7px}
+  .photo img{max-width:84%!important;max-height:96%!important}
+  .product-gallery-main{height:250px!important}
+}
+@media(max-width:520px){
+  .photo{flex-basis:104px;height:104px;min-height:104px;margin:5px 5px 0;padding:6px}
+  .product-gallery-main{height:230px!important}
+}
+
 </style></head><body>
 <header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
