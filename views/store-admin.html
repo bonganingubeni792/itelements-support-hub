@@ -389,7 +389,8 @@ function render(){
 $('productList').addEventListener('click',async e=>{
  const btn=e.target.closest('[data-stock-save]');if(!btn)return;
  const id=btn.dataset.stockSave,p=products.find(x=>x._id===id);if(!p)return;
- const qtyInput=$(`[data-stock-qty="${id}"]`),modeSelect=$(`[data-stock-mode="${id}"]`);
+ const qtyInput=document.querySelector(`[data-stock-qty="${id}"]`),modeSelect=document.querySelector(`[data-stock-mode="${id}"]`);
+ if(!qtyInput||!modeSelect){notice('Could not find the stock controls. Refresh the page and try again.','error');return;} 
  let qty=Math.floor(Number(qtyInput.value));
  if(modeSelect.value==='out')qty=0;
  else if(!Number.isInteger(qty)||qty<1){notice('For In stock, enter at least 1 unit.','error');qtyInput.focus();return;}
@@ -403,8 +404,8 @@ $('productList').addEventListener('click',async e=>{
 });
 $('productList').addEventListener('change',e=>{
  const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
- const id=mode.dataset.stockMode,qty=$(`[data-stock-qty="${id}"]`);
- if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
+ const id=mode.dataset.stockMode,qty=document.querySelector(`[data-stock-qty="${id}"]`);
+ if(!qty)return;if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
 });
 function selectedProductIds(){return [...document.querySelectorAll('.product-check:checked')].map(x=>x.value);}
 function updateSelectedCount(){$('selectedCount').textContent=`${selectedProductIds().length} selected`;}
