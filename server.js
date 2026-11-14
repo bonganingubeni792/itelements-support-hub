@@ -103,6 +103,7 @@ const StoreProduct = mongoose.model('StoreProduct', new mongoose.Schema({
     compareAtPrice: { type: Number, default: 0, min: 0 },
     stock: { type: Number, default: 0, min: 0 },
     imageUrl: { type: String, default: '', trim: true, maxlength: 1000 },
+    images: { type: [String], default: [] },
     status: { type: String, enum: ['active', 'draft'], default: 'active' },
     featured: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
@@ -782,7 +783,7 @@ app.post('/webhooks/payfast', async (req, res) => {
 });
 
 // JSON request support
-app.use(express.json({ limit: '8mb' }));
+app.use(express.json({ limit: '60mb' }));
 
 if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
     throw new Error('SESSION_SECRET must be set in production.');
@@ -918,6 +919,30 @@ function cleanStoreProduct(body = {}) {
     const category = String(body.category || '').trim();
     const description = String(body.description || '').trim();
     const imageUrl = String(body.imageUrl || '').trim();
+    const incomingImages = Array.isArray(body.images) ? body.images : [];
+    const imageCandidates = [imageUrl, ...incomingImages]
+        .map(value => String(value || '').trim())
+        .filter(Boolean);
+    const validImages = [];
+    for (const candidate of imageCandidates) {
+        let normalized = '';
+        if (/^\/(?:assets\/)?uploads\/products\/[a-f0-9-]+\.(?:jpg|jpeg|png|webp|avif)$/i.test(candidate)) {
+            normalized = candidate;
+        } else {
+            try {
+                const parsed = new URL(candidate);
+                if (!['http:', 'https:'].includes(parsed.protocol)) {
+                    return { error: 'Product images must use an HTTP or HTTPS address.' };
+                }
+                normalized = parsed.href;
+            } catch (_) {
+                return { error: 'One of the product image addresses is invalid.' };
+            }
+        }
+        if (!validImages.includes(normalized)) validImages.push(normalized);
+        if (validImages.length >= 20) break;
+    }
+    const primaryImage = validImages[0] || '';
 
     const price = Number(body.price);
     const compareAtPrice = body.compareAtPrice === '' ||
@@ -931,25 +956,6 @@ function cleanStoreProduct(body = {}) {
     const status = ['active', 'draft'].includes(body.status)
         ? body.status
         : 'draft';
-
-    let validImageUrl = '';
-
-    if (imageUrl) {
-        // Uploaded product images are served from this application's public assets folder.
-        if (/^\/assets\/uploads\/products\/[a-f0-9-]+\.(?:jpg|jpeg|png|webp|avif)$/i.test(imageUrl)) {
-            validImageUrl = imageUrl;
-        } else {
-            try {
-                const parsed = new URL(imageUrl);
-                if (!['http:', 'https:'].includes(parsed.protocol)) {
-                    return { error: 'Product images must use an HTTP or HTTPS address.' };
-                }
-                validImageUrl = parsed.href;
-            } catch (_) {
-                return { error: 'Enter a valid product image URL or upload an image.' };
-            }
-        }
-    }
 
     if (!name || name.length > 120) {
         return {
@@ -1008,7 +1014,8 @@ function cleanStoreProduct(body = {}) {
             compareAtPrice,
             stock,
             status,
-            imageUrl: validImageUrl,
+            imageUrl: primaryImage,
+            images: validImages,
             description,
             featured: body.featured === true ||
                 body.featured === 'true' ||
