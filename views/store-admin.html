@@ -168,8 +168,8 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
     <div class="import-card import-guide">
       <div class="tool-icon">▤</div><h3>Spreadsheet columns</h3>
       <p>Use these column headings. Product name, category and selling price are required. Other columns are optional.</p>
-      <div class="column-list"><span>name</span><span>sku</span><span>category / categories</span><span>price</span><span>rec / RRP</span><span>cpt</span><span>jhb</span><span>db</span><span>description</span><span>featured image</span><span>additional images</span><span>all image</span></div>
-      <small>Syntech CSV feeds are detected automatically. Featured, additional and all-image columns are combined into the product gallery. Existing standard CSV files remain supported.</small>
+      <div class="column-list"><span>sku</span><span>name</span><span>price</span><span>rec</span><span>cpt / jhb / db</span><span>url</span><span>description</span><span>shortdesc</span><span>featured image</span><span>additional images</span><span>all image</span><span>categories</span></div>
+      <small>Only the important Syntech columns are imported: SKU, name, price, RRP, branch stock, description and product images. Departments are detected automatically from supplier categories and product details; you can correct them in the preview.</small>
     </div>
   </div>
   <div id="importPreviewWrap" hidden>
@@ -359,6 +359,48 @@ function splitImageValues(value){
  const found=text.match(/https?:\/\/[^\s,;|"'<>]+/gi)||[];
  return found.map(url=>url.replace(/[)\]}]+$/,'')).filter(Boolean);
 }
+
+function inferStoreDepartment(product){
+ const text=[product.name,product.sku,product.categoryRaw,product.description,product.shortDescription]
+  .filter(Boolean).join(' ').toLowerCase();
+ const has=(...terms)=>terms.some(term=>text.includes(term));
+ const rules=[
+  ['Gaming Laptops',()=>has('gaming laptop','gaming notebook','rog laptop','tuf gaming laptop','legion laptop','predator laptop','nitro laptop','omen laptop')],
+  ['Gaming PCs',()=>has('gaming pc','gaming desktop','gaming tower','gaming computer')],
+  ['Computers & Laptops',()=>has('laptop','notebook','desktop pc','desktop computer','all-in-one pc','aio pc','mini pc','workstation')],
+  ['Refurbished Computers',()=>has('refurbished','renewed','reconditioned','pre-owned','used laptop','used desktop')],
+  ['Graphics Cards',()=>has('graphics card','geforce','nvidia rtx','radeon rx','gpu','video card')],
+  ['Processors (CPU)',()=>has('processor','cpu','ryzen 3','ryzen 5','ryzen 7','ryzen 9','intel core','core i3','core i5','core i7','core i9','xeon')],
+  ['Motherboards',()=>has('motherboard','mainboard','system board')],
+  ['RAM & Memory',()=>has('ram','memory module','ddr3','ddr4','ddr5','sodimm','udimm')],
+  ['SSD & NVMe Storage',()=>has('nvme','ssd','solid state drive','m.2 drive')],
+  ['Hard Drives (HDD)',()=>has('hard drive',' hdd',' sata drive','desktop drive','2.5-inch drive','3.5-inch drive')],
+  ['External Storage',()=>has('external drive','portable drive','usb flash','flash drive','memory stick')],
+  ['Monitors & Displays',()=>has('monitor','display','screen')],
+  ['Keyboards',()=>has('keyboard')],
+  ['Mice & Gaming Mice',()=>has('mouse','mice')],
+  ['Headsets & Audio',()=>has('headset','headphone','speaker','microphone','soundbar')],
+  ['Networking & Wi-Fi',()=>has('router','mesh wi-fi','mesh wifi','access point','network switch','wi-fi adapter','wifi adapter')],
+  ['Printers & Scanners',()=>has('printer','scanner','multifunction')],
+  ['PC Cases',()=>has('pc case','computer case','chassis')],
+  ['Power Supplies (PSU)',()=>has('power supply','psu')],
+  ['CPU Cooling & Fans',()=>has('cpu cooler','cooling fan','case fan','liquid cooler','aio cooler')],
+  ['Cables & Adapters',()=>has('cable','adapter','converter')],
+  ['Docks & Hubs',()=>has('dock','usb hub','type-c hub')],
+  ['UPS & Power Protection',()=>has('ups','surge protector','power protection')],
+  ['Software & Security',()=>has('antivirus','security software','software licence','software license')],
+  ['Operating Systems',()=>has('windows 11','windows 10','operating system')]
+ ];
+ for(const [department,test] of rules){if(test())return department;}
+ return '';
+}
+
+function splitImageValues(value){
+ const text=String(value||'').trim();
+ if(!text)return [];
+ const found=text.match(/https?:\/\/[^\s,;|"'<>]+/gi)||[];
+ return found.map(url=>url.replace(/[)\]}]+$/,'')).filter(Boolean);
+}
 function keyMap(row){
  const out={};
  for(const [k,v] of Object.entries(row)){
@@ -371,59 +413,55 @@ function keyMap(row){
   }
   return '';
  };
- const truth=v=>['true','yes','1','y','featured','active'].includes(String(v).trim().toLowerCase());
- const splitList=v=>String(v||'').split(/[|;>]/).map(x=>x.trim()).filter(Boolean);
- const featuredImages=splitImageValues(get('featured image','featuredimage','main image','image','imageurl','image url','product image'));
- const additionalImages=splitImageValues(get('additional images','additionalimages','extra images','gallery images','other images'));
- const allImages=splitImageValues(get('all image','all images','allimage','allimages','images','image gallery'));
- const images=[...new Set([...featuredImages,...additionalImages,...allImages])].slice(0,20);
- const categoryRaw=get('category','categories','product category','type','department');
- const categoryList=splitList(categoryRaw);
- const rawCategory=categoryList[0]||String(categoryRaw||'').split(',')[0].trim();
- const categoryChoices=['Computers & Laptops', 'Gaming PCs', 'Gaming Laptops', 'Refurbished Computers', 'Gaming Components', 'Graphics Cards', 'Processors (CPU)', 'Motherboards', 'RAM & Memory', 'SSD & NVMe Storage', 'Hard Drives (HDD)', 'External Storage', 'PC Cases', 'Power Supplies (PSU)', 'CPU Cooling & Fans', 'Monitors & Displays', 'Gaming Monitors', 'Keyboards', 'Gaming Keyboards', 'Mice & Gaming Mice', 'Headsets & Audio', 'Controllers & Gamepads', 'Webcams & Streaming', 'Networking & Wi-Fi', 'Routers & Mesh Wi-Fi', 'Network Switches', 'Cables & Adapters', 'Docks & Hubs', 'Printers & Scanners', 'Printer Ink & Toner', 'Software & Security', 'Operating Systems', 'Office Accessories', 'UPS & Power Protection', 'Special Offers', 'Other Accessories'];
- const category=categoryChoices.find(c=>c.toLowerCase()===rawCategory.toLowerCase())||'';
- const description=String(get('description','details','specifications','shortdesc','short description')).trim();
  const numeric=v=>{
   const n=Number(String(v??'').replace(/[R,\s]/g,''));
   return Number.isFinite(n)?n:0;
  };
- // Syntech feeds use branch columns for stock. Sum only numeric branch quantities.
+ const splitList=v=>String(v||'').split(/[|;>]/).map(x=>x.trim()).filter(Boolean);
+ const truth=v=>['true','yes','1','y','featured','active'].includes(String(v).trim().toLowerCase());
+
+ const name=String(get('name','product','productname','title')).trim();
+ const sku=String(get('sku','productcode','code')).trim();
+ const supplierCategory=String(get('categories','category','product category','type','department')).trim();
+ const categoryList=splitList(supplierCategory);
+ const rawCategory=categoryList[0]||'';
+ const allowedCategories=['Computers & Laptops', 'Gaming PCs', 'Gaming Laptops', 'Refurbished Computers', 'Gaming Components', 'Graphics Cards', 'Processors (CPU)', 'Motherboards', 'RAM & Memory', 'SSD & NVMe Storage', 'Hard Drives (HDD)', 'External Storage', 'PC Cases', 'Power Supplies (PSU)', 'CPU Cooling & Fans', 'Monitors & Displays', 'Gaming Monitors', 'Keyboards', 'Gaming Keyboards', 'Mice & Gaming Mice', 'Headsets & Audio', 'Controllers & Gamepads', 'Webcams & Streaming', 'Networking & Wi-Fi', 'Routers & Mesh Wi-Fi', 'Network Switches', 'Cables & Adapters', 'Docks & Hubs', 'Printers & Scanners', 'Printer Ink & Toner', 'Software & Security', 'Operating Systems', 'Office Accessories', 'UPS & Power Protection', 'Special Offers', 'Other Accessories'];
+ const matchedSupplierCategory=allowedCategories.find(c=>c.toLowerCase()===rawCategory.toLowerCase())||'';
+ const description=String(get('description','details','specifications')).trim();
+ const shortDescription=String(get('shortdesc','short description','shortdescription')).trim();
+ const featuredImages=splitImageValues(get('featured image','featuredimage','main image','image','imageurl','image url','product image'));
+ const additionalImages=splitImageValues(get('additional images','additionalimages','extra images','gallery images','other images'));
+ const allImages=splitImageValues(get('all image','all images','allimage','allimages','images','image gallery'));
+ const images=[...new Set([...featuredImages,...additionalImages,...allImages])].slice(0,20);
+
+ // Syntech stock is split by branch. Sum the three stock columns if no
+ // explicit total-stock column exists.
  const branchValues=['cpt','jhb','db'].map(k=>get(k));
  const hasBranchStock=branchValues.some(v=>String(v).trim()!=='');
  const branchStock=branchValues.reduce((sum,v)=>sum+numeric(v),0);
  const explicitStock=get('stock','quantity','inventory','qty');
- const rec=get('rec','rrp','recommended retail price','recommendedretailprice','compareAtPrice','compare at price','oldprice','previousprice');
+ const price=numeric(get('price','sellingprice','regularprice'));
+ const compareAtPrice=numeric(get('rec','rrp','recommended retail price','recommendedretailprice','compareAtPrice','compare at price','oldprice','previousprice'));
+ const categoryRaw=matchedSupplierCategory||rawCategory;
+ const autoCategory=matchedSupplierCategory||inferStoreDepartment({
+  name,sku,categoryRaw,
+  description:description||shortDescription,
+  shortDescription
+ });
  return {
-  name:String(get('name','product','productname','title')).trim(),
-  sku:String(get('sku','productcode','code')).trim(),
-  category,
-  description,
+  name,sku,
+  category:autoCategory,
+  categoryRaw,
+  description:description||shortDescription,
+  shortDescription,
   imageUrl:images[0]||'',
   images,
-  price:numeric(get('price','sellingprice','regularprice')),
-  compareAtPrice:numeric(rec),
+  price,
+  compareAtPrice,
   stock:explicitStock!==''?Math.max(0,Math.floor(numeric(explicitStock))):(hasBranchStock?Math.max(0,Math.floor(branchStock)):0),
   status:['active','published','live'].includes(String(get('status','visibility')).trim().toLowerCase())?'active':'draft',
   featured:truth(get('featured','highlight','featured product'))
  };
-}
-function refreshImportValidation(){
- const errors=importRows.map((p,i)=>validateImportRow(p,i)).filter(Boolean);
- const valid=importRows.length-errors.length;
- const imageTotal=importRows.reduce((n,p)=>n+(p.images||[]).length,0);
- $('importPreviewCount').textContent=`${valid} ready · ${errors.length} need attention · ${imageTotal} images detected`;
- $('runImport').disabled=valid===0;
- importRows.forEach((p,i)=>{
-  const row=$(`importPreviewRows`).querySelector(`[data-import-row="${i}"]`);
-  if(!row)return;
-  const nameCell=row.children[1];
-  const warning=nameCell.querySelector('.row-validation-warning');
-  if(validateImportRow(p,i)){
-   if(!warning){const badge=document.createElement('b');badge.className='row-validation-warning';badge.style.color='#b00000';badge.textContent=' · Choose/check';nameCell.appendChild(badge);}
-  }else if(warning)warning.remove();
-  const hint=row.querySelector('.import-category-hint');
-  if(hint)hint.textContent=p.category?'Selected: '+p.category:'Please choose a department';
- });
 }
 function validateImportRow(p,index){
  if(!p.name)return `Row ${index+2}: product name is missing.`;
@@ -466,8 +504,8 @@ async function readImportFile(file){
   $('importPreviewWrap').hidden=false;
   $('importPreviewTitle').textContent=`Preview: ${file.name}`;
   $('importPreviewCount').textContent=`${valid} valid · ${errors.length} need attention · ${imageTotal} images detected`;
-  if(isSyntech)setImportStatus(`Syntech feed detected automatically. SKU, name, price, RRP, categories and all image columns have been mapped where available. ${imageTotal} image URLs found across ${importRows.length} products.`,'success');
-  $('importPreviewRows').innerHTML=importRows.slice(0,importRows.length).map((p,i)=>`<tr data-import-row="${i}"><td class="image-cell"><div class="import-image-gallery">${(p.images||[]).slice(0,5).map((url,n)=>`<img class="import-image-preview" src="${escapeHtml(url)}" alt="Product image ${n+1}" onerror="this.style.opacity='.18';this.alt='Image unavailable'">`).join('')||'<span class="no-import-image">No image found</span>'}</div><textarea class="import-image-url" data-image-row="${i}" rows="2" placeholder="Image URLs">${escapeHtml((p.images||[]).join('\n'))}</textarea><small class="import-image-count">${(p.images||[]).length} image(s) detected · up to 20</small><label style="display:block;margin-top:5px;font-size:9px;color:#666">Or upload main image <input type="file" data-image-file-row="${i}" accept="image/jpeg,image/png,image/webp,image/avif" style="display:block;max-width:145px;font-size:9px"></label><small class="import-upload-status" style="display:block;color:#16834b"></small><label class="import-row-check"><input type="checkbox" data-include-row="${i}" checked> Import</label></td><td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td><td><select class="import-category-select" data-category-row="${i}" aria-label="Choose department for ${escapeHtml(p.name||'product')}"><option value="">Choose department…</option><option value="Computers & Laptops">Computers & Laptops</option><option value="Gaming PCs">Gaming PCs</option><option value="Gaming Laptops">Gaming Laptops</option><option value="Refurbished Computers">Refurbished Computers</option><option value="Gaming Components">Gaming Components</option><option value="Graphics Cards">Graphics Cards</option><option value="Processors (CPU)">Processors (CPU)</option><option value="Motherboards">Motherboards</option><option value="RAM & Memory">RAM & Memory</option><option value="SSD & NVMe Storage">SSD & NVMe Storage</option><option value="Hard Drives (HDD)">Hard Drives (HDD)</option><option value="External Storage">External Storage</option><option value="PC Cases">PC Cases</option><option value="Power Supplies (PSU)">Power Supplies (PSU)</option><option value="CPU Cooling & Fans">CPU Cooling & Fans</option><option value="Monitors & Displays">Monitors & Displays</option><option value="Gaming Monitors">Gaming Monitors</option><option value="Keyboards">Keyboards</option><option value="Gaming Keyboards">Gaming Keyboards</option><option value="Mice & Gaming Mice">Mice & Gaming Mice</option><option value="Headsets & Audio">Headsets & Audio</option><option value="Controllers & Gamepads">Controllers & Gamepads</option><option value="Webcams & Streaming">Webcams & Streaming</option><option value="Networking & Wi-Fi">Networking & Wi-Fi</option><option value="Routers & Mesh Wi-Fi">Routers & Mesh Wi-Fi</option><option value="Network Switches">Network Switches</option><option value="Cables & Adapters">Cables & Adapters</option><option value="Docks & Hubs">Docks & Hubs</option><option value="Printers & Scanners">Printers & Scanners</option><option value="Printer Ink & Toner">Printer Ink & Toner</option><option value="Software & Security">Software & Security</option><option value="Operating Systems">Operating Systems</option><option value="Office Accessories">Office Accessories</option><option value="UPS & Power Protection">UPS & Power Protection</option><option value="Special Offers">Special Offers</option><option value="Other Accessories">Other Accessories</option></select><small class="import-category-hint">${p.category?'Detected: '+escapeHtml(p.category):'Please choose a department'}</small></td><td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td><td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td><td>${escapeHtml(p.status)}</td></tr>`).join('');
+  if(isSyntech)setImportStatus(`Syntech feed detected. Important product fields and image links mapped; departments were auto-detected where possible. ${imageTotal} image URLs found across ${importRows.length} products.`,'success');
+  $('importPreviewRows').innerHTML=importRows.slice(0,importRows.length).map((p,i)=>`<tr data-import-row="${i}"><td class="image-cell"><div class="import-image-gallery">${(p.images||[]).slice(0,5).map((url,n)=>`<img class="import-image-preview" src="${escapeHtml(url)}" alt="Product image ${n+1}" onerror="this.style.opacity='.18';this.alt='Image unavailable'">`).join('')||'<span class="no-import-image">No image found</span>'}</div><textarea class="import-image-url" data-image-row="${i}" rows="2" placeholder="Image URLs">${escapeHtml((p.images||[]).join('\n'))}</textarea><small class="import-image-count">${(p.images||[]).length} image(s) detected · up to 20</small><label style="display:block;margin-top:5px;font-size:9px;color:#666">Or upload main image <input type="file" data-image-file-row="${i}" accept="image/jpeg,image/png,image/webp,image/avif" style="display:block;max-width:145px;font-size:9px"></label><small class="import-upload-status" style="display:block;color:#16834b"></small><label class="import-row-check"><input type="checkbox" data-include-row="${i}" checked> Import</label></td><td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td><td><select class="import-category-select" data-category-row="${i}" aria-label="Choose department for ${escapeHtml(p.name||'product')}"><option value="">Choose department…</option><option value="Computers & Laptops">Computers & Laptops</option><option value="Gaming PCs">Gaming PCs</option><option value="Gaming Laptops">Gaming Laptops</option><option value="Refurbished Computers">Refurbished Computers</option><option value="Gaming Components">Gaming Components</option><option value="Graphics Cards">Graphics Cards</option><option value="Processors (CPU)">Processors (CPU)</option><option value="Motherboards">Motherboards</option><option value="RAM & Memory">RAM & Memory</option><option value="SSD & NVMe Storage">SSD & NVMe Storage</option><option value="Hard Drives (HDD)">Hard Drives (HDD)</option><option value="External Storage">External Storage</option><option value="PC Cases">PC Cases</option><option value="Power Supplies (PSU)">Power Supplies (PSU)</option><option value="CPU Cooling & Fans">CPU Cooling & Fans</option><option value="Monitors & Displays">Monitors & Displays</option><option value="Gaming Monitors">Gaming Monitors</option><option value="Keyboards">Keyboards</option><option value="Gaming Keyboards">Gaming Keyboards</option><option value="Mice & Gaming Mice">Mice & Gaming Mice</option><option value="Headsets & Audio">Headsets & Audio</option><option value="Controllers & Gamepads">Controllers & Gamepads</option><option value="Webcams & Streaming">Webcams & Streaming</option><option value="Networking & Wi-Fi">Networking & Wi-Fi</option><option value="Routers & Mesh Wi-Fi">Routers & Mesh Wi-Fi</option><option value="Network Switches">Network Switches</option><option value="Cables & Adapters">Cables & Adapters</option><option value="Docks & Hubs">Docks & Hubs</option><option value="Printers & Scanners">Printers & Scanners</option><option value="Printer Ink & Toner">Printer Ink & Toner</option><option value="Software & Security">Software & Security</option><option value="Operating Systems">Operating Systems</option><option value="Office Accessories">Office Accessories</option><option value="UPS & Power Protection">UPS & Power Protection</option><option value="Special Offers">Special Offers</option><option value="Other Accessories">Other Accessories</option></select><small class="import-category-hint">${p.category?'Auto-selected: '+escapeHtml(p.category):'Not recognised — please choose'}</small></td><td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td><td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td><td>${escapeHtml(p.status)}</td></tr>`).join('');
   $('importPreviewRows').querySelectorAll('[data-category-row]').forEach(select=>{
    const rowIndex=Number(select.dataset.categoryRow);
    select.value=importRows[rowIndex]?.category||'';
