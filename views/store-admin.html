@@ -160,21 +160,21 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
   <div class="import-grid">
     <div class="import-card">
       <div class="tool-icon">⇧</div><h3>Import products</h3>
-      <p>Upload a <b>.CSV</b> file or an <b>.XLSX / .XLS</b> Excel spreadsheet. Each valid row will be added as a product.</p>
-      <label class="file-drop" for="productImportFile"><strong>Choose product file</strong><span>CSV or Excel · up to 5 MB</span><input id="productImportFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"></label>
+      <p>Upload a <b>.CSV</b> file or an <b>.XLSX / .XLS</b> Excel spreadsheet. Each valid row will be added as a product. Large CSV/Excel catalogues up to 50 MB are supported.</p>
+      <label class="file-drop" for="productImportFile"><strong>Choose product file</strong><span>CSV or Excel · up to 50 MB</span><input id="productImportFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"></label>
       <div class="import-actions"><button class="btn" type="button" id="downloadTemplate">Download CSV template</button><button class="btn" type="button" id="exportProducts">Export catalogue CSV</button><button class="btn softred" type="button" id="deleteAllProducts">Delete all products</button></div>
       <div id="importStatus" class="import-status" aria-live="polite">Choose a file to preview the rows before importing.</div>
     </div>
     <div class="import-card import-guide">
       <div class="tool-icon">▤</div><h3>Spreadsheet columns</h3>
       <p>Use these column headings. Product name, category and selling price are required. Other columns are optional.</p>
-      <div class="column-list"><span>name</span><span>sku</span><span>category</span><span>price</span><span>compareAtPrice</span><span>stock</span><span>description</span><span>imageUrl</span><span>status</span><span>featured</span></div>
-      <small>Tip: save your Excel workbook as .xlsx, or choose CSV UTF-8 when exporting from Excel.</small>
+      <div class="column-list"><span>name</span><span>sku</span><span>category / categories</span><span>price</span><span>rec / RRP</span><span>cpt</span><span>jhb</span><span>db</span><span>description</span><span>featured image</span><span>additional images</span><span>all image</span></div>
+      <small>Syntech CSV feeds are detected automatically. Featured, additional and all-image columns are combined into the product gallery. Existing standard CSV files remain supported.</small>
     </div>
   </div>
   <div id="importPreviewWrap" hidden>
     <div class="preview-heading"><strong id="importPreviewTitle">Import preview</strong><span id="importPreviewCount"></span></div>
-    <div class="import-table-wrap"><table class="import-table"><thead><tr><th>Image</th><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead><tbody id="importPreviewRows"></tbody></table></div>
+    <div class="import-table-wrap"><table class="import-table"><thead><tr><th>Image</th><th>Product</th><th>Choose department</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead><tbody id="importPreviewRows"></tbody></table></div>
     <div class="import-actions"><button class="btn primary" type="button" id="runImport">Import selected products</button><button class="btn" type="button" id="cancelImport">Cancel</button></div>
   </div>
 </section>
@@ -353,22 +353,77 @@ function csvParse(text){
  const headers=rows.shift().map(h=>String(h||'').replace(/^\uFEFF/,'').trim());
  return rows.map(values=>Object.fromEntries(headers.map((h,i)=>[h,values[i]??''])));
 }
+function splitImageValues(value){
+ const text=String(value||'').trim();
+ if(!text)return [];
+ const found=text.match(/https?:\/\/[^\s,;|"'<>]+/gi)||[];
+ return found.map(url=>url.replace(/[)\]}]+$/,'')).filter(Boolean);
+}
 function keyMap(row){
- const out={};for(const [k,v] of Object.entries(row)){out[String(k).toLowerCase().replace(/[^a-z0-9]/g,'')]=v;}
- const get=(...keys)=>{for(const k of keys){const key=k.toLowerCase().replace(/[^a-z0-9]/g,'');if(out[key]!==undefined)return out[key];}return '';};
- const truth=v=>['true','yes','1','y','featured'].includes(String(v).trim().toLowerCase());
+ const out={};
+ for(const [k,v] of Object.entries(row)){
+  out[String(k).toLowerCase().replace(/[^a-z0-9]/g,'')]=v;
+ }
+ const get=(...keys)=>{
+  for(const k of keys){
+   const key=k.toLowerCase().replace(/[^a-z0-9]/g,'');
+   if(out[key]!==undefined&&String(out[key]).trim()!=='')return out[key];
+  }
+  return '';
+ };
+ const truth=v=>['true','yes','1','y','featured','active'].includes(String(v).trim().toLowerCase());
+ const splitList=v=>String(v||'').split(/[|;>]/).map(x=>x.trim()).filter(Boolean);
+ const featuredImages=splitImageValues(get('featured image','featuredimage','main image','image','imageurl','image url','product image'));
+ const additionalImages=splitImageValues(get('additional images','additionalimages','extra images','gallery images','other images'));
+ const allImages=splitImageValues(get('all image','all images','allimage','allimages','images','image gallery'));
+ const images=[...new Set([...featuredImages,...additionalImages,...allImages])].slice(0,20);
+ const categoryRaw=get('category','categories','product category','type','department');
+ const categoryList=splitList(categoryRaw);
+ const rawCategory=categoryList[0]||String(categoryRaw||'').split(',')[0].trim();
+ const categoryChoices=['Computers & Laptops', 'Gaming PCs', 'Gaming Laptops', 'Refurbished Computers', 'Gaming Components', 'Graphics Cards', 'Processors (CPU)', 'Motherboards', 'RAM & Memory', 'SSD & NVMe Storage', 'Hard Drives (HDD)', 'External Storage', 'PC Cases', 'Power Supplies (PSU)', 'CPU Cooling & Fans', 'Monitors & Displays', 'Gaming Monitors', 'Keyboards', 'Gaming Keyboards', 'Mice & Gaming Mice', 'Headsets & Audio', 'Controllers & Gamepads', 'Webcams & Streaming', 'Networking & Wi-Fi', 'Routers & Mesh Wi-Fi', 'Network Switches', 'Cables & Adapters', 'Docks & Hubs', 'Printers & Scanners', 'Printer Ink & Toner', 'Software & Security', 'Operating Systems', 'Office Accessories', 'UPS & Power Protection', 'Special Offers', 'Other Accessories'];
+ const category=categoryChoices.find(c=>c.toLowerCase()===rawCategory.toLowerCase())||'';
+ const description=String(get('description','details','specifications','shortdesc','short description')).trim();
+ const numeric=v=>{
+  const n=Number(String(v??'').replace(/[R,\s]/g,''));
+  return Number.isFinite(n)?n:0;
+ };
+ // Syntech feeds use branch columns for stock. Sum only numeric branch quantities.
+ const branchValues=['cpt','jhb','db'].map(k=>get(k));
+ const hasBranchStock=branchValues.some(v=>String(v).trim()!=='');
+ const branchStock=branchValues.reduce((sum,v)=>sum+numeric(v),0);
+ const explicitStock=get('stock','quantity','inventory','qty');
+ const rec=get('rec','rrp','recommended retail price','recommendedretailprice','compareAtPrice','compare at price','oldprice','previousprice');
  return {
   name:String(get('name','product','productname','title')).trim(),
   sku:String(get('sku','productcode','code')).trim(),
-  category:String(get('category','type','department')).trim(),
-  description:String(get('description','details','specifications')).trim(),
-  imageUrl:String(get('imageUrl','image','imageurl','image link','product image','image url','image_url','image1','image 1','main image','picture','photo','productimage','product image url','imagepath','image path','thumbnail','image src')).trim(),
-  price:Number(String(get('price','sellingprice','regularprice')).replace(/[R,\s]/g,'')),
-  compareAtPrice:Number(String(get('compareAtPrice','compare at price','oldprice','previousprice')).replace(/[R,\s]/g,''))||0,
-  stock:Number(String(get('stock','quantity','inventory','qty')).replace(/[,\s]/g,'' )||0),
+  category,
+  description,
+  imageUrl:images[0]||'',
+  images,
+  price:numeric(get('price','sellingprice','regularprice')),
+  compareAtPrice:numeric(rec),
+  stock:explicitStock!==''?Math.max(0,Math.floor(numeric(explicitStock))):(hasBranchStock?Math.max(0,Math.floor(branchStock)):0),
   status:['active','published','live'].includes(String(get('status','visibility')).trim().toLowerCase())?'active':'draft',
-  featured:truth(get('featured','highlight'))
+  featured:truth(get('featured','highlight','featured product'))
  };
+}
+function refreshImportValidation(){
+ const errors=importRows.map((p,i)=>validateImportRow(p,i)).filter(Boolean);
+ const valid=importRows.length-errors.length;
+ const imageTotal=importRows.reduce((n,p)=>n+(p.images||[]).length,0);
+ $('importPreviewCount').textContent=`${valid} ready · ${errors.length} need attention · ${imageTotal} images detected`;
+ $('runImport').disabled=valid===0;
+ importRows.forEach((p,i)=>{
+  const row=$(`importPreviewRows`).querySelector(`[data-import-row="${i}"]`);
+  if(!row)return;
+  const nameCell=row.children[1];
+  const warning=nameCell.querySelector('.row-validation-warning');
+  if(validateImportRow(p,i)){
+   if(!warning){const badge=document.createElement('b');badge.className='row-validation-warning';badge.style.color='#b00000';badge.textContent=' · Choose/check';nameCell.appendChild(badge);}
+  }else if(warning)warning.remove();
+  const hint=row.querySelector('.import-category-hint');
+  if(hint)hint.textContent=p.category?'Selected: '+p.category:'Please choose a department';
+ });
 }
 function validateImportRow(p,index){
  if(!p.name)return `Row ${index+2}: product name is missing.`;
@@ -379,12 +434,16 @@ function validateImportRow(p,index){
  if(!Number.isFinite(p.compareAtPrice)||p.compareAtPrice<0)return `Row ${index+2}: previous price is invalid.`;
  if(!Number.isInteger(p.stock)||p.stock<0)return `Row ${index+2}: stock must be a whole number of zero or more.`;
  if(p.sku.length>60||p.description.length>2000)return `Row ${index+2}: SKU or description is too long.`;
- if(p.imageUrl){try{const u=new URL(p.imageUrl);if(!['http:','https:'].includes(u.protocol))throw Error();}catch{return `Row ${index+2}: image URL must start with http:// or https://.`;}}
+ for(const image of (p.images||[])){
+  try{const u=new URL(image);if(!['http:','https:'].includes(u.protocol))throw Error();}
+  catch{return `Row ${index+2}: one of the product image URLs is invalid.`;}
+ }
+ if(p.images&&p.images.length>20)return `Row ${index+2}: a maximum of 20 product images is allowed.`;
  return '';
 }
 async function readImportFile(file){
  if(!file)return;
- if(file.size>5*1024*1024){setImportStatus('The selected file is larger than 5 MB.','error');return;}
+ if(file.size>50*1024*1024){setImportStatus('The selected file is larger than 50 MB. Please split the supplier catalogue into smaller files.','error');return;}
  try{
   let records=[];
   const ext=file.name.toLowerCase().split('.').pop();
@@ -396,26 +455,48 @@ async function readImportFile(file){
    records=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:false});
   }else throw Error('Choose a CSV or Excel (.xlsx / .xls) file.');
   if(!records.length)throw Error('No product rows were found in the first worksheet.');
+  if(records.length>10000)throw Error(`This file contains ${records.length.toLocaleString()} product rows. The maximum per import is 10,000 rows; split the supplier file into smaller parts.`);
   importRows=records.map(keyMap);
+  const firstRecord=records[0]||{};
+  const normalizedHeaders=Object.keys(firstRecord).map(h=>String(h).toLowerCase().replace(/[^a-z0-9]/g,''));
+  const isSyntech=normalizedHeaders.includes('featuredimage')||normalizedHeaders.includes('additionalimages')||normalizedHeaders.includes('allimage');
+  const imageTotal=importRows.reduce((n,p)=>n+(p.images||[]).length,0);
   const errors=importRows.map((p,i)=>validateImportRow(p,i)).filter(Boolean);
   const valid=importRows.length-errors.length;
   $('importPreviewWrap').hidden=false;
   $('importPreviewTitle').textContent=`Preview: ${file.name}`;
-  $('importPreviewCount').textContent=`${valid} valid · ${errors.length} need attention`;
-  $('importPreviewRows').innerHTML=importRows.slice(0,importRows.length).map((p,i)=>`<tr data-import-row="${i}"><td class="image-cell"><img class="import-image-preview" src="${escapeHtml(p.imageUrl||'')}" alt="" onerror="this.style.opacity='.18';this.alt='No image'"><input class="import-image-url" data-image-row="${i}" value="${escapeHtml(p.imageUrl||'')}" placeholder="Paste image URL"><label style="display:block;margin-top:5px;font-size:9px;color:#666">Or upload <input type="file" data-image-file-row="${i}" accept="image/jpeg,image/png,image/webp,image/avif" style="display:block;max-width:145px;font-size:9px"></label><small class="import-upload-status" style="display:block;color:#16834b"></small><label class="import-row-check"><input type="checkbox" data-include-row="${i}" checked> Import</label></td><td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td><td>${escapeHtml(p.category||'—')}</td><td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td><td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td><td>${escapeHtml(p.status)}</td></tr>`).join('');
-  $('runImport').disabled=valid===0;
+  $('importPreviewCount').textContent=`${valid} valid · ${errors.length} need attention · ${imageTotal} images detected`;
+  if(isSyntech)setImportStatus(`Syntech feed detected automatically. SKU, name, price, RRP, categories and all image columns have been mapped where available. ${imageTotal} image URLs found across ${importRows.length} products.`,'success');
+  $('importPreviewRows').innerHTML=importRows.slice(0,importRows.length).map((p,i)=>`<tr data-import-row="${i}"><td class="image-cell"><div class="import-image-gallery">${(p.images||[]).slice(0,5).map((url,n)=>`<img class="import-image-preview" src="${escapeHtml(url)}" alt="Product image ${n+1}" onerror="this.style.opacity='.18';this.alt='Image unavailable'">`).join('')||'<span class="no-import-image">No image found</span>'}</div><textarea class="import-image-url" data-image-row="${i}" rows="2" placeholder="Image URLs">${escapeHtml((p.images||[]).join('\n'))}</textarea><small class="import-image-count">${(p.images||[]).length} image(s) detected · up to 20</small><label style="display:block;margin-top:5px;font-size:9px;color:#666">Or upload main image <input type="file" data-image-file-row="${i}" accept="image/jpeg,image/png,image/webp,image/avif" style="display:block;max-width:145px;font-size:9px"></label><small class="import-upload-status" style="display:block;color:#16834b"></small><label class="import-row-check"><input type="checkbox" data-include-row="${i}" checked> Import</label></td><td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td><td><select class="import-category-select" data-category-row="${i}" aria-label="Choose department for ${escapeHtml(p.name||'product')}"><option value="">Choose department…</option><option value="Computers & Laptops">Computers & Laptops</option><option value="Gaming PCs">Gaming PCs</option><option value="Gaming Laptops">Gaming Laptops</option><option value="Refurbished Computers">Refurbished Computers</option><option value="Gaming Components">Gaming Components</option><option value="Graphics Cards">Graphics Cards</option><option value="Processors (CPU)">Processors (CPU)</option><option value="Motherboards">Motherboards</option><option value="RAM & Memory">RAM & Memory</option><option value="SSD & NVMe Storage">SSD & NVMe Storage</option><option value="Hard Drives (HDD)">Hard Drives (HDD)</option><option value="External Storage">External Storage</option><option value="PC Cases">PC Cases</option><option value="Power Supplies (PSU)">Power Supplies (PSU)</option><option value="CPU Cooling & Fans">CPU Cooling & Fans</option><option value="Monitors & Displays">Monitors & Displays</option><option value="Gaming Monitors">Gaming Monitors</option><option value="Keyboards">Keyboards</option><option value="Gaming Keyboards">Gaming Keyboards</option><option value="Mice & Gaming Mice">Mice & Gaming Mice</option><option value="Headsets & Audio">Headsets & Audio</option><option value="Controllers & Gamepads">Controllers & Gamepads</option><option value="Webcams & Streaming">Webcams & Streaming</option><option value="Networking & Wi-Fi">Networking & Wi-Fi</option><option value="Routers & Mesh Wi-Fi">Routers & Mesh Wi-Fi</option><option value="Network Switches">Network Switches</option><option value="Cables & Adapters">Cables & Adapters</option><option value="Docks & Hubs">Docks & Hubs</option><option value="Printers & Scanners">Printers & Scanners</option><option value="Printer Ink & Toner">Printer Ink & Toner</option><option value="Software & Security">Software & Security</option><option value="Operating Systems">Operating Systems</option><option value="Office Accessories">Office Accessories</option><option value="UPS & Power Protection">UPS & Power Protection</option><option value="Special Offers">Special Offers</option><option value="Other Accessories">Other Accessories</option></select><small class="import-category-hint">${p.category?'Detected: '+escapeHtml(p.category):'Please choose a department'}</small></td><td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td><td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td><td>${escapeHtml(p.status)}</td></tr>`).join('');
+  $('importPreviewRows').querySelectorAll('[data-category-row]').forEach(select=>{
+   const rowIndex=Number(select.dataset.categoryRow);
+   select.value=importRows[rowIndex]?.category||'';
+  });
+  refreshImportValidation();
   setImportStatus(errors.length?`${valid} rows are ready. ${errors.length} rows contain errors and will be skipped. Correct them in your spreadsheet and re-upload if needed.`:`${valid} products are ready to import.` ,errors.length?'':'success');
  }catch(err){importRows=[];$('importPreviewWrap').hidden=true;setImportStatus(err.message||'Could not read this file.','error');}
 }
 $('productImportFile').addEventListener('change',e=>readImportFile(e.target.files[0]));
 $('cancelImport').onclick=()=>{$('productImportFile').value='';importRows=[];$('importPreviewWrap').hidden=true;setImportStatus('Import cancelled.');};
 
+$('importPreviewRows').addEventListener('change',e=>{
+ const select=e.target.closest('[data-category-row]');
+ if(!select)return;
+ const i=Number(select.dataset.categoryRow);
+ if(!importRows[i])return;
+ importRows[i].category=select.value;
+ refreshImportValidation();
+});
 $('importPreviewRows').addEventListener('input',e=>{
  const field=e.target.closest('[data-image-row]');if(!field)return;
  const i=Number(field.dataset.imageRow);if(!importRows[i])return;
- importRows[i].imageUrl=field.value.trim();
- const img=field.closest('tr').querySelector('.import-image-preview');
- if(img){img.src=importRows[i].imageUrl;img.style.opacity='1';}
+ const urls=splitImageValues(field.value);
+ importRows[i].images=[...new Set(urls)].slice(0,20);
+ importRows[i].imageUrl=importRows[i].images[0]||'';
+ const cell=field.closest('td');
+ const gallery=cell.querySelector('.import-image-gallery');
+ gallery.innerHTML=importRows[i].images.slice(0,5).map((url,n)=>`<img class="import-image-preview" src="${escapeHtml(url)}" alt="Product image ${n+1}" onerror="this.style.opacity='.18';this.alt='Image unavailable'">`).join('')||'<span class="no-import-image">No image found</span>';
+ cell.querySelector('.import-image-count').textContent=`${importRows[i].images.length} image(s) detected · up to 20`;
 });
 $('importPreviewRows').addEventListener('change',async e=>{
  const field=e.target.closest('[data-image-file-row]');if(!field)return;
@@ -430,11 +511,21 @@ $('runImport').onclick=async()=>{
  $('runImport').disabled=true;
  setImportStatus(`Importing ${selected.length} selected products with their selected images…`);
  try{
-  const result=await api('/api/admin/store/products/bulk',{method:'POST',body:JSON.stringify({products:selected})});
+  let totalCreated=0,totalSkipped=0;
+  const batchSize=100;
+  const batches=Math.ceil(selected.length/batchSize);
+  for(let offset=0;offset<selected.length;offset+=batchSize){
+   const batch=selected.slice(offset,offset+batchSize);
+   const batchNumber=Math.floor(offset/batchSize)+1;
+   setImportStatus(`Importing batch ${batchNumber} of ${batches} · ${Math.min(offset+batch.length,selected.length).toLocaleString()} of ${selected.length.toLocaleString()} products…`);
+   const result=await api('/api/admin/store/products/bulk',{method:'POST',body:JSON.stringify({products:batch})});
+   totalCreated+=Number(result.created)||0;
+   totalSkipped+=Number(result.skipped)||0;
+  }
   await load();
-  setImportStatus(`Import complete: ${result.created||0} products added${result.skipped?`, ${result.skipped} skipped`:''}.`,result.skipped?'error':'success');
+  setImportStatus(`Import complete: ${totalCreated.toLocaleString()} products added${totalSkipped?`, ${totalSkipped} skipped`:''}.`,totalSkipped?'error':'success');
   $('productImportFile').value='';importRows=[];$('importPreviewWrap').hidden=true;
- }catch(e){setImportStatus(e.message||'Bulk import failed.','error');$('runImport').disabled=false;}
+ }catch(e){setImportStatus((e.message||'Bulk import failed.')+' If earlier batches completed, those products may already be saved; check the catalogue before retrying.','error');$('runImport').disabled=false;}
 };
 $('deleteAllProducts').onclick=async()=>{
  if(!products.length){setImportStatus('There are no products to delete.');return;}
@@ -466,3 +557,18 @@ document.querySelectorAll('.department-card').forEach(btn=>btn.addEventListener(
 
 $('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;$('refreshBtn').onclick=load;$('imageUrl').addEventListener('input',preview);load();
 </script></body></html>
+
+<style>
+.import-table .image-cell{min-width:190px;width:190px;vertical-align:top}
+.import-image-gallery{display:flex;gap:4px;flex-wrap:wrap;max-width:180px;margin-bottom:6px}
+.import-image-preview{width:42px;height:38px;object-fit:contain;border:1px solid #e5e7eb;border-radius:5px;background:#fff}
+.import-image-url{display:block;width:180px;max-width:180px;padding:6px;border:1px solid #dfe1e5;border-radius:5px;font-size:9px;resize:vertical}
+.import-image-count,.no-import-image{display:block;font-size:9px;color:#818894;margin:3px 0}
+</style>
+
+<style>
+.import-table .import-category-select{width:180px;max-width:100%;min-height:36px;padding:7px 25px 7px 8px;border:1px solid #dfe2e7;border-radius:7px;background:#fff;color:#252a32;font-size:10px;font-weight:700}
+.import-table .import-category-select:focus{outline:3px solid #e000001a;border-color:#e00000}
+.import-category-hint{display:block;margin-top:4px;font-size:9px;color:#858b95}
+.row-validation-warning{display:inline-block;margin-top:4px}
+</style>
