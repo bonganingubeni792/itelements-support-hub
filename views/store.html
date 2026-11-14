@@ -35,9 +35,7 @@ a{color:inherit;text-decoration:none}header{height:76px;border-bottom:1px solid 
 .department-nav{margin-top:17px;padding-top:14px;border-top:1px solid #f0f0f0}
 .department-nav-head{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .department-nav-head strong{font-size:12px}.department-nav-head span{font-size:10px;color:#969ba3}
-.department-chips{display:flex;gap:7px;overflow-x:auto;padding:2px 0 5px;scrollbar-width:thin}
-.department-chip{flex:none;padding:8px 11px;border:1px solid #e3e5e9;border-radius:20px;background:#fff;color:#555e69;font-size:10px;font-weight:750;white-space:nowrap}
-.department-chip:hover,.department-chip.active{border-color:var(--red);background:#fff1f1;color:var(--red-dark)}
+
 @media(max-width:760px){.filter-row{grid-template-columns:repeat(2,minmax(0,1fr))}.shop-filters{padding:13px}}
 @media(max-width:430px){.search-row{flex-direction:column}.searchbox{width:100%}.filter-reset{height:38px}.filter-row{gap:8px}.filter-field select{font-size:10px}}
 
@@ -110,12 +108,12 @@ nav a:hover:after{width:100%}
 .filter-row{gap:13px;margin-top:16px}
 .filter-field{font-size:11px;letter-spacing:.1px}
 .filter-field select{height:44px;border-radius:10px;font-size:12px}
-.department-nav{margin-top:19px;padding-top:17px}
-.department-nav-head strong{font-size:13px}
-.department-nav-head span{font-size:11px}
-.department-chips{gap:8px}
-.department-chip{padding:9px 13px;font-size:11px;cursor:pointer;transition:.18s}
-.department-chip.active{background:#fff0f0;color:var(--red);font-weight:850}
+.department-nav{margin-top:18px;padding-top:16px;border-top:1px solid #f0f1f3}
+.department-picker-label{display:flex;align-items:center;justify-content:space-between;gap:18px;max-width:520px}
+.department-picker-title{font-size:13px;font-weight:850;color:#252932}
+#departmentPicker{width:min(340px,100%);height:46px;padding:0 42px 0 14px;border:1px solid #e2e5e9;border-radius:10px;background:#fff;color:#252932;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 2px 5px #17191f05}
+#departmentPicker:focus{outline:3px solid #e000001c;border-color:#e00000}
+@media(max-width:480px){.department-picker-label{align-items:stretch;flex-direction:column;gap:8px}#departmentPicker{width:100%}}
 .catalogue-toolbar{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 0 14px}
 .catalogue-toolbar>div strong{display:block;margin-top:3px;font-size:18px;letter-spacing:-.3px}
 .toolbar-kicker{font-size:9px;font-weight:900;letter-spacing:1.7px;color:var(--red)}
@@ -157,12 +155,18 @@ nav a:hover:after{width:100%}
 <section class="shop-filters" aria-label="Search and filter products">
   <div class="search-row"><label class="searchbox"><span>⌕</span><input id="search" type="search" placeholder="Search products, brands, model, SKU or category…"><kbd>/</kbd></label><button class="filter-reset" id="clearFilters" type="button">Clear filters</button></div>
   <div class="filter-row">
-    <label class="filter-field"><span>Department</span><select id="category"><option value="">All departments</option></select></label>
     <label class="filter-field"><span>Price range</span><select id="priceRange"><option value="">Any price</option><option value="0-500">Under R500</option><option value="500-1500">R500 – R1,500</option><option value="1500-5000">R1,500 – R5,000</option><option value="5000-10000">R5,000 – R10,000</option><option value="10000+">Over R10,000</option></select></label>
     <label class="filter-field"><span>Availability</span><select id="availability"><option value="">All products</option><option value="in">In stock</option><option value="out">Contact for availability</option></select></label>
     <label class="filter-field"><span>Sort by</span><select id="sort"><option value="featured">Featured first</option><option value="newest">Recently added</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="name">Name: A to Z</option></select></label>
   </div>
-  <div class="department-nav"><div class="department-nav-head"><strong>Shop by department</strong><span>Choose a category to narrow your search</span></div><div class="department-chips" id="departmentChips"></div></div>
+  <div class="department-nav">
+    <label class="department-picker-label" for="departmentPicker">
+      <span class="department-picker-title">Shop by department</span>
+      <select id="departmentPicker" aria-label="Choose a product department">
+        <option value="">All departments</option>
+      </select>
+    </label>
+  </div>
 </section>
 <div class="catalogue-toolbar"><div><span class="toolbar-kicker">THE IT ELEMENTS COLLECTION</span><strong>Explore our products</strong></div><span class="catalogue-note">Select a product to view details and options</span></div><section class="products" id="products"><div class="empty">Loading products...</div></section></main>
 <footer class="foot"><div>© <span id="year"></span> IT Elements. Your Technology, Our Support.</div><div>Need help choosing? <a style="color:#ff5555" href="https://wa.me/27606181229">Chat to our team on WhatsApp</a></div></footer>
@@ -285,13 +289,17 @@ $('checkout').onclick=()=>{
  window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank');
 };
 $('search').oninput=render;$('category').onchange=render;$('priceRange').onchange=render;$('availability').onchange=render;$('sort').onchange=render;$('year').textContent=new Date().getFullYear();
-$('clearFilters').onclick=()=>{$('search').value='';$('category').value='';$('priceRange').value='';$('availability').value='';$('sort').value='featured';render();};
+$('clearFilters').onclick=()=>{$('search').value='';$('category').value='';$('departmentPicker').value='';$('priceRange').value='';$('availability').value='';$('sort').value='featured';render();};
 $('search').addEventListener('keydown',e=>{if(e.key==='/'){e.preventDefault();$('search').focus();}});
 function buildDepartmentFilters(){
- const chips=['All departments',...STORE_CATEGORIES];
- $('departmentChips').innerHTML=chips.map((c,i)=>`<button type="button" class="department-chip${i===0?' active':''}" data-category="${i===0?'':esc(c)}">${esc(c)}</button>`).join('');
- document.querySelectorAll('.department-chip').forEach(b=>b.addEventListener('click',()=>{$('category').value=b.dataset.category;render();}));
- $('category').innerHTML='<option value="">All departments</option>'+STORE_CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+ const options='<option value="">All departments</option>'+STORE_CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+ $('departmentPicker').innerHTML=options;
+ $('category').innerHTML=options;
+ $('departmentPicker').value=$('category').value||'';
+ $('departmentPicker').onchange=()=>{
+  $('category').value=$('departmentPicker').value;
+  render();
+ };
 }
 async function load(){
  try{
