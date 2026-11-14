@@ -256,7 +256,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 </section>
 
 <div class="workspace"><section class="panel" id="editor"><div class="panelhead"><div><h2 id="formTitle">Add new product</h2><p class="sub">Product details, image, pricing and availability</p></div><span class="eyebrow">PRODUCT EDITOR</span></div>
-<form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="2000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="imageUrl">Product image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint">Use a direct HTTPS image link. Image file uploads are not enabled by the current server API.</p></div></div>
+<form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="2000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="productImageFile">Choose image from your computer</label><input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="hint">JPG, PNG, WebP or AVIF · maximum 5 MB. The uploaded image is attached to this product.</p></div><div class="field"><label for="imageUrl">Or use an image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint" id="imageUploadStatus" aria-live="polite">You can upload a picture or paste an existing image URL.</p></div></div>
 <div class="two"><div class="field"><label for="sku">SKU / Product code</label><input id="sku" maxlength="60" placeholder="ITE-SSD-001"></div><div class="field"><label for="category">Category *</label><input id="category" list="categoryOptions" maxlength="80" required placeholder="Choose or type a category"><datalist id="categoryOptions"></datalist></div></div>
 <div class="two"><div class="field"><label for="price">Selling price (ZAR) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="1299.00"></div><div class="field"><label for="compareAtPrice">Previous price (ZAR)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="1499.00"></div></div>
 <div class="two"><div class="field"><label for="stock">Stock quantity</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div></div>
@@ -278,8 +278,16 @@ const $=id=>document.getElementById(id);let products=[];const money=n=>'R '+Numb
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function notice(t,type=''){ $('message').innerHTML=t?`<div class="notice ${type}">${escapeHtml(t)}</div>`:''; }
 async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});if(r.redirected||r.status===401||r.status===403){location.href='/client/login';throw Error('Administrator sign-in required.');}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.message||'Request failed.');return d;}
-function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('formTitle').textContent='Add new product';$('saveBtn').textContent='Save product';$('imagePreview').textContent='Paste an image URL below';notice('');}
-function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
+function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('formTitle').textContent='Add new product';$('saveBtn').textContent='Save product';$('imagePreview').textContent='Choose an image or paste a URL';$('imageUploadStatus').textContent='You can upload a picture or paste an existing image URL.';notice('');}
+async function uploadProductImage(file){
+ if(!file)return '';
+ if(!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type))throw Error('Choose a JPG, PNG, WebP or AVIF image.');
+ if(file.size>5*1024*1024)throw Error('The image must be 5 MB or smaller.');
+ const dataUrl=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=()=>reject(Error('Could not read the selected image.'));reader.readAsDataURL(file);});
+ const result=await api('/api/admin/store/upload-image',{method:'POST',body:JSON.stringify({imageData:dataUrl})});
+ return result.imageUrl;
+}
+function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
 function preview(){const u=$('imageUrl').value.trim(),box=$('imagePreview');box.replaceChildren();if(!u){box.textContent='Paste an image URL below';return;}const img=document.createElement('img');img.src=u;img.alt='Product preview';img.onerror=()=>{box.textContent='Image could not be loaded';};box.appendChild(img);}
 function render(){
  const q=$('search').value.toLowerCase(),f=$('filter').value;
@@ -314,7 +322,19 @@ $('publishAll').onclick=()=>bulkAction('publish',products.map(p=>p._id));
 $('draftAll').onclick=()=>bulkAction('draft',products.map(p=>p._id));
 window.editProduct=id=>{const p=products.find(x=>x._id===id);if(p)edit(p);};window.deleteProduct=async id=>{const p=products.find(x=>x._id===id);if(!p||!confirm(`Permanently delete ${p.name}?`))return;try{await api('/api/admin/store/products/'+id,{method:'DELETE'});await load();if($('productId').value===id)reset();}catch(e){notice(e.message,'error');}};
 async function load(){try{const d=await api('/api/admin/store/products');products=d.products||[];render();}catch(e){$('productList').innerHTML=`<div class="notice error">${escapeHtml(e.message)}. Check that you are signed in as an administrator and the store APIs are deployed.</div>`;}}
-$('productForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('productId').value,body={name:$('name').value,description:$('description').value,imageUrl:$('imageUrl').value,sku:$('sku').value,category:$('category').value,price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,status:$('status').value,featured:$('featured').checked};try{await api(id?'/api/admin/store/products/'+id:'/api/admin/store/products',{method:id?'PUT':'POST',body:JSON.stringify(body)});notice(id?'Product updated successfully.':'Product saved successfully.','ok');reset();await load();}catch(err){notice(err.message,'error');}});
+$('productImageFile').addEventListener('change',async e=>{
+ const file=e.target.files[0];if(!file)return;
+ $('imageUploadStatus').textContent='Uploading image…';
+ try{const url=await uploadProductImage(file);$('imageUrl').value=url;$('imageUploadStatus').textContent='Image uploaded successfully. Save the product to attach it.';preview();}
+ catch(err){$('imageUploadStatus').textContent=err.message;$('productImageFile').value='';}
+});
+$('productForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('productId').value;const save=$('saveBtn');save.disabled=true;
+ try{
+  if($('productImageFile').files[0]){ $('imageUploadStatus').textContent='Uploading image…';$('imageUrl').value=await uploadProductImage($('productImageFile').files[0]); }
+  const body={name:$('name').value,description:$('description').value,imageUrl:$('imageUrl').value,sku:$('sku').value,category:$('category').value,price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,status:$('status').value,featured:$('featured').checked};
+  await api(id?'/api/admin/store/products/'+id:'/api/admin/store/products',{method:id?'PUT':'POST',body:JSON.stringify(body)});notice(id?'Product updated successfully.':'Product saved successfully.','ok');reset();await load();
+ }catch(err){notice(err.message,'error');}finally{save.disabled=false;}
+});
 
 const IMPORT_CATEGORIES = ["Computers & Laptops", "Gaming PCs", "Gaming Laptops", "Gaming Components", "Graphics Cards", "Processors (CPU)", "Motherboards", "RAM & Memory", "SSD & NVMe Storage", "Hard Drives (HDD)", "External Storage", "PC Cases", "Power Supplies (PSU)", "CPU Cooling & Fans", "Monitors & Displays", "Gaming Monitors", "Keyboards", "Gaming Keyboards", "Mice & Gaming Mice", "Headsets & Audio", "Controllers & Gamepads", "Webcams & Streaming", "Networking & Wi-Fi", "Routers & Mesh Wi-Fi", "Network Switches", "Cables & Adapters", "Docks & Hubs", "Printers & Scanners", "Printer Ink & Toner", "Software & Security", "Operating Systems", "Office Accessories", "UPS & Power Protection", "Refurbished Computers", "Special Offers", "Other Accessories"];
 let importRows=[];
@@ -382,7 +402,7 @@ async function readImportFile(file){
   $('importPreviewWrap').hidden=false;
   $('importPreviewTitle').textContent=`Preview: ${file.name}`;
   $('importPreviewCount').textContent=`${valid} valid · ${errors.length} need attention`;
-  $('importPreviewRows').innerHTML=importRows.slice(0,importRows.length).map((p,i)=>`<tr data-import-row="${i}"><td class="image-cell"><img class="import-image-preview" src="${escapeHtml(p.imageUrl||'')}" alt="" onerror="this.style.opacity='.18';this.alt='No image'"><input class="import-image-url" data-image-row="${i}" value="${escapeHtml(p.imageUrl||'')}" placeholder="Paste image URL"><label class="import-row-check"><input type="checkbox" data-include-row="${i}" checked> Import</label></td><td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td><td>${escapeHtml(p.category||'—')}</td><td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td><td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td><td>${escapeHtml(p.status)}</td></tr>`).join('');
+  $('importPreviewRows').innerHTML=importRows.slice(0,importRows.length).map((p,i)=>`<tr data-import-row="${i}"><td class="image-cell"><img class="import-image-preview" src="${escapeHtml(p.imageUrl||'')}" alt="" onerror="this.style.opacity='.18';this.alt='No image'"><input class="import-image-url" data-image-row="${i}" value="${escapeHtml(p.imageUrl||'')}" placeholder="Paste image URL"><label style="display:block;margin-top:5px;font-size:9px;color:#666">Or upload <input type="file" data-image-file-row="${i}" accept="image/jpeg,image/png,image/webp,image/avif" style="display:block;max-width:145px;font-size:9px"></label><small class="import-upload-status" style="display:block;color:#16834b"></small><label class="import-row-check"><input type="checkbox" data-include-row="${i}" checked> Import</label></td><td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td><td>${escapeHtml(p.category||'—')}</td><td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td><td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td><td>${escapeHtml(p.status)}</td></tr>`).join('');
   $('runImport').disabled=valid===0;
   setImportStatus(errors.length?`${valid} rows are ready. ${errors.length} rows contain errors and will be skipped. Correct them in your spreadsheet and re-upload if needed.`:`${valid} products are ready to import.` ,errors.length?'':'success');
  }catch(err){importRows=[];$('importPreviewWrap').hidden=true;setImportStatus(err.message||'Could not read this file.','error');}
@@ -397,11 +417,18 @@ $('importPreviewRows').addEventListener('input',e=>{
  const img=field.closest('tr').querySelector('.import-image-preview');
  if(img){img.src=importRows[i].imageUrl;img.style.opacity='1';}
 });
+$('importPreviewRows').addEventListener('change',async e=>{
+ const field=e.target.closest('[data-image-file-row]');if(!field)return;
+ const i=Number(field.dataset.imageFileRow),file=field.files[0];if(!file||!importRows[i])return;
+ const cell=field.closest('td');const status=cell.querySelector('.import-upload-status');status.textContent='Uploading…';
+ try{importRows[i].imageUrl=await uploadProductImage(file);const img=cell.querySelector('.import-image-preview');img.src=importRows[i].imageUrl;img.style.opacity='1';const urlInput=cell.querySelector('[data-image-row]');if(urlInput)urlInput.value=importRows[i].imageUrl;status.textContent='Image ready';}
+ catch(err){status.textContent=err.message;field.value='';}
+});
 $('runImport').onclick=async()=>{
  const selected=importRows.filter((p,i)=>!validateImportRow(p,i)&&$('importPreviewRows').querySelector(`[data-include-row="${i}"]`)?.checked);
  if(!selected.length){setImportStatus('Select at least one valid product to import.','error');return;}
  $('runImport').disabled=true;
- setImportStatus(`Importing ${selected.length} selected products with their chosen image URLs…`);
+ setImportStatus(`Importing ${selected.length} selected products with their selected images…`);
  try{
   const result=await api('/api/admin/store/products/bulk',{method:'POST',body:JSON.stringify({products:selected})});
   await load();
