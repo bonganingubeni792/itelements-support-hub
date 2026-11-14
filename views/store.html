@@ -604,6 +604,94 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
   .account-gate-panel>p.muted{font-size:13px}
 }
 
+
+/* Product detail: use the available laptop screen and keep the complete product image visible */
+.product-modal{
+  position:fixed!important;
+  inset:0!important;
+  padding:14px!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+.product-modal-panel{
+  width:min(1700px,calc(100vw - 28px))!important;
+  max-width:none!important;
+  height:calc(100dvh - 28px)!important;
+  max-height:calc(100dvh - 28px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  border-radius:16px!important;
+}
+.product-modal-content{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.12fr) minmax(380px,.88fr)!important;
+  align-items:start!important;
+  gap:clamp(20px,3vw,48px)!important;
+  padding:clamp(18px,2.2vw,36px)!important;
+  min-height:0!important;
+}
+.product-gallery-main{
+  width:100%!important;
+  height:clamp(460px,68vh,760px)!important;
+  min-height:0!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:#fff!important;
+}
+.product-gallery-main img{
+  display:block!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center!important;
+}
+.product-gallery-thumbs{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  justify-content:flex-start!important;
+  overflow-x:auto!important;
+  gap:10px!important;
+  padding:10px 2px 8px!important;
+}
+.product-gallery-thumb{flex:0 0 78px!important;width:78px!important;height:74px!important}
+.product-detail-copy{min-width:0!important;width:100%!important}
+@media(max-width:900px){
+ .product-modal{padding:0!important;align-items:stretch!important}
+ .product-modal-panel{
+  width:100vw!important;max-width:100vw!important;
+  height:100dvh!important;max-height:100dvh!important;
+  border-radius:0!important;
+ }
+ .product-modal-content{
+  grid-template-columns:minmax(0,1fr)!important;
+  gap:16px!important;
+  padding:16px!important;
+ }
+ .product-gallery-main{
+  height:clamp(300px,48vh,520px)!important;
+  min-height:0!important;
+ }
+ .product-gallery-main img{
+  width:100%!important;height:100%!important;
+  max-width:100%!important;max-height:100%!important;
+  object-fit:contain!important;
+ }
+ .product-gallery-thumb{flex-basis:66px!important;width:66px!important;height:62px!important}
+ .product-detail-copy{padding:0!important}
+}
+@media(max-width:480px){
+ .product-modal-content{padding:12px!important;gap:12px!important}
+ .product-gallery-main{height:clamp(260px,43vh,390px)!important}
+ .product-gallery-thumbs{gap:7px!important}
+ .product-gallery-thumb{flex-basis:58px!important;width:58px!important;height:56px!important}
+ .product-detail-copy h2{font-size:20px!important}
+ .product-detail-price{font-size:24px!important}
+ .product-detail-actions{grid-template-columns:1fr!important}
+}
+
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body>
 <header><button class="mobile-menu-trigger" id="openStoreMenu" type="button" aria-label="Open store menu" aria-expanded="false"><span></span><span></span><span></span></button><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
