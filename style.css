@@ -1,0 +1,133 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #0b0b0b;
+    color: #ffffff;
+    padding: 40px 20px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.2rem;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.subtitle {
+    color: #777;
+    font-size: 0.9rem;
+    margin-bottom: 40px;
+}
+
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    align-items: start;
+}
+
+.card {
+    background-color: #121212;
+    border: 1px solid #1f1f1f;
+    border-radius: 6px;
+    padding: 30px 20px;
+    text-align: left;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+    .card.featured {
+        border: 2px solid #e50914;
+    }
+
+.badge {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #e50914;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 3px 12px;
+    border-radius: 10px;
+}
+
+h2 {
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+}
+
+.desc {
+    color: #aaa;
+    font-size: 0.85rem;
+    margin-bottom: 25px;
+}
+
+.price {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+    .price span {
+        font-size: 1rem;
+        color: #888;
+        font-weight: normal;
+    }
+
+.features {
+    list-style: none;
+    margin-bottom: 35px;
+    flex-grow: 1;
+}
+
+    .features li {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+        color: #ccc;
+    }
+
+.btn {
+    background-color: #e50914;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+    .btn:hover {
+        background-color: #b80710;
+    }
+
+.card.wide {
+    grid-column: span 3;
+    max-width: 450px;
+    margin: 15px auto 0 auto;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .pricing-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .card.wide {
+        grid-column: span 1;
+    }
+}

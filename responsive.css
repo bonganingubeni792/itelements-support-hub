@@ -1,0 +1,69 @@
+/* Shared responsive layout for IT Elements public pages and portals. */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { width: 100%; overflow-x: clip; }
+body { width: 100%; min-width: 320px; overflow-x: clip; }
+img, svg, video, canvas, iframe { max-width: 100%; }
+input, select, textarea, button { max-width: 100%; }
+main, section, article, form, nav, header, footer, .page, .container { min-width: 0; }
+a, p, h1, h2, h3, td, th, label { overflow-wrap: anywhere; }
+:focus-visible { outline: 2px solid #ff6666; outline-offset: 3px; }
+
+/* Keep content centered and let navigation and card grids reflow at laptop widths. */
+.page, .container { margin-inline: auto; }
+.navbar, .nav, .header, .header-bar { flex-wrap: wrap; }
+.nav-links, .links, .header-actions { min-width: 0; }
+.feature-grid, .how-it-works, .feedback-section, .pricing-grid, .grid, .stats-grid, .quick-stats {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+}
+.pricing-grid { display: grid; }
+.feedback-section { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.plans-wrapper { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 235px), 1fr)); }
+.plan-box { width: auto; min-width: 0; }
+.feature-card:last-child { grid-column: auto; }
+.main-card, .incident-box, .dashboard-card, .ticket-card, .card, .hero, .register-container, .login-box, .box { min-width: 0; }
+.table-scroll { max-width: 100%; overscroll-behavior-x: contain; }
+
+button, .btn, .submit, .submit-btn, .subscribe-btn, .pay-btn, .pay-trigger-btn, .logout-btn {
+  min-height: 42px;
+  touch-action: manipulation;
+}
+
+@media (max-width: 900px) {
+  body { padding-left: clamp(12px, 2.5vw, 22px); padding-right: clamp(12px, 2.5vw, 22px); }
+  .page, .container { width: 100%; max-width: 100%; }
+  .navbar, .nav { gap: 12px; }
+  .onsite-promo { grid-template-columns: minmax(0, 1fr); }
+  .onsite-promo-link { justify-self: start; }
+}
+
+@media (max-width: 600px) {
+  body { padding: 10px; }
+  .navbar, .nav { align-items: flex-start; flex-direction: column; padding: 12px; margin-top: 10px; }
+  .nav-brand, .brand { font-size: 18px; }
+  .nav-links, .links, .header-actions { width: 100%; display: flex; flex-wrap: wrap; gap: 4px; }
+  .nav-links a, .links a, .header-actions a { margin: 0; padding: 8px 9px; }
+  .header, .header-bar { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .header h1 { font-size: clamp(18px, 5vw, 22px); flex-wrap: wrap; }
+  main { width: 100%; }
+  .container, .page { width: 100%; }
+  .main-card, .incident-box, .dashboard-card, .ticket-card, .card, .hero { padding: 18px 14px; }
+  .feature-grid, .how-it-works, .feedback-section, .pricing-grid, .grid, .stats-grid, .quick-stats,
+  .plans-wrapper { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .quick-stat:last-child { grid-column: auto; }
+  .pricing-card, .plan-box { width: 100%; max-width: none; min-width: 0; }
+  .form-group, .field { min-width: 0; }
+  input, select, textarea { font-size: 16px; }
+  .soft-box { flex-direction: column; }
+  .visit-item { grid-template-columns: minmax(0, 1fr); }
+  .toolbar input { min-width: 0; width: 100%; }
+  .toolbar select, .toolbar button { flex: 1 1 auto; }
+  .list-size { align-items: flex-start; flex-wrap: wrap; }
+  .whatsapp-floating-bubble { width: 52px; height: 52px; right: 14px; bottom: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}

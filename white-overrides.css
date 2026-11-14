@@ -1,0 +1,128 @@
+/* IT Elements unified white visual system — loaded last on every page. */
+:root {
+  color-scheme: light !important;
+  --ite-red: #d92d20;
+  --ite-ink: #182230;
+  --ite-muted: #667085;
+  --ite-line: #e1e6ec;
+  --ite-white: #ffffff;
+  --ite-soft: #f7f8fa;
+}
+html, body {
+  background: #ffffff !important;
+  color: var(--ite-ink) !important;
+  min-height: 100%;
+}
+body {
+  font-family: Inter, "Segoe UI", Arial, sans-serif !important;
+  line-height: 1.58;
+}
+body::before, body::after { pointer-events: none; }
+/* Consistent white navigation and page headers. */
+header, nav, .navbar, .nav, .header, .header-bar, .top-navbar, .head,
+.topbar, .site-header, .main-header {
+  color: var(--ite-ink) !important;
+  background: #ffffff !important;
+  border-color: var(--ite-line) !important;
+  box-shadow: 0 3px 14px rgba(16,24,40,.06) !important;
+  backdrop-filter: none !important;
+}
+.nav a, .navbar a, .nav-links a, .links a, .header-actions a,
+header a, .top-navbar a {
+  color: var(--ite-ink) !important;
+}
+.nav a:hover, .navbar a:hover, .nav-links a:hover, .links a:hover,
+.header-actions a:hover, header a:hover { color: var(--ite-red) !important; }
+/* White cards, panels, forms and content areas. */
+main, section, article, .container, .page, .wrap, .content, .workspace-container,
+.main-card, .incident-box, .feature-card, .status-card, .pricing-card, .plan-box,
+.ticket-card, .dashboard-card, .card, .box, .panel, .hero, .register-container,
+.login-box, .faq-item, .step-card, .service, .service-card, .request-card,
+.request-choice, .soft-item, .contact, .review-item, .onsite-request,
+.subscription-summary, .stat-card, .quick-stat, .onsite-promo, .form-card,
+.invoice-card, .invoice-preview, .workspace-card, .billing-card {
+  color: var(--ite-ink) !important;
+  background-color: #ffffff !important;
+  border-color: var(--ite-line) !important;
+  box-shadow: 0 5px 20px rgba(16,24,40,.055) !important;
+}
+.hero, .main-card, .quick-fix-section {
+  background: #ffffff !important;
+}
+/* Readable typography, including pages that previously used white-on-black. */
+h1, h2, h3, h4, h5, h6, p, li, label, legend, th, td, summary,
+strong, small, span, div { text-shadow: none; }
+h1, h2, h3, h4, h5, h6 { color: #182230; }
+p, li, label, legend, th, td, .muted, .subtitle, .intro, .hint,
+.top-description, .desc, .note, .form-help { color: #475467; }
+a { color: #175cd3; }
+a:hover { color: var(--ite-red); }
+/* Inputs stay white with visible typed text and clear borders. */
+input, select, textarea, .form-control, .form-input {
+  color: #182230 !important;
+  background: #ffffff !important;
+  border: 1px solid #cfd6df !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+}
+input::placeholder, textarea::placeholder { color: #98a2b3 !important; opacity: 1; }
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: #175cd3 !important;
+  box-shadow: 0 0 0 3px rgba(23,92,211,.13) !important;
+}
+select option { color: #182230 !important; background: #ffffff !important; }
+/* Keep primary actions branded red and consistently legible. */
+button, .btn, .button, .submit, .submit-btn, .subscribe-btn, .pay-btn,
+.pay-trigger-btn, .logout-btn, .hero-button:not(.secondary),
+.quickfix-card-pay, input[type="submit"] {
+  color: #ffffff !important;
+  background: #d92d20 !important;
+  border-color: #d92d20 !important;
+}
+button:hover, .btn:hover, .button:hover, .submit:hover, .submit-btn:hover,
+.subscribe-btn:hover, .pay-btn:hover, .pay-trigger-btn:hover,
+input[type="submit"]:hover { background: #b42318 !important; }
+/* Tables and invoice details align cleanly on all screen sizes. */
+table { width: 100%; border-collapse: collapse; }
+th { background: #f2f4f7 !important; color: #344054 !important; }
+td, th { border-color: #e1e6ec !important; }
+.table-scroll { max-width: 100%; overflow-x: auto; }
+img { max-width: 100%; height: auto; }
+* { box-sizing: border-box; }
+@media (max-width: 760px) {
+  .layout { grid-template-columns: minmax(0,1fr) !important; }
+  .intro { align-items: flex-start !important; flex-direction: column !important; }
+  .form-card, .panel { padding: 18px !important; }
+  .actions { width: 100%; }
+  .actions > * { flex: 1 1 auto; }
+}
+@media print {
+  html, body { background: #ffffff !important; color: #000000 !important; }
+  .no-print, .actions, button { display: none !important; }
+  .panel, .invoice-preview { box-shadow: none !important; }
+}
+
+/* Page-specific surfaces from the original dark templates. */
+.dark-section, .cta, .trust-strip, .form-box, .calculator, .calculator-section,
+.estimate-box, .why-card, .why-section, .process-card, .final-cta,
+.dashboard-preview, .review-grid, .stats, .stat, .notice, .empty,
+.dashboard-grid, .hotline-row, .hotline-details, .status-metric,
+.faq-list, .faq-item, .footer, footer, .footer-grid {
+  color: #182230 !important;
+  background: #ffffff !important;
+  border-color: #e1e6ec !important;
+  box-shadow: 0 4px 18px rgba(16,24,40,.045) !important;
+}
+.brand, .brand span, .logo, .nav-brand { color: #182230 !important; }
+.brand .red, .red, .eyebrow, .section-heading, .service-price,
+.plan-tag { color: #b42318 !important; }
+.nav-links a, .nav-cta, .btn-outline { color: #182230 !important; }
+.nav-cta, .nav-links .btn, .btn:not(.btn-outline) { color: #ffffff !important; }
+.form-label, .field label, .form-group label { color: #344054 !important; }
+.preview-top, .preview-bottom, .preview-item, .preview-services,
+.preview-status, .preview-caption, .preview-title, .preview-brand {
+  color: #344054 !important;
+  background: #f8fafc !important;
+  border-color: #e1e6ec !important;
+}

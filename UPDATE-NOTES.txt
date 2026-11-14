@@ -1,0 +1,44 @@
+IT ELEMENTS — FULL WEBSITE UPDATE
+================================
+
+This ZIP is based on the complete project ZIP supplied for this update.
+It keeps the existing Express/MongoDB/PayFast project structure and updates the existing files rather than replacing the project with a separate demo.
+
+WHAT CHANGED
+------------
+1. Added a shared dark contact/account strip to the public website pages.
+   - Shows Customer Login when signed out.
+   - Shows My Account or Admin Dashboard and Log out when signed in.
+   - The header checks /api/session-status without exposing account information.
+2. Added Online Store navigation across the main website pages so the store is reachable from Services, Plans, About, Contact and other pages.
+3. Updated the homepage, Services and About messaging so IT Elements is clearly presented as BOTH an IT product sales business and an IT support/services business.
+4. Updated the store layout to a clean white/red commerce layout:
+   - Compact product cards with contained images and readable product names.
+   - Desktop department/product/cart columns.
+   - A desktop cart summary panel and the existing full cart drawer.
+   - Product detail image gallery with previous/next controls, thumbnails and touch swipe.
+   - Quantity plus/minus controls remain limited by stock.
+   - No Shopify checkout branding; order enquiries remain with IT Elements.
+5. Added /api/session-status to server.js.
+
+FILES
+-----
+The complete project is included: server.js, package files, public assets/CSS, and all views.
+
+DEPLOY
+------
+1. Keep a backup of the current GitHub/Render project first.
+2. Extract this ZIP.
+3. Replace the matching project files in your GitHub repository with the files from this ZIP (keep your existing Render environment variables).
+4. Commit and push to GitHub, then wait for Render to deploy.
+5. Test:
+   - / and /store
+   - Click Online Store from Services, Plans, About and Contact.
+   - /client/login, sign in, confirm My Account/Admin Dashboard and Log out appear in the top strip.
+   - Open a product with multiple images; use arrows and swipe on mobile.
+   - Test quantity against available stock and cart contents.
+
+IMPORTANT
+---------
+- Do not delete or change your Render environment variables (MongoDB URI, SESSION_SECRET, PayFast keys, Resend keys, etc.).
+- This package was syntax-checked locally (Node.js server and inline page scripts). It has not been deployed to or live-tested against your Render database, live PayFast account or production website.

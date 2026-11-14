@@ -859,6 +859,16 @@ app.get('/invoice-maker.html', (req, res) => {
     res.sendFile(path.join(viewsPath, 'invoice-maker.html'));
 });
 
+// Public session status for the shared website header (never exposes private account data).
+app.get('/api/session-status', (req, res) => {
+    res.set('Cache-Control', 'no-store');
+    const loggedIn = Boolean(req.session && (req.session.isUser || req.session.isAdmin));
+    res.json({
+        loggedIn,
+        role: req.session && req.session.isAdmin ? 'admin' : (loggedIn ? 'customer' : 'guest')
+    });
+});
+
 // Public website files
 app.use(express.static(viewsPath, { index: false }));
 
