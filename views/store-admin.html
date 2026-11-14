@@ -162,6 +162,16 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .order-pill{display:inline-block;padding:4px 8px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase}
 .order-pill.paid{background:#eaf8ef;color:#087443}.order-pill.pending{background:#fff4df;color:#8a5a00}.order-pill.failed{background:#fff0f0;color:#a00000}
 @media(max-width:700px){.order-controls select{flex:1;min-width:150px}}
+
+.stock-admin-line{display:flex;align-items:center;gap:9px;margin:8px 0 6px;font-size:11px;color:#515965}
+.stock-admin-state{font-size:9px;font-weight:900;letter-spacing:.05em;padding:4px 8px;border-radius:20px}
+.stock-admin-state.available{background:#e9f8ef;color:#087443}
+.stock-admin-state.unavailable{background:#fff0f0;color:#b00020}
+.stock-admin-edit{display:flex;align-items:end;gap:7px;flex-wrap:wrap;margin:7px 0 9px}
+.stock-admin-edit label{display:grid;gap:4px;font-size:9px;font-weight:800;color:#777}
+.stock-admin-edit input,.stock-admin-edit select{width:100px;min-width:0;padding:7px;border:1px solid #dfe2e7;border-radius:7px;background:#fff;font-size:11px}
+.stock-admin-edit select{width:115px}
+.stock-admin-edit .btn{padding:7px 10px;font-size:10px}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body><div class="app">
 <aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#orders"><span class="ico">▣</span>Orders <span id="orderNavCount" style="margin-left:auto;color:#e00000;font-weight:900"></span></a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
@@ -293,7 +303,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 <form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="2000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="productImageFile">Choose image from your computer</label><input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="hint">JPG, PNG, WebP or AVIF · maximum 5 MB. The uploaded image is attached to this product.</p></div><div class="field"><label for="imageUrl">Or use an image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint" id="imageUploadStatus" aria-live="polite">You can upload a picture or paste an existing image URL.</p></div></div>
 <div class="two"><div class="field"><label for="sku">SKU / Product code</label><input id="sku" maxlength="60" placeholder="ITE-SSD-001"></div><div class="field"><label for="category">Category *</label><input id="category" list="categoryOptions" maxlength="80" required placeholder="Choose or type a category"><datalist id="categoryOptions"></datalist></div></div>
 <div class="two"><div class="field"><label for="price">Selling price (ZAR) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="1299.00"></div><div class="field"><label for="compareAtPrice">Previous price (ZAR)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="1499.00"></div></div>
-<div class="two"><div class="field"><label for="stock">Stock quantity</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div></div>
+<div class="two"><div class="field"><label for="stock">Stock quantity (units left)</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="stockAvailability">Stock availability</label><select id="stockAvailability"><option value="in">In stock</option><option value="out">Out of stock</option></select></div></div><div class="two"><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div><div class="field"><label>Stock rule</label><small style="color:#777">In stock requires at least 1 unit. Out of stock sets quantity to 0.</small></div></div>
 <label class="check"><input type="checkbox" id="featured"> Feature this product in the public store</label><div class="formactions"><button class="btn primary" id="saveBtn" type="submit">Save product</button><button class="btn" type="button" id="resetBtn">Clear form</button></div><div id="message" aria-live="polite"></div></form></section>
 <section class="panel" id="catalogue"><div class="panelhead"><div><h2>Product catalogue</h2><p class="sub">Edit, publish, hide or remove products</p></div><button class="btn" id="refreshBtn">↻ Refresh</button></div><div class="toolbar admin-filterbar">
 <input id="search" type="search" placeholder="⌕  Search products, brands, model, SKU or category...">
@@ -318,7 +328,7 @@ const $=id=>document.getElementById(id);let products=[];let adminPage=1;const AD
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function notice(t,type=''){ $('message').innerHTML=t?`<div class="notice ${type}">${escapeHtml(t)}</div>`:''; }
 async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});if(r.redirected||r.status===401||r.status===403){location.href='/client/login';throw Error('Administrator sign-in required.');}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.message||'Request failed.');return d;}
-function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('formTitle').textContent='Add new product';$('saveBtn').textContent='Save product';$('imagePreview').textContent='Choose an image or paste a URL';$('imageUploadStatus').textContent='You can upload a picture or paste an existing image URL.';notice('');}
+function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('stockAvailability').value='out';$('formTitle').textContent='Add new product';$('saveBtn').textContent='Save product';$('imagePreview').textContent='Choose an image or paste a URL';$('imageUploadStatus').textContent='You can upload a picture or paste an existing image URL.';notice('');}
 async function uploadProductImage(file){
  if(!file)return '';
  if(!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type))throw Error('Choose a JPG, PNG, WebP or AVIF image.');
@@ -327,7 +337,14 @@ async function uploadProductImage(file){
  const result=await api('/api/admin/store/upload-image',{method:'POST',body:JSON.stringify({imageData:dataUrl})});
  return result.imageUrl;
 }
-function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
+function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('stockAvailability').value=Number(p.stock)>0?'in':'out';$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
+$('stockAvailability').addEventListener('change',()=>{
+ if($('stockAvailability').value==='out')$('stock').value=0;
+ else if(Number($('stock').value)<1)$('stock').value=1;
+});
+$('stock').addEventListener('input',()=>{
+ $('stockAvailability').value=Number($('stock').value)>0?'in':'out';
+});
 function preview(){const u=$('imageUrl').value.trim(),box=$('imagePreview');box.replaceChildren();if(!u){box.textContent='Paste an image URL below';return;}const img=document.createElement('img');img.src=u;img.alt='Product preview';img.onerror=()=>{box.textContent='Image could not be loaded';};box.appendChild(img);}
 function render(){
  const q=$('search').value.trim().toLowerCase(),f=$('filter').value,price=$('priceFilter').value,sort=$('sortFilter').value;
@@ -361,12 +378,34 @@ function render(){
  $('productList').innerHTML=pageItems.length?pageItems.map(p=>`<article class="product">
  <label class="product-select"><input class="product-check" type="checkbox" value="${escapeHtml(p._id)}"> Select</label>
  <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" decoding="async">`:'No image'}</div>
- <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''} · Stock: ${Number(p.stock)||0}</div>
+ <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''}</div>
+ <div class="stock-admin-line"><span class="stock-admin-state ${Number(p.stock)>0?'available':'unavailable'}">${Number(p.stock)>0?'IN STOCK':'OUT OF STOCK'}</span><strong>${Number(p.stock)||0} left</strong></div>
+ <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label><button class="btn" type="button" data-stock-save="${p._id}">Save stock</button></div>
  <div class="price">${money(p.price)}${Number(p.compareAtPrice)>Number(p.price)?` <s style="color:#999;font-weight:500">${money(p.compareAtPrice)}</s>`:''}</div>
  <span class="pill ${p.status==='draft'?'draft':''}">${p.status==='draft'?'DRAFT':'PUBLISHED'}</span>${p.featured?' <span class="pill">FEATURED</span>':''}</div>
  <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products match these filters.</div>';
  $('selectAllProducts').checked=false;updateSelectedCount();
 }
+$('productList').addEventListener('click',async e=>{
+ const btn=e.target.closest('[data-stock-save]');if(!btn)return;
+ const id=btn.dataset.stockSave,p=products.find(x=>x._id===id);if(!p)return;
+ const qtyInput=$(`[data-stock-qty="${id}"]`),modeSelect=$(`[data-stock-mode="${id}"]`);
+ let qty=Math.floor(Number(qtyInput.value));
+ if(modeSelect.value==='out')qty=0;
+ else if(!Number.isInteger(qty)||qty<1){notice('For In stock, enter at least 1 unit.','error');qtyInput.focus();return;}
+ if(!Number.isInteger(qty)||qty<0){notice('Enter a valid whole-number stock quantity.','error');return;}
+ btn.disabled=true;btn.textContent='Saving…';
+ try{
+  const body={name:p.name,description:p.description||'',imageUrl:p.imageUrl||'',images:Array.isArray(p.images)?p.images:[],sku:p.sku||'',category:p.category,price:p.price,compareAtPrice:p.compareAtPrice||0,stock:qty,status:p.status,featured:!!p.featured};
+  await api('/api/admin/store/products/'+encodeURIComponent(id),{method:'PUT',body:JSON.stringify(body)});
+  notice(`${p.name}: ${qty>0?qty+' unit(s) in stock':'marked out of stock'}.`,'ok');await load();
+ }catch(err){notice(err.message||'Could not update stock.','error');btn.disabled=false;btn.textContent='Save stock';}
+});
+$('productList').addEventListener('change',e=>{
+ const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
+ const id=mode.dataset.stockMode,qty=$(`[data-stock-qty="${id}"]`);
+ if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
+});
 function selectedProductIds(){return [...document.querySelectorAll('.product-check:checked')].map(x=>x.value);}
 function updateSelectedCount(){$('selectedCount').textContent=`${selectedProductIds().length} selected`;}
 document.addEventListener('change',e=>{if(e.target.matches('.product-check'))updateSelectedCount();});
@@ -440,6 +479,8 @@ $('productImageFile').addEventListener('change',async e=>{
 $('productForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('productId').value;const save=$('saveBtn');save.disabled=true;
  try{
   if($('productImageFile').files[0]){ $('imageUploadStatus').textContent='Uploading image…';$('imageUrl').value=await uploadProductImage($('productImageFile').files[0]); }
+  if($('stockAvailability').value==='in'&&Number($('stock').value)<1)$('stock').value=1;
+  if($('stockAvailability').value==='out')$('stock').value=0;
   const body={name:$('name').value,description:$('description').value,imageUrl:$('imageUrl').value,sku:$('sku').value,category:$('category').value,price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,status:$('status').value,featured:$('featured').checked};
   await api(id?'/api/admin/store/products/'+id:'/api/admin/store/products',{method:id?'PUT':'POST',body:JSON.stringify(body)});notice(id?'Product updated successfully.':'Product saved successfully.','ok');reset();await load();
  }catch(err){notice(err.message,'error');}finally{save.disabled=false;}
