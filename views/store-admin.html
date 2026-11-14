@@ -42,7 +42,15 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .hint{font-size:10px;color:#9298a1;line-height:1.55;margin-top:7px}
 .notice{margin-top:12px;padding:11px 13px;border-radius:9px;background:#f3f4f6;color:#444b55;font-size:12px}.notice.error{background:#fff0f0;color:#a00000}.notice.ok{background:#edfff3;color:#176b35}
 #catalogue{margin-top:18px}.toolbar{display:flex;gap:9px;margin:14px 0}.toolbar input{flex:1;min-width:130px;background:#fff}.toolbar select{max-width:165px;background:#fff}
-.catalogue{display:grid;gap:9px}.product{display:grid;grid-template-columns:72px minmax(0,1fr) auto;align-items:center;gap:14px;border:1px solid #eceef1;border-radius:11px;padding:11px;transition:.16s}.product:hover{border-color:#d7dbe1;box-shadow:0 4px 14px #11100008}
+.catalogue{display:grid;gap:9px}
+.admin-filterbar{display:grid;grid-template-columns:minmax(230px,2fr) repeat(3,minmax(135px,1fr)) auto;align-items:end;gap:10px;padding:14px;border:1px solid var(--line);border-radius:11px;background:#fff}
+.admin-filterbar label{display:grid;gap:5px;color:#777f8a;font-size:10px;font-weight:800}
+.admin-filterbar input,.admin-filterbar select{width:100%;min-width:0;border:1px solid #dfe2e7;border-radius:8px;padding:11px 12px;background:#fff;color:#303640;font-size:12px}
+.catalogue-pager{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 2px;color:#7c838e;font-size:11px}
+.catalogue-pager>div{display:flex;align-items:center;gap:10px}
+.catalogue-pager .btn{padding:8px 11px;font-size:10px}
+@media(max-width:1050px){.admin-filterbar{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.admin-filterbar{grid-template-columns:1fr}.catalogue-pager{align-items:flex-start;flex-direction:column}.catalogue-pager>div{width:100%;justify-content:space-between}}.product{display:grid;grid-template-columns:72px minmax(0,1fr) auto;align-items:center;gap:14px;border:1px solid #eceef1;border-radius:11px;padding:11px;transition:.16s}.product:hover{border-color:#d7dbe1;box-shadow:0 4px 14px #11100008}
 .thumb{width:72px;height:72px;background:#f5f6f8;border-radius:9px;overflow:hidden;display:grid;place-items:center;color:#a2a7af;font-size:10px}.thumb img{width:100%;height:100%;object-fit:contain}.pname{font-weight:850;font-size:12px;color:#282d35}.meta{font-size:10px;color:#9298a2;margin-top:4px}.price{font-size:13px;font-weight:900;color:#252a32;margin-top:5px}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#eaf8ef;color:#087443;font-size:9px;font-weight:900;margin-top:6px}.pill.draft{background:#fff4df;color:#8a5a00}.rowactions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.rowactions .btn{padding:8px 10px;font-size:10px}.empty{padding:32px;text-align:center;color:#9298a2;font-size:12px;border:1px dashed #e1e4e8;border-radius:11px;background:#fbfbfc}
 @media(max-width:1050px){.app{grid-template-columns:218px minmax(0,1fr)}.stats{grid-template-columns:repeat(2,1fr)}#productForm{grid-template-columns:minmax(0,1fr)}#productForm>.formlayout{grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr)}}
 @media(max-width:720px){#productForm>.formlayout{grid-template-columns:1fr}.app{display:block}aside{height:auto;position:relative;padding:12px 14px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:0 4px 11px}.nav{display:flex;overflow:auto;gap:4px}.navlabel{display:none}.nav a{white-space:nowrap;padding:9px 11px}.sidefoot{display:none}.topbar{height:58px;padding:0 14px}.content{padding:20px 13px 36px}.pagehead{align-items:flex-start;flex-direction:column}.pagehead h1{font-size:25px}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:22px}.panel{padding:15px}#productForm{display:block}.two{grid-template-columns:1fr;gap:0}.product{grid-template-columns:55px minmax(0,1fr)}.thumb{width:55px;height:55px}.rowactions{grid-column:2;justify-content:flex-start}.toolbar{flex-direction:column}.toolbar select{max-width:none}.topright{gap:8px}.topright a:first-child{display:none}}
@@ -145,15 +153,49 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .product{position:relative}
 @media(max-width:700px){.bulk-toolbar .btn{flex:1}.bulk-toolbar #selectedCount{width:100%;order:-1}}
 
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261114b"></head><body><div class="app">
-<aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
+.order-card{border:1px solid #e8eaee;border-radius:11px;padding:15px;background:#fff;display:grid;gap:10px}
+.order-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.order-id{font-size:12px;font-weight:900}.order-meta{font-size:10px;color:#858b95;margin-top:4px}
+.order-items{font-size:11px;color:#414852;line-height:1.65}
+.order-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.order-controls select{border:1px solid #e0e3e8;border-radius:8px;padding:8px;background:#fff;font-size:11px}
+.order-pill{display:inline-block;padding:4px 8px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase}
+.order-pill.paid{background:#eaf8ef;color:#087443}.order-pill.pending{background:#fff4df;color:#8a5a00}.order-pill.failed{background:#fff0f0;color:#a00000}
+@media(max-width:700px){.order-controls select{flex:1;min-width:150px}}
+
+.stock-admin-line{display:flex;align-items:center;gap:9px;margin:8px 0 6px;font-size:11px;color:#515965}
+.stock-admin-state{font-size:9px;font-weight:900;letter-spacing:.05em;padding:4px 8px;border-radius:20px}
+.stock-admin-state.available{background:#e9f8ef;color:#087443}
+.stock-admin-state.unavailable{background:#fff0f0;color:#b00020}
+.stock-admin-edit{display:flex;align-items:end;gap:7px;flex-wrap:wrap;margin:7px 0 9px}
+.stock-admin-edit label{display:grid;gap:4px;font-size:9px;font-weight:800;color:#777}
+.stock-admin-edit input,.stock-admin-edit select{width:100px;min-width:0;padding:7px;border:1px solid #dfe2e7;border-radius:7px;background:#fff;font-size:11px}
+.stock-admin-edit select{width:115px}
+.stock-admin-edit .btn{padding:7px 10px;font-size:10px}
+
+.bulk-stock-qty{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;color:#707782}
+.bulk-stock-qty input{width:76px;padding:8px;border:1px solid #dfe2e7;border-radius:8px;font-size:11px}
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body><div class="app">
+<aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#orders"><span class="ico">▣</span>Orders <span id="orderNavCount" style="margin-left:auto;color:#e00000;font-weight:900"></span></a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
 <nav class="workspace-switch" aria-label="Admin workspaces">
 <a class="workspace-tab" href="/admin"><span class="workspace-symbol">⌂</span><span><strong>Online Support</strong><small>Tickets, clients &amp; service operations</small></span><span class="workspace-arrow">↗</span></a>
 <a class="workspace-tab active store-active" href="/admin/store" aria-current="page"><span class="workspace-symbol store-symbol">▣</span><span><strong>Store</strong><small>Products, pricing &amp; inventory</small></span><span class="workspace-state">ACTIVE</span></a>
 </nav>
 <div class="content" id="overview"><section class="pagehead"><div><div class="eyebrow">IT Elements commerce</div><h1>Store Management</h1><p>Add products, control pricing and stock, and choose what customers can see in your online store.</p></div><button class="btn primary" id="newBtn">＋ Add new product</button></section>
-<section class="stats"><article class="stat"><small>Total products</small><strong id="totalCount">0</strong><em>All products in your catalogue</em></article><article class="stat"><small>Published in store</small><strong id="activeCount">0</strong><em>Visible to customers</em></article><article class="stat"><small>Private drafts</small><strong id="draftCount">0</strong><em>Only visible to administrators</em></article><article class="stat"><small>Low stock</small><strong id="lowCount">0</strong><em>Products with 5 or fewer units</em></article></section>
+<section class="stats"><article class="stat"><small>Total products</small><strong id="totalCount">0</strong><em>All products in your catalogue</em></article><article class="stat"><small>Published in store</small><strong id="activeCount">0</strong><em>Visible to customers</em></article><article class="stat"><small>Private drafts</small><strong id="draftCount">0</strong><em>Only visible to administrators</em></article><article class="stat"><small>Low stock</small><strong id="lowCount">0</strong><em>Products with 5 or fewer units</em></article>
+</section>
+
+<section class="panel" id="orders">
+ <div class="panelhead"><div><h2>Customer orders</h2><p class="sub">Orders placed through the online store and their PayFast payment status.</p></div><button class="btn" id="refreshOrders">↻ Refresh orders</button></div>
+ <div class="toolbar admin-filterbar" style="grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) auto">
+  <input id="orderSearch" type="search" placeholder="Search order number, customer or email…">
+  <label>Payment status<select id="orderPaymentFilter"><option value="all">All payments</option><option value="paid">Paid</option><option value="pending">Pending</option><option value="failed">Failed</option></select></label>
+  <label>Order progress<select id="orderFulfilFilter"><option value="all">All stages</option><option value="new">New</option><option value="processing">Processing</option><option value="ready">Ready</option><option value="shipped">Shipped</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></label>
+ </div>
+ <div id="ordersSummary" class="sub" style="margin:10px 0 14px">Loading orders…</div>
+ <div id="ordersList" class="catalogue"><div class="empty">Loading orders…</div></div>
+</section>
 
 <section class="panel import-panel" id="bulk-tools">
   <div class="panelhead"><div><h2>Product import &amp; catalogue tools</h2><p class="sub">Bring in a complete product list using CSV or Excel, or download your catalogue for editing.</p></div><span class="eyebrow">BULK MANAGEMENT</span></div>
@@ -264,9 +306,15 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 <form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="2000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="productImageFile">Choose image from your computer</label><input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="hint">JPG, PNG, WebP or AVIF · maximum 5 MB. The uploaded image is attached to this product.</p></div><div class="field"><label for="imageUrl">Or use an image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint" id="imageUploadStatus" aria-live="polite">You can upload a picture or paste an existing image URL.</p></div></div>
 <div class="two"><div class="field"><label for="sku">SKU / Product code</label><input id="sku" maxlength="60" placeholder="ITE-SSD-001"></div><div class="field"><label for="category">Category *</label><input id="category" list="categoryOptions" maxlength="80" required placeholder="Choose or type a category"><datalist id="categoryOptions"></datalist></div></div>
 <div class="two"><div class="field"><label for="price">Selling price (ZAR) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="1299.00"></div><div class="field"><label for="compareAtPrice">Previous price (ZAR)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="1499.00"></div></div>
-<div class="two"><div class="field"><label for="stock">Stock quantity</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div></div>
+<div class="two"><div class="field"><label for="stock">Stock quantity (units left)</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="stockAvailability">Stock availability</label><select id="stockAvailability"><option value="in">In stock</option><option value="out">Out of stock</option></select></div></div><div class="two"><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div><div class="field"><label>Stock rule</label><small style="color:#777">In stock requires at least 1 unit. Out of stock sets quantity to 0.</small></div></div>
 <label class="check"><input type="checkbox" id="featured"> Feature this product in the public store</label><div class="formactions"><button class="btn primary" id="saveBtn" type="submit">Save product</button><button class="btn" type="button" id="resetBtn">Clear form</button></div><div id="message" aria-live="polite"></div></form></section>
-<section class="panel" id="catalogue"><div class="panelhead"><div><h2>Product catalogue</h2><p class="sub">Edit, publish, hide or remove products</p></div><button class="btn" id="refreshBtn">↻ Refresh</button></div><div class="toolbar"><input id="search" type="search" placeholder="Search product name, SKU or category..."><select id="filter"><option value="all">All products</option><option value="active">Published</option><option value="draft">Drafts</option></select></div>
+<section class="panel" id="catalogue"><div class="panelhead"><div><h2>Product catalogue</h2><p class="sub">Edit, publish, hide or remove products</p></div><button class="btn" id="refreshBtn">↻ Refresh</button></div><div class="toolbar admin-filterbar">
+<input id="search" type="search" placeholder="⌕  Search products, brands, model, SKU or category...">
+<label>Price range<select id="priceFilter"><option value="all">Any price</option><option value="0-500">Under R500</option><option value="500-1500">R500 – R1,500</option><option value="1500-5000">R1,500 – R5,000</option><option value="5000-10000">R5,000 – R10,000</option><option value="10000+">R10,000+</option></select></label>
+<label>Availability<select id="filter"><option value="all">All products</option><option value="active">Published</option><option value="draft">Drafts</option><option value="in">In stock</option><option value="out">Out of stock</option></select></label>
+<label>Sort by<select id="sortFilter"><option value="featured">Featured first</option><option value="newest">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="name">Product name</option></select></label>
+<button class="btn" type="button" id="clearAdminFilters">Clear filters</button></div>
+<div class="catalogue-pager"><span id="adminResultCount">Showing 0 products</span><div><button class="btn" id="adminPrev" type="button">Previous</button><span id="adminPageLabel">Page 1 of 1</span><button class="btn" id="adminNext" type="button">Next 50</button></div></div>
 <div class="bulk-toolbar">
   <label class="bulk-select-all"><input type="checkbox" id="selectAllProducts"> Select all shown</label>
   <span id="selectedCount">0 selected</span>
@@ -275,15 +323,21 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
   <button class="btn softred" type="button" id="deleteSelected">Delete selected</button>
   <button class="btn" type="button" id="publishAll">Publish ALL products</button>
   <button class="btn" type="button" id="draftAll">Set ALL to draft</button>
+  <button class="btn primary" type="button" id="savePageStock">Save all 50 stock changes</button>
+  <label class="bulk-stock-qty">Units per product <input id="bulkStockQty" type="number" min="1" step="1" value="1"></label>
+  <button class="btn" type="button" id="stockAllIn">Set ALL IN STOCK</button>
+  <button class="btn softred" type="button" id="stockAllOut">Set ALL OUT OF STOCK</button>
+  <button class="btn" type="button" id="stockSelectedIn">Set selected IN STOCK</button>
+  <button class="btn softred" type="button" id="stockSelectedOut">Set selected OUT OF STOCK</button>
 </div><div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
 </div></main></div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
-const $=id=>document.getElementById(id);let products=[];const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
+const $=id=>document.getElementById(id);let products=[];let adminPage=1;const ADMIN_PAGE_SIZE=50;const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function notice(t,type=''){ $('message').innerHTML=t?`<div class="notice ${type}">${escapeHtml(t)}</div>`:''; }
 async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});if(r.redirected||r.status===401||r.status===403){location.href='/client/login';throw Error('Administrator sign-in required.');}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.message||'Request failed.');return d;}
-function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('formTitle').textContent='Add new product';$('saveBtn').textContent='Save product';$('imagePreview').textContent='Choose an image or paste a URL';$('imageUploadStatus').textContent='You can upload a picture or paste an existing image URL.';notice('');}
+function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('stockAvailability').value='out';$('formTitle').textContent='Add new product';$('saveBtn').textContent='Save product';$('imagePreview').textContent='Choose an image or paste a URL';$('imageUploadStatus').textContent='You can upload a picture or paste an existing image URL.';notice('');}
 async function uploadProductImage(file){
  if(!file)return '';
  if(!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type))throw Error('Choose a JPG, PNG, WebP or AVIF image.');
@@ -292,26 +346,119 @@ async function uploadProductImage(file){
  const result=await api('/api/admin/store/upload-image',{method:'POST',body:JSON.stringify({imageData:dataUrl})});
  return result.imageUrl;
 }
-function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
+function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('stockAvailability').value=Number(p.stock)>0?'in':'out';$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
+$('stockAvailability').addEventListener('change',()=>{
+ if($('stockAvailability').value==='out')$('stock').value=0;
+ else if(Number($('stock').value)<1)$('stock').value=1;
+});
+$('stock').addEventListener('input',()=>{
+ $('stockAvailability').value=Number($('stock').value)>0?'in':'out';
+});
 function preview(){const u=$('imageUrl').value.trim(),box=$('imagePreview');box.replaceChildren();if(!u){box.textContent='Paste an image URL below';return;}const img=document.createElement('img');img.src=u;img.alt='Product preview';img.onerror=()=>{box.textContent='Image could not be loaded';};box.appendChild(img);}
 function render(){
- const q=$('search').value.toLowerCase(),f=$('filter').value;
- const shown=products.filter(p=>(f==='all'||p.status===f)&&[p.name,p.sku,p.category].join(' ').toLowerCase().includes(q));
+ const q=$('search').value.trim().toLowerCase(),f=$('filter').value,price=$('priceFilter').value,sort=$('sortFilter').value;
+ let shown=products.filter(p=>{
+  const hay=[p.name,p.sku,p.category,p.brand,p.model].join(' ').toLowerCase();
+  if(q&&!hay.includes(q))return false;
+  if(f==='active'&&p.status!=='active')return false;
+  if(f==='draft'&&p.status!=='draft')return false;
+  if(f==='in'&&Number(p.stock)<=0)return false;
+  if(f==='out'&&Number(p.stock)>0)return false;
+  const n=Number(p.price||0);
+  if(price==='0-500'&&n>=500)return false;
+  if(price==='500-1500'&&(n<500||n>1500))return false;
+  if(price==='1500-5000'&&(n<1500||n>5000))return false;
+  if(price==='5000-10000'&&(n<5000||n>10000))return false;
+  if(price==='10000+'&&n<=10000)return false;
+  return true;
+ });
+ if(sort==='price-low')shown.sort((a,b)=>Number(a.price||0)-Number(b.price||0));
+ if(sort==='price-high')shown.sort((a,b)=>Number(b.price||0)-Number(a.price||0));
+ if(sort==='name')shown.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+ if(sort==='featured')shown.sort((a,b)=>Number(!!b.featured)-Number(!!a.featured));
+ if(sort==='newest')shown.sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0));
+ const pages=Math.max(1,Math.ceil(shown.length/ADMIN_PAGE_SIZE));adminPage=Math.min(adminPage,pages);
+ const pageItems=shown.slice((adminPage-1)*ADMIN_PAGE_SIZE,adminPage*ADMIN_PAGE_SIZE);
  $('totalCount').textContent=products.length;$('activeCount').textContent=products.filter(p=>p.status==='active').length;$('draftCount').textContent=products.filter(p=>p.status==='draft').length;$('lowCount').textContent=products.filter(p=>Number(p.stock)<=5).length;
  const cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
  $('categoryOptions').innerHTML=cats.map(c=>`<option value="${escapeHtml(c)}"></option>`).join('');
- $('productList').innerHTML=shown.length?shown.map(p=>`<article class="product">
+ $('adminResultCount').textContent=shown.length?`Showing ${(adminPage-1)*ADMIN_PAGE_SIZE+1}–${Math.min(adminPage*ADMIN_PAGE_SIZE,shown.length)} of ${shown.length} products`:'No products found';
+ $('adminPageLabel').textContent=`Page ${adminPage} of ${pages}`;$('adminPrev').disabled=adminPage<=1;$('adminNext').disabled=adminPage>=pages;
+ $('productList').innerHTML=pageItems.length?pageItems.map(p=>`<article class="product">
  <label class="product-select"><input class="product-check" type="checkbox" value="${escapeHtml(p._id)}"> Select</label>
  <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" decoding="async">`:'No image'}</div>
- <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''} · Stock: ${Number(p.stock)||0}</div>
+ <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''}</div>
+ <div class="stock-admin-line"><span class="stock-admin-state ${Number(p.stock)>0?'available':'unavailable'}">${Number(p.stock)>0?'IN STOCK':'OUT OF STOCK'}</span><strong>${Number(p.stock)||0} left</strong></div>
+ <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label></div>
  <div class="price">${money(p.price)}${Number(p.compareAtPrice)>Number(p.price)?` <s style="color:#999;font-weight:500">${money(p.compareAtPrice)}</s>`:''}</div>
  <span class="pill ${p.status==='draft'?'draft':''}">${p.status==='draft'?'DRAFT':'PUBLISHED'}</span>${p.featured?' <span class="pill">FEATURED</span>':''}</div>
- <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products found. Add your first product using the editor.</div>';
+ <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products match these filters.</div>';
  $('selectAllProducts').checked=false;updateSelectedCount();
 }
+$('productList').addEventListener('change',e=>{
+ const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
+ const id=mode.dataset.stockMode,qty=document.querySelector(`[data-stock-qty="${id}"]`);
+ if(!qty)return;if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
+});
+
+async function setBulkStock(ids,qty,label){
+ ids=[...new Set(ids)].filter(id=>products.some(p=>p._id===id));
+ if(!ids.length){notice('There are no products to update.','error');return;}
+ if(!confirm(`Set ${ids.length} product(s) to ${qty>0?qty+' unit(s) in stock':'out of stock'}?`))return;
+ const buttons=['stockAllIn','stockAllOut','stockSelectedIn','stockSelectedOut','savePageStock'].map(id=>$(id)).filter(Boolean);
+ buttons.forEach(b=>b.disabled=true);
+ notice(`Updating ${label}…`);
+ try{
+  const result=await api('/api/admin/store/products/stock',{method:'PATCH',body:JSON.stringify({updates:ids.map(id=>({id,stock:qty}))})});
+  await load();
+  notice(`${result.updated ?? ids.length} product(s) updated. ${qty>0?'Stock set to '+qty+'.':'All set to out of stock.'}`,'ok');
+ }catch(e){notice(e.message||'Could not save stock quantities.','error');}
+ finally{buttons.forEach(b=>b.disabled=false);}
+}
+$('savePageStock').addEventListener('click',async()=>{
+ const visibleIds=products.filter(p=>document.querySelector(`[data-stock-qty="${p._id}"]`)).map(p=>p._id);
+ const updates=[];
+ for(const id of visibleIds){
+  const input=document.querySelector(`[data-stock-qty="${id}"]`);
+  const mode=document.querySelector(`[data-stock-mode="${id}"]`);
+  if(!input||!mode)continue;
+  const qty=Math.floor(Number(input.value));
+  const stock=mode.value==='out'?0:qty;
+  if(!Number.isInteger(stock)||stock<0||stock>10000000||(mode.value==='in'&&stock<1)){
+   notice(`Enter a valid quantity for ${products.find(p=>p._id===id)?.name||'a product'}. In-stock products need at least 1 unit.`,'error');
+   input.focus();return;
+  }
+  updates.push({id,stock});
+ }
+ if(!updates.length){notice('No products are shown on this page.','error');return;}
+ if(!confirm(`Save stock quantities for all ${updates.length} products shown on this page?`))return;
+ const btn=$('savePageStock');btn.disabled=true;btn.textContent='Saving…';
+ try{
+  const result=await api('/api/admin/store/products/stock',{method:'PATCH',body:JSON.stringify({updates})});
+  await load();notice(`Saved stock for ${result.updated ?? updates.length} products on this page.`,'ok');
+ }catch(e){notice(e.message||'Could not save the stock changes.','error');}
+ finally{btn.disabled=false;btn.textContent='Save all 50 stock changes';}
+});
+$('stockAllIn').addEventListener('click',()=>{
+ const qty=Math.floor(Number($('bulkStockQty').value));
+ if(!Number.isInteger(qty)||qty<1||qty>10000000){notice('Enter a valid quantity of at least 1.','error');return;}
+ setBulkStock(products.map(p=>p._id),qty,'all products');
+});
+$('stockAllOut').addEventListener('click',()=>setBulkStock(products.map(p=>p._id),0,'all products'));
+$('stockSelectedIn').addEventListener('click',()=>{
+ const qty=Math.floor(Number($('bulkStockQty').value));
+ if(!Number.isInteger(qty)||qty<1||qty>10000000){notice('Enter a valid quantity of at least 1.','error');return;}
+ setBulkStock(selectedProductIds(),qty,'selected products');
+});
+$('stockSelectedOut').addEventListener('click',()=>setBulkStock(selectedProductIds(),0,'selected products'));
 function selectedProductIds(){return [...document.querySelectorAll('.product-check:checked')].map(x=>x.value);}
 function updateSelectedCount(){$('selectedCount').textContent=`${selectedProductIds().length} selected`;}
 document.addEventListener('change',e=>{if(e.target.matches('.product-check'))updateSelectedCount();});
+['search','filter','priceFilter','sortFilter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',()=>{adminPage=1;render();}));
+$('clearAdminFilters').onclick=()=>{$('search').value='';$('filter').value='all';$('priceFilter').value='all';$('sortFilter').value='featured';adminPage=1;render();};
+$('adminPrev').onclick=()=>{if(adminPage>1){adminPage--;render();}};
+$('adminNext').onclick=()=>{adminPage++;render();};
+
 $('selectAllProducts').addEventListener('change',e=>{document.querySelectorAll('.product-check').forEach(x=>x.checked=e.target.checked);updateSelectedCount();});
 async function bulkAction(action,ids){
  if(!ids.length){notice('Select at least one product first.','error');return;}
@@ -326,6 +473,47 @@ $('deleteSelected').onclick=()=>bulkAction('delete',selectedProductIds());
 $('publishAll').onclick=()=>bulkAction('publish',products.map(p=>p._id));
 $('draftAll').onclick=()=>bulkAction('draft',products.map(p=>p._id));
 window.editProduct=id=>{const p=products.find(x=>x._id===id);if(p)edit(p);};window.deleteProduct=async id=>{const p=products.find(x=>x._id===id);if(!p||!confirm(`Permanently delete ${p.name}?`))return;try{await api('/api/admin/store/products/'+id,{method:'DELETE'});await load();if($('productId').value===id)reset();}catch(e){notice(e.message,'error');}};
+
+let storeOrders=[];
+const orderMoney=cents=>'R '+(Number(cents||0)/100).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
+function orderDate(value){try{return new Date(value).toLocaleString('en-ZA',{dateStyle:'medium',timeStyle:'short'});}catch(_){return '—';}}
+function renderOrders(){
+ const q=($('orderSearch')?.value||'').trim().toLowerCase();
+ const pay=$('orderPaymentFilter')?.value||'all',fulfil=$('orderFulfilFilter')?.value||'all';
+ const list=storeOrders.filter(o=>{
+  const d=o.orderDetails||{},hay=[o.paymentId,o.userEmail,d.customerName,d.phone,d.deliveryAddress,...(d.items||[]).flatMap(i=>[i.name,i.sku])].join(' ').toLowerCase();
+  return (!q||hay.includes(q))&&(pay==='all'||o.status===pay)&&(fulfil==='all'||(o.fulfilmentStatus||'new')===fulfil);
+ });
+ const paid=storeOrders.filter(o=>o.status==='paid').length;
+ $('orderNavCount').textContent=storeOrders.length?`(${storeOrders.length})`:'';
+ $('ordersSummary').textContent=`${list.length} shown · ${storeOrders.length} total · ${paid} paid`;
+ $('ordersList').innerHTML=list.length?list.map(o=>{
+  const d=o.orderDetails||{},items=Array.isArray(d.items)?d.items:[];
+  const itemText=items.map(i=>`${Number(i.quantity)||1} × ${escapeHtml(i.name||'Product')}${i.sku?' · '+escapeHtml(i.sku):''} — ${orderMoney((Number(i.unitPriceCents)||0)*(Number(i.quantity)||1))}`).join('<br>')||'No item details saved';
+  const status=o.status||'pending',ful=o.fulfilmentStatus||'new';
+  return `<article class="order-card">
+   <div class="order-top"><div><div class="order-id">${escapeHtml(o.paymentId||'Order')}</div><div class="order-meta">${escapeHtml(d.customerName||'Customer')} · ${escapeHtml(o.userEmail||'')} · ${escapeHtml(d.phone||'')}<br>${orderDate(o.createdAt)}</div></div>
+   <div><span class="order-pill ${escapeHtml(status)}">${escapeHtml(status)}</span> <strong style="margin-left:8px">${orderMoney(o.amount)}</strong></div></div>
+   <div class="order-items">${itemText}</div>
+   <div class="order-meta">${d.deliveryMethod==='collection'?'Collection':'Delivery'}${d.deliveryAddress?' · '+escapeHtml(d.deliveryAddress):''}${o.pfPaymentId?' · PayFast ref: '+escapeHtml(o.pfPaymentId):''}</div>
+   <div class="order-controls"><label style="font-size:10px;font-weight:800">Order progress</label><select data-order-status="${escapeHtml(o._id)}">${[['new','New'],['processing','Processing'],['ready','Ready for collection'],['shipped','Shipped'],['completed','Completed'],['cancelled','Cancelled']].map(([v,l])=>`<option value="${v}" ${ful===v?'selected':''}>${l}</option>`).join('')}</select><span class="order-meta">Payment status is confirmed separately by PayFast.</span></div>
+  </article>`;
+ }).join(''):'<div class="empty">No orders match these filters yet. New store checkouts will appear here.</div>';
+}
+async function loadOrders(){
+ $('ordersList').innerHTML='<div class="empty">Loading orders…</div>';
+ try{const data=await api('/api/admin/store/orders');storeOrders=data.orders||[];renderOrders();}
+ catch(e){$('ordersList').innerHTML=`<div class="notice error">${escapeHtml(e.message||'Could not load orders.')}</div>`;}
+}
+$('refreshOrders').addEventListener('click',loadOrders);
+['orderSearch','orderPaymentFilter','orderFulfilFilter'].forEach(id=>$(id).addEventListener(id==='orderSearch'?'input':'change',renderOrders));
+$('ordersList').addEventListener('change',async e=>{
+ const select=e.target.closest('[data-order-status]');if(!select)return;
+ select.disabled=true;
+ try{await api('/api/admin/store/orders/'+encodeURIComponent(select.dataset.orderStatus)+'/fulfilment',{method:'PATCH',body:JSON.stringify({fulfilmentStatus:select.value})});const o=storeOrders.find(x=>x._id===select.dataset.orderStatus);if(o)o.fulfilmentStatus=select.value;renderOrders();}
+ catch(err){alert(err.message||'Could not update order.');await loadOrders();}
+});
+
 async function load(){try{const d=await api('/api/admin/store/products');products=d.products||[];render();}catch(e){$('productList').innerHTML=`<div class="notice error">${escapeHtml(e.message)}. Check that you are signed in as an administrator and the store APIs are deployed.</div>`;}}
 $('productImageFile').addEventListener('change',async e=>{
  const file=e.target.files[0];if(!file)return;
@@ -336,6 +524,8 @@ $('productImageFile').addEventListener('change',async e=>{
 $('productForm').addEventListener('submit',async e=>{e.preventDefault();const id=$('productId').value;const save=$('saveBtn');save.disabled=true;
  try{
   if($('productImageFile').files[0]){ $('imageUploadStatus').textContent='Uploading image…';$('imageUrl').value=await uploadProductImage($('productImageFile').files[0]); }
+  if($('stockAvailability').value==='in'&&Number($('stock').value)<1)$('stock').value=1;
+  if($('stockAvailability').value==='out')$('stock').value=0;
   const body={name:$('name').value,description:$('description').value,imageUrl:$('imageUrl').value,sku:$('sku').value,category:$('category').value,price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,status:$('status').value,featured:$('featured').checked};
   await api(id?'/api/admin/store/products/'+id:'/api/admin/store/products',{method:id?'PUT':'POST',body:JSON.stringify(body)});notice(id?'Product updated successfully.':'Product saved successfully.','ok');reset();await load();
  }catch(err){notice(err.message,'error');}finally{save.disabled=false;}
@@ -675,8 +865,8 @@ document.querySelectorAll('.department-card').forEach(btn=>btn.addEventListener(
  $('category').value=btn.dataset.category;$('editor').scrollIntoView({behavior:'smooth'});$('name').focus();
 }));
 
-$('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;$('refreshBtn').onclick=load;$('imageUrl').addEventListener('input',preview);load();
-</script><script src="/nav-store-global.js?v=20261114b" defer></script></body></html>
+$('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;$('refreshBtn').onclick=load;$('imageUrl').addEventListener('input',preview);load();loadOrders();
+</script><script src="/nav-store-global.js?v=20261114" defer></script></body></html>
 
 <style>
 .import-table .image-cell{min-width:190px;width:190px;vertical-align:top}
