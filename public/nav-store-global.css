@@ -1,0 +1,38 @@
+
+/* IT Elements global navigation: keep Online Store visible on every page */
+header nav a.ite-store-nav-link,
+nav a.ite-store-nav-link,
+.ite-global-nav a.ite-store-nav-link {
+  display:inline-flex !important;
+  align-items:center;
+  visibility:visible !important;
+  opacity:1 !important;
+  color:#e00000 !important;
+  font-weight:800 !important;
+  text-decoration:none !important;
+  white-space:nowrap;
+}
+header nav, header .nav-links, header .links, header .header-actions,
+.navbar .nav-links, .navbar .links, .site-nav, .main-nav {
+  flex-wrap:wrap !important;
+  align-items:center !important;
+  min-width:0;
+}
+@media (max-width: 760px) {
+  header nav, header .nav-links, header .links, header .header-actions,
+  .navbar .nav-links, .navbar .links, .site-nav, .main-nav {
+    display:flex !important;
+    flex-direction:row !important;
+    flex-wrap:wrap !important;
+    gap:6px 10px !important;
+    width:100%;
+    max-width:100%;
+    overflow:visible !important;
+  }
+  header nav a, header .nav-links a, header .links a,
+  .navbar .nav-links a, .navbar .links a, .site-nav a, .main-nav a {
+    font-size:13px !important;
+    padding:8px 7px !important;
+    white-space:nowrap;
+  }
+}
