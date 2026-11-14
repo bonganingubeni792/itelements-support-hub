@@ -62,10 +62,98 @@ a{color:inherit;text-decoration:none}header{height:76px;border-bottom:1px solid 
 @media(max-width:680px){.product-modal-content{grid-template-columns:1fr;gap:12px;padding:17px}.product-detail-image{min-height:220px}.product-detail-copy{padding:0}.product-detail-copy h2{font-size:21px}}
 
 .cartline .qty button:disabled{opacity:.4;cursor:not-allowed}
+
+
+.product-ribbon{position:absolute;z-index:1;top:10px;left:10px;padding:6px 9px;border-radius:6px;background:#e00000;color:#fff;font-size:8px;font-weight:900;letter-spacing:1px;box-shadow:0 3px 9px #e0000033}
+.card-price-row{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+.stock{display:flex;align-items:center;gap:6px}
+.stock-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.in-stock{background:#14945b;box-shadow:0 0 0 3px #14945b18}
+.out-stock{background:#d58a17;box-shadow:0 0 0 3px #d58a1718}
+
+/* IT ELEMENTS STORE — PREMIUM COMMERCE THEME */
+:root{--red:#e00000;--red-dark:#b80000;--ink:#17191f;--muted:#747b86;--line:#e7e9ed;--soft:#f6f7f9}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{background:#fff;color:var(--ink);font-family:Inter,Arial,sans-serif}
+header{height:78px;padding:0 max(5%,calc((100% - 1440px)/2));box-shadow:0 3px 18px #11100008;border-bottom:1px solid #eceef1}
+.brand{letter-spacing:-.5px}.brand img{width:46px;height:46px}
+nav a{position:relative;padding:8px 0;color:#343943}
+nav a:hover{color:var(--red)}
+nav a:after{content:"";position:absolute;left:0;bottom:1px;width:0;height:2px;background:var(--red);transition:width .2s}
+nav a:hover:after{width:100%}
+.cartbtn{border-radius:9px;padding:12px 18px;box-shadow:0 5px 13px #e0000024;transition:transform .2s,box-shadow .2s}
+.cartbtn:hover,.add:hover{transform:translateY(-1px);box-shadow:0 7px 18px #e0000028}
+.hero{position:relative;isolation:isolate;overflow:hidden;min-height:330px;padding:58px max(6%,calc((100% - 1320px)/2));grid-template-columns:1.15fr .85fr;background:linear-gradient(112deg,#17191f 0%,#22252c 58%,#351719 100%)}
+.hero:before{content:"";position:absolute;z-index:-1;width:520px;height:520px;right:-130px;top:-260px;border:1px solid #ffffff12;border-radius:50%;box-shadow:0 0 0 45px #ffffff08,0 0 0 90px #ffffff05}
+.hero h1{letter-spacing:-1.8px;font-weight:850}
+.hero p{font-size:15px;line-height:1.8;color:#d2d4d8}
+.hero-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:22px}
+.hero-cta{display:inline-flex;align-items:center;gap:20px;padding:13px 18px;border-radius:9px;background:var(--red);color:#fff;font-weight:800;font-size:13px;box-shadow:0 7px 20px #e0000033}
+.hero-cta:hover{background:#f00}
+.hero-link{font-size:12px;font-weight:700;color:#fff}
+.hero-art{border:1px solid #ffffff24;border-radius:20px;background:radial-gradient(circle at 50% 30%,#642326,#25262b 70%);box-shadow:0 20px 55px #0005}
+.hero-art-tile{background:#ffffff12;backdrop-filter:blur(6px)}
+.store-benefits{max-width:1320px;margin:0 auto;padding:18px 22px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;border-bottom:1px solid #f0f1f3}
+.store-benefits>div{display:flex;align-items:center;gap:12px;padding:7px 12px}
+.benefit-icon{width:38px;height:38px;display:grid;place-items:center;flex:none;border-radius:12px;background:#fff0f0;color:var(--red);font-size:20px;font-weight:900}
+.store-benefits strong,.store-benefits small{display:block}
+.store-benefits strong{font-size:12px}.store-benefits small{margin-top:3px;color:#858b95;font-size:10px}
+.wrap{max-width:1320px;padding:43px 22px 64px}
+.intro{align-items:center;margin-bottom:20px}
+.intro h2{font-size:clamp(27px,3vw,34px);letter-spacing:-.8px;font-weight:850}
+.intro .eyebrow{margin-bottom:5px}
+#resultCount{padding:8px 12px;border:1px solid #eceef1;border-radius:30px;background:#fafbfc;font-size:12px;font-weight:700;color:#626975}
+.shop-filters{padding:19px;border:1px solid #e7e9ed;border-radius:17px;box-shadow:0 10px 28px #11100006}
+.searchbox{border-radius:11px;padding-left:15px}
+.searchbox input{height:50px;font-size:14px}
+.filter-reset{border-radius:10px;padding:0 18px;cursor:pointer}
+.filter-row{gap:13px;margin-top:16px}
+.filter-field{font-size:11px;letter-spacing:.1px}
+.filter-field select{height:44px;border-radius:10px;font-size:12px}
+.department-nav{margin-top:19px;padding-top:17px}
+.department-nav-head strong{font-size:13px}
+.department-nav-head span{font-size:11px}
+.department-chips{gap:8px}
+.department-chip{padding:9px 13px;font-size:11px;cursor:pointer;transition:.18s}
+.department-chip.active{background:#fff0f0;color:var(--red);font-weight:850}
+.catalogue-toolbar{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 0 14px}
+.catalogue-toolbar>div strong{display:block;margin-top:3px;font-size:18px;letter-spacing:-.3px}
+.toolbar-kicker{font-size:9px;font-weight:900;letter-spacing:1.7px;color:var(--red)}
+.catalogue-note{font-size:11px;color:#858b95}
+.products{grid-template-columns:repeat(4,minmax(0,1fr));gap:19px}
+.card{position:relative;border:1px solid #e8eaee;border-radius:16px;background:#fff;transition:transform .22s,box-shadow .22s,border-color .22s}
+.card:hover{transform:translateY(-5px);border-color:#f0b7b7;box-shadow:0 17px 38px #17191f12}
+.photo{position:relative;height:220px;margin:10px 10px 0;border-radius:11px;background:linear-gradient(145deg,#f8f9fb,#f0f2f5);color:#c2c6ce}
+.photo img{mix-blend-mode:multiply;transition:transform .35s}
+.card:hover .photo img{transform:scale(1.045)}
+.cardbody{padding:16px 17px 17px}
+.category{font-size:9px;letter-spacing:1px}
+.card h3{font-size:15px;line-height:1.4;letter-spacing:-.2px;margin:7px 0}
+.desc{font-size:12px;line-height:1.65;min-height:58px}
+.price{font-size:19px;letter-spacing:-.4px}
+.old{font-size:11px}
+.stock{font-size:10px;margin:7px 0 12px}
+.add{border-radius:9px;padding:12px;font-size:11px;transition:.2s}
+.add.secondary{border:1px solid #e6e8ec!important;background:#fff!important;color:#343943!important}
+.add.secondary:hover{border-color:var(--red)!important;color:var(--red)!important;box-shadow:none}
+.empty{padding:58px 20px;background:#fbfbfc;border-radius:15px}
+.foot{padding:30px max(5%,calc((100% - 1320px)/2));line-height:1.8}
+.drawer{backdrop-filter:blur(3px)}
+.cartpanel{box-shadow:-18px 0 55px #0002}
+.carthead{padding-bottom:17px;border-bottom:1px solid var(--line)}
+.checkout{border-radius:10px;box-shadow:0 7px 18px #16844725}
+.product-modal-panel{border:1px solid #eee}
+.product-detail-image{background:linear-gradient(145deg,#fafbfc,#f0f2f5)}
+.product-detail-actions button{border-radius:9px;cursor:pointer}
+@media(max-width:1050px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding-left:5%;padding-right:5%}}
+@media(max-width:760px){.hero{min-height:0;padding:42px 5%;grid-template-columns:1fr}.hero-art{display:none}.store-benefits{grid-template-columns:1fr;gap:2px;padding:12px 18px}.store-benefits>div{padding:6px 2px}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.catalogue-note{display:none}}
+@media(max-width:480px){header{padding:9px 14px}.brand{font-size:18px}.brand img{width:39px;height:39px}.cartbtn{padding:10px 12px;font-size:12px}.hero h1{font-size:36px}.wrap{padding:29px 13px 45px}.shop-filters{padding:12px;border-radius:13px}.products{gap:10px}.photo{height:150px;margin:7px 7px 0}.cardbody{padding:11px}.card h3{font-size:13px}.desc{font-size:11px;min-height:65px}.price{font-size:16px}.add{padding:10px 7px;font-size:10px}.intro h2{font-size:26px}.catalogue-toolbar{margin-top:22px}.product-detail-price{font-size:24px}}
+
 </style></head><body>
 <header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
-<section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Shop carefully selected computer hardware, storage, networking equipment and everyday IT essentials.</p></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
-<main class="wrap"><div class="intro"><div><div class="eyebrow">Browse products</div><h2>Find what you need</h2><div class="muted">Products and prices are managed by IT Elements.</div></div><div class="muted" id="resultCount"></div></div>
+<section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
+<section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
+<main class="wrap" id="catalogue"><div class="intro"><div><div class="eyebrow">Browse products</div><h2>Find what you need</h2><div class="muted">Products and prices are managed by IT Elements.</div></div><div class="muted" id="resultCount"></div></div>
 <section class="shop-filters" aria-label="Search and filter products">
   <div class="search-row"><label class="searchbox"><span>⌕</span><input id="search" type="search" placeholder="Search products, brands, model, SKU or category…"><kbd>/</kbd></label><button class="filter-reset" id="clearFilters" type="button">Clear filters</button></div>
   <div class="filter-row">
@@ -76,7 +164,7 @@ a{color:inherit;text-decoration:none}header{height:76px;border-bottom:1px solid 
   </div>
   <div class="department-nav"><div class="department-nav-head"><strong>Shop by department</strong><span>Choose a category to narrow your search</span></div><div class="department-chips" id="departmentChips"></div></div>
 </section>
-<section class="products" id="products"><div class="empty">Loading products...</div></section></main>
+<div class="catalogue-toolbar"><div><span class="toolbar-kicker">THE IT ELEMENTS COLLECTION</span><strong>Explore our products</strong></div><span class="catalogue-note">Select a product to view details and options</span></div><section class="products" id="products"><div class="empty">Loading products...</div></section></main>
 <footer class="foot"><div>© <span id="year"></span> IT Elements. Your Technology, Our Support.</div><div>Need help choosing? <a style="color:#ff5555" href="https://wa.me/27606181229">Chat to our team on WhatsApp</a></div></footer>
 <div class="drawer" id="drawer"><aside class="cartpanel"><div class="carthead"><h2>Your cart</h2><button class="x" id="closeCart">✕</button></div><div id="cartItems"></div><div class="total"><span>Total</span><span id="cartTotal">R 0.00</span></div><button class="checkout" id="checkout">Order via WhatsApp</button><p class="muted" style="font-size:12px">Your order request will be sent to IT Elements on WhatsApp. Payment and delivery will be confirmed by our team.</p></aside></div>
 
@@ -128,7 +216,7 @@ function render(){
  if(sort==='featured')list.sort((a,b)=>Number(!!b.featured)-Number(!!a.featured));
  if(sort==='newest')list.sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
  $('resultCount').textContent=`${list.length} product${list.length===1?'':'s'} found`;
- $('products').innerHTML=list.length?list.map(p=>`<article class="card" role="button" tabindex="0" onclick="showProduct('${p._id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showProduct('${p._id}')}"><div class="photo">${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" loading="lazy">`:'💻'}</div><div class="cardbody"><div class="category">${esc(p.category)}</div><h3>${esc(p.name)}</h3><p class="desc">${esc(p.description||'Contact us for more product information.')}</p><div><span class="price">${money(p.price)}</span>${p.compareAtPrice>p.price?`<span class="old">${money(p.compareAtPrice)}</span>`:''}</div><div class="stock">${p.stock>0?`${p.stock} available`:'Contact us to confirm availability'}</div><button class="add" onclick="event.stopPropagation();addToCart('${p._id}')" ${p.stock<=0?'disabled':''}>${p.stock>0?'Add to cart':'Check availability'}</button><button class="add secondary" style="margin-top:7px;background:#26282d" onclick="event.stopPropagation();showProduct('${p._id}')">View product</button></div></article>`).join(''):'<div class="empty">No products match those filters. Try another department or clear your search.</div>';
+ $('products').innerHTML=list.length?list.map(p=>`<article class="card" role="button" tabindex="0" aria-label="View ${esc(p.name)}" onclick="showProduct('${p._id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showProduct('${p._id}')}"><div class="photo">${p.featured?'<span class="product-ribbon">FEATURED</span>':''}${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" loading="lazy">`:'<span aria-hidden="true">💻</span>'}</div><div class="cardbody"><div class="category">${esc(p.category||'IT products')}</div><h3>${esc(p.name)}</h3><p class="desc">${esc(p.description||'Contact us for more product information.')}</p><div class="card-price-row"><span class="price">${money(p.price)}</span>${p.compareAtPrice>p.price?`<span class="old">${money(p.compareAtPrice)}</span>`:''}</div><div class="stock"><span class="stock-dot ${Number(p.stock)>0?'in-stock':'out-stock'}"></span>${p.stock>0?`${p.stock} available`:'Contact us to confirm availability'}</div><button class="add" onclick="event.stopPropagation();addToCart('${p._id}')" ${p.stock<=0?'disabled':''}>${p.stock>0?'Add to cart':'Check availability'}</button><button class="add secondary" style="margin-top:7px" onclick="event.stopPropagation();showProduct('${p._id}')">View details</button></div></article>`).join(''):'<div class="empty"><strong style="display:block;color:#252932;margin-bottom:7px">No products found</strong>Try a different search or clear your filters.<br><button class="filter-reset" style="margin-top:15px;padding:10px 15px" onclick="document.getElementById(\'clearFilters\').click()">Clear all filters</button></div>';
  document.querySelectorAll('.department-chip').forEach(b=>b.classList.toggle('active',b.dataset.category===cat));
 }
 function addToCart(id){
