@@ -153,15 +153,36 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .product{position:relative}
 @media(max-width:700px){.bulk-toolbar .btn{flex:1}.bulk-toolbar #selectedCount{width:100%;order:-1}}
 
+.order-card{border:1px solid #e8eaee;border-radius:11px;padding:15px;background:#fff;display:grid;gap:10px}
+.order-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.order-id{font-size:12px;font-weight:900}.order-meta{font-size:10px;color:#858b95;margin-top:4px}
+.order-items{font-size:11px;color:#414852;line-height:1.65}
+.order-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.order-controls select{border:1px solid #e0e3e8;border-radius:8px;padding:8px;background:#fff;font-size:11px}
+.order-pill{display:inline-block;padding:4px 8px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase}
+.order-pill.paid{background:#eaf8ef;color:#087443}.order-pill.pending{background:#fff4df;color:#8a5a00}.order-pill.failed{background:#fff0f0;color:#a00000}
+@media(max-width:700px){.order-controls select{flex:1;min-width:150px}}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body><div class="app">
-<aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
+<aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#orders"><span class="ico">▣</span>Orders <span id="orderNavCount" style="margin-left:auto;color:#e00000;font-weight:900"></span></a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
 <nav class="workspace-switch" aria-label="Admin workspaces">
 <a class="workspace-tab" href="/admin"><span class="workspace-symbol">⌂</span><span><strong>Online Support</strong><small>Tickets, clients &amp; service operations</small></span><span class="workspace-arrow">↗</span></a>
 <a class="workspace-tab active store-active" href="/admin/store" aria-current="page"><span class="workspace-symbol store-symbol">▣</span><span><strong>Store</strong><small>Products, pricing &amp; inventory</small></span><span class="workspace-state">ACTIVE</span></a>
 </nav>
 <div class="content" id="overview"><section class="pagehead"><div><div class="eyebrow">IT Elements commerce</div><h1>Store Management</h1><p>Add products, control pricing and stock, and choose what customers can see in your online store.</p></div><button class="btn primary" id="newBtn">＋ Add new product</button></section>
-<section class="stats"><article class="stat"><small>Total products</small><strong id="totalCount">0</strong><em>All products in your catalogue</em></article><article class="stat"><small>Published in store</small><strong id="activeCount">0</strong><em>Visible to customers</em></article><article class="stat"><small>Private drafts</small><strong id="draftCount">0</strong><em>Only visible to administrators</em></article><article class="stat"><small>Low stock</small><strong id="lowCount">0</strong><em>Products with 5 or fewer units</em></article></section>
+<section class="stats"><article class="stat"><small>Total products</small><strong id="totalCount">0</strong><em>All products in your catalogue</em></article><article class="stat"><small>Published in store</small><strong id="activeCount">0</strong><em>Visible to customers</em></article><article class="stat"><small>Private drafts</small><strong id="draftCount">0</strong><em>Only visible to administrators</em></article><article class="stat"><small>Low stock</small><strong id="lowCount">0</strong><em>Products with 5 or fewer units</em></article>
+</section>
+
+<section class="panel" id="orders">
+ <div class="panelhead"><div><h2>Customer orders</h2><p class="sub">Orders placed through the online store and their PayFast payment status.</p></div><button class="btn" id="refreshOrders">↻ Refresh orders</button></div>
+ <div class="toolbar admin-filterbar" style="grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) auto">
+  <input id="orderSearch" type="search" placeholder="Search order number, customer or email…">
+  <label>Payment status<select id="orderPaymentFilter"><option value="all">All payments</option><option value="paid">Paid</option><option value="pending">Pending</option><option value="failed">Failed</option></select></label>
+  <label>Order progress<select id="orderFulfilFilter"><option value="all">All stages</option><option value="new">New</option><option value="processing">Processing</option><option value="ready">Ready</option><option value="shipped">Shipped</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></label>
+ </div>
+ <div id="ordersSummary" class="sub" style="margin:10px 0 14px">Loading orders…</div>
+ <div id="ordersList" class="catalogue"><div class="empty">Loading orders…</div></div>
+</section>
 
 <section class="panel import-panel" id="bulk-tools">
   <div class="panelhead"><div><h2>Product import &amp; catalogue tools</h2><p class="sub">Bring in a complete product list using CSV or Excel, or download your catalogue for editing.</p></div><span class="eyebrow">BULK MANAGEMENT</span></div>
@@ -368,6 +389,47 @@ $('deleteSelected').onclick=()=>bulkAction('delete',selectedProductIds());
 $('publishAll').onclick=()=>bulkAction('publish',products.map(p=>p._id));
 $('draftAll').onclick=()=>bulkAction('draft',products.map(p=>p._id));
 window.editProduct=id=>{const p=products.find(x=>x._id===id);if(p)edit(p);};window.deleteProduct=async id=>{const p=products.find(x=>x._id===id);if(!p||!confirm(`Permanently delete ${p.name}?`))return;try{await api('/api/admin/store/products/'+id,{method:'DELETE'});await load();if($('productId').value===id)reset();}catch(e){notice(e.message,'error');}};
+
+let storeOrders=[];
+const orderMoney=cents=>'R '+(Number(cents||0)/100).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
+function orderDate(value){try{return new Date(value).toLocaleString('en-ZA',{dateStyle:'medium',timeStyle:'short'});}catch(_){return '—';}}
+function renderOrders(){
+ const q=($('orderSearch')?.value||'').trim().toLowerCase();
+ const pay=$('orderPaymentFilter')?.value||'all',fulfil=$('orderFulfilFilter')?.value||'all';
+ const list=storeOrders.filter(o=>{
+  const d=o.orderDetails||{},hay=[o.paymentId,o.userEmail,d.customerName,d.phone,d.deliveryAddress,...(d.items||[]).flatMap(i=>[i.name,i.sku])].join(' ').toLowerCase();
+  return (!q||hay.includes(q))&&(pay==='all'||o.status===pay)&&(fulfil==='all'||(o.fulfilmentStatus||'new')===fulfil);
+ });
+ const paid=storeOrders.filter(o=>o.status==='paid').length;
+ $('orderNavCount').textContent=storeOrders.length?`(${storeOrders.length})`:'';
+ $('ordersSummary').textContent=`${list.length} shown · ${storeOrders.length} total · ${paid} paid`;
+ $('ordersList').innerHTML=list.length?list.map(o=>{
+  const d=o.orderDetails||{},items=Array.isArray(d.items)?d.items:[];
+  const itemText=items.map(i=>`${Number(i.quantity)||1} × ${escapeHtml(i.name||'Product')}${i.sku?' · '+escapeHtml(i.sku):''} — ${orderMoney((Number(i.unitPriceCents)||0)*(Number(i.quantity)||1))}`).join('<br>')||'No item details saved';
+  const status=o.status||'pending',ful=o.fulfilmentStatus||'new';
+  return `<article class="order-card">
+   <div class="order-top"><div><div class="order-id">${escapeHtml(o.paymentId||'Order')}</div><div class="order-meta">${escapeHtml(d.customerName||'Customer')} · ${escapeHtml(o.userEmail||'')} · ${escapeHtml(d.phone||'')}<br>${orderDate(o.createdAt)}</div></div>
+   <div><span class="order-pill ${escapeHtml(status)}">${escapeHtml(status)}</span> <strong style="margin-left:8px">${orderMoney(o.amount)}</strong></div></div>
+   <div class="order-items">${itemText}</div>
+   <div class="order-meta">${d.deliveryMethod==='collection'?'Collection':'Delivery'}${d.deliveryAddress?' · '+escapeHtml(d.deliveryAddress):''}${o.pfPaymentId?' · PayFast ref: '+escapeHtml(o.pfPaymentId):''}</div>
+   <div class="order-controls"><label style="font-size:10px;font-weight:800">Order progress</label><select data-order-status="${escapeHtml(o._id)}">${[['new','New'],['processing','Processing'],['ready','Ready for collection'],['shipped','Shipped'],['completed','Completed'],['cancelled','Cancelled']].map(([v,l])=>`<option value="${v}" ${ful===v?'selected':''}>${l}</option>`).join('')}</select><span class="order-meta">Payment status is confirmed separately by PayFast.</span></div>
+  </article>`;
+ }).join(''):'<div class="empty">No orders match these filters yet. New store checkouts will appear here.</div>';
+}
+async function loadOrders(){
+ $('ordersList').innerHTML='<div class="empty">Loading orders…</div>';
+ try{const data=await api('/api/admin/store/orders');storeOrders=data.orders||[];renderOrders();}
+ catch(e){$('ordersList').innerHTML=`<div class="notice error">${escapeHtml(e.message||'Could not load orders.')}</div>`;}
+}
+$('refreshOrders').addEventListener('click',loadOrders);
+['orderSearch','orderPaymentFilter','orderFulfilFilter'].forEach(id=>$(id).addEventListener(id==='orderSearch'?'input':'change',renderOrders));
+$('ordersList').addEventListener('change',async e=>{
+ const select=e.target.closest('[data-order-status]');if(!select)return;
+ select.disabled=true;
+ try{await api('/api/admin/store/orders/'+encodeURIComponent(select.dataset.orderStatus)+'/fulfilment',{method:'PATCH',body:JSON.stringify({fulfilmentStatus:select.value})});const o=storeOrders.find(x=>x._id===select.dataset.orderStatus);if(o)o.fulfilmentStatus=select.value;renderOrders();}
+ catch(err){alert(err.message||'Could not update order.');await loadOrders();}
+});
+
 async function load(){try{const d=await api('/api/admin/store/products');products=d.products||[];render();}catch(e){$('productList').innerHTML=`<div class="notice error">${escapeHtml(e.message)}. Check that you are signed in as an administrator and the store APIs are deployed.</div>`;}}
 $('productImageFile').addEventListener('change',async e=>{
  const file=e.target.files[0];if(!file)return;
@@ -717,7 +779,7 @@ document.querySelectorAll('.department-card').forEach(btn=>btn.addEventListener(
  $('category').value=btn.dataset.category;$('editor').scrollIntoView({behavior:'smooth'});$('name').focus();
 }));
 
-$('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;$('refreshBtn').onclick=load;$('imageUrl').addEventListener('input',preview);load();
+$('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;$('refreshBtn').onclick=load;$('imageUrl').addEventListener('input',preview);load();loadOrders();
 </script><script src="/nav-store-global.js?v=20261114" defer></script></body></html>
 
 <style>
