@@ -369,37 +369,40 @@ function inferStoreDepartment(product){
  const text=[product.name,product.sku,product.categoryRaw,product.description,product.shortDescription]
   .filter(Boolean).join(' ').toLowerCase();
  const has=(...terms)=>terms.some(term=>text.includes(term));
+ // Specific components/accessories must be checked before the generic laptop rule.
  const rules=[
   ['Gaming Laptops',()=>has('gaming laptop','gaming notebook','rog laptop','tuf gaming laptop','legion laptop','predator laptop','nitro laptop','omen laptop')],
   ['Gaming PCs',()=>has('gaming pc','gaming desktop','gaming tower','gaming computer')],
-  ['Computers & Laptops',()=>has('laptop','notebook','desktop pc','desktop computer','all-in-one pc','aio pc','mini pc','workstation')],
-  ['Refurbished Computers',()=>has('refurbished','renewed','reconditioned','pre-owned','used laptop','used desktop')],
-  ['Graphics Cards',()=>has('graphics card','geforce','nvidia rtx','radeon rx','gpu','video card')],
-  ['Processors (CPU)',()=>has('processor','cpu','ryzen 3','ryzen 5','ryzen 7','ryzen 9','intel core','core i3','core i5','core i7','core i9','xeon')],
-  ['Motherboards',()=>has('motherboard','mainboard','system board')],
-  ['RAM & Memory',()=>has('ram','memory module','ddr3','ddr4','ddr5','sodimm','udimm')],
+  ['RAM & Memory',()=>/\bram\b/.test(text)||has('memory module','notebook memory','laptop memory','ddr2','ddr3','ddr4','ddr5','sodimm','so-dimm','udimm','dimm')],
   ['SSD & NVMe Storage',()=>has('nvme','ssd','solid state drive','m.2 drive')],
   ['Hard Drives (HDD)',()=>has('hard drive',' hdd',' sata drive','desktop drive','2.5-inch drive','3.5-inch drive')],
   ['External Storage',()=>has('external drive','portable drive','usb flash','flash drive','memory stick')],
-  ['Monitors & Displays',()=>has('monitor','display','screen')],
+  ['Graphics Cards',()=>has('graphics card','geforce','nvidia rtx','radeon rx','gpu','video card')],
+  ['Processors (CPU)',()=>has('processor','cpu','ryzen 3','ryzen 5','ryzen 7','ryzen 9','intel core','core i3','core i5','core i7','core i9','xeon')],
+  ['Motherboards',()=>has('motherboard','mainboard','system board')],
+  ['Controllers & Gamepads',()=>has('controller','gamepad','game pad','joystick')],
+  ['Gaming Keyboards',()=>has('gaming keyboard','mechanical gaming keyboard','rgb mechanical keyboard')],
   ['Keyboards',()=>has('keyboard')],
   ['Mice & Gaming Mice',()=>has('mouse','mice')],
   ['Headsets & Audio',()=>has('headset','headphone','speaker','microphone','soundbar')],
-  ['Networking & Wi-Fi',()=>has('router','mesh wi-fi','mesh wifi','access point','network switch','wi-fi adapter','wifi adapter')],
+  ['Monitors & Displays',()=>has('monitor','display','screen')],
   ['Printers & Scanners',()=>has('printer','scanner','multifunction')],
+  ['Networking & Wi-Fi',()=>has('router','mesh wi-fi','mesh wifi','access point','network switch','wi-fi adapter','wifi adapter')],
   ['PC Cases',()=>has('pc case','computer case','chassis')],
-  ['Power Supplies (PSU)',()=>has('power supply','psu')],
   ['CPU Cooling & Fans',()=>has('cpu cooler','cooling fan','case fan','liquid cooler','aio cooler')],
-  ['Cables & Adapters',()=>has('cable','adapter','converter')],
+  ['Power Supplies (PSU)',()=>has('power supply','psu','power adapter','ac adapter','laptop charger','notebook charger','charger adapter','desktop adapter')],
+  ['Cables & Adapters',()=>has('cable','converter','travel adapter','plug adapter')],
   ['Docks & Hubs',()=>has('dock','usb hub','type-c hub')],
   ['UPS & Power Protection',()=>has('ups','surge protector','power protection')],
   ['Software & Security',()=>has('antivirus','security software','software licence','software license')],
-  ['Operating Systems',()=>has('windows 11','windows 10','operating system')]
+  ['Operating Systems',()=>has('windows 11','windows 10','operating system')],
+  ['Refurbished Computers',()=>has('refurbished','renewed','reconditioned','pre-owned','used laptop','used desktop')],
+  ['Office Accessories',()=>has('laptop stand','notebook stand','vesa mount','mounting bracket','laptop bag','notebook bag')],
+  ['Computers & Laptops',()=>has('laptop','notebook computer','notebook pc','desktop pc','desktop computer','all-in-one pc','aio pc','mini pc','workstation')]
  ];
  for(const [department,test] of rules){if(test())return department;}
  return '';
 }
-
 function splitImageValues(value){
  const text=String(value||'').trim();
  if(!text)return [];
@@ -447,12 +450,15 @@ function keyMap(row){
  const explicitStock=get('stock','quantity','inventory','qty');
  const price=numeric(get('price','sellingprice','regularprice'));
  const compareAtPrice=numeric(get('rec','rrp','recommended retail price','recommendedretailprice','compareAtPrice','compare at price','oldprice','previousprice'));
- const categoryRaw=matchedSupplierCategory||rawCategory;
- const autoCategory=matchedSupplierCategory||inferStoreDepartment({
+ const categoryRaw=rawCategory||matchedSupplierCategory;
+ // Trust a specific product-name/specification match over a broad supplier category.
+ // Fall back to a recognised supplier category when the product cannot be classified.
+ const inferredCategory=inferStoreDepartment({
   name,sku,categoryRaw,
   description:description||shortDescription,
   shortDescription
  });
+ const autoCategory=inferredCategory||matchedSupplierCategory;
  return {
   name,sku,
   category:autoCategory,
@@ -493,7 +499,7 @@ function refreshImportValidation(){
    }else if(!problem&&warning){warning.remove();}
   }
   const hint=row.querySelector('.import-category-hint');
-  if(hint)hint.textContent=product.category?'Auto-selected: '+product.category:'Not recognised — please choose';
+  if(hint)hint.textContent=product.category?'Auto-detected: '+product.category:'Not recognised — please choose a department';
  });
 }
 
@@ -518,7 +524,7 @@ function renderImportPreviewPage(){
    <td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td>
    <td><select class="import-category-select" data-category-row="${i}" aria-label="Choose department for ${escapeHtml(p.name||'product')}">
     <option value="">Choose department…</option>${IMPORT_CATEGORIES.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
-   </select><small class="import-category-hint">${p.category?'Auto-selected: '+escapeHtml(p.category):'Not recognised — please choose'}</small></td>
+   </select><small class="import-category-hint">${p.category?'Auto-detected: '+escapeHtml(p.category):'Not recognised — please choose a department'}</small></td>
    <td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td>
    <td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td>
    <td>${escapeHtml(p.status||'draft')}</td>
