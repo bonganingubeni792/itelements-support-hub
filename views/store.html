@@ -324,69 +324,27 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 @media(max-width:520px){.products{grid-template-columns:repeat(2,minmax(0,1fr))}.photo{height:115px;min-height:115px;flex-basis:115px}.hero h1{font-size:24px}.store-benefits strong{font-size:7px}.store-benefits .benefit-icon{width:18px;height:18px;flex-basis:18px}.product-modal-content{grid-template-columns:1fr}.product-gallery-main{height:230px!important}}
 
 
-/* IT ELEMENTS COMMERCE LAYOUT — aligned, clean and image-safe */
-header{gap:18px;min-height:78px;height:auto;flex-wrap:wrap}
-header nav{display:flex;align-items:center;justify-content:center;flex:1;gap:clamp(10px,1.4vw,22px);flex-wrap:wrap}
-header nav a{font-size:13px;white-space:nowrap}
-.hero{min-height:245px;padding:34px max(4%,calc((100% - 1440px)/2));grid-template-columns:1.25fr .75fr;border-radius:14px;margin:20px auto 0;max-width:1440px}
-.hero h1{font-size:clamp(27px,3.2vw,43px);line-height:1.08;max-width:720px}
-.hero-art{height:180px}
-.wrap{max-width:1480px;padding:30px 24px}
-.intro{margin-bottom:16px}.intro h2{font-size:25px}
-.shop-filters{padding:14px;margin-bottom:17px}
-.catalogue-layout{display:grid;grid-template-columns:220px minmax(0,1fr) 245px;gap:18px;align-items:start}
-.department-sidebar{position:sticky;top:100px}
-.products{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-.card{min-width:0;border-radius:12px}
-.photo{height:154px;background:#fff;padding:12px;display:flex;align-items:center;justify-content:center}
-.photo img{width:100%;height:100%;max-width:100%;max-height:100%;object-fit:contain;object-position:center;background:#fff}
-.cardbody{padding:12px;min-width:0}
-.card h3{font-size:14px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;min-height:56px;overflow-wrap:anywhere}
-.desc{font-size:12px;line-height:1.45;-webkit-line-clamp:2}
-.price{font-size:18px}
-.add{width:100%;padding:10px 8px}
-.store-cart-summary{position:sticky;top:100px;border:1px solid #e6e8ec;border-radius:14px;background:#fff;padding:15px;box-shadow:0 8px 24px #1110000c}
-.store-cart-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:12px;border-bottom:1px solid #eee}
-.store-cart-open{border:0;background:#fff;color:#e00000;font-size:12px;font-weight:800;cursor:pointer}
-.store-cart-preview{max-height:310px;overflow:auto}
-.store-cart-line{display:grid;grid-template-columns:52px minmax(0,1fr);gap:9px;padding:11px 0;border-bottom:1px solid #f0f0f0}
-.store-cart-line img{width:52px;height:52px;object-fit:contain;border:1px solid #eee;border-radius:7px;background:#fff}
-.store-cart-line strong{display:block;font-size:11px;line-height:1.35;overflow-wrap:anywhere}
-.store-cart-line small{display:block;color:#737373;font-size:10px;margin-top:3px}
-.store-cart-total{display:flex;justify-content:space-between;gap:8px;padding:14px 0;font-size:13px}
-.store-cart-checkout{width:100%;border:0;border-radius:8px;background:#e00000;color:#fff;padding:12px;font-weight:800;cursor:pointer}
-.store-cart-summary>small{display:block;color:#777;font-size:10px;line-height:1.5;margin-top:10px}
-.product-detail-image{position:relative;min-height:360px;height:100%;padding:18px;background:#fff;overflow:hidden}
-.product-gallery-main{height:320px;display:flex;align-items:center;justify-content:center;touch-action:pan-y}
-.product-gallery-main img{width:100%;height:100%;max-height:320px;object-fit:contain;display:block}
-.product-gallery-controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
-.product-gallery-controls button{width:38px;height:38px;border:1px solid #ddd;border-radius:50%;background:#fff;color:#171717;font-size:20px;font-weight:800;cursor:pointer}
-.product-gallery-controls span{font-size:11px;color:#777}
-.product-gallery-thumbs{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px}
-.product-gallery-thumb{flex:0 0 76px;width:76px;height:76px;padding:5px;border:1px solid #ddd;border-radius:9px;background:#fff;cursor:pointer}
-.product-gallery-thumb.active{border:2px solid #e00000}
-.product-gallery-thumb img{width:100%;height:100%;object-fit:contain}
-.detail-qty{display:flex;align-items:center;gap:14px;margin:20px 0}
-.detail-qty button{width:42px;height:42px;border:1px solid #ddd;border-radius:9px;background:#fff;font-size:22px;color:#0878d1;cursor:pointer}
-.detail-qty strong{min-width:22px;text-align:center;font-size:18px}
-.product-detail-copy h2{overflow-wrap:anywhere}
-@media(max-width:1120px){.catalogue-layout{grid-template-columns:190px minmax(0,1fr)}.store-cart-summary{display:none}.products{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:760px){header{padding:10px 4%}header nav{order:3;width:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap;padding:7px 0}header nav a{font-size:12px}.hero{margin:12px 12px 0;padding:28px 22px;min-height:210px}.hero-art{display:none}.catalogue-layout{grid-template-columns:1fr}.department-sidebar{position:static}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.photo{height:132px;padding:10px}.card h3{font-size:13px;min-height:52px}.wrap{padding:22px 12px}.product-detail-image{min-height:240px}.product-gallery-main{height:220px}.product-gallery-main img{max-height:220px}}
-@media(max-width:420px){.products{gap:9px}.photo{height:118px}.cardbody{padding:9px}.price{font-size:16px}.add{font-size:12px}}
+/* IT Elements responsive product checkout */
+.checkout-modal{display:none;position:fixed;inset:0;z-index:1500;align-items:center;justify-content:center;padding:16px}.checkout-modal.open{display:flex}
+.checkout-backdrop{position:absolute;inset:0;background:#111a;backdrop-filter:blur(3px)}.checkout-panel{position:relative;width:min(510px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;padding:28px;box-shadow:0 24px 80px #0004}
+.checkout-close{position:absolute;right:15px;top:12px;border:0;background:#f1f2f4;border-radius:50%;width:36px;height:36px;font-size:24px}
+.checkout-eyebrow{font-size:10px;letter-spacing:1.5px;color:#e00000;font-weight:900}.checkout-panel h2{font-size:25px;margin:7px 0}.checkout-intro{font-size:13px;color:#747b86;margin:0 0 20px}
+#productCheckoutForm{display:grid;gap:12px}#productCheckoutForm label{display:grid;gap:6px;font-size:12px;font-weight:800;color:#30343b}
+#productCheckoutForm input,#productCheckoutForm select,#productCheckoutForm textarea{width:100%;min-width:0;border:1px solid #dfe2e7;border-radius:9px;padding:12px;font:inherit;font-size:13px;color:#17191f;background:#fff}
+.checkout-note{background:#f7f8fa;border-radius:9px;padding:11px;color:#626975;font-size:11px;line-height:1.6}.checkout-total{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #eceef1;padding-top:14px;font-size:15px}.checkout-total strong{font-size:21px}
+.payfast-submit{background:#e00000;color:#fff;border:0;border-radius:10px;padding:15px;font-weight:850;font-size:14px}.payfast-submit:disabled{opacity:.55;cursor:wait}.payfast-trust{text-align:center;color:#737b85;font-size:11px}.checkout-error{color:#b00020;font-size:12px}
+.store-payment-notice{display:none;position:fixed;z-index:1800;left:50%;bottom:22px;transform:translateX(-50%);width:min(600px,calc(100% - 24px));padding:14px 18px;border-radius:12px;background:#17191f;color:#fff;box-shadow:0 10px 30px #0003;font-size:13px}.store-payment-notice.show{display:block}.store-payment-notice.success{background:#126b3b}.store-payment-notice.error{background:#a20f20}
+.detail-qty{display:flex;align-items:center;gap:16px;margin:20px 0;min-height:54px}.detail-qty>span{font-size:14px;font-weight:800;margin-right:2px}.detail-qty button{width:52px;height:52px;border:1px solid #dfe2e7;border-radius:12px;background:#fff;font-size:24px;font-weight:500;color:#0878d1;display:grid;place-items:center}.detail-qty button:disabled{opacity:.35;cursor:not-allowed}.detail-qty strong{min-width:22px;text-align:center;font-size:20px;font-weight:750;font-variant-numeric:tabular-nums}
+.photo{height:190px}.photo img{object-fit:contain;padding:10px}.product-gallery-main{height:390px;min-height:0;background:#fff}.product-gallery-main img{width:100%;height:100%;max-height:390px;object-fit:contain}
+@media(max-width:760px){.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.cardbody{padding:10px}.photo{height:145px}.card h3{font-size:13px;line-height:1.35}.desc{font-size:11px;-webkit-line-clamp:2}.price{font-size:16px}.product-modal{padding:8px}.product-modal-panel{max-height:94vh}.product-modal-content{grid-template-columns:minmax(0,1fr);gap:14px;padding:15px}.product-gallery-main{height:270px}.product-gallery-main img{max-height:270px}.product-detail-image{min-height:240px}.product-detail-copy h2{font-size:21px}.product-detail-price{font-size:24px}.product-detail-actions{grid-template-columns:1fr}.checkout-panel{padding:22px 17px;border-radius:15px}}
+@media(max-width:390px){.products{gap:8px}.photo{height:125px}.cardbody{padding:8px}.add{font-size:11px;padding:9px}.detail-qty{gap:12px}.detail-qty button{width:46px;height:46px}}
 
-.gallery-prev,.gallery-next{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:42px;border:1px solid #ddd;border-radius:8px;background:#ffffffed;color:#171717;font-size:25px;z-index:2;cursor:pointer}
-.gallery-prev{left:7px}.gallery-next{right:7px}
-</style><style>
-/* IT ELEMENTS SHARED COMMERCE + ACCOUNT BAR */
-.ite-utility-bar{min-height:38px;padding:7px max(4%,calc((100% - 1440px)/2));display:flex;align-items:center;justify-content:space-between;gap:12px;background:#171717;color:#fff;font:600 12px/1.3 Arial,sans-serif;position:relative;z-index:30}
-.ite-utility-left,.ite-utility-right{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-.ite-utility-bar a{color:#fff;text-decoration:none}.ite-utility-bar a:hover{color:#ff5555}
-.ite-utility-right{margin-left:auto}.ite-utility-right a{white-space:nowrap}
-.ite-utility-right .ite-account-primary{font-weight:800}
-@media(max-width:650px){.ite-utility-bar{padding:7px 12px;font-size:10px}.ite-utility-left{gap:8px}.ite-utility-left .ite-location{display:none}.ite-utility-right{gap:10px}}
+.product-gallery-main{position:relative;overflow:hidden}.gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border:1px solid #e3e5e9;border-radius:50%;background:#ffffffed;color:#17191f;font-size:25px;line-height:1;box-shadow:0 3px 12px #0001}.gallery-arrow.prev{left:10px}.gallery-arrow.next{right:10px}
+.product-gallery-thumb img{width:100%;height:100%;object-fit:contain;padding:5px}
+@media(max-width:760px){.gallery-arrow{width:34px;height:34px}.product-gallery-thumbs{justify-content:flex-start;overflow-x:auto;padding-bottom:4px}}
 </style></head><body>
-<header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store" aria-current="page">Online Store</a><a href="/pricing">Support Plans</a><a href="/tools/invoices">Invoice Studio</a><a href="/dashboard">Client Portal</a><a href="/about">About</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
-<section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Computers, laptops, components<br><span style="color:#ff3535">& IT solutions.</span></h1><p>Shop quality IT products for home and business, with expert support before and after your purchase.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
+<header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
+<section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
 <main class="wrap" id="catalogue"><div class="intro"><div><div class="eyebrow">Browse products</div><h2>Find what you need</h2><div class="muted">Products and prices are managed by IT Elements.</div></div><div class="muted" id="resultCount"></div></div>
 <section class="shop-filters" aria-label="Search and filter products">
@@ -409,16 +367,30 @@ header nav a{font-size:13px;white-space:nowrap}
     <div class="catalogue-toolbar"><div><span class="toolbar-kicker">THE IT ELEMENTS COLLECTION</span><strong>All Products</strong></div><span class="catalogue-note">Select a product to view details and options</span></div>
     <section class="products" id="products"><div class="empty">Loading products...</div></section>
   </section>
-  <aside class="store-cart-summary" aria-label="Shopping cart summary">
-    <div class="store-cart-head"><strong>Your Cart</strong><button type="button" class="store-cart-open" id="openCartSide">View cart</button></div>
-    <div id="storeCartPreview" class="store-cart-preview"><p class="muted">Your cart is empty.</p></div>
-    <div class="store-cart-total"><span>Subtotal</span><strong id="storeCartSubtotal">R 0.00</strong></div>
-    <button type="button" class="store-cart-checkout" id="storeCartOpenBottom">View cart & order</button>
-    <small>Order securely by contacting IT Elements. We confirm stock, payment and delivery with you.</small>
-  </aside>
 </div></main>
-<footer class="foot"><div>© <span id="year"></span> IT Elements. IT Support | Sales | Services.</div><div>Need help choosing? <a style="color:#ff5555" href="https://wa.me/27606181229">Chat to our team on WhatsApp</a></div></footer>
-<div class="drawer" id="drawer"><aside class="cartpanel"><div class="carthead"><h2>Your cart</h2><button class="x" id="closeCart">✕</button></div><div id="cartItems"></div><div class="total"><span>Total</span><span id="cartTotal">R 0.00</span></div><button class="checkout" id="checkout">Order via WhatsApp</button><p class="muted" style="font-size:12px">Your order request will be sent to IT Elements on WhatsApp. Payment and delivery will be confirmed by our team.</p></aside></div>
+<footer class="foot"><div>© <span id="year"></span> IT Elements. Your Technology, Our Support.</div><div>Need help choosing? <a style="color:#ff5555" href="https://wa.me/27606181229">Chat to our team on WhatsApp</a></div></footer>
+<div class="checkout-modal" id="checkoutModal" aria-hidden="true">
+ <div class="checkout-backdrop" data-close-checkout></div>
+ <section class="checkout-panel" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+  <button type="button" class="checkout-close" data-close-checkout aria-label="Close checkout">×</button>
+  <div class="checkout-eyebrow">SECURE CHECKOUT</div><h2 id="checkoutTitle">Complete your order</h2>
+  <p class="checkout-intro">Enter your details, then continue to PayFast.</p>
+  <form id="productCheckoutForm">
+   <label>Full name<input name="customerName" autocomplete="name" required maxlength="100" placeholder="Your full name"></label>
+   <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+   <label>Phone number<input name="phone" type="tel" autocomplete="tel" required placeholder="+27 ..."></label>
+   <label>Delivery or collection<select name="deliveryMethod" id="deliveryMethod"><option value="delivery">Nationwide delivery</option><option value="collection">Collection (arrange with IT Elements)</option></select></label>
+   <label id="deliveryAddressField">Delivery address<textarea name="deliveryAddress" rows="3" autocomplete="street-address" required placeholder="Street, suburb, city, province and postal code"></textarea></label>
+   <div class="checkout-note">Delivery charges and timing will be confirmed by IT Elements before dispatch. Collection details will be arranged with you.</div>
+   <div class="checkout-total"><span>Order total</span><strong id="checkoutTotal">R 0.00</strong></div>
+   <button type="submit" class="payfast-submit" id="payfastSubmit">Continue to PayFast →</button>
+   <div id="checkoutError" role="alert" class="checkout-error"></div>
+   <div class="payfast-trust">🔒 Secure payment processed by PayFast</div>
+  </form>
+ </section>
+</div>
+<div class="store-payment-notice" id="storePaymentNotice" role="status" aria-live="polite"></div>
+<div class="drawer" id="drawer"><aside class="cartpanel"><div class="carthead"><h2>Your cart</h2><button class="x" id="closeCart">✕</button></div><div id="cartItems"></div><div class="total"><span>Total</span><span id="cartTotal">R 0.00</span></div><button class="checkout" id="checkout">Continue to secure checkout</button><p class="muted" style="font-size:12px">Pay securely with PayFast. Choose nationwide delivery or arrange collection during checkout.</p></aside></div>
 
 <div class="product-modal" id="productModal" aria-hidden="true">
  <div class="product-modal-backdrop" data-close-product></div>
@@ -476,16 +448,17 @@ function render(){
 }
 function addToCart(id, quantity=1){
  const p=products.find(x=>x._id===id);
- if(!p)return;
+ if(!p)return false;
  const available=Math.max(0,Number(p.stock)||0);
- if(available<1){alert('This product is currently out of stock. Please contact IT Elements to confirm availability.');return;}
+ if(available<1){alert('This product is currently out of stock. Please contact IT Elements to confirm availability.');return false;}
  const item=cart.find(x=>x.id===id);
  if(item){
-  if(item.qty+quantity>available){alert(`Only ${available} unit${available===1?'':'s'} currently available.`);return;}
+  if(item.qty+quantity>available){alert(`Only ${available} unit${available===1?'':'s'} currently available.`);return false;}
   item.qty+=quantity;
- }else {if(quantity>available){alert(`Only ${available} unit${available===1?'':'s'} currently available.`);return;}cart.push({id,qty:quantity});}
+ }else {if(quantity>available){alert(`Only ${available} unit${available===1?'':'s'} currently available.`);return false;}cart.push({id,qty:quantity});}
  saveCart();
  renderCart();
+ return true;
 }
 
 window.showProduct=async id=>{
@@ -503,30 +476,42 @@ window.showProduct=async id=>{
   return;
  }
  const gallery=[...new Set([p.imageUrl,...(Array.isArray(p.images)?p.images:[])].filter(Boolean))];
- const image=gallery.length?`<div class="product-gallery-main" id="productGallerySwipe"><button type="button" class="gallery-prev" onclick="stepProductImage(-1)" aria-label="Previous image">‹</button><img id="productGalleryMain" src="${esc(gallery[0])}" alt="${esc(p.name)}"><button type="button" class="gallery-next" onclick="stepProductImage(1)" aria-label="Next image">›</button></div>${gallery.length>1?`<div class="product-gallery-controls"><button type="button" onclick="stepProductImage(-1)" aria-label="Previous image">‹</button><span id="productGalleryCount">1 / ${gallery.length} · Swipe to view more</span><button type="button" onclick="stepProductImage(1)" aria-label="Next image">›</button></div><div class="product-gallery-thumbs">${gallery.map((url,i)=>`<button type="button" class="product-gallery-thumb${i===0?' active':''}" onclick="selectProductImage(${i})" aria-label="View product image ${i+1}"><img src="${esc(url)}" alt=""></button>`).join('')}</div>`:''}`:'<span style="font-size:80px">💻</span>';
- let activeGalleryIndex=0;
+ const image=gallery.length?`<div class="product-gallery-main"><img id="productGalleryMain" src="${esc(gallery[0])}" alt="${esc(p.name)}"></div>${gallery.length>1?`<div class="product-gallery-thumbs">${gallery.map((url,i)=>`<button type="button" class="product-gallery-thumb${i===0?' active':''}" onclick="selectProductImage(${i})" aria-label="View product image ${i+1}"><img src="${esc(url)}" alt=""></button>`).join('')}</div>`:''}`:'<span style="font-size:80px">💻</span>';
+ let galleryIndex=0;
  window.selectProductImage=index=>{
   if(!gallery.length)return;
-  activeGalleryIndex=(index+gallery.length)%gallery.length;
-  const main=$('productGalleryMain');if(main)main.src=gallery[activeGalleryIndex];
-  document.querySelectorAll('.product-gallery-thumb').forEach((button,i)=>button.classList.toggle('active',i===activeGalleryIndex));
-  const count=$('productGalleryCount');if(count)count.textContent=(activeGalleryIndex+1)+' / '+gallery.length+' · Swipe to view more';
+  galleryIndex=(index+gallery.length)%gallery.length;
+  const url=gallery[galleryIndex];
+  const main=$('productGalleryMain');if(main)main.src=url;
+  document.querySelectorAll('.product-gallery-thumb').forEach((button,i)=>button.classList.toggle('active',i===galleryIndex));
  };
- window.stepProductImage=delta=>window.selectProductImage(activeGalleryIndex+delta);
- const swipeArea=$('productGallerySwipe');
- if(swipeArea&&gallery.length>1){
-   let startX=0;
-   swipeArea.addEventListener('touchstart',e=>{startX=e.changedTouches[0].clientX;},{passive:true});
-   swipeArea.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-startX;if(Math.abs(dx)>35)window.stepProductImage(dx<0?1:-1);},{passive:true});
-   swipeArea.addEventListener('pointerdown',e=>{startX=e.clientX;});
-   swipeArea.addEventListener('pointerup',e=>{const dx=e.clientX-startX;if(Math.abs(dx)>55)window.stepProductImage(dx<0?1:-1);});
+ if(gallery.length>1){
+  const galleryBox=document.querySelector('.product-gallery-main');
+  if(galleryBox){
+   let touchStartX=0;
+   galleryBox.addEventListener('touchstart',event=>{touchStartX=event.changedTouches[0].clientX;},{passive:true});
+   galleryBox.addEventListener('touchend',event=>{
+    const dx=event.changedTouches[0].clientX-touchStartX;
+    if(Math.abs(dx)>35)window.selectProductImage(galleryIndex+(dx<0?1:-1));
+   },{passive:true});
+   galleryBox.insertAdjacentHTML('beforeend',`<button type="button" class="gallery-arrow prev" aria-label="Previous image" onclick="selectProductImage(${gallery.length-1})">‹</button><button type="button" class="gallery-arrow next" aria-label="Next image" onclick="selectProductImage(1)">›</button>`);
+  }
  }
  detailQuantity=1;
- $('productModalContent').innerHTML=`<div><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><div class="detail-meta"><span class="detail-pill">SKU: ${esc(p.sku||'On request')}</span><span class="detail-pill">${Number(p.stock)>0?'In stock':'Check availability'}</span></div><div class="detail-qty"><span style="font-size:12px;font-weight:800">Quantity</span><button type="button" onclick="changeDetailQty(-1)" aria-label="Decrease quantity">−</button><strong id="detailQty">1</strong><button type="button" onclick="changeDetailQty(1)" aria-label="Increase quantity">+</button></div><div class="product-detail-actions"><button type="button" onclick="addDetailToCart('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to cart</button><button type="button" class="secondary" onclick="orderProduct('${p._id}')">Ask / order on WhatsApp</button></div><div class="detail-section"><details open><summary>Product description & details</summary><div class="detail-description">${esc(p.description||'Contact IT Elements for full specifications and compatibility information.').replace(/\n/g,'<br>')}</div></details></div><div class="detail-section"><details><summary>Delivery, payment & support</summary><div class="detail-description">Contact IT Elements to confirm stock, delivery options, payment arrangements and product compatibility. Our team can help before and after your purchase.</div></details></div><div class="detail-section"><button type="button" class="filter-reset" style="height:38px" onclick="copyProductLink('${p._id}')">Copy product link</button></div></div>`;
+ $('productModalContent').innerHTML=`<div><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><div class="detail-meta"><span class="detail-pill">SKU: ${esc(p.sku||'On request')}</span><span class="detail-pill">${Number(p.stock)>0?'In stock':'Check availability'}</span></div><div class="detail-qty"><span style="font-size:12px;font-weight:800">Quantity</span><button type="button" onclick="changeDetailQty(-1)" aria-label="Decrease quantity" disabled>−</button><strong id="detailQty">1</strong><button type="button" onclick="changeDetailQty(1)" aria-label="Increase quantity" ${Number(p.stock)>1?'':'disabled'}>+</button></div><div class="product-detail-actions"><button type="button" onclick="addDetailToCart('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to cart</button><button type="button" class="secondary" onclick="orderProduct('${p._id}')">Ask / order on WhatsApp</button></div><div class="detail-section"><details open><summary>Product description & details</summary><div class="detail-description">${esc(p.description||'Contact IT Elements for full specifications and compatibility information.').replace(/\n/g,'<br>')}</div></details></div><div class="detail-section"><details><summary>Delivery, payment & support</summary><div class="detail-description">Contact IT Elements to confirm stock, delivery options, payment arrangements and product compatibility. Our team can help before and after your purchase.</div></details></div><div class="detail-section"><button type="button" class="filter-reset" style="height:38px" onclick="copyProductLink('${p._id}')">Copy product link</button></div></div>`;
  $('productModal').classList.add('open');$('productModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 };
-window.changeDetailQty=delta=>{const p=products.find(x=>x._id===activeProductId);const max=p?Math.max(1,Number(p.stock)||1):99;detailQuantity=Math.max(1,Math.min(max,detailQuantity+delta));const el=$('detailQty');if(el)el.textContent=detailQuantity;};
-window.addDetailToCart=id=>{addToCart(id,detailQuantity);closeProduct();};
+window.changeDetailQty=delta=>{
+ const p=products.find(x=>x._id===activeProductId);
+ const max=p?Math.max(1,Number(p.stock)||1):1;
+ detailQuantity=Math.max(1,Math.min(max,detailQuantity+delta));
+ const el=$('detailQty');if(el)el.textContent=detailQuantity;
+ const minus=document.querySelector('.detail-qty button[aria-label="Decrease quantity"]');
+ const plus=document.querySelector('.detail-qty button[aria-label="Increase quantity"]');
+ if(minus)minus.disabled=detailQuantity<=1;
+ if(plus)plus.disabled=detailQuantity>=max;
+};
+window.addDetailToCart=id=>{if(addToCart(id,detailQuantity))closeProduct();};
 window.copyProductLink=id=>{const url=location.origin+location.pathname+'?product='+encodeURIComponent(id);if(navigator.clipboard?.writeText)navigator.clipboard.writeText(url).then(()=>alert('Product link copied.')).catch(()=>alert(url));else alert(url);};
 window.closeProduct=()=>{$('productModal').classList.remove('open');$('productModal').setAttribute('aria-hidden','true');document.body.style.overflow='';activeProductId=null;};
 window.orderProduct=id=>{
@@ -546,13 +531,7 @@ function renderCart(){
   const available=Math.max(0,Number(p.stock)||0);
   return `<div class="cartline"><div><strong>${esc(p.name)}</strong><div class="muted">${money(p.price)} each · ${available} available</div><div class="qty"><button aria-label="Decrease ${esc(p.name)} quantity" onclick="changeQty('${p._id}',-1)">−</button><span>${x.qty}</span><button aria-label="Increase ${esc(p.name)} quantity" onclick="changeQty('${p._id}',1)" ${x.qty>=available?'disabled':''}>+</button></div>${x.qty>available?'<small style="color:#b00000">Quantity exceeds current stock. Please reduce it.</small>':''}</div><strong>${money(p.price*x.qty)}</strong></div>`;
  }).join(''):'<p class="muted">Your cart is empty.</p>';
- const cartSubtotal=cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0);
- $('cartTotal').textContent=money(cartSubtotal);
- const preview=$('storeCartPreview'), subtotal=$('storeCartSubtotal');
- if(preview){
-   preview.innerHTML=cart.length?cart.map(x=>{const p=products.find(z=>z._id===x.id);if(!p)return '';return `<div class="store-cart-line"><img src="${esc(p.imageUrl||'')}" alt=""><div><strong>${esc(p.name)}</strong><small>${x.qty} × ${money(p.price)}</small></div></div>`;}).join(''):'<p class="muted">Your cart is empty.</p>';
- }
- if(subtotal)subtotal.textContent=money(cartSubtotal);
+ $('cartTotal').textContent=money(cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0));
 }
 window.addToCart=addToCart;
 window.changeQty=(id,d)=>{
@@ -568,17 +547,64 @@ window.changeQty=(id,d)=>{
 $('openCart').onclick=()=>$('drawer').classList.add('open');$('closeCart').onclick=()=>$('drawer').classList.remove('open');$('drawer').onclick=e=>{if(e.target===$('drawer'))$('drawer').classList.remove('open')};
 $('checkout').onclick=()=>{
  if(!cart.length){alert('Your cart is empty.');return;}
- const orderLines=[];
- for(const item of cart){
-  const p=products.find(z=>z._id===item.id);
-  if(!p){alert('A product in your cart is no longer available. Please refresh your store.');return;}
-  if(item.qty>Number(p.stock||0)){alert(`Only ${Number(p.stock)||0} unit(s) of ${p.name} are currently available. Please update your cart.`);return;}
-  orderLines.push(`${item.qty} x ${p.name} [SKU: ${p.sku||'N/A'}] (${money(p.price)} each)`);
- }
- const total=cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0);
- const message=`Hello IT Elements, I would like to place an order:\n\n${orderLines.join('\n')}\n\nEstimated total: ${money(total)}\n\nPlease confirm availability, payment and delivery options.`;
- window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank');
+ const invalid=cart.find(item=>{const p=products.find(z=>z._id===item.id);return !p||item.qty>Number(p.stock||0);});
+ if(invalid){alert('Please check product availability and quantities before checkout.');return;}
+ $('checkoutTotal').textContent=money(cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0));
+ $('checkoutError').textContent='';
+ $('checkoutModal').classList.add('open');
+ $('checkoutModal').setAttribute('aria-hidden','false');
 };
+function closeCheckout(){ $('checkoutModal').classList.remove('open');$('checkoutModal').setAttribute('aria-hidden','true');}
+document.querySelectorAll('[data-close-checkout]').forEach(el=>el.addEventListener('click',closeCheckout));
+$('deliveryMethod').addEventListener('change',()=>{
+ const collection=$('deliveryMethod').value==='collection';
+ $('deliveryAddressField').style.display=collection?'none':'grid';
+ $('deliveryAddressField').querySelector('textarea').required=!collection;
+});
+$('productCheckoutForm').addEventListener('submit',async event=>{
+ event.preventDefault();
+ const button=$('payfastSubmit'),error=$('checkoutError');
+ error.textContent='';
+ if(!cart.length){error.textContent='Your cart is empty.';return;}
+ const data=new FormData(event.currentTarget);
+ const payload={
+  customerName:String(data.get('customerName')||'').trim(),
+  email:String(data.get('email')||'').trim(),
+  phone:String(data.get('phone')||'').trim(),
+  deliveryMethod:String(data.get('deliveryMethod')||'delivery'),
+  deliveryAddress:String(data.get('deliveryAddress')||'').trim(),
+  items:cart.map(item=>({id:item.id,qty:item.qty}))
+ };
+ button.disabled=true;button.textContent='Preparing secure checkout…';
+ try{
+  const response=await fetch('/api/payment/payfast-product-checkout',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||!result.success)throw new Error(result.message||'Could not prepare PayFast checkout.');
+  const form=document.createElement('form');form.method='POST';form.action=result.action;
+  Object.entries(result.fields||{}).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=String(value);form.appendChild(input);});
+  document.body.appendChild(form);form.submit();
+ }catch(err){error.textContent=err.message||'Secure checkout could not start. Please try again.';button.disabled=false;button.innerHTML='Continue to PayFast <span>→</span>';}
+});
+
+async function checkReturnedPayment(){
+ const params=new URLSearchParams(location.search),paymentId=params.get('paymentId');
+ if(!paymentId||!['returned','cancelled'].includes(params.get('payment')))return;
+ const notice=$('storePaymentNotice');
+ const show=(message,type='')=>{notice.textContent=message;notice.className='store-payment-notice show '+type;};
+ if(params.get('payment')==='cancelled'){show('Payment was cancelled. Your cart is saved so you can try again.','error');return;}
+ show('Thank you. We are confirming your PayFast payment…');
+ try{
+  for(let attempt=0;attempt<8;attempt++){
+   const response=await fetch('/api/payment/payfast-status?paymentId='+encodeURIComponent(paymentId),{cache:'no-store'});
+   const result=await response.json();
+   if(response.ok&&result.success&&result.checkout?.status==='paid'){
+    cart=[];saveCart();renderCart();show('Payment successful! Your IT Elements order is confirmed. We will contact you about delivery or collection.','success');history.replaceState({},'',location.pathname);return;
+   }
+   await new Promise(resolve=>setTimeout(resolve,2500));
+  }
+  show('Your payment is still being confirmed. Please do not pay again. Contact IT Elements with your PayFast reference if you received a receipt.');
+ }catch(_){show('We could not check payment status. Your order is only marked paid after PayFast confirms it. Please contact IT Elements if you received a receipt.');}
+}
 function buildDepartmentFilters(){
  const options='<option value="">All departments</option>'+STORE_CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
  const picker=$('departmentPicker');
@@ -625,26 +651,6 @@ async function load(){
  }
 }
 load();renderCart();
-</script>
-<script>
-(function(){
-  function installITElementsHeader(){
-    if(document.querySelector('.ite-utility-bar')) return;
-    var bar=document.createElement('div');
-    bar.className='ite-utility-bar';
-    bar.innerHTML='<div class="ite-utility-left"><a href="tel:+27671234567">☎ +27 67 123 4567</a><a href="mailto:support@itelements.co.za">✉ support@itelements.co.za</a><span class="ite-location">⌖ South Africa</span></div><div class="ite-utility-right"><a class="ite-login-link" href="/client/login">Customer Login</a><a href="/store">Online Store</a></div>';
-    var nav=document.querySelector('body > nav, body > header');
-    if(nav) nav.parentNode.insertBefore(bar,nav); else document.body.insertBefore(bar,document.body.firstChild);
-    fetch('/api/session-status',{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(s){
-      if(!s)return;
-      var right=bar.querySelector('.ite-utility-right');
-      if(s.loggedIn){
-        right.innerHTML=(s.role==='admin'?'<a class="ite-account-primary" href="/admin">Admin Dashboard</a>':'<a class="ite-account-primary" href="/dashboard">My Account</a>')+'<a href="/store">Online Store</a><a href="/client/logout">Log out</a>';
-      }
-    }).catch(function(){});
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installITElementsHeader);else installITElementsHeader();
-})();
-</script>
-</body></html>
+checkReturnedPayment();
+</script></body></html>
 
