@@ -199,7 +199,7 @@ function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&l
 
 const STORE_CATEGORIES = ["Computers & Laptops", "Gaming PCs", "Gaming Laptops", "Gaming Components", "Graphics Cards", "Processors (CPU)", "Motherboards", "RAM & Memory", "SSD & NVMe Storage", "Hard Drives (HDD)", "External Storage", "PC Cases", "Power Supplies (PSU)", "CPU Cooling & Fans", "Monitors & Displays", "Gaming Monitors", "Keyboards", "Gaming Keyboards", "Mice & Gaming Mice", "Headsets & Audio", "Controllers & Gamepads", "Webcams & Streaming", "Networking & Wi-Fi", "Routers & Mesh Wi-Fi", "Network Switches", "Cables & Adapters", "Docks & Hubs", "Printers & Scanners", "Printer Ink & Toner", "Software & Security", "Operating Systems", "Office Accessories", "UPS & Power Protection", "Refurbished Computers", "Special Offers", "Other Accessories"];
 function render(){
- const q=$('search').value.trim().toLowerCase(),cat=$('category').value,price=$('priceRange').value,avail=$('availability').value,sort=$('sort').value;
+ const q=$('search').value.trim().toLowerCase(),cat=$('departmentPicker').value,price=$('priceRange').value,avail=$('availability').value,sort=$('sort').value;
  let list=products.filter(p=>{
   const hay=[p.name,p.description,p.category,p.sku,p.brand,p.model,p.specifications].join(' ').toLowerCase();
   if(q&&!hay.includes(q))return false;
@@ -305,19 +305,20 @@ $('checkout').onclick=()=>{
  const message=`Hello IT Elements, I would like to place an order:\n\n${orderLines.join('\n')}\n\nEstimated total: ${money(total)}\n\nPlease confirm availability, payment and delivery options.`;
  window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank');
 };
-$('search').oninput=render;$('category').onchange=render;$('priceRange').onchange=render;$('availability').onchange=render;$('sort').onchange=render;$('year').textContent=new Date().getFullYear();
-$('clearFilters').onclick=()=>{$('search').value='';$('category').value='';$('departmentPicker').value='';$('priceRange').value='';$('availability').value='';$('sort').value='featured';render();};
-$('search').addEventListener('keydown',e=>{if(e.key==='/'){e.preventDefault();$('search').focus();}});
 function buildDepartmentFilters(){
  const options='<option value="">All departments</option>'+STORE_CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
- $('departmentPicker').innerHTML=options;
- $('category').innerHTML=options;
- $('departmentPicker').value=$('category').value||'';
- $('departmentPicker').onchange=()=>{
-  $('category').value=$('departmentPicker').value;
-  render();
- };
+ const picker=$('departmentPicker');
+ if(!picker)return;
+ picker.innerHTML=options;
+ picker.value='';
+ picker.onchange=render;
 }
+// Build the department menu immediately. It must not depend on the product API.
+buildDepartmentFilters();
+$('search').oninput=render;$('priceRange').onchange=render;$('availability').onchange=render;$('sort').onchange=render;
+$('year').textContent=new Date().getFullYear();
+$('clearFilters').onclick=()=>{$('search').value='';$('departmentPicker').value='';$('priceRange').value='';$('availability').value='';$('sort').value='featured';render();};
+$('search').addEventListener('keydown',e=>{if(e.key==='/'){e.preventDefault();$('search').focus();}});
 async function load(){
  try{
   const r=await fetch('/api/store/products');
@@ -332,7 +333,6 @@ async function load(){
   });
   cart=cart.filter(item=>item.qty>0);
   saveCart();
-  buildDepartmentFilters();
   render();
   renderCart();
  }catch(e){
