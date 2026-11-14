@@ -117,12 +117,17 @@ const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     userEmail: { type: String, default: '', lowercase: true, trim: true },
     purchaseType: {
         type: String,
-        enum: ['plan', 'quickfix', 'invoicePro'],
+        enum: ['plan', 'quickfix', 'invoicePro', 'productOrder'],
         required: true
     },
     planId: { type: String, default: '' },
     planName: { type: String, default: '' },
     durationOption: { type: String, default: '' },
+    orderItems: { type: [Object], default: [] },
+    customerName: { type: String, default: '' },
+    customerPhone: { type: String, default: '' },
+    deliveryAddress: { type: String, default: '' },
+    deliveryMethod: { type: String, default: 'delivery' },
     amount: { type: Number, required: true },
     mode: { type: String, enum: ['test', 'live'], default: 'live' },
     status: {
@@ -657,6 +662,48 @@ async function markPayFastPurchasePaid(fields) {
         { $set: update }
     );
 
+    if (saved.modifiedCount && purchase.purchaseType === 'productOrder') {
+        // Deduct inventory only after PayFast's verified COMPLETE notification.
+        // Conditional updates prevent stock from going negative if inventory changed during checkout.
+        for (const line of (purchase.orderItems || [])) {
+            const result = await StoreProduct.updateOne(
+                { _id: line.productId, status: 'active', stock: { $gte: line.quantity } },
+                { $inc: { stock: -line.quantity }, $set: { updatedAt: paidAt } }
+            );
+            if (!result.modifiedCount) {
+                console.error('Paid store order requires stock review:', purchase.paymentId, line.productId);
+            }
+        }
+        await sendCustomerEmail(
+            purchase.userEmail,
+            'IT Elements order payment received',
+            [
+                `PayFast confirmed your product order ${purchase.paymentId}.`,
+                ...(purchase.orderItems || []).map(line => `${line.quantity} x ${line.name} (${line.sku || 'No SKU'})`),
+                `Paid amount: R ${(purchase.amount / 100).toFixed(2)}.`,
+                `Delivery method: ${purchase.deliveryMethod || 'delivery'}.`,
+                purchase.deliveryAddress ? `Delivery address: ${purchase.deliveryAddress}` : 'Our team will contact you to confirm delivery or collection.',
+                'IT Elements will contact you with the order and delivery update.'
+            ]
+        );
+        const adminEmail = String(process.env.SUPPORT_EMAIL || process.env.ADMIN_EMAIL || '').trim();
+        if (adminEmail) {
+            await sendCustomerEmail(
+                adminEmail,
+                `New paid IT Elements store order ${purchase.paymentId}`,
+                [
+                    `Customer: ${purchase.customerName || 'Not provided'}`,
+                    `Email: ${purchase.userEmail}`,
+                    `Phone: ${purchase.customerPhone || 'Not provided'}`,
+                    `Paid total: R ${(purchase.amount / 100).toFixed(2)}`,
+                    `Delivery method: ${purchase.deliveryMethod || 'delivery'}`,
+                    purchase.deliveryAddress ? `Delivery address: ${purchase.deliveryAddress}` : 'Collection requested.',
+                    ...(purchase.orderItems || []).map(line => `${line.quantity} x ${line.name} | SKU ${line.sku || 'N/A'} | R ${(line.lineTotalCents / 100).toFixed(2)}`)
+                ]
+            );
+        }
+    }
+
     if (saved.modifiedCount && purchase.purchaseType === 'plan') {
         await UserAccount.findOneAndUpdate(
             { email: purchase.userEmail },
@@ -854,19 +901,9 @@ app.get('/dashboard.html', checkUserAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
 
-// Invoice Maker is public. Customer dashboards remain protected.
-app.get('/invoice-maker.html', (req, res) => {
-    res.sendFile(path.join(viewsPath, 'invoice-maker.html'));
-});
-
-// Public session status for the shared website header (never exposes private account data).
-app.get('/api/session-status', (req, res) => {
-    res.set('Cache-Control', 'no-store');
-    const loggedIn = Boolean(req.session && (req.session.isUser || req.session.isAdmin));
-    res.json({
-        loggedIn,
-        role: req.session && req.session.isAdmin ? 'admin' : (loggedIn ? 'customer' : 'guest')
-    });
+// Invoice Maker temporarily paused while IT Elements focuses on product sales.
+app.get(['/invoice-maker.html', '/tools/invoices'], (req, res) => {
+    res.redirect(302, '/store');
 });
 
 // Public website files
@@ -1454,6 +1491,113 @@ async function createPayFastCheckout({
     };
 }
 
+// Customer product checkout — prices and stock are always re-read from MongoDB.
+app.post('/api/payment/payfast-product-checkout', async (req, res) => {
+    const customerName = String(req.body.customerName || '').trim().slice(0, 100);
+    const email = String(req.body.email || '').trim().toLowerCase();
+    const phone = String(req.body.phone || '').trim().slice(0, 40);
+    const deliveryAddress = String(req.body.deliveryAddress || '').trim().slice(0, 500);
+    const deliveryMethod = ['delivery', 'collection'].includes(req.body.deliveryMethod)
+        ? req.body.deliveryMethod : 'delivery';
+    const incoming = Array.isArray(req.body.items) ? req.body.items : [];
+
+    if (!customerName || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !phone) {
+        return res.status(400).json({ success: false, message: 'Enter your name, valid email address and phone number.' });
+    }
+    if (deliveryMethod === 'delivery' && deliveryAddress.length < 8) {
+        return res.status(400).json({ success: false, message: 'Enter your delivery address, or choose collection.' });
+    }
+    if (!incoming.length || incoming.length > 30) {
+        return res.status(400).json({ success: false, message: 'Your cart is empty or contains too many different products.' });
+    }
+
+    try {
+        const merged = new Map();
+        for (const row of incoming) {
+            const id = String(row && row.id || '');
+            const quantity = Number(row && row.qty);
+            if (!mongoose.isValidObjectId(id) || !Number.isInteger(quantity) || quantity < 1 || quantity > 100) {
+                return res.status(400).json({ success: false, message: 'One of the cart items has an invalid quantity.' });
+            }
+            merged.set(id, (merged.get(id) || 0) + quantity);
+        }
+        const ids = [...merged.keys()];
+        const products = await StoreProduct.find({ _id: { $in: ids }, status: 'active' })
+            .select('name sku price stock')
+            .lean();
+        if (products.length !== ids.length) {
+            return res.status(409).json({ success: false, message: 'A product in your cart is no longer available. Please refresh your cart.' });
+        }
+
+        const orderItems = [];
+        let amount = 0;
+        for (const product of products) {
+            const quantity = merged.get(String(product._id));
+            if (!Number.isFinite(product.price) || product.price <= 0) {
+                return res.status(400).json({ success: false, message: `${product.name} is not currently available for online payment. Please contact IT Elements.` });
+            }
+            if (quantity > Number(product.stock || 0)) {
+                return res.status(409).json({ success: false, message: `Only ${Number(product.stock || 0)} unit(s) of ${product.name} are currently available.` });
+            }
+            const unitCents = Math.round(Number(product.price) * 100);
+            amount += unitCents * quantity;
+            orderItems.push({
+                productId: String(product._id),
+                name: product.name,
+                sku: product.sku || '',
+                quantity,
+                unitPriceCents: unitCents,
+                lineTotalCents: unitCents * quantity
+            });
+        }
+        if (!Number.isSafeInteger(amount) || amount < 100 || amount > 1000000000) {
+            return res.status(400).json({ success: false, message: 'The order total is outside the supported payment range.' });
+        }
+
+        const config = payfastConfig();
+        if (!config) {
+            return res.status(503).json({ success: false, message: 'PayFast is not configured yet. Please contact IT Elements.' });
+        }
+        const publicBaseUrl = String(process.env.PUBLIC_BASE_URL || '').replace(/\/$/, '');
+        if (!publicBaseUrl.startsWith('https://')) {
+            return res.status(503).json({ success: false, message: 'The secure checkout address is not configured. Please contact IT Elements.' });
+        }
+
+        const paymentId = `ite-${randomUUID()}`;
+        await PayFastPurchase.create({
+            paymentId,
+            userEmail: email,
+            purchaseType: 'productOrder',
+            orderItems,
+            customerName,
+            customerPhone: phone,
+            deliveryAddress,
+            deliveryMethod,
+            amount,
+            mode: config.mode
+        });
+
+        const description = orderItems.map(line => `${line.quantity}x ${line.name}`).join(', ');
+        const fields = {
+            merchant_id: config.merchantId,
+            merchant_key: config.merchantKey,
+            return_url: `${publicBaseUrl}/store?payment=returned&paymentId=${encodeURIComponent(paymentId)}`,
+            cancel_url: `${publicBaseUrl}/store?payment=cancelled&paymentId=${encodeURIComponent(paymentId)}`,
+            notify_url: `${publicBaseUrl}/webhooks/payfast`,
+            email_address: email,
+            m_payment_id: paymentId,
+            amount: (amount / 100).toFixed(2),
+            item_name: `IT Elements product order ${paymentId.slice(-8)}`,
+            item_description: description.slice(0, 255)
+        };
+        fields.signature = payfastSignature(fields, process.env.PAYFAST_PASSPHRASE || '');
+        return res.json({ success: true, action: config.endpoint, fields, paymentId });
+    } catch (err) {
+        console.error('Product checkout error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not start secure checkout. Please try again or contact IT Elements.' });
+    }
+});
+
 // Quick-fix checkout
 app.post('/api/payment/payfast-quickfix', async (req, res) => {
     const durationOption = String(req.body.durationOption || '');
@@ -1574,6 +1718,19 @@ app.get('/api/payment/payfast-status', async (req, res) => {
 
     if (!purchase) {
         return res.status(404).json({ success: false });
+    }
+
+    if (purchase.purchaseType === 'productOrder') {
+        return res.json({
+            success: true,
+            checkout: {
+                paymentId: purchase.paymentId,
+                purchaseType: purchase.purchaseType,
+                status: purchase.status,
+                amount: purchase.amount,
+                paidAt: purchase.paidAt
+            }
+        });
     }
 
     return res.json({
