@@ -1208,6 +1208,35 @@ app.post('/api/admin/store/products', checkAdminAuth, async (req, res) => {
     }
 });
 
+// ADMIN: Save stock quantities for multiple products in one request.
+app.patch('/api/admin/store/products/stock', checkAdminAuth, async (req, res) => {
+    const updates = Array.isArray(req.body && req.body.updates) ? req.body.updates : [];
+    if (!updates.length || updates.length > 500) {
+        return res.status(400).json({ success: false, message: 'Submit between 1 and 500 stock updates.' });
+    }
+    const cleaned = [];
+    const seen = new Set();
+    for (const item of updates) {
+        const id = String(item && item.id || '');
+        const stock = Number(item && item.stock);
+        if (!mongoose.isValidObjectId(id) || seen.has(id) || !Number.isInteger(stock) || stock < 0 || stock > 10000000) {
+            return res.status(400).json({ success: false, message: 'One or more product IDs or stock quantities are invalid.' });
+        }
+        seen.add(id);
+        cleaned.push({ id, stock });
+    }
+    try {
+        const results = await Promise.all(cleaned.map(item =>
+            StoreProduct.updateOne({ _id: item.id }, { $set: { stock: item.stock, updatedAt: new Date() } })
+        ));
+        const updated = results.reduce((sum, result) => sum + (result.modifiedCount || result.nModified || 0) + (result.matchedCount === 1 && (result.modifiedCount || result.nModified || 0) === 0 ? 1 : 0), 0);
+        return res.json({ success: true, updated, requested: cleaned.length });
+    } catch (err) {
+        console.error('Bulk stock update error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not save stock quantities.' });
+    }
+});
+
 // ADMIN: Edit an existing product
 app.put('/api/admin/store/products/:id', checkAdminAuth, async (req, res) => {
     const productId = String(req.params.id || '');
