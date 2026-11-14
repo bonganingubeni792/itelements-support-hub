@@ -1459,7 +1459,7 @@ async function createPayFastCheckout({
     if (!config) {
         throw Object.assign(
             new Error(
-                'Check the PayFast Render settings: PAYFAST_MERCHANT_ID must be the 8-digit Merchant ID and PAYFAST_MERCHANT_KEY must be the 13-character Merchant Key. Do not enter your passphrase as the Merchant Key.'
+                'Secure payment is not configured correctly yet. Please contact IT Elements so we can complete the payment setup.'
             ),
             { statusCode: 503 }
         );
@@ -1471,7 +1471,7 @@ async function createPayFastCheckout({
 
     if (!publicBaseUrl.startsWith('https://')) {
         throw Object.assign(
-            new Error('Set PUBLIC_BASE_URL to your deployed HTTPS website address.'),
+            new Error('Secure checkout needs the website's HTTPS address to be configured. Please contact IT Elements.'),
             { statusCode: 503 }
         );
     }
@@ -1624,6 +1624,10 @@ app.post('/api/payment/payfast-product-checkout', checkUserAuth, async (req, res
             return res.status(400).json({ success: false, message: 'The order total is invalid.' });
         }
 
+        if (mongoose.connection.readyState !== 1) {
+            throw Object.assign(new Error('The order service is temporarily unavailable. Please try again shortly or contact IT Elements.'), { statusCode: 503 });
+        }
+
         const checkout = await createPayFastCheckout({
             email,
             amount: totalCents,
@@ -1638,7 +1642,8 @@ app.post('/api/payment/payfast-product-checkout', checkUserAuth, async (req, res
         });
         return res.json({ success: true, ...checkout });
     } catch (err) {
-        return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Could not start PayFast checkout.' });
+        console.error('[STORE CHECKOUT] Secure payment preparation failed:', err && (err.stack || err.message || err));
+        return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Secure payment could not be prepared. Please try again or contact IT Elements.' });
     }
 });
 
