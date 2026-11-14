@@ -180,7 +180,12 @@ header{height:62px;padding:0 max(18px,calc((100% - 1440px)/2));box-shadow:0 1px 
 .detail-meta{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.detail-pill{padding:7px 10px;background:#f5f6f7;border-radius:6px;font-size:10px;color:#555}
 .detail-qty{display:flex;align-items:center;gap:12px;margin:18px 0}.detail-qty button{width:34px;height:34px;border:1px solid #ddd;border-radius:6px;background:#fff;font-size:18px}.detail-qty strong{min-width:18px;text-align:center}
 .product-detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.product-detail-actions button{min-height:46px;font-size:12px}.product-detail-actions .secondary{background:#fff;color:#242830;border:1px solid #dfe2e6}
-.detail-section{margin-top:23px;border-top:1px solid #e9ebef;padding-top:15px}.detail-section summary{cursor:pointer;font-size:13px;font-weight:800}.detail-description{font-size:12px;line-height:1.8;color:#626975;margin-top:12px;overflow-wrap:anywhere}
+.detail-section{margin-top:23px;border-top:1px solid #e9ebef;padding-top:15px}.detail-section summary{cursor:pointer;font-size:13px;font-weight:800}.detail-description{font-size:13px;line-height:1.75;color:#515965;margin-top:12px;overflow-wrap:anywhere}
+.detail-description p{margin:0 0 12px;padding:12px 14px;background:#f7f8fa;border:1px solid #e8ebef;border-radius:9px}
+.detail-description h2,.detail-description h3,.detail-description h4{margin:16px 0 8px;color:#20242b}
+.detail-description ul,.detail-description ol{margin:8px 0 14px;padding:12px 14px 12px 32px;background:#f7f8fa;border:1px solid #e8ebef;border-radius:9px}
+.detail-description li{padding:3px 0}
+.detail-description a{color:#d00000;text-decoration:underline}
 @media(max-width:1100px){.products{grid-template-columns:repeat(4,minmax(0,1fr))}.shop-filters{grid-template-columns:repeat(4,minmax(0,1fr))}.searchbox{grid-column:span 2}.filter-reset{grid-column:4;grid-row:1}.department-nav{grid-column:span 2}}
 @media(max-width:760px){header{height:auto;min-height:58px;gap:8px}.store-benefits{justify-content:space-around;gap:7px;padding:6px 8px}.store-benefits small{display:none}.store-benefits>div{gap:4px}.benefit-icon{width:19px;height:19px;font-size:11px}.store-benefits strong{font-size:8px}.wrap{padding:13px 10px 35px}.shop-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:9px}.searchbox{grid-column:1/-1}.filter-reset{grid-column:2;grid-row:2}.filter-row{display:contents}.department-nav{grid-column:1/-1}.filter-field select{height:36px}.department-picker-label{flex-direction:row;align-items:center}.department-picker-title{white-space:nowrap}.department-picker-label select{max-width:70%}.products{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.photo{height:112px;margin:5px 5px 0}.cardbody{padding:7px}.card h3{font-size:10px;min-height:40px}.price{font-size:13px}.stock{font-size:8px}.add{font-size:9px;padding:8px 4px}.product-modal-content{grid-template-columns:1fr;gap:18px;padding:16px 14px 40px}.product-detail-image{position:static;padding:8px}.product-gallery-main{height:280px}.product-detail-copy h2{font-size:21px}.product-detail-actions{grid-template-columns:1fr}.product-detail-price{font-size:25px}}
 @media(max-width:430px){nav{gap:13px;font-size:11px}.brand{font-size:15px}.brand img{width:31px;height:31px}.cartbtn{padding:8px 10px;font-size:10px}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.photo{height:138px}.card h3{font-size:11px;min-height:43px}.stock{font-size:9px}.add{font-size:10px}.store-benefits>div{padding:2px}.product-gallery-main{height:240px}}
@@ -627,6 +632,37 @@ async function addToCart(id, quantity=1){
  return true;
 }
 
+
+function formatProductDescription(value){
+ const raw=String(value||'').trim();
+ if(!raw)return '<p>Contact IT Elements for full specifications and compatibility information.</p>';
+ const source=document.createElement('div');
+ // Supplier descriptions can contain literal HTML tags; parse them, then rebuild only safe elements.
+ source.innerHTML=raw;
+ const allowed=new Set(['P','H2','H3','H4','UL','OL','LI','STRONG','B','EM','I','BR','HR','A']);
+ function clean(node){
+  if(node.nodeType===Node.TEXT_NODE)return esc(node.nodeValue||'');
+  if(node.nodeType!==Node.ELEMENT_NODE)return '';
+  const tag=node.tagName.toUpperCase();
+  if(!allowed.has(tag))return Array.from(node.childNodes).map(clean).join('');
+  const children=Array.from(node.childNodes).map(clean).join('');
+  if(tag==='BR'||tag==='HR')return `<${tag.toLowerCase()}>`;
+  if(tag==='A'){
+   const href=node.getAttribute('href')||'';
+   if(/^https?:\/\//i.test(href))return `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${children}</a>`;
+   return children;
+  }
+  const out=tag.toLowerCase()==='b'?'strong':tag.toLowerCase()==='i'?'em':tag.toLowerCase();
+  return `<${out}>${children}</${out}>`;
+ }
+ const hasMarkup=/<\/?(?:p|h[2-4]|ul|ol|li|strong|b|em|i|br|hr|a)\b/i.test(raw);
+ if(hasMarkup){
+  const html=Array.from(source.childNodes).map(clean).join('');
+  return html.replace(/(?:<br>\s*){3,}/g,'<br><br>');
+ }
+ return raw.split(/\n{2,}/).map(line=>`<p>${esc(line).replace(/\n/g,'<br>')}</p>`).join('');
+}
+
 window.showProduct=async id=>{
  activeProductId=id;
  let p=products.find(x=>x._id===id);if(!p)return;
@@ -664,7 +700,7 @@ window.showProduct=async id=>{
   }
  }
  detailQuantity=1;
- $('productModalContent').innerHTML=`<div><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><div class="detail-meta"><span class="detail-pill">SKU: ${esc(p.sku||'On request')}</span><span class="detail-pill">${Number(p.stock)>0?'In stock':'Check availability'}</span></div><div class="detail-qty" aria-label="Choose product quantity"><span>Quantity</span><button type="button" id="detailQtyMinus" onclick="changeDetailQty(-1)" aria-label="Decrease quantity" disabled>−</button><input id="detailQtyInput" type="number" inputmode="numeric" min="1" max="${Math.max(1,Number(p.stock)||1)}" value="1" aria-label="Product quantity" onchange="setDetailQty(this.value)" oninput="setDetailQty(this.value)" ${Number(p.stock)>0?'':'disabled'}><button type="button" id="detailQtyPlus" onclick="changeDetailQty(1)" aria-label="Increase quantity" ${Number(p.stock)>1?'':'disabled'}>+</button><small id="detailStockHint">${Number(p.stock)>0?`${Number(p.stock)} available`:'Currently unavailable'}</small></div><div class="product-detail-actions"><button type="button" onclick="addDetailToCart('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to cart</button><button type="button" class="buy-now" onclick="buyDetailNow('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Buy now · PayFast</button><button type="button" class="secondary" onclick="askAboutProduct('${p._id}')">Ask about product</button></div><div class="detail-section"><details open><summary>Product description & details</summary><div class="detail-description">${esc(p.description||'Contact IT Elements for full specifications and compatibility information.').replace(/\n/g,'<br>')}</div></details></div><div class="detail-section"><details><summary>Delivery, payment & support</summary><div class="detail-description">Contact IT Elements to confirm stock, delivery options, payment arrangements and product compatibility. Our team can help before and after your purchase.</div></details></div><div class="detail-section"><button type="button" class="filter-reset" style="height:38px" onclick="copyProductLink('${p._id}')">Copy product link</button></div></div>`;
+ $('productModalContent').innerHTML=`<div><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><div class="detail-meta"><span class="detail-pill">SKU: ${esc(p.sku||'On request')}</span><span class="detail-pill">${Number(p.stock)>0?'In stock':'Check availability'}</span></div><div class="detail-qty" aria-label="Choose product quantity"><span>Quantity</span><button type="button" id="detailQtyMinus" onclick="changeDetailQty(-1)" aria-label="Decrease quantity" disabled>−</button><input id="detailQtyInput" type="number" inputmode="numeric" min="1" max="${Math.max(1,Number(p.stock)||1)}" value="1" aria-label="Product quantity" onchange="setDetailQty(this.value)" oninput="setDetailQty(this.value)" ${Number(p.stock)>0?'':'disabled'}><button type="button" id="detailQtyPlus" onclick="changeDetailQty(1)" aria-label="Increase quantity" ${Number(p.stock)>1?'':'disabled'}>+</button><small id="detailStockHint">${Number(p.stock)>0?`${Number(p.stock)} available`:'Currently unavailable'}</small></div><div class="product-detail-actions"><button type="button" onclick="addDetailToCart('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to cart</button><button type="button" class="buy-now" onclick="buyDetailNow('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Buy now</button><button type="button" class="secondary" onclick="askAboutProduct('${p._id}')">Ask about product</button></div><div class="detail-section"><details open><summary>Product description & details</summary><div class="detail-description">${formatProductDescription(p.description)}</div></details></div><div class="detail-section"><details><summary>Delivery, payment & support</summary><div class="detail-description">Contact IT Elements to confirm stock, delivery options, payment arrangements and product compatibility. Our team can help before and after your purchase.</div></details></div><div class="detail-section"><button type="button" class="filter-reset" style="height:38px" onclick="copyProductLink('${p._id}')">Copy product link</button></div></div>`;
  $('productModal').classList.add('open');$('productModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 };
 window.changeDetailQty=delta=>{
