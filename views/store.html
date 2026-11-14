@@ -342,7 +342,62 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 .product-gallery-main{position:relative;overflow:hidden}.gallery-arrow{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border:1px solid #e3e5e9;border-radius:50%;background:#ffffffed;color:#17191f;font-size:25px;line-height:1;box-shadow:0 3px 12px #0001}.gallery-arrow.prev{left:10px}.gallery-arrow.next{right:10px}
 .product-gallery-thumb img{width:100%;height:100%;object-fit:contain;padding:5px}
 @media(max-width:760px){.gallery-arrow{width:34px;height:34px}.product-gallery-thumbs{justify-content:flex-start;overflow-x:auto;padding-bottom:4px}}
-</style></head><body>
+
+/* IT ELEMENTS RESPONSIVE STORE REFINEMENT — desktop + mobile */
+.products{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.photo{height:190px;padding:10px;background:#fff}
+.photo img{width:100%;height:100%;object-fit:contain;object-position:center}
+.cardbody{padding:12px;min-width:0}
+.card h3{font-size:14px;line-height:1.35;overflow-wrap:anywhere}
+.catalogue-layout{grid-template-columns:190px minmax(0,1fr);gap:16px}
+.product-gallery-main{position:relative;overflow:hidden;background:#fff}
+.product-gallery-main img,.product-detail-image img{display:block;max-width:100%;object-fit:contain;object-position:center}
+.product-modal-panel{max-width:min(1100px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow:auto}
+.product-modal-content{min-width:0}
+.product-detail-copy{min-width:0;overflow-wrap:anywhere}
+@media(max-width:1050px){.products{grid-template-columns:repeat(3,minmax(0,1fr))}.catalogue-layout{grid-template-columns:165px minmax(0,1fr)}}
+@media(max-width:760px){
+ .wrap{width:min(100% - 24px,100%);margin-inline:auto}
+ .hero{padding:24px 18px;border-radius:14px;min-height:0;gap:18px}
+ .hero h1{font-size:clamp(27px,7vw,38px);line-height:1.08}
+ .hero-art{min-height:150px;max-height:190px}
+ .store-benefits{gap:8px;padding:10px 0}
+ .store-benefits> *{min-width:0}
+ .shop-filters{padding:12px;margin-bottom:16px}
+ .search-row{flex-wrap:wrap}
+ .searchbox{flex-basis:100%}
+ .filter-row{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .catalogue-layout{display:block}
+ .department-sidebar{position:static;margin-bottom:12px;padding:8px}
+ .department-links{display:flex;flex-direction:row;overflow-x:auto;max-height:none;white-space:nowrap;scrollbar-width:thin}
+ .department-link{width:auto;flex:0 0 auto;padding:9px 11px}
+ .products{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .photo{height:clamp(112px,34vw,175px);padding:7px}
+ .cardbody{padding:9px}
+ .card h3{font-size:12px;line-height:1.3;margin:5px 0}
+ .category{font-size:9px}
+ .desc{font-size:10px;-webkit-line-clamp:2;margin-bottom:8px}
+ .price{font-size:16px}
+ .stock{font-size:10px;margin:4px 0 8px}
+ .add{padding:10px 7px;font-size:11px}
+ .product-modal{padding:8px}
+ .product-modal-panel{width:100%;max-width:100%;max-height:calc(100dvh - 16px);border-radius:13px}
+ .product-modal-content{grid-template-columns:minmax(0,1fr);gap:12px;padding:13px}
+ .product-gallery-main{height:clamp(220px,65vw,390px);min-height:0}
+ .product-gallery-main img{width:100%;height:100%;max-height:100%;object-fit:contain}
+ .product-gallery-thumbs{justify-content:flex-start;overflow-x:auto;padding:2px 0 6px}
+ .product-gallery-thumb{flex:0 0 66px;width:66px;height:62px}
+ .product-detail-copy h2{font-size:20px;line-height:1.25}
+ .product-detail-price{font-size:24px}
+ .product-detail-actions{grid-template-columns:1fr 1fr}
+ .detail-qty{gap:12px;flex-wrap:wrap}
+ .detail-qty button{width:44px;height:44px}
+ .checkout-modal{padding:8px;align-items:flex-end}
+ .checkout-panel{width:100%;max-height:92dvh;border-radius:16px 16px 10px 10px;padding:20px 16px}
+}
+@media(max-width:380px){.products{gap:7px}.photo{height:112px}.cardbody{padding:8px}.card h3{font-size:11px}.price{font-size:14px}.filter-row{grid-template-columns:1fr}}
+
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body>
 <header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
@@ -652,5 +707,5 @@ async function load(){
 }
 load();renderCart();
 checkReturnedPayment();
-</script></body></html>
+</script><script src="/nav-store-global.js?v=20261114" defer></script></body></html>
 

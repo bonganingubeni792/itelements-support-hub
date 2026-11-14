@@ -145,7 +145,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .product{position:relative}
 @media(max-width:700px){.bulk-toolbar .btn{flex:1}.bulk-toolbar #selectedCount{width:100%;order:-1}}
 
-</style></head><body><div class="app">
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body><div class="app">
 <aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
 <nav class="workspace-switch" aria-label="Admin workspaces">
@@ -676,7 +676,7 @@ document.querySelectorAll('.department-card').forEach(btn=>btn.addEventListener(
 }));
 
 $('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;$('refreshBtn').onclick=load;$('imageUrl').addEventListener('input',preview);load();
-</script></body></html>
+</script><script src="/nav-store-global.js?v=20261114" defer></script></body></html>
 
 <style>
 .import-table .image-cell{min-width:190px;width:190px;vertical-align:top}
