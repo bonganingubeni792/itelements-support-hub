@@ -239,8 +239,14 @@ function addToCart(id){
 
 window.showProduct=id=>{
  const p=products.find(x=>x._id===id);if(!p)return;
- const image=p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}">`:'<span style="font-size:80px">💻</span>';
- $('productModalContent').innerHTML=`<div class="product-detail-image">${image}</div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><p>${esc(p.description||'Contact IT Elements for full specifications and compatibility information.')}</p><p><b>SKU:</b> ${esc(p.sku||'Available on request')}<br><b>Availability:</b> ${Number(p.stock)>0?`${Number(p.stock)} in stock`:'Contact us to confirm availability'}</p><div class="product-detail-actions"><button type="button" onclick="addToCart('${p._id}');closeProduct()">Add to cart</button><button type="button" class="secondary" onclick="orderProduct('${p._id}')">Order / enquire on WhatsApp</button></div></div>`;
+ const gallery=[...new Set([p.imageUrl,...(Array.isArray(p.images)?p.images:[])].filter(Boolean))];
+ const image=gallery.length?`<div class="product-gallery-main"><img id="productGalleryMain" src="${esc(gallery[0])}" alt="${esc(p.name)}"></div>${gallery.length>1?`<div class="product-gallery-thumbs">${gallery.map((url,i)=>`<button type="button" class="product-gallery-thumb${i===0?' active':''}" onclick="selectProductImage(${i})" aria-label="View product image ${i+1}"><img src="${esc(url)}" alt=""></button>`).join('')}</div>`:''}`:'<span style="font-size:80px">💻</span>';
+ window.selectProductImage=index=>{
+  const url=gallery[index];if(!url)return;
+  const main=$('productGalleryMain');if(main)main.src=url;
+  document.querySelectorAll('.product-gallery-thumb').forEach((button,i)=>button.classList.toggle('active',i===index));
+ };
+ $('productModalContent').innerHTML=`<div><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><p>${esc(p.description||'Contact IT Elements for full specifications and compatibility information.')}</p><p><b>SKU:</b> ${esc(p.sku||'Available on request')}<br><b>Availability:</b> ${Number(p.stock)>0?`${Number(p.stock)} in stock`:'Contact us to confirm availability'}</p><div class="product-detail-actions"><button type="button" onclick="addToCart('${p._id}');closeProduct()">Add to cart</button><button type="button" class="secondary" onclick="orderProduct('${p._id}')">Order / enquire on WhatsApp</button></div></div>`;
  $('productModal').classList.add('open');$('productModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 };
 window.closeProduct=()=>{$('productModal').classList.remove('open');$('productModal').setAttribute('aria-hidden','true');document.body.style.overflow='';};
@@ -325,3 +331,12 @@ async function load(){
 }
 load();renderCart();
 </script></body></html>
+
+<style>
+.product-gallery-main{width:100%;height:100%;min-height:300px;display:grid;place-items:center}
+.product-gallery-main img{width:100%;height:100%;max-height:420px;object-fit:contain}
+.product-gallery-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.product-gallery-thumb{width:62px;height:58px;padding:4px;border:1px solid #e3e5e9;border-radius:8px;background:#fff;cursor:pointer}
+.product-gallery-thumb.active,.product-gallery-thumb:hover{border-color:#e00000;box-shadow:0 0 0 2px #e0000017}
+.product-gallery-thumb img{width:100%;height:100%;object-fit:contain}
+</style>
