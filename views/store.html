@@ -523,6 +523,87 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 @media(min-width:761px) and (max-width:1050px){
  .catalogue-layout{grid-template-columns:165px minmax(0,1fr)!important}
 }
+
+/* Account sign-in prompt — compact, centred IT Elements design */
+.account-gate{
+  justify-content:center!important;
+  align-items:center!important;
+  padding:20px!important;
+  background:rgba(18,22,30,.58)!important;
+  backdrop-filter:blur(5px);
+}
+.account-gate-panel{
+  width:min(500px,100%)!important;
+  height:auto!important;
+  max-height:calc(100dvh - 40px)!important;
+  min-height:0!important;
+  padding:28px!important;
+  overflow:auto!important;
+  border:1px solid #e5e7eb!important;
+  border-radius:18px!important;
+  box-shadow:0 24px 80px rgba(0,0,0,.24)!important;
+  background:#fff!important;
+}
+.account-gate-panel .carthead{
+  align-items:center;
+  padding-bottom:18px;
+  border-bottom:1px solid #eceef1;
+}
+.account-gate-panel .carthead h2{
+  font-size:clamp(21px,4vw,27px)!important;
+  line-height:1.2;
+  letter-spacing:-.4px;
+}
+.account-gate-panel .x{
+  width:40px;height:40px;
+  background:#f3f4f6;
+  color:#252525;
+}
+.account-gate-panel>p.muted{
+  margin:18px 0 22px;
+  color:#626b78;
+  font-size:14px;
+  line-height:1.65;
+}
+.account-gate-panel .account-gate-actions{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+}
+.account-gate-panel .account-gate-actions a{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:50px;
+  padding:13px 18px;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:800;
+  text-decoration:none;
+}
+.account-gate-panel .account-gate-actions a.checkout{
+  background:#e00000;
+  color:#fff;
+  box-shadow:0 7px 18px rgba(224,0,0,.14);
+}
+.account-gate-panel .account-gate-actions a.checkout:hover{background:#bd0000}
+.account-gate-panel .account-gate-actions a.create-account{
+  background:#fff!important;
+  color:#d00000!important;
+  border:1px solid #e00000!important;
+  box-shadow:none!important;
+}
+.account-gate-panel .account-gate-actions a.create-account:hover{background:#fff4f4!important}
+@media(max-width:600px){
+  .account-gate{padding:16px!important}
+  .account-gate-panel{
+    width:min(440px,100%)!important;
+    padding:22px!important;
+    border-radius:16px!important;
+  }
+  .account-gate-panel>p.muted{font-size:13px}
+}
+
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body>
 <header><button class="mobile-menu-trigger" id="openStoreMenu" type="button" aria-label="Open store menu" aria-expanded="false"><span></span><span></span><span></span></button><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
