@@ -36,3 +36,16 @@ header nav, header .nav-links, header .links, header .header-actions,
     white-space:nowrap;
   }
 }
+
+
+/* IT Elements shared header bar — soft grey background across the site */
+body > .nav,
+body > nav.nav,
+body > header,
+body > .navbar,
+body > .site-header {
+  background: #eeeeee !important;
+  background-color: #eeeeee !important;
+  border-bottom: 1px solid #dddddd !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.045);
+}
