@@ -3,7 +3,7 @@ IT ELEMENTS — STORE QUANTITY + PAYFAST UPDATE
 WHAT IS INCLUDED
 - Product detail quantity input plus minus buttons, limited by available stock.
 - Add to Cart uses the selected quantity.
-- Buy Now opens the existing secure product checkout flow; the button is labelled simply Buy now.
+- Buy Now opens the product PayFast checkout flow.
 - WhatsApp is retained for product questions only, not as a payment method.
 - Product gallery next/previous controls advance from the currently selected image; touch swipe and thumbnails remain available.
 - Existing product viewer, cart, checkout form and PayFast product checkout server endpoint are retained.
