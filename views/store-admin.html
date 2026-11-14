@@ -170,11 +170,15 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .stock-admin-edit{display:flex;align-items:end;gap:7px;flex-wrap:wrap;margin:7px 0 9px}
 .stock-admin-edit label{display:grid;gap:4px;font-size:9px;font-weight:800;color:#777}
 .stock-admin-edit input,.stock-admin-edit select{width:100px;min-width:0;padding:7px;border:1px solid #dfe2e7;border-radius:7px;background:#fff;font-size:11px}
-.stock-admin-edit select{width:115px}
+.stock-admin-edit select{width:115px}.stock-one-save{background:#e00000!important;color:#fff!important;border-color:#e00000!important}
 .stock-admin-edit .btn{padding:7px 10px;font-size:10px}
 
 .bulk-stock-qty{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;color:#707782}
 .bulk-stock-qty input{width:76px;padding:8px;border:1px solid #dfe2e7;border-radius:8px;font-size:11px}
+
+#savePageStock{background:#e00000!important;color:#fff!important;border-color:#e00000!important;font-weight:900!important}
+.stock-admin-edit{padding:8px;background:#f7f8fa;border:1px solid #eceef1;border-radius:8px}
+@media(max-width:760px){.stock-admin-edit{align-items:flex-end}.stock-admin-edit label{min-width:100px}.stock-admin-edit .stock-one-save{width:100%}}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body><div class="app">
 <aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#orders"><span class="ico">▣</span>Orders <span id="orderNavCount" style="margin-left:auto;color:#e00000;font-weight:900"></span></a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
@@ -389,39 +393,13 @@ function render(){
  <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" decoding="async">`:'No image'}</div>
  <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''}</div>
  <div class="stock-admin-line"><span class="stock-admin-state ${Number(p.stock)>0?'available':'unavailable'}">${Number(p.stock)>0?'IN STOCK':'OUT OF STOCK'}</span><strong>${Number(p.stock)||0} left</strong></div>
- <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label></div>
+ <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label><button class="btn stock-one-save" type="button" data-save-one-stock="${p._id}">Save stock</button></div>
  <div class="price">${money(p.price)}${Number(p.compareAtPrice)>Number(p.price)?` <s style="color:#999;font-weight:500">${money(p.compareAtPrice)}</s>`:''}</div>
  <span class="pill ${p.status==='draft'?'draft':''}">${p.status==='draft'?'DRAFT':'PUBLISHED'}</span>${p.featured?' <span class="pill">FEATURED</span>':''}</div>
  <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products match these filters.</div>';
  $('selectAllProducts').checked=false;updateSelectedCount();
 }
-function updateStockPreviewForControl(control){
- const card=control.closest('.product');
- if(!card)return;
- const qtyInput=card.querySelector('[data-stock-qty]');
- const modeSelect=card.querySelector('[data-stock-mode]');
- if(!qtyInput||!modeSelect)return;
- const qty=modeSelect.value==='out'?0:Math.max(0,Math.floor(Number(qtyInput.value)||0));
- const state=card.querySelector('.stock-admin-state');
- const left=card.querySelector('.stock-admin-line strong');
- if(state){state.textContent=qty>0?'IN STOCK':'OUT OF STOCK';state.classList.toggle('available',qty>0);state.classList.toggle('unavailable',qty<=0);}
- if(left)left.textContent=`${qty} left`;
-}
-
-$('productList').addEventListener('input',e=>{
- const input=e.target.closest('[data-stock-qty]');if(!input)return;
- const card=input.closest('.product');const mode=card?.querySelector('[data-stock-mode]');
- if(mode)mode.value=Number(input.value)>0?'in':'out';
- updateStockPreviewForControl(input);
-});
 $('productList').addEventListener('change',e=>{
- const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
- const card=mode.closest('.product');const qty=card?.querySelector('[data-stock-qty]');
- if(!qty)return;
- if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
- updateStockPreviewForControl(mode);
-});
-
  const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
  const id=mode.dataset.stockMode,qty=document.querySelector(`[data-stock-qty="${id}"]`);
  if(!qty)return;if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
@@ -441,6 +419,28 @@ async function setBulkStock(ids,qty,label){
  }catch(e){notice(e.message||'Could not save stock quantities.','error');}
  finally{buttons.forEach(b=>b.disabled=false);}
 }
+
+$('productList').addEventListener('click',async e=>{
+ const btn=e.target.closest('[data-save-one-stock]');if(!btn)return;
+ const id=btn.dataset.saveOneStock;
+ const input=document.querySelector(`[data-stock-qty="${CSS.escape(id)}"]`);
+ const mode=document.querySelector(`[data-stock-mode="${CSS.escape(id)}"]`);
+ if(!input||!mode)return;
+ let stock=Math.floor(Number(input.value));
+ if(mode.value==='out')stock=0;
+ else if(!Number.isInteger(stock)||stock<1){notice('Enter at least 1 unit for an in-stock product.','error');input.focus();return;}
+ if(!Number.isInteger(stock)||stock<0){notice('Enter a valid whole-number stock quantity.','error');input.focus();return;}
+ btn.disabled=true;btn.textContent='Saving…';
+ try{
+  await api('/api/admin/store/products/stock',{method:'PATCH',body:JSON.stringify({updates:[{id,stock}]})});
+  const p=products.find(x=>x._id===id);if(p)p.stock=stock;
+  const card=btn.closest('.product');
+  const state=card?.querySelector('.stock-admin-state');if(state){state.textContent=stock>0?'IN STOCK':'OUT OF STOCK';state.classList.toggle('available',stock>0);state.classList.toggle('unavailable',stock<=0);}
+  const left=card?.querySelector('.stock-admin-line strong');if(left)left.textContent=stock+' left';
+  notice(`Saved ${stock} unit(s) for ${p?.name||'product'}.`,'ok');
+ }catch(err){notice(err.message||'Could not save this product stock.','error');}
+ finally{btn.disabled=false;btn.textContent='Save stock';}
+});
 $('savePageStock').addEventListener('click',async()=>{
  const visibleIds=products.filter(p=>document.querySelector(`[data-stock-qty="${p._id}"]`)).map(p=>p._id);
  const updates=[];
