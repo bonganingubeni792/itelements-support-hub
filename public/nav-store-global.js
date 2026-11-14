@@ -1,24 +1,44 @@
 (function () {
   'use strict';
 
-  var drawerCounter = 0;
+  var mobileQuery = '(max-width: 760px)';
+  var drawerSequence = 0;
 
   function makeLink(href, label) {
-    var a = document.createElement('a');
-    a.href = href;
-    a.textContent = label;
-    return a;
+    var link = document.createElement('a');
+    link.href = href;
+    link.textContent = label;
+    return link;
   }
 
-  function makeDrawer(owner, linksBox, trigger) {
-    if (!linksBox || !trigger || trigger.dataset.iteDrawerReady === '1') return;
-    trigger.dataset.iteDrawerReady = '1';
-    trigger.setAttribute('aria-label', 'Open menu');
-    trigger.setAttribute('aria-expanded', 'false');
+  function closeDrawer(drawer, trigger) {
+    if (!drawer) return;
+    drawer.classList.remove('open');
+    document.body.classList.remove('ite-drawer-open');
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', 'false');
+      trigger.setAttribute('aria-label', 'Open menu');
+    }
+  }
 
-    drawerCounter += 1;
-    var drawerId = 'iteMobileDrawer' + drawerCounter;
+  function openDrawer(drawer, trigger) {
+    if (!drawer) return;
+    drawer.classList.add('open');
+    document.body.classList.add('ite-drawer-open');
+    if (trigger) {
+      trigger.setAttribute('aria-expanded', 'true');
+      trigger.setAttribute('aria-label', 'Close menu');
+    }
+  }
+
+  function createDrawer(nav, linksBox, trigger) {
+    if (!trigger || trigger.dataset.iteDrawerId) return;
+    drawerSequence += 1;
+    var drawerId = 'iteMobileDrawer' + drawerSequence;
     trigger.dataset.iteDrawerId = drawerId;
+    trigger.setAttribute('aria-controls', drawerId);
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-label', 'Open menu');
 
     var overlay = document.createElement('div');
     overlay.className = 'ite-mobile-drawer';
@@ -35,139 +55,134 @@
       '</aside>';
 
     var list = overlay.querySelector('.ite-mobile-drawer-links');
-
-    // Store-style shortcuts shown in the user's reference menu.
-    [
+    var standardLinks = [
       ['/','Home'],
       ['/store#catalogue','Shop by Category'],
-      ['/store#catalogue','Deals & featured products'],
+      ['/store#featured','Deals & featured products'],
       ['/client/login','Orders & order history'],
       ['/client/login','My Account'],
-      ['/store','Cart']
-    ].forEach(function (item) { list.appendChild(makeLink(item[0], item[1])); });
+      ['/store#cart','Cart']
+    ];
+    standardLinks.forEach(function (item) {
+      list.appendChild(makeLink(item[0], item[1]));
+    });
 
-    // Keep every existing page navigation link available in the drawer.
-    Array.prototype.forEach.call(linksBox.querySelectorAll('a'), function (original) {
-      var href = original.getAttribute('href') || '#';
-      var label = (original.textContent || '').trim();
-      if (!label) return;
-      var duplicate = Array.prototype.some.call(list.querySelectorAll('a'), function (a) {
-        return a.getAttribute('href') === href && a.textContent.trim().toLowerCase() === label.toLowerCase();
+    // Retain every existing navigation destination from this page in the drawer.
+    if (linksBox) {
+      Array.prototype.forEach.call(linksBox.querySelectorAll('a'), function (original) {
+        var href = original.getAttribute('href') || '#';
+        var label = (original.textContent || '').trim();
+        if (!label) return;
+        var exists = Array.prototype.some.call(list.querySelectorAll('a'), function (a) {
+          return a.getAttribute('href') === href &&
+            a.textContent.trim().toLowerCase() === label.toLowerCase();
+        });
+        if (!exists) list.appendChild(makeLink(href, label));
       });
-      if (!duplicate) list.appendChild(makeLink(href, label));
+    }
+
+    // Ensure the full set of public destinations is available even on pages
+    // whose desktop header has a shorter navigation list.
+    [
+      ['/services','Services'],
+      ['/onsite-support','On-site'],
+      ['/pricing','Plans'],
+      ['/business-support','Business'],
+      ['/reviews','Reviews'],
+      ['/about','About'],
+      ['/faq','FAQ'],
+      ['/contact','Contact'],
+      ['/client/login','Client Portal']
+    ].forEach(function (item) {
+      var exists = Array.prototype.some.call(list.querySelectorAll('a'), function (a) {
+        return a.getAttribute('href') === item[0] &&
+          a.textContent.trim().toLowerCase() === item[1].toLowerCase();
+      });
+      if (!exists) list.appendChild(makeLink(item[0], item[1]));
     });
 
     document.body.appendChild(overlay);
-
-    function openDrawer() {
-      overlay.classList.add('open');
-      trigger.setAttribute('aria-expanded', 'true');
-      trigger.setAttribute('aria-label', 'Close menu');
-      document.body.classList.add('ite-drawer-open');
-    }
-    function closeDrawer() {
-      overlay.classList.remove('open');
-      trigger.setAttribute('aria-expanded', 'false');
-      trigger.setAttribute('aria-label', 'Open menu');
-      document.body.classList.remove('ite-drawer-open');
-    }
-
-    trigger.addEventListener('click', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      if (overlay.classList.contains('open')) closeDrawer();
-      else openDrawer();
+    overlay.querySelector('.ite-mobile-drawer-close').addEventListener('click', function () {
+      closeDrawer(overlay, trigger);
     });
-
-    overlay.querySelector('.ite-mobile-drawer-close').addEventListener('click', closeDrawer);
     overlay.addEventListener('click', function (event) {
-      if (event.target === overlay) closeDrawer();
-      if (event.target.closest('a')) closeDrawer();
+      if (event.target === overlay || (event.target.closest && event.target.closest('a'))) {
+        closeDrawer(overlay, trigger);
+      }
     });
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape') closeDrawer();
+      if (event.key === 'Escape') closeDrawer(overlay, trigger);
     });
   }
 
-  function install() {
-    if (!window.matchMedia || !window.matchMedia('(max-width: 760px)').matches) return;
-
-    // Main public pages: keep their existing nav and links; only change mobile presentation.
+  function setupPublicNavigation() {
     Array.prototype.forEach.call(document.querySelectorAll('nav.nav, nav.navbar'), function (nav) {
-      var linksBox = nav.querySelector('.nav-links, .links');
-      var brand = nav.querySelector('.brand, .nav-brand');
-      if (!linksBox || !brand) return;
+      // Ignore the admin workspace sidebar; it has its own navigation controls.
+      if (nav.closest('.app') || nav.getAttribute('aria-label') === 'Store management') return;
 
+      var brand = nav.querySelector('.brand, .nav-brand');
+      if (!brand) return;
+      var linksBox = nav.querySelector('.nav-links, .links');
       var trigger = nav.querySelector('.menu-toggle, .ite-mobile-menu-trigger');
+
       if (!trigger) {
         trigger = document.createElement('button');
         trigger.type = 'button';
         trigger.className = 'ite-mobile-menu-trigger';
         trigger.textContent = '☰';
-        nav.insertBefore(trigger, brand);
+        nav.appendChild(trigger);
       }
       trigger.classList.add('ite-mobile-menu-trigger');
-
-      var cart = nav.querySelector('.ite-mobile-cart');
-      if (!cart) {
-        cart = document.createElement('a');
-        cart.className = 'ite-mobile-cart';
-        cart.href = '/store';
-        cart.textContent = 'Cart (0)';
-        cart.setAttribute('aria-label', 'Open shopping cart');
-        nav.appendChild(cart);
-      }
-      makeDrawer(nav, linksBox, trigger);
+      createDrawer(nav, linksBox, trigger);
     });
-
-    // Store page: use the same hamburger + brand + Cart header as the reference.
-    var storeHeader = document.querySelector('header');
-    if (storeHeader && storeHeader.querySelector('.cartbtn')) {
-      var storeBrand = storeHeader.querySelector('.brand');
-      var storeLinks = storeHeader.querySelector('nav');
-      var storeTrigger = storeHeader.querySelector('.ite-generated-menu');
-      if (storeBrand && storeLinks) {
-        if (!storeTrigger) {
-          storeTrigger = document.createElement('button');
-          storeTrigger.type = 'button';
-          storeTrigger.className = 'ite-generated-menu';
-          storeTrigger.textContent = '☰';
-          storeTrigger.setAttribute('aria-label', 'Open menu');
-          storeHeader.insertBefore(storeTrigger, storeBrand);
-        }
-        makeDrawer(storeHeader, storeLinks, storeTrigger);
-      }
-    }
   }
 
-  // Capture before legacy inline menu handlers so the old large button-grid/dropdown
-  // does not open on mobile. The new drawer is the only mobile menu interaction.
+  function setupStoreNavigation() {
+    var header = document.querySelector('body.store-page header, header');
+    if (!header || !header.querySelector('.cartbtn')) return;
+    var brand = header.querySelector('.brand');
+    var links = header.querySelector('nav');
+    if (!brand) return;
+
+    var trigger = header.querySelector('.ite-generated-menu');
+    if (!trigger) {
+      trigger = document.createElement('button');
+      trigger.type = 'button';
+      trigger.className = 'ite-generated-menu';
+      trigger.textContent = '☰';
+      trigger.setAttribute('aria-label', 'Open menu');
+      header.insertBefore(trigger, brand);
+    }
+    createDrawer(header, links, trigger);
+  }
+
+  function boot() {
+    setupPublicNavigation();
+    setupStoreNavigation();
+  }
+
+  // One capture-phase handler owns mobile menu clicks. This prevents legacy
+  // inline menu-grid handlers from opening the old oversized button panel.
   document.addEventListener('click', function (event) {
-    var trigger = event.target.closest && event.target.closest('.menu-toggle, .ite-mobile-menu-trigger, .ite-generated-menu');
-    if (!trigger || !window.matchMedia || !window.matchMedia('(max-width: 760px)').matches) return;
+    if (!window.matchMedia || !window.matchMedia(mobileQuery).matches) return;
+    var trigger = event.target.closest && event.target.closest(
+      '.menu-toggle, .ite-mobile-menu-trigger, .ite-generated-menu'
+    );
+    if (!trigger) return;
+
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
+
     var drawer = document.getElementById(trigger.dataset.iteDrawerId);
     if (!drawer) return;
-    var isOpen = drawer.classList.contains('open');
-    drawer.classList.toggle('open', !isOpen);
-    trigger.setAttribute('aria-expanded', String(!isOpen));
-    trigger.setAttribute('aria-label', isOpen ? 'Open menu' : 'Close menu');
-    document.body.classList.toggle('ite-drawer-open', !isOpen);
+    if (drawer.classList.contains('open')) closeDrawer(drawer, trigger);
+    else openDrawer(drawer, trigger);
   }, true);
 
-  function ensureStoreLink() {
-    Array.prototype.forEach.call(document.querySelectorAll('nav.nav, nav.navbar'), function (nav) {
-      var links = nav.querySelector('.nav-links, .links');
-      if (!links) return;
-      if (!links.querySelector('a[href="/store"],a[href="/store/"]')) {
-        links.appendChild(makeLink('/store', 'Online Store'));
-      }
-    });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
-
-  function boot() { ensureStoreLink(); install(); }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
-  else boot();
 })();

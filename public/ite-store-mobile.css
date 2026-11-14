@@ -203,3 +203,12 @@
   header .brand{font-size:16px!important}
   header .cartbtn{min-width:76px!important;padding-inline:7px!important;font-size:12px!important}
 }
+
+
+/* Keep the store's live cart and align its hamburger/brand/cart row on phones. */
+@media(max-width:760px){
+  header .ite-generated-menu{display:flex!important;order:0!important}
+  header .brand{order:1!important}
+  header nav{display:none!important}
+  header .cartbtn{order:2!important}
+}
