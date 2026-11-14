@@ -463,6 +463,35 @@ function keyMap(row){
   featured:truth(get('featured','highlight','featured product'))
  };
 }
+
+function refreshImportValidation(){
+ const errors=importRows.map((product,index)=>validateImportRow(product,index)).filter(Boolean);
+ const ready=importRows.length-errors.length;
+ const imageTotal=importRows.reduce((total,product)=>total+(Array.isArray(product.images)?product.images.length:0),0);
+ const count=$('importPreviewCount');
+ if(count)count.textContent=`${ready.toLocaleString()} ready · ${errors.length.toLocaleString()} need attention · ${imageTotal.toLocaleString()} images detected`;
+ const importButton=$('runImport');
+ if(importButton)importButton.disabled=ready===0;
+ importRows.forEach((product,index)=>{
+  const row=$('importPreviewRows')?.querySelector(`[data-import-row="${index}"]`);
+  if(!row)return;
+  const nameCell=row.children[1];
+  if(nameCell){
+   let warning=nameCell.querySelector('.row-validation-warning');
+   const problem=validateImportRow(product,index);
+   if(problem&&!warning){
+    warning=document.createElement('b');
+    warning.className='row-validation-warning';
+    warning.style.color='#b00000';
+    warning.textContent=' · Check this row';
+    nameCell.appendChild(warning);
+   }else if(!problem&&warning){warning.remove();}
+  }
+  const hint=row.querySelector('.import-category-hint');
+  if(hint)hint.textContent=product.category?'Auto-selected: '+product.category:'Not recognised — please choose';
+ });
+}
+
 function validateImportRow(p,index){
  if(!p.name)return `Row ${index+2}: product name is missing.`;
  if(p.name.length>120)return `Row ${index+2}: product name is too long.`;
