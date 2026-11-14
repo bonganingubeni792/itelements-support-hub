@@ -1,0 +1,33 @@
+IT ELEMENTS — COMPLETE STORE + PAYFAST / NO INVOICE MAKER
+======================================================
+
+WHAT THIS PACKAGE DOES
+- Removes the Invoice Studio navigation item from all supplied public/customer pages.
+- Removes views/invoice-maker.html from the project.
+- Uses the server.js build that has no Invoice Maker model, routes, API endpoints or Invoice Pro payment flow.
+- Keeps the IT Elements customer portal, admin dashboard, support plans, quick-fix payments, product manager, store and product PayFast checkout.
+- Keeps the existing site pages, assets, CSS, package files and product admin page.
+- Uses the product storefront with responsive desktop and mobile refinements.
+
+STORE EXPERIENCE
+- Desktop catalogue: four product columns, department sidebar and compact product cards.
+- Tablet: three product columns.
+- Phone: two product columns, horizontally scrollable department choices, stacked product detail and full-fit product images.
+- Product detail gallery uses contained images and thumbnail navigation; quantity buttons control the actual cart quantity.
+- PayFast checkout validates product price and stock on the server; stock is reduced only after a verified PayFast COMPLETE webhook.
+
+DEPLOYMENT
+1. Back up your current GitHub repository first.
+2. Extract this ZIP and replace the matching project files/folders in your repository. This is a complete project package, not just a single HTML page.
+3. Confirm the `views` folder is deployed with the updated `index.html`, `store.html`, other pages and `store-admin.html`.
+4. Confirm the root `server.js` is replaced by this package's server.js.
+5. Keep your Render environment variables. Confirm PUBLIC_BASE_URL=https://www.itelements.help and your PayFast merchant ID, merchant key, passphrase and live/test mode are correct.
+6. Commit and push to the branch connected to Render. Wait for a successful deployment, then test /store and /api/store/products.
+7. Hard refresh the browser (Ctrl+F5) or test in a private window to bypass cached HTML.
+
+IMPORTANT
+- I cannot directly change your live Render server or GitHub repository from this chat. You must deploy these files to the connected repository.
+- Existing MongoDB invoice records are not deleted by this package. The application code and page are removed; database records are left untouched.
+- Test product checkout in PayFast sandbox before switching to live. A customer returning from PayFast is not treated as paid unless the verified webhook confirms payment.
+- Delivery fees are not calculated automatically in this build; confirm delivery cost with the customer before dispatch.
+- Local syntax checks are not a substitute for testing the live MongoDB connection, PayFast credentials and webhook.
