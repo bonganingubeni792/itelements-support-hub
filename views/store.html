@@ -45,10 +45,10 @@ a{color:inherit;text-decoration:none}header{height:76px;border-bottom:1px solid 
 .product-modal-backdrop{position:absolute;inset:0;background:#101114b8;backdrop-filter:blur(3px)}
 .product-modal-panel{position:relative;z-index:1;width:min(900px,100%);max-height:90vh;overflow:auto;border-radius:17px;background:#fff;box-shadow:0 25px 80px #0005}
 .product-modal-close{position:sticky;top:10px;float:right;margin:10px 10px -48px 0;z-index:3;width:38px;height:38px;border:0;border-radius:50%;background:#f1f2f4;font-size:24px}
-.product-modal-content{display:grid;grid-template-columns:1fr 1fr;gap:26px;padding:28px}
-.product-detail-image{display:grid;place-items:center;min-height:320px;border:1px solid #eceef1;border-radius:12px;background:#fafafa}
-.product-detail-image img{width:100%;height:100%;max-height:420px;object-fit:contain}
-.product-detail-copy{padding:15px 4px}
+.product-modal-content{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;padding:28px;max-width:100%}
+.product-detail-image{display:grid;place-items:center;width:100%;min-height:360px;max-height:480px;overflow:hidden;border:1px solid #eceef1;border-radius:14px;background:#f7f8fa;padding:16px}
+.product-detail-image img{display:block;width:100%;height:100%;max-height:440px;object-fit:contain}
+.product-detail-copy{width:100%;min-width:0;padding:4px 2px 12px;display:flex;flex-direction:column;align-items:stretch}
 .product-detail-copy .category{color:#e00000;font-size:11px;font-weight:900;text-transform:uppercase}
 .product-detail-copy h2{margin:9px 0 12px;font-size:25px;line-height:1.25}
 .product-detail-copy p{color:#686e78;font-size:13px;line-height:1.7;white-space:pre-line}
@@ -180,7 +180,12 @@ header{height:62px;padding:0 max(18px,calc((100% - 1440px)/2));box-shadow:0 1px 
 .detail-meta{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.detail-pill{padding:7px 10px;background:#f5f6f7;border-radius:6px;font-size:10px;color:#555}
 .detail-qty{display:flex;align-items:center;gap:12px;margin:18px 0}.detail-qty button{width:34px;height:34px;border:1px solid #ddd;border-radius:6px;background:#fff;font-size:18px}.detail-qty strong{min-width:18px;text-align:center}
 .product-detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.product-detail-actions button{min-height:46px;font-size:12px}.product-detail-actions .secondary{background:#fff;color:#242830;border:1px solid #dfe2e6}
-.detail-section{margin-top:23px;border-top:1px solid #e9ebef;padding-top:15px}.detail-section summary{cursor:pointer;font-size:13px;font-weight:800}.detail-description{font-size:12px;line-height:1.8;color:#626975;margin-top:12px;overflow-wrap:anywhere}
+.detail-section{margin-top:23px;border-top:1px solid #e9ebef;padding-top:15px}.detail-section summary{cursor:pointer;font-size:13px;font-weight:800}.detail-description{display:block;width:100%;font-size:14px;line-height:1.75;color:#515965;margin-top:12px;overflow-wrap:anywhere}
+.detail-description p{margin:0 0 12px;padding:12px 14px;background:#f7f8fa;border:1px solid #e8ebef;border-radius:9px}
+.detail-description h2,.detail-description h3,.detail-description h4{margin:16px 0 8px;color:#20242b}
+.detail-description ul,.detail-description ol{margin:8px 0 14px;padding:12px 14px 12px 32px;background:#f7f8fa;border:1px solid #e8ebef;border-radius:9px}
+.detail-description li{padding:3px 0}
+.detail-description a{color:#d00000;text-decoration:underline}
 @media(max-width:1100px){.products{grid-template-columns:repeat(4,minmax(0,1fr))}.shop-filters{grid-template-columns:repeat(4,minmax(0,1fr))}.searchbox{grid-column:span 2}.filter-reset{grid-column:4;grid-row:1}.department-nav{grid-column:span 2}}
 @media(max-width:760px){header{height:auto;min-height:58px;gap:8px}.store-benefits{justify-content:space-around;gap:7px;padding:6px 8px}.store-benefits small{display:none}.store-benefits>div{gap:4px}.benefit-icon{width:19px;height:19px;font-size:11px}.store-benefits strong{font-size:8px}.wrap{padding:13px 10px 35px}.shop-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:9px}.searchbox{grid-column:1/-1}.filter-reset{grid-column:2;grid-row:2}.filter-row{display:contents}.department-nav{grid-column:1/-1}.filter-field select{height:36px}.department-picker-label{flex-direction:row;align-items:center}.department-picker-title{white-space:nowrap}.department-picker-label select{max-width:70%}.products{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.photo{height:112px;margin:5px 5px 0}.cardbody{padding:7px}.card h3{font-size:10px;min-height:40px}.price{font-size:13px}.stock{font-size:8px}.add{font-size:9px;padding:8px 4px}.product-modal-content{grid-template-columns:1fr;gap:18px;padding:16px 14px 40px}.product-detail-image{position:static;padding:8px}.product-gallery-main{height:280px}.product-detail-copy h2{font-size:21px}.product-detail-actions{grid-template-columns:1fr}.product-detail-price{font-size:25px}}
 @media(max-width:430px){nav{gap:13px;font-size:11px}.brand{font-size:15px}.brand img{width:31px;height:31px}.cartbtn{padding:8px 10px;font-size:10px}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.photo{height:138px}.card h3{font-size:11px;min-height:43px}.stock{font-size:9px}.add{font-size:10px}.store-benefits>div{padding:2px}.product-gallery-main{height:240px}}
@@ -450,20 +455,54 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 @media(min-width:761px){.mobile-menu-trigger{display:flex}header{gap:18px}header nav{margin-left:auto}}
 
 .drawer:not(.account-gate) .cartpanel{display:flex;flex-direction:column;overflow:hidden;min-height:0}.drawer:not(.account-gate) #cartItems{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding-right:3px}.drawer:not(.account-gate) .cart-footer{flex:0 0 auto}.drawer:not(.account-gate){z-index:1000}
-/* Friendly sign-in prompt when a shopper tries to add an item without an account */
-.account-gate{z-index:2200;align-items:center;justify-content:center;padding:18px;background:rgba(18,22,29,.56);backdrop-filter:blur(4px)}
-.account-gate.open{display:flex}
-.account-gate .account-gate-panel{width:min(560px,calc(100% - 24px));height:auto;max-height:min(82vh,650px);padding:28px 30px;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.22);overflow:auto}
-.account-gate .carthead{padding-bottom:18px;align-items:center}
-.account-gate .carthead h2{font-size:clamp(22px,4vw,29px);font-weight:850;color:#171d2a}
-.account-gate .x{width:44px;height:44px;border-radius:50%;background:#f1f3f5;font-size:25px}
-.account-gate .muted{font-size:15px;line-height:1.7;color:#69717e;margin:22px 0}
-.account-gate-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.account-gate-actions .checkout{display:flex;align-items:center;justify-content:center;min-height:54px;border-radius:11px;background:#e00000;color:#fff;font-size:15px;font-weight:850;text-decoration:none;padding:12px 18px}
-.account-gate-actions .create-account{background:#fff;color:#e00000;border:1.5px solid #e00000}
-.account-gate-actions .checkout:hover{filter:brightness(.95)}
-@media(max-width:560px){.account-gate{padding:14px}.account-gate .account-gate-panel{padding:22px 18px;border-radius:16px}.account-gate-actions{grid-template-columns:1fr}.account-gate .muted{font-size:14px}}
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261114b"></head><body>
+
+/* Floating WhatsApp contact button — matches the homepage */
+.whatsapp{
+ position:fixed;
+ right:20px;
+ bottom:20px;
+ z-index:1200;
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ gap:8px;
+ background:#168d4d;
+ color:#fff;
+ border-radius:50px;
+ padding:13px 19px;
+ font-size:13px;
+ font-weight:900;
+ text-decoration:none;
+ box-shadow:0 5px 20px rgba(0,0,0,.18);
+ transition:transform .2s ease,background .2s ease;
+}
+.whatsapp:hover{background:#0e713c;color:#fff;transform:translateY(-2px)}
+@media(max-width:600px){.whatsapp{right:14px;bottom:14px;padding:12px 16px;font-size:12px}}
+
+.product-modal-panel{width:min(980px,100%);max-height:92vh}
+.product-detail-copy>*{width:100%}
+.product-detail-copy .category{margin-top:2px}
+.product-detail-copy h2{max-width:100%;overflow-wrap:anywhere}
+.product-detail-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+.detail-section{width:100%;margin-top:18px;padding:18px 0 0}
+.detail-section details{width:100%}
+.detail-description p{margin:0 0 12px;padding:14px 16px;background:#f7f8fa;border:1px solid #e7eaf0;border-radius:10px}
+.detail-description h2,.detail-description h3,.detail-description h4{margin:18px 0 9px;padding:12px 15px;background:#f7f8fa;border-left:3px solid #e00000;border-radius:7px;color:#20242b}
+.detail-description ul,.detail-description ol{margin:10px 0 14px;padding:14px 18px 14px 36px;background:#f7f8fa;border:1px solid #e7eaf0;border-radius:10px}
+.detail-description li{padding:4px 0}
+@media(max-width:760px){
+ .product-modal{padding:8px}
+ .product-modal-panel{width:100%;max-height:94vh;border-radius:13px}
+ .product-modal-content{grid-template-columns:minmax(0,1fr);gap:14px;padding:15px}
+ .product-detail-image{min-height:230px;max-height:320px;padding:10px}
+ .product-detail-image img{max-height:290px}
+ .product-detail-copy{padding:0}
+ .product-detail-copy h2{font-size:21px}
+ .product-detail-actions{grid-template-columns:1fr}
+ .detail-description{font-size:13px}
+}
+
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body>
 <header><button class="mobile-menu-trigger" id="openStoreMenu" type="button" aria-label="Open store menu" aria-expanded="false"><span></span><span></span><span></span></button><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
@@ -617,6 +656,37 @@ async function addToCart(id, quantity=1){
  return true;
 }
 
+
+function formatProductDescription(value){
+ const raw=String(value||'').trim();
+ if(!raw)return '<p>Contact IT Elements for full specifications and compatibility information.</p>';
+ const source=document.createElement('div');
+ // Supplier descriptions can contain literal HTML tags; parse them, then rebuild only safe elements.
+ source.innerHTML=raw;
+ const allowed=new Set(['P','H2','H3','H4','UL','OL','LI','STRONG','B','EM','I','BR','HR','A']);
+ function clean(node){
+  if(node.nodeType===Node.TEXT_NODE)return esc(node.nodeValue||'');
+  if(node.nodeType!==Node.ELEMENT_NODE)return '';
+  const tag=node.tagName.toUpperCase();
+  if(!allowed.has(tag))return Array.from(node.childNodes).map(clean).join('');
+  const children=Array.from(node.childNodes).map(clean).join('');
+  if(tag==='BR'||tag==='HR')return `<${tag.toLowerCase()}>`;
+  if(tag==='A'){
+   const href=node.getAttribute('href')||'';
+   if(/^https?:\/\//i.test(href))return `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${children}</a>`;
+   return children;
+  }
+  const out=tag.toLowerCase()==='b'?'strong':tag.toLowerCase()==='i'?'em':tag.toLowerCase();
+  return `<${out}>${children}</${out}>`;
+ }
+ const hasMarkup=/<\/?(?:p|h[2-4]|ul|ol|li|strong|b|em|i|br|hr|a)\b/i.test(raw);
+ if(hasMarkup){
+  const html=Array.from(source.childNodes).map(clean).join('');
+  return html.replace(/(?:<br>\s*){3,}/g,'<br><br>');
+ }
+ return raw.split(/\n{2,}/).map(line=>`<p>${esc(line).replace(/\n/g,'<br>')}</p>`).join('');
+}
+
 window.showProduct=async id=>{
  activeProductId=id;
  let p=products.find(x=>x._id===id);if(!p)return;
@@ -654,7 +724,7 @@ window.showProduct=async id=>{
   }
  }
  detailQuantity=1;
- $('productModalContent').innerHTML=`<div><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><div class="detail-meta"><span class="detail-pill">SKU: ${esc(p.sku||'On request')}</span><span class="detail-pill">${Number(p.stock)>0?'In stock':'Check availability'}</span></div><div class="detail-qty" aria-label="Choose product quantity"><span>Quantity</span><button type="button" id="detailQtyMinus" onclick="changeDetailQty(-1)" aria-label="Decrease quantity" disabled>−</button><input id="detailQtyInput" type="number" inputmode="numeric" min="1" max="${Math.max(1,Number(p.stock)||1)}" value="1" aria-label="Product quantity" onchange="setDetailQty(this.value)" oninput="setDetailQty(this.value)" ${Number(p.stock)>0?'':'disabled'}><button type="button" id="detailQtyPlus" onclick="changeDetailQty(1)" aria-label="Increase quantity" ${Number(p.stock)>1?'':'disabled'}>+</button><small id="detailStockHint">${Number(p.stock)>0?`${Number(p.stock)} available`:'Currently unavailable'}</small></div><div class="product-detail-actions"><button type="button" onclick="addDetailToCart('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to cart</button><button type="button" class="buy-now" onclick="buyDetailNow('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Buy now · PayFast</button><button type="button" class="secondary" onclick="askAboutProduct('${p._id}')">Ask about product</button></div><div class="detail-section"><details open><summary>Product description & details</summary><div class="detail-description">${esc(p.description||'Contact IT Elements for full specifications and compatibility information.').replace(/\n/g,'<br>')}</div></details></div><div class="detail-section"><details><summary>Delivery, payment & support</summary><div class="detail-description">Contact IT Elements to confirm stock, delivery options, payment arrangements and product compatibility. Our team can help before and after your purchase.</div></details></div><div class="detail-section"><button type="button" class="filter-reset" style="height:38px" onclick="copyProductLink('${p._id}')">Copy product link</button></div></div>`;
+ $('productModalContent').innerHTML=`<div><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><div class="detail-meta"><span class="detail-pill">SKU: ${esc(p.sku||'On request')}</span><span class="detail-pill">${Number(p.stock)>0?'In stock':'Check availability'}</span></div><div class="detail-qty" aria-label="Choose product quantity"><span>Quantity</span><button type="button" id="detailQtyMinus" onclick="changeDetailQty(-1)" aria-label="Decrease quantity" disabled>−</button><input id="detailQtyInput" type="number" inputmode="numeric" min="1" max="${Math.max(1,Number(p.stock)||1)}" value="1" aria-label="Product quantity" onchange="setDetailQty(this.value)" oninput="setDetailQty(this.value)" ${Number(p.stock)>0?'':'disabled'}><button type="button" id="detailQtyPlus" onclick="changeDetailQty(1)" aria-label="Increase quantity" ${Number(p.stock)>1?'':'disabled'}>+</button><small id="detailStockHint">${Number(p.stock)>0?`${Number(p.stock)} available`:'Currently unavailable'}</small></div><div class="product-detail-actions"><button type="button" onclick="addDetailToCart('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to cart</button><button type="button" class="buy-now" onclick="buyDetailNow('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Buy now</button><button type="button" class="secondary" onclick="askAboutProduct('${p._id}')">Ask about product</button></div><div class="detail-section"><details open><summary>Product description & details</summary><div class="detail-description">${formatProductDescription(p.description)}</div></details></div><div class="detail-section"><details><summary>Delivery, payment & support</summary><div class="detail-description">Contact IT Elements to confirm stock, delivery options, payment arrangements and product compatibility. Our team can help before and after your purchase.</div></details></div><div class="detail-section"><button type="button" class="filter-reset" style="height:38px" onclick="copyProductLink('${p._id}')">Copy product link</button></div></div>`;
  $('productModal').classList.add('open');$('productModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 };
 window.changeDetailQty=delta=>{
@@ -897,5 +967,5 @@ async function load(){
 
 load();renderCart();
 checkReturnedPayment();
-</script><script src="/nav-store-global.js?v=20261114b" defer></script></body></html>
+</script><a class="whatsapp" href="https://wa.me/27606181229" target="_blank" rel="noopener noreferrer" aria-label="Chat with IT Elements on WhatsApp">WhatsApp Us</a><script src="/nav-store-global.js?v=20261114" defer></script></body></html>
 
