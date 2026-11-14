@@ -179,7 +179,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 #savePageStock{background:#e00000!important;color:#fff!important;border-color:#e00000!important;font-weight:900!important}
 .stock-admin-edit{padding:8px;background:#f7f8fa;border:1px solid #eceef1;border-radius:8px}
 @media(max-width:760px){.stock-admin-edit{align-items:flex-end}.stock-admin-edit label{min-width:100px}.stock-admin-edit .stock-one-save{width:100%}}
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-drawer-v2"></head><body><div class="app">
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-drawer-v3"></head><body><div class="app">
 <aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#orders"><span class="ico">▣</span>Orders <span id="orderNavCount" style="margin-left:auto;color:#e00000;font-weight:900"></span></a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
 <nav class="workspace-switch" aria-label="Admin workspaces">
@@ -327,7 +327,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
   <button class="btn softred" type="button" id="deleteSelected">Delete selected</button>
   <button class="btn" type="button" id="publishAll">Publish ALL products</button>
   <button class="btn" type="button" id="draftAll">Set ALL to draft</button>
-  <button class="btn primary" type="button" id="savePageStock">Save all 50 stock changes</button>
+  <button class="btn primary" type="button" id="savePageStock">Save ALL stock changes</button>
   <label class="bulk-stock-qty">Units per product <input id="bulkStockQty" type="number" min="1" step="1" value="1"></label>
   <button class="btn" type="button" id="stockAllIn">Set ALL IN STOCK</button>
   <button class="btn softred" type="button" id="stockAllOut">Set ALL OUT OF STOCK</button>
@@ -463,7 +463,7 @@ $('savePageStock').addEventListener('click',async()=>{
   const result=await api('/api/admin/store/products/stock',{method:'PATCH',body:JSON.stringify({updates})});
   await load();notice(`Saved stock for ${result.updated ?? updates.length} products on this page.`,'ok');
  }catch(e){notice(e.message||'Could not save the stock changes.','error');}
- finally{btn.disabled=false;btn.textContent='Save all 50 stock changes';}
+ finally{btn.disabled=false;btn.textContent='Save ALL stock changes';}
 });
 $('stockAllIn').addEventListener('click',()=>{
  const qty=Math.floor(Number($('bulkStockQty').value));
@@ -892,7 +892,7 @@ document.querySelectorAll('.department-card').forEach(btn=>btn.addEventListener(
 }));
 
 $('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;$('refreshBtn').onclick=load;$('imageUrl').addEventListener('input',preview);load();loadOrders();
-</script><script src="/nav-store-global.js?v=20261115-drawer-v2" defer></script></body></html>
+</script><script src="/nav-store-global.js?v=20261115-drawer-v3" defer></script></body></html>
 
 <style>
 .import-table .image-cell{min-width:190px;width:190px;vertical-align:top}
