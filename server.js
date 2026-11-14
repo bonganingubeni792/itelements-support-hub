@@ -782,7 +782,7 @@ app.post('/webhooks/payfast', async (req, res) => {
 });
 
 // JSON request support
-app.use(express.json({ limit: '100kb' }));
+app.use(express.json({ limit: '8mb' }));
 
 if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
     throw new Error('SESSION_SECRET must be set in production.');
@@ -935,20 +935,19 @@ function cleanStoreProduct(body = {}) {
     let validImageUrl = '';
 
     if (imageUrl) {
-        try {
-            const parsed = new URL(imageUrl);
-
-            if (!['http:', 'https:'].includes(parsed.protocol)) {
-                return {
-                    error: 'Product images must use an HTTP or HTTPS address.'
-                };
+        // Uploaded product images are served from this application's public assets folder.
+        if (/^\/assets\/uploads\/products\/[a-f0-9-]+\.(?:jpg|jpeg|png|webp|avif)$/i.test(imageUrl)) {
+            validImageUrl = imageUrl;
+        } else {
+            try {
+                const parsed = new URL(imageUrl);
+                if (!['http:', 'https:'].includes(parsed.protocol)) {
+                    return { error: 'Product images must use an HTTP or HTTPS address.' };
+                }
+                validImageUrl = parsed.href;
+            } catch (_) {
+                return { error: 'Enter a valid product image URL or upload an image.' };
             }
-
-            validImageUrl = parsed.href;
-        } catch (_) {
-            return {
-                error: 'Enter a valid product image URL.'
-            };
         }
     }
 
@@ -1018,6 +1017,39 @@ function cleanStoreProduct(body = {}) {
         }
     };
 }
+
+// ADMIN: Upload product images from the administrator's computer.
+// Files are restricted by size, extension, MIME type and file signature.
+const productUploadDir = path.join(__dirname, 'public', 'uploads', 'products');
+const PRODUCT_IMAGE_TYPES = {
+    'image/jpeg': { ext: 'jpg', signature: bytes => bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff },
+    'image/png': { ext: 'png', signature: bytes => bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) },
+    'image/webp': { ext: 'webp', signature: bytes => bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WEBP' },
+    'image/avif': { ext: 'avif', signature: bytes => bytes.toString('ascii', 4, 12).includes('ftypavif') }
+};
+
+app.post('/api/admin/store/upload-image', checkAdminAuth, async (req, res) => {
+    try {
+        const match = String(req.body && req.body.imageData || '').match(/^data:(image\/(?:jpeg|png|webp|avif));base64,([A-Za-z0-9+/=]+)$/);
+        if (!match) return res.status(400).json({ success: false, message: 'Choose a JPG, PNG, WebP or AVIF image.' });
+        const mime = match[1];
+        const bytes = Buffer.from(match[2], 'base64');
+        if (!bytes.length || bytes.length > 5 * 1024 * 1024) {
+            return res.status(400).json({ success: false, message: 'Product images must be 5 MB or smaller.' });
+        }
+        const type = PRODUCT_IMAGE_TYPES[mime];
+        if (!type || !type.signature(bytes)) {
+            return res.status(400).json({ success: false, message: 'The image file is invalid or its format does not match.' });
+        }
+        await fs.promises.mkdir(productUploadDir, { recursive: true });
+        const filename = `${randomUUID()}.${type.ext}`;
+        await fs.promises.writeFile(path.join(productUploadDir, filename), bytes, { flag: 'wx' });
+        return res.status(201).json({ success: true, imageUrl: `/assets/uploads/products/${filename}` });
+    } catch (err) {
+        console.error('Product image upload error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not upload this product image.' });
+    }
+});
 
 // PUBLIC: Load active products for the online store
 app.get('/api/store/products', async (req, res) => {
