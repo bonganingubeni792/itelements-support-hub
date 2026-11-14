@@ -132,6 +132,7 @@ const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
         default: 'pending'
     },
     pfPaymentId: { type: String, default: '' },
+    fulfilmentStatus: { type: String, enum: ['new', 'processing', 'ready', 'shipped', 'completed', 'cancelled'], default: 'new' },
     paidAt: { type: Date, default: null },
     expiresAt: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
@@ -1121,6 +1122,42 @@ app.get('/api/store/products/:id', async (req, res) => {
 });
 
 // ADMIN: Load all products, including drafts
+// ADMIN: Store orders created through the PayFast product checkout.
+app.get('/api/admin/store/orders', checkAdminAuth, async (req, res) => {
+    try {
+        const orders = await PayFastPurchase.find({ purchaseType: 'storeOrder' })
+            .select('paymentId userEmail orderDetails amount mode status pfPaymentId paidAt createdAt fulfilmentStatus')
+            .sort({ createdAt: -1 })
+            .limit(500)
+            .lean();
+        return res.json({ success: true, orders });
+    } catch (err) {
+        console.error('Admin store orders error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not load store orders.' });
+    }
+});
+
+// ADMIN: Update order fulfilment stage (does not alter PayFast payment status).
+app.patch('/api/admin/store/orders/:id/fulfilment', checkAdminAuth, async (req, res) => {
+    const allowed = ['new', 'processing', 'ready', 'shipped', 'completed', 'cancelled'];
+    const fulfilmentStatus = String(req.body.fulfilmentStatus || '');
+    if (!mongoose.isValidObjectId(req.params.id) || !allowed.includes(fulfilmentStatus)) {
+        return res.status(400).json({ success: false, message: 'Invalid order or fulfilment status.' });
+    }
+    try {
+        const order = await PayFastPurchase.findOneAndUpdate(
+            { _id: req.params.id, purchaseType: 'storeOrder' },
+            { $set: { fulfilmentStatus } },
+            { new: true }
+        ).select('paymentId fulfilmentStatus status');
+        if (!order) return res.status(404).json({ success: false, message: 'Order not found.' });
+        return res.json({ success: true, order });
+    } catch (err) {
+        console.error('Store order update error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not update this order.' });
+    }
+});
+
 app.get('/api/admin/store/products', checkAdminAuth, async (req, res) => {
     try {
         const products = await StoreProduct.find()
