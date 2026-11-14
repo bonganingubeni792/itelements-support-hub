@@ -147,6 +147,44 @@ nav a:hover:after{width:100%}
 @media(max-width:760px){.hero{min-height:0;padding:42px 5%;grid-template-columns:1fr}.hero-art{display:none}.store-benefits{grid-template-columns:1fr;gap:2px;padding:12px 18px}.store-benefits>div{padding:6px 2px}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.catalogue-note{display:none}}
 @media(max-width:480px){header{padding:9px 14px}.brand{font-size:18px}.brand img{width:39px;height:39px}.cartbtn{padding:10px 12px;font-size:12px}.hero h1{font-size:36px}.wrap{padding:29px 13px 45px}.shop-filters{padding:12px;border-radius:13px}.products{gap:10px}.photo{height:150px;margin:7px 7px 0}.cardbody{padding:11px}.card h3{font-size:13px}.desc{font-size:11px;min-height:65px}.price{font-size:16px}.add{padding:10px 7px;font-size:10px}.intro h2{font-size:26px}.catalogue-toolbar{margin-top:22px}.product-detail-price{font-size:24px}}
 
+
+/* AMAZON-STYLE COMPACT STOREFRONT */
+header{height:62px;padding:0 max(18px,calc((100% - 1440px)/2));box-shadow:0 1px 5px #00000008}
+.brand{font-size:18px}.brand img{width:37px;height:37px}
+.hero{display:none!important}
+.store-benefits{max-width:1440px;padding:7px 20px;display:flex;justify-content:center;gap:clamp(18px,5vw,70px);border-bottom:1px solid #eceef1}
+.store-benefits>div{padding:3px 0;gap:7px}.benefit-icon{width:23px;height:23px;border-radius:50%;font-size:13px;background:#fff1f1}
+.store-benefits strong{font-size:10px}.store-benefits small{font-size:9px;margin-top:0}
+.wrap{max-width:1440px;padding:17px 20px 48px}
+.intro{margin:0 0 10px;display:flex;align-items:center}.intro h2{font-size:21px;margin:0;letter-spacing:-.4px}.intro .eyebrow{font-size:9px;margin:0 0 2px}.intro .muted{font-size:10px}
+#resultCount{display:none!important}
+.shop-filters{margin:0 0 14px;padding:10px 12px;border:1px solid #e6e8eb;border-radius:9px;box-shadow:none;display:grid;grid-template-columns:minmax(220px,1.7fr) minmax(105px,.8fr) minmax(115px,.9fr) minmax(125px,1fr) minmax(165px,1.2fr) auto;gap:8px;align-items:center}
+.search-row{display:contents}.searchbox{height:36px;padding:0 9px;border-radius:7px}.searchbox>span{font-size:18px}.searchbox input{height:34px;font-size:11px}.searchbox kbd{display:none}.filter-reset{height:34px;padding:0 10px;font-size:10px;border-radius:7px;grid-column:6;grid-row:1}
+.filter-row{display:contents}.filter-field{font-size:9px;gap:2px}.filter-field select{height:34px;padding:0 7px;font-size:10px;border-radius:7px}
+.department-nav{margin:0;padding:0;border:0;min-width:0}.department-picker-label{gap:6px;display:flex;flex-direction:column;align-items:stretch}.department-picker-title{font-size:9px}.department-picker-label select{width:100%;height:34px;font-size:10px;padding:0 8px;border-radius:7px}
+.catalogue-toolbar{display:none!important}
+.products{grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}
+.card{border:1px solid #e6e8eb;border-radius:9px;box-shadow:none;min-width:0}.card:hover{transform:translateY(-2px);border-color:#d7dbe0;box-shadow:0 5px 14px #0000000c}
+.photo{height:150px;margin:7px 7px 0;border-radius:6px;background:#fff}.photo img{object-fit:contain}
+.cardbody{padding:9px 10px 10px}.category{font-size:8px;letter-spacing:.4px}.card h3{font-size:11px;line-height:1.35;margin:5px 0 7px;min-height:44px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.desc{display:none}.card-price-row{margin-top:auto}.price{font-size:15px}.old{font-size:9px}.stock{font-size:9px;margin:5px 0 8px}.add{padding:8px 7px;font-size:10px;border-radius:6px}.card .add.secondary{display:none!important}
+.product-ribbon{top:6px;left:6px;padding:4px 6px;font-size:7px}
+/* Product detail is a full-screen product page with an obvious back action */
+.product-modal{padding:0;align-items:stretch}.product-modal-backdrop{background:#fff;backdrop-filter:none}.product-modal-panel{width:100%;height:100%;max-height:none;overflow:auto;border:0;border-radius:0;box-shadow:none;background:#fff}
+.product-modal-close{position:sticky;top:0;float:none;display:flex;align-items:center;gap:8px;width:100%;height:54px;margin:0;padding:0 22px;border:0;border-bottom:1px solid #e9ebef;border-radius:0;background:#fff;color:#222;font-size:13px;font-weight:800;text-align:left}
+.product-modal-close:before{content:'←';font-size:23px;color:var(--red);line-height:1}
+.product-modal-content{max-width:1240px;margin:0 auto;grid-template-columns:minmax(0,1.05fr) minmax(320px,.95fr);gap:48px;padding:30px 28px 55px;align-items:start}
+.product-detail-image{position:sticky;top:72px;display:block;min-height:0;padding:14px;border:1px solid #e9ebef;border-radius:12px;background:#fff}
+.product-gallery-main{height:430px;min-height:0}.product-gallery-main img{height:100%;max-height:430px;object-fit:contain;cursor:zoom-in}
+.product-gallery-thumbs{justify-content:center;gap:9px;margin-top:13px}.product-gallery-thumb{width:70px;height:66px;border-radius:7px}
+.product-detail-copy{padding:8px 0}.product-detail-copy .category{font-size:10px}.product-detail-copy h2{font-size:26px;line-height:1.28;margin:10px 0 14px}.product-detail-price{font-size:29px;margin:14px 0}.product-detail-copy p{font-size:13px;line-height:1.75;color:#555d68}
+.detail-meta{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0}.detail-pill{padding:7px 10px;background:#f5f6f7;border-radius:6px;font-size:10px;color:#555}
+.detail-qty{display:flex;align-items:center;gap:12px;margin:18px 0}.detail-qty button{width:34px;height:34px;border:1px solid #ddd;border-radius:6px;background:#fff;font-size:18px}.detail-qty strong{min-width:18px;text-align:center}
+.product-detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.product-detail-actions button{min-height:46px;font-size:12px}.product-detail-actions .secondary{background:#fff;color:#242830;border:1px solid #dfe2e6}
+.detail-section{margin-top:23px;border-top:1px solid #e9ebef;padding-top:15px}.detail-section summary{cursor:pointer;font-size:13px;font-weight:800}.detail-description{font-size:12px;line-height:1.8;color:#626975;margin-top:12px;overflow-wrap:anywhere}
+@media(max-width:1100px){.products{grid-template-columns:repeat(4,minmax(0,1fr))}.shop-filters{grid-template-columns:repeat(4,minmax(0,1fr))}.searchbox{grid-column:span 2}.filter-reset{grid-column:4;grid-row:1}.department-nav{grid-column:span 2}}
+@media(max-width:760px){header{height:auto;min-height:58px;gap:8px}.store-benefits{justify-content:space-around;gap:7px;padding:6px 8px}.store-benefits small{display:none}.store-benefits>div{gap:4px}.benefit-icon{width:19px;height:19px;font-size:11px}.store-benefits strong{font-size:8px}.wrap{padding:13px 10px 35px}.shop-filters{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:9px}.searchbox{grid-column:1/-1}.filter-reset{grid-column:2;grid-row:2}.filter-row{display:contents}.department-nav{grid-column:1/-1}.filter-field select{height:36px}.department-picker-label{flex-direction:row;align-items:center}.department-picker-title{white-space:nowrap}.department-picker-label select{max-width:70%}.products{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.photo{height:112px;margin:5px 5px 0}.cardbody{padding:7px}.card h3{font-size:10px;min-height:40px}.price{font-size:13px}.stock{font-size:8px}.add{font-size:9px;padding:8px 4px}.product-modal-content{grid-template-columns:1fr;gap:18px;padding:16px 14px 40px}.product-detail-image{position:static;padding:8px}.product-gallery-main{height:280px}.product-detail-copy h2{font-size:21px}.product-detail-actions{grid-template-columns:1fr}.product-detail-price{font-size:25px}}
+@media(max-width:430px){nav{gap:13px;font-size:11px}.brand{font-size:15px}.brand img{width:31px;height:31px}.cartbtn{padding:8px 10px;font-size:10px}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.photo{height:138px}.card h3{font-size:11px;min-height:43px}.stock{font-size:9px}.add{font-size:10px}.store-benefits>div{padding:2px}.product-gallery-main{height:240px}}
+
 </style></head><body>
 <header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
@@ -175,7 +213,7 @@ nav a:hover:after{width:100%}
 <div class="product-modal" id="productModal" aria-hidden="true">
  <div class="product-modal-backdrop" data-close-product></div>
  <section class="product-modal-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
-  <button class="product-modal-close" type="button" data-close-product aria-label="Close product details">×</button>
+  <button class="product-modal-close" type="button" data-close-product aria-label="Back to products">Back to products</button>
   <div class="product-modal-content" id="productModalContent"></div>
  </section>
 </div>
@@ -191,6 +229,8 @@ function readSavedCart(){
  }catch(_){return [];}
 }
 let cart=readSavedCart();
+let detailQuantity=1;
+let activeProductId=null;
 function saveCart(){
  try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart));}catch(_){}
 }
@@ -219,25 +259,26 @@ function render(){
  if(sort==='name')list.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
  if(sort==='featured')list.sort((a,b)=>Number(!!b.featured)-Number(!!a.featured));
  if(sort==='newest')list.sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
- $('resultCount').textContent=`${list.length} product${list.length===1?'':'s'} found`;
+ $('resultCount').textContent='';
  $('products').innerHTML=list.length?list.map(p=>`<article class="card" role="button" tabindex="0" aria-label="View ${esc(p.name)}" onclick="showProduct('${p._id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showProduct('${p._id}')}"><div class="photo">${p.featured?'<span class="product-ribbon">FEATURED</span>':''}${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" loading="lazy">`:'<span aria-hidden="true">💻</span>'}</div><div class="cardbody"><div class="category">${esc(p.category||'IT products')}</div><h3>${esc(p.name)}</h3><p class="desc">${esc(p.description||'Contact us for more product information.')}</p><div class="card-price-row"><span class="price">${money(p.price)}</span>${p.compareAtPrice>p.price?`<span class="old">${money(p.compareAtPrice)}</span>`:''}</div><div class="stock"><span class="stock-dot ${Number(p.stock)>0?'in-stock':'out-stock'}"></span>${p.stock>0?`${p.stock} available`:'Contact us to confirm availability'}</div><button class="add" onclick="event.stopPropagation();addToCart('${p._id}')" ${p.stock<=0?'disabled':''}>${p.stock>0?'Add to cart':'Check availability'}</button><button class="add secondary" style="margin-top:7px" onclick="event.stopPropagation();showProduct('${p._id}')">View details</button></div></article>`).join(''):'<div class="empty"><strong style="display:block;color:#252932;margin-bottom:7px">No products found</strong>Try a different search or clear your filters.<br><button class="filter-reset" style="margin-top:15px;padding:10px 15px" onclick="document.getElementById(\'clearFilters\').click()">Clear all filters</button></div>';
  document.querySelectorAll('.department-chip').forEach(b=>b.classList.toggle('active',b.dataset.category===cat));
 }
-function addToCart(id){
+function addToCart(id, quantity=1){
  const p=products.find(x=>x._id===id);
  if(!p)return;
  const available=Math.max(0,Number(p.stock)||0);
  if(available<1){alert('This product is currently out of stock. Please contact IT Elements to confirm availability.');return;}
  const item=cart.find(x=>x.id===id);
  if(item){
-  if(item.qty>=available){alert(`Only ${available} unit${available===1?'':'s'} currently available.`);return;}
-  item.qty++;
- }else cart.push({id,qty:1});
+  if(item.qty+quantity>available){alert(`Only ${available} unit${available===1?'':'s'} currently available.`);return;}
+  item.qty+=quantity;
+ }else {if(quantity>available){alert(`Only ${available} unit${available===1?'':'s'} currently available.`);return;}cart.push({id,qty:quantity});}
  saveCart();
  renderCart();
 }
 
 window.showProduct=async id=>{
+ activeProductId=id;
  let p=products.find(x=>x._id===id);if(!p)return;
  try{
   const response=await fetch('/api/store/products/'+encodeURIComponent(id));
@@ -257,10 +298,14 @@ window.showProduct=async id=>{
   const main=$('productGalleryMain');if(main)main.src=url;
   document.querySelectorAll('.product-gallery-thumb').forEach((button,i)=>button.classList.toggle('active',i===index));
  };
- $('productModalContent').innerHTML=`<div><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><p>${esc(p.description||'Contact IT Elements for full specifications and compatibility information.')}</p><p><b>SKU:</b> ${esc(p.sku||'Available on request')}<br><b>Availability:</b> ${Number(p.stock)>0?`${Number(p.stock)} in stock`:'Contact us to confirm availability'}</p><div class="product-detail-actions"><button type="button" onclick="addToCart('${p._id}');closeProduct()">Add to cart</button><button type="button" class="secondary" onclick="orderProduct('${p._id}')">Order / enquire on WhatsApp</button></div></div>`;
+ detailQuantity=1;
+ $('productModalContent').innerHTML=`<div><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><div class="detail-meta"><span class="detail-pill">SKU: ${esc(p.sku||'On request')}</span><span class="detail-pill">${Number(p.stock)>0?'In stock':'Check availability'}</span></div><div class="detail-qty"><span style="font-size:12px;font-weight:800">Quantity</span><button type="button" onclick="changeDetailQty(-1)" aria-label="Decrease quantity">−</button><strong id="detailQty">1</strong><button type="button" onclick="changeDetailQty(1)" aria-label="Increase quantity">+</button></div><div class="product-detail-actions"><button type="button" onclick="addDetailToCart('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to cart</button><button type="button" class="secondary" onclick="orderProduct('${p._id}')">Ask / order on WhatsApp</button></div><div class="detail-section"><details open><summary>Product description & details</summary><div class="detail-description">${esc(p.description||'Contact IT Elements for full specifications and compatibility information.').replace(/\n/g,'<br>')}</div></details></div><div class="detail-section"><details><summary>Delivery, payment & support</summary><div class="detail-description">Contact IT Elements to confirm stock, delivery options, payment arrangements and product compatibility. Our team can help before and after your purchase.</div></details></div><div class="detail-section"><button type="button" class="filter-reset" style="height:38px" onclick="copyProductLink('${p._id}')">Copy product link</button></div></div>`;
  $('productModal').classList.add('open');$('productModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 };
-window.closeProduct=()=>{$('productModal').classList.remove('open');$('productModal').setAttribute('aria-hidden','true');document.body.style.overflow='';};
+window.changeDetailQty=delta=>{const p=products.find(x=>x._id===activeProductId);const max=p?Math.max(1,Number(p.stock)||1):99;detailQuantity=Math.max(1,Math.min(max,detailQuantity+delta));const el=$('detailQty');if(el)el.textContent=detailQuantity;};
+window.addDetailToCart=id=>{addToCart(id,detailQuantity);closeProduct();};
+window.copyProductLink=id=>{const url=location.origin+location.pathname+'?product='+encodeURIComponent(id);if(navigator.clipboard?.writeText)navigator.clipboard.writeText(url).then(()=>alert('Product link copied.')).catch(()=>alert(url));else alert(url);};
+window.closeProduct=()=>{$('productModal').classList.remove('open');$('productModal').setAttribute('aria-hidden','true');document.body.style.overflow='';activeProductId=null;};
 window.orderProduct=id=>{
  const p=products.find(x=>x._id===id);if(!p)return;
  const message=`Hello IT Elements, I am interested in: ${p.name}\\nSKU: ${p.sku||'N/A'}\\nListed price: ${money(p.price)}\\nPlease confirm availability, specifications, payment and delivery.`;
@@ -335,6 +380,7 @@ async function load(){
   saveCart();
   render();
   renderCart();
+  const requestedProduct=new URLSearchParams(location.search).get('product');if(requestedProduct&&products.some(p=>p._id===requestedProduct))showProduct(requestedProduct);
  }catch(e){
   $('products').innerHTML='<div class="empty">The store is temporarily unavailable. Please try again later.</div>';
   renderCart();
@@ -343,11 +389,3 @@ async function load(){
 load();renderCart();
 </script></body></html>
 
-<style>
-.product-gallery-main{width:100%;height:100%;min-height:300px;display:grid;place-items:center}
-.product-gallery-main img{width:100%;height:100%;max-height:420px;object-fit:contain}
-.product-gallery-thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-.product-gallery-thumb{width:62px;height:58px;padding:4px;border:1px solid #e3e5e9;border-radius:8px;background:#fff;cursor:pointer}
-.product-gallery-thumb.active,.product-gallery-thumb:hover{border-color:#e00000;box-shadow:0 0 0 2px #e0000017}
-.product-gallery-thumb img{width:100%;height:100%;object-fit:contain}
-</style>
