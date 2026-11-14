@@ -1061,30 +1061,47 @@ app.post('/api/admin/store/upload-image', checkAdminAuth, async (req, res) => {
 // PUBLIC: Load active products for the online store
 app.get('/api/store/products', async (req, res) => {
     try {
-        res.setHeader('Cache-Control', 'no-store');
+        // Product catalogue data changes infrequently. A short browser cache
+        // avoids repeatedly downloading the same catalogue on every visit.
+        res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
 
-        const products = await StoreProduct.find({
-            status: 'active'
-        })
-            .select('-__v')
-            .sort({
-                featured: -1,
-                createdAt: -1
-            })
+        const products = await StoreProduct.find({ status: 'active' })
+            .select('name sku category description price compareAtPrice stock imageUrl status featured createdAt')
+            .sort({ featured: -1, createdAt: -1 })
             .lean();
 
-        return res.json({
-            success: true,
-            products
-        });
+        return res.json({ success: true, products });
     } catch (err) {
         console.error('Public store products error:', err.message);
-
         return res.status(500).json({
             success: false,
             message: 'Could not load store products.',
             products: []
         });
+    }
+});
+
+// Load the full image gallery only when a customer opens a product.
+app.get('/api/store/products/:id', async (req, res) => {
+    try {
+        if (!mongoose.isValidObjectId(req.params.id)) {
+            return res.status(400).json({ success: false, message: 'Invalid product.' });
+        }
+
+        const product = await StoreProduct.findOne({
+            _id: req.params.id,
+            status: 'active'
+        }).select('-__v').lean();
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found.' });
+        }
+
+        res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+        return res.json({ success: true, product });
+    } catch (err) {
+        console.error('Public store product detail error:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not load this product.' });
     }
 });
 
