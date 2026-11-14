@@ -1,33 +1,27 @@
-IT ELEMENTS — COMPLETE STORE + PAYFAST / NO INVOICE MAKER
-======================================================
+IT ELEMENTS — STORE QUANTITY + PAYFAST UPDATE
 
-WHAT THIS PACKAGE DOES
-- Removes the Invoice Studio navigation item from all supplied public/customer pages.
-- Removes views/invoice-maker.html from the project.
-- Uses the server.js build that has no Invoice Maker model, routes, API endpoints or Invoice Pro payment flow.
-- Keeps the IT Elements customer portal, admin dashboard, support plans, quick-fix payments, product manager, store and product PayFast checkout.
-- Keeps the existing site pages, assets, CSS, package files and product admin page.
-- Uses the product storefront with responsive desktop and mobile refinements.
+WHAT IS INCLUDED
+- Product detail quantity input plus minus buttons, limited by available stock.
+- Add to Cart uses the selected quantity.
+- Buy Now opens the product PayFast checkout flow.
+- WhatsApp is retained for product questions only, not as a payment method.
+- Product gallery next/previous controls advance from the currently selected image; touch swipe and thumbnails remain available.
+- Existing product viewer, cart, checkout form and PayFast product checkout server endpoint are retained.
+- Invoice Maker page is not included in this package.
 
-STORE EXPERIENCE
-- Desktop catalogue: four product columns, department sidebar and compact product cards.
-- Tablet: three product columns.
-- Phone: two product columns, horizontally scrollable department choices, stacked product detail and full-fit product images.
-- Product detail gallery uses contained images and thumbnail navigation; quantity buttons control the actual cart quantity.
-- PayFast checkout validates product price and stock on the server; stock is reduced only after a verified PayFast COMPLETE webhook.
+FILES
+This is a full project package. Extract the contents into the root of the GitHub repository connected to Render, preserving the public/ and views/ folders.
 
-DEPLOYMENT
-1. Back up your current GitHub repository first.
-2. Extract this ZIP and replace the matching project files/folders in your repository. This is a complete project package, not just a single HTML page.
-3. Confirm the `views` folder is deployed with the updated `index.html`, `store.html`, other pages and `store-admin.html`.
-4. Confirm the root `server.js` is replaced by this package's server.js.
-5. Keep your Render environment variables. Confirm PUBLIC_BASE_URL=https://www.itelements.help and your PayFast merchant ID, merchant key, passphrase and live/test mode are correct.
-6. Commit and push to the branch connected to Render. Wait for a successful deployment, then test /store and /api/store/products.
-7. Hard refresh the browser (Ctrl+F5) or test in a private window to bypass cached HTML.
+DEPLOY AND TEST
+1. Back up your GitHub project first.
+2. Extract this ZIP and replace the matching project files at the repository root.
+3. Keep your existing MongoDB URI, session secret, email settings and other required environment variables.
+4. In Render, verify PayFast merchant ID, merchant key, mode, optional passphrase, and PUBLIC_BASE_URL are correctly configured. Do not put secrets in GitHub or HTML.
+5. Commit and push to GitHub and wait for Render deployment.
+6. Test using PayFast sandbox/test mode first. Open a product with stock greater than one, change quantity, add it to cart, and test Buy Now.
+
+VALIDATION
+The inline JavaScript in views/store.html and server.js passed Node.js syntax checks. This is not a live PayFast payment test and does not prove production credentials or webhook delivery are configured.
 
 IMPORTANT
-- I cannot directly change your live Render server or GitHub repository from this chat. You must deploy these files to the connected repository.
-- Existing MongoDB invoice records are not deleted by this package. The application code and page are removed; database records are left untouched.
-- Test product checkout in PayFast sandbox before switching to live. A customer returning from PayFast is not treated as paid unless the verified webhook confirms payment.
-- Delivery fees are not calculated automatically in this build; confirm delivery cost with the customer before dispatch.
-- Local syntax checks are not a substitute for testing the live MongoDB connection, PayFast credentials and webhook.
+This package does not directly update your GitHub repository or Render service. Existing MongoDB data is not deleted. Confirm the deployed version on the live site after Render finishes.
