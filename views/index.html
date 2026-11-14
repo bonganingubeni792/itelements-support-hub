@@ -1969,25 +1969,5 @@ footer {
 </script>
 
 
-<script>
-(function(){
-  function installITElementsHeader(){
-    if(document.querySelector('.ite-utility-bar')) return;
-    var bar=document.createElement('div');
-    bar.className='ite-utility-bar';
-    bar.innerHTML='<div class="ite-utility-left"><a href="tel:+27671234567">☎ +27 67 123 4567</a><a href="mailto:support@itelements.co.za">✉ support@itelements.co.za</a><span class="ite-location">⌖ South Africa</span></div><div class="ite-utility-right"><a class="ite-login-link" href="/client/login">Customer Login</a><a href="/store">Online Store</a></div>';
-    var nav=document.querySelector('body > nav, body > header');
-    if(nav) nav.parentNode.insertBefore(bar,nav); else document.body.insertBefore(bar,document.body.firstChild);
-    fetch('/api/session-status',{credentials:'same-origin',cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(s){
-      if(!s)return;
-      var right=bar.querySelector('.ite-utility-right');
-      if(s.loggedIn){
-        right.innerHTML=(s.role==='admin'?'<a class="ite-account-primary" href="/admin">Admin Dashboard</a>':'<a class="ite-account-primary" href="/dashboard">My Account</a>')+'<a href="/store">Online Store</a><a href="/client/logout">Log out</a>';
-      }
-    }).catch(function(){});
-  }
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',installITElementsHeader);else installITElementsHeader();
-})();
-</script>
 <script src="/nav-store-global.js?v=20261114" defer></script></body>
 </html>
