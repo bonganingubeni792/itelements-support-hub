@@ -175,6 +175,11 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
   <div id="importPreviewWrap" hidden>
     <div class="preview-heading"><strong id="importPreviewTitle">Import preview</strong><span id="importPreviewCount"></span></div>
     <div class="import-table-wrap"><table class="import-table"><thead><tr><th>Image</th><th>Product</th><th>Choose department</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead><tbody id="importPreviewRows"></tbody></table></div>
+    <div class="import-actions" style="align-items:center;justify-content:space-between">
+      <button class="btn" type="button" id="importPrevPage">Previous 50</button>
+      <span id="importPageLabel" style="font-size:11px;color:#777">Preview page 1</span>
+      <button class="btn" type="button" id="importNextPage">Next 50</button>
+    </div>
     <div class="import-actions"><button class="btn primary" type="button" id="runImport">Import selected products</button><button class="btn" type="button" id="cancelImport">Cancel</button></div>
   </div>
 </section>
@@ -297,7 +302,7 @@ function render(){
  $('categoryOptions').innerHTML=cats.map(c=>`<option value="${escapeHtml(c)}"></option>`).join('');
  $('productList').innerHTML=shown.length?shown.map(p=>`<article class="product">
  <label class="product-select"><input class="product-check" type="checkbox" value="${escapeHtml(p._id)}"> Select</label>
- <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="">`:'No image'}</div>
+ <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" decoding="async">`:'No image'}</div>
  <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''} · Stock: ${Number(p.stock)||0}</div>
  <div class="price">${money(p.price)}${Number(p.compareAtPrice)>Number(p.price)?` <s style="color:#999;font-weight:500">${money(p.compareAtPrice)}</s>`:''}</div>
  <span class="pill ${p.status==='draft'?'draft':''}">${p.status==='draft'?'DRAFT':'PUBLISHED'}</span>${p.featured?' <span class="pill">FEATURED</span>':''}</div>
@@ -337,7 +342,7 @@ $('productForm').addEventListener('submit',async e=>{e.preventDefault();const id
 });
 
 const IMPORT_CATEGORIES = ["Computers & Laptops", "Gaming PCs", "Gaming Laptops", "Gaming Components", "Graphics Cards", "Processors (CPU)", "Motherboards", "RAM & Memory", "SSD & NVMe Storage", "Hard Drives (HDD)", "External Storage", "PC Cases", "Power Supplies (PSU)", "CPU Cooling & Fans", "Monitors & Displays", "Gaming Monitors", "Keyboards", "Gaming Keyboards", "Mice & Gaming Mice", "Headsets & Audio", "Controllers & Gamepads", "Webcams & Streaming", "Networking & Wi-Fi", "Routers & Mesh Wi-Fi", "Network Switches", "Cables & Adapters", "Docks & Hubs", "Printers & Scanners", "Printer Ink & Toner", "Software & Security", "Operating Systems", "Office Accessories", "UPS & Power Protection", "Refurbished Computers", "Special Offers", "Other Accessories"];
-let importRows=[];
+let importRows=[];let importPage=0;const IMPORT_PAGE_SIZE=50;
 function setImportStatus(message,type=''){const el=$('importStatus');el.textContent=message;el.className='import-status '+type;}
 function csvParse(text){
  const rows=[];let row=[],cell='',quoted=false;
@@ -492,6 +497,46 @@ function refreshImportValidation(){
  });
 }
 
+function renderImportPreviewPage(){
+ const body=$('importPreviewRows');
+ if(!body)return;
+ const totalPages=Math.max(1,Math.ceil(importRows.length/IMPORT_PAGE_SIZE));
+ importPage=Math.min(Math.max(0,importPage),totalPages-1);
+ const start=importPage*IMPORT_PAGE_SIZE;
+ const pageRows=importRows.slice(start,start+IMPORT_PAGE_SIZE);
+ body.innerHTML=pageRows.map((p,offset)=>{
+  const i=start+offset;
+  const urls=(p.images||[]);
+  const thumbnails=urls.slice(0,3).map((url,n)=>`<img class="import-image-preview" loading="lazy" decoding="async" src="${escapeHtml(url)}" alt="Product image ${n+1}" onerror="this.style.opacity='.18';this.alt='Image unavailable'">`).join('');
+  return `<tr data-import-row="${i}">
+   <td class="image-cell"><div class="import-image-gallery">${thumbnails||'<span class="no-import-image">No image found</span>'}</div>
+   <textarea class="import-image-url" data-image-row="${i}" rows="2" placeholder="Image URLs">${escapeHtml(urls.join('\n'))}</textarea>
+   <small class="import-image-count">${urls.length} image(s) detected · up to 20</small>
+   <label style="display:block;margin-top:5px;font-size:9px;color:#666">Or upload main image <input type="file" data-image-file-row="${i}" accept="image/jpeg,image/png,image/webp,image/avif" style="display:block;max-width:145px;font-size:9px"></label>
+   <small class="import-upload-status" style="display:block;color:#16834b"></small>
+   <label class="import-row-check"><input type="checkbox" data-include-row="${i}" ${p.include===false?'':'checked'}> Import</label></td>
+   <td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td>
+   <td><select class="import-category-select" data-category-row="${i}" aria-label="Choose department for ${escapeHtml(p.name||'product')}">
+    <option value="">Choose department…</option>${IMPORT_CATEGORIES.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')}
+   </select><small class="import-category-hint">${p.category?'Auto-selected: '+escapeHtml(p.category):'Not recognised — please choose'}</small></td>
+   <td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td>
+   <td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td>
+   <td>${escapeHtml(p.status||'draft')}</td>
+  </tr>`;
+ }).join('');
+ body.querySelectorAll('[data-category-row]').forEach(select=>{
+  const rowIndex=Number(select.dataset.categoryRow);
+  select.value=importRows[rowIndex]?.category||'';
+ });
+ const label=$('importPageLabel');
+ if(label)label.textContent=`Preview page ${importPage+1} of ${totalPages} · rows ${(start+1).toLocaleString()}–${Math.min(start+IMPORT_PAGE_SIZE,importRows.length).toLocaleString()} of ${importRows.length.toLocaleString()}`;
+ const prev=$('importPrevPage'),next=$('importNextPage');
+ if(prev)prev.disabled=importPage===0;
+ if(next)next.disabled=importPage>=totalPages-1;
+}
+$('importPrevPage').onclick=()=>{if(importPage>0){importPage--;renderImportPreviewPage();}};
+$('importNextPage').onclick=()=>{if((importPage+1)*IMPORT_PAGE_SIZE<importRows.length){importPage++;renderImportPreviewPage();}};
+
 function validateImportRow(p,index){
  if(!p.name)return `Row ${index+2}: product name is missing.`;
  if(p.name.length>120)return `Row ${index+2}: product name is too long.`;
@@ -534,25 +579,27 @@ async function readImportFile(file){
   $('importPreviewTitle').textContent=`Preview: ${file.name}`;
   $('importPreviewCount').textContent=`${valid} valid · ${errors.length} need attention · ${imageTotal} images detected`;
   if(isSyntech)setImportStatus(`Syntech feed detected. Important product fields and image links mapped; departments were auto-detected where possible. ${imageTotal} image URLs found across ${importRows.length} products.`,'success');
-  $('importPreviewRows').innerHTML=importRows.slice(0,importRows.length).map((p,i)=>`<tr data-import-row="${i}"><td class="image-cell"><div class="import-image-gallery">${(p.images||[]).slice(0,5).map((url,n)=>`<img class="import-image-preview" src="${escapeHtml(url)}" alt="Product image ${n+1}" onerror="this.style.opacity='.18';this.alt='Image unavailable'">`).join('')||'<span class="no-import-image">No image found</span>'}</div><textarea class="import-image-url" data-image-row="${i}" rows="2" placeholder="Image URLs">${escapeHtml((p.images||[]).join('\n'))}</textarea><small class="import-image-count">${(p.images||[]).length} image(s) detected · up to 20</small><label style="display:block;margin-top:5px;font-size:9px;color:#666">Or upload main image <input type="file" data-image-file-row="${i}" accept="image/jpeg,image/png,image/webp,image/avif" style="display:block;max-width:145px;font-size:9px"></label><small class="import-upload-status" style="display:block;color:#16834b"></small><label class="import-row-check"><input type="checkbox" data-include-row="${i}" checked> Import</label></td><td>${escapeHtml(p.name||'Missing name')}${validateImportRow(p,i)?' <b style="color:#b00000">· Check row</b>':''}</td><td><select class="import-category-select" data-category-row="${i}" aria-label="Choose department for ${escapeHtml(p.name||'product')}"><option value="">Choose department…</option><option value="Computers & Laptops">Computers & Laptops</option><option value="Gaming PCs">Gaming PCs</option><option value="Gaming Laptops">Gaming Laptops</option><option value="Refurbished Computers">Refurbished Computers</option><option value="Gaming Components">Gaming Components</option><option value="Graphics Cards">Graphics Cards</option><option value="Processors (CPU)">Processors (CPU)</option><option value="Motherboards">Motherboards</option><option value="RAM & Memory">RAM & Memory</option><option value="SSD & NVMe Storage">SSD & NVMe Storage</option><option value="Hard Drives (HDD)">Hard Drives (HDD)</option><option value="External Storage">External Storage</option><option value="PC Cases">PC Cases</option><option value="Power Supplies (PSU)">Power Supplies (PSU)</option><option value="CPU Cooling & Fans">CPU Cooling & Fans</option><option value="Monitors & Displays">Monitors & Displays</option><option value="Gaming Monitors">Gaming Monitors</option><option value="Keyboards">Keyboards</option><option value="Gaming Keyboards">Gaming Keyboards</option><option value="Mice & Gaming Mice">Mice & Gaming Mice</option><option value="Headsets & Audio">Headsets & Audio</option><option value="Controllers & Gamepads">Controllers & Gamepads</option><option value="Webcams & Streaming">Webcams & Streaming</option><option value="Networking & Wi-Fi">Networking & Wi-Fi</option><option value="Routers & Mesh Wi-Fi">Routers & Mesh Wi-Fi</option><option value="Network Switches">Network Switches</option><option value="Cables & Adapters">Cables & Adapters</option><option value="Docks & Hubs">Docks & Hubs</option><option value="Printers & Scanners">Printers & Scanners</option><option value="Printer Ink & Toner">Printer Ink & Toner</option><option value="Software & Security">Software & Security</option><option value="Operating Systems">Operating Systems</option><option value="Office Accessories">Office Accessories</option><option value="UPS & Power Protection">UPS & Power Protection</option><option value="Special Offers">Special Offers</option><option value="Other Accessories">Other Accessories</option></select><small class="import-category-hint">${p.category?'Auto-selected: '+escapeHtml(p.category):'Not recognised — please choose'}</small></td><td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td><td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td><td>${escapeHtml(p.status)}</td></tr>`).join('');
-  $('importPreviewRows').querySelectorAll('[data-category-row]').forEach(select=>{
-   const rowIndex=Number(select.dataset.categoryRow);
-   select.value=importRows[rowIndex]?.category||'';
-  });
+    importPage=0;
+  renderImportPreviewPage();
   refreshImportValidation();
-  setImportStatus(errors.length?`${valid} rows are ready. ${errors.length} rows contain errors and will be skipped. Correct them in your spreadsheet and re-upload if needed.`:`${valid} products are ready to import.` ,errors.length?'':'success');
+  setImportStatus(errors.length?`${valid} rows are ready. ${errors.length} rows contain errors and will be skipped. Correct them in your spreadsheet and re-upload if needed.`:`${valid} products are ready to import.`,errors.length?'':'success');
  }catch(err){importRows=[];$('importPreviewWrap').hidden=true;setImportStatus(err.message||'Could not read this file.','error');}
 }
 $('productImportFile').addEventListener('change',e=>readImportFile(e.target.files[0]));
 $('cancelImport').onclick=()=>{$('productImportFile').value='';importRows=[];$('importPreviewWrap').hidden=true;setImportStatus('Import cancelled.');};
 
 $('importPreviewRows').addEventListener('change',e=>{
- const select=e.target.closest('[data-category-row]');
- if(!select)return;
- const i=Number(select.dataset.categoryRow);
- if(!importRows[i])return;
- importRows[i].category=select.value;
- refreshImportValidation();
+ const categorySelect=e.target.closest('[data-category-row]');
+ if(categorySelect){
+  const i=Number(categorySelect.dataset.categoryRow);
+  if(importRows[i]){importRows[i].category=categorySelect.value;refreshImportValidation();}
+  return;
+ }
+ const include=e.target.closest('[data-include-row]');
+ if(include){
+  const i=Number(include.dataset.includeRow);
+  if(importRows[i])importRows[i].include=include.checked;
+ }
 });
 $('importPreviewRows').addEventListener('input',e=>{
  const field=e.target.closest('[data-image-row]');if(!field)return;
@@ -573,7 +620,7 @@ $('importPreviewRows').addEventListener('change',async e=>{
  catch(err){status.textContent=err.message;field.value='';}
 });
 $('runImport').onclick=async()=>{
- const selected=importRows.filter((p,i)=>!validateImportRow(p,i)&&$('importPreviewRows').querySelector(`[data-include-row="${i}"]`)?.checked);
+ const selected=importRows.filter((p,i)=>!validateImportRow(p,i)&&p.include!==false);
  if(!selected.length){setImportStatus('Select at least one valid product to import.','error');return;}
  $('runImport').disabled=true;
  setImportStatus(`Importing ${selected.length} selected products with their selected images…`);
