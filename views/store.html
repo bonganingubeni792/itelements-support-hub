@@ -61,6 +61,7 @@ a{color:inherit;text-decoration:none}header{height:76px;border-bottom:1px solid 
 .card{cursor:pointer}.card button{cursor:pointer}
 @media(max-width:680px){.product-modal-content{grid-template-columns:1fr;gap:12px;padding:17px}.product-detail-image{min-height:220px}.product-detail-copy{padding:0}.product-detail-copy h2{font-size:21px}}
 
+.cartline .qty button:disabled{opacity:.4;cursor:not-allowed}
 </style></head><body>
 <header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Shop carefully selected computer hardware, storage, networking equipment and everyday IT essentials.</p></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
@@ -88,7 +89,19 @@ a{color:inherit;text-decoration:none}header{height:76px;border-bottom:1px solid 
 </div>
 
 <script>
-const $=id=>document.getElementById(id);let products=[],cart=[];
+const $=id=>document.getElementById(id);
+let products=[];
+const CART_STORAGE_KEY='itelements_store_cart_v1';
+function readSavedCart(){
+ try{
+  const saved=JSON.parse(localStorage.getItem(CART_STORAGE_KEY)||'[]');
+  return Array.isArray(saved)?saved.filter(x=>x&&typeof x.id==='string'&&Number.isInteger(x.qty)&&x.qty>0):[];
+ }catch(_){return [];}
+}
+let cart=readSavedCart();
+function saveCart(){
+ try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart));}catch(_){}
+}
 const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
@@ -118,7 +131,19 @@ function render(){
  $('products').innerHTML=list.length?list.map(p=>`<article class="card" role="button" tabindex="0" onclick="showProduct('${p._id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showProduct('${p._id}')}"><div class="photo">${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" loading="lazy">`:'💻'}</div><div class="cardbody"><div class="category">${esc(p.category)}</div><h3>${esc(p.name)}</h3><p class="desc">${esc(p.description||'Contact us for more product information.')}</p><div><span class="price">${money(p.price)}</span>${p.compareAtPrice>p.price?`<span class="old">${money(p.compareAtPrice)}</span>`:''}</div><div class="stock">${p.stock>0?`${p.stock} available`:'Contact us to confirm availability'}</div><button class="add" onclick="event.stopPropagation();addToCart('${p._id}')" ${p.stock<=0?'disabled':''}>${p.stock>0?'Add to cart':'Check availability'}</button><button class="add secondary" style="margin-top:7px;background:#26282d" onclick="event.stopPropagation();showProduct('${p._id}')">View product</button></div></article>`).join(''):'<div class="empty">No products match those filters. Try another department or clear your search.</div>';
  document.querySelectorAll('.department-chip').forEach(b=>b.classList.toggle('active',b.dataset.category===cat));
 }
-function addToCart(id){const p=products.find(x=>x._id===id);if(!p)return;const item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,qty:1});renderCart();}
+function addToCart(id){
+ const p=products.find(x=>x._id===id);
+ if(!p)return;
+ const available=Math.max(0,Number(p.stock)||0);
+ if(available<1){alert('This product is currently out of stock. Please contact IT Elements to confirm availability.');return;}
+ const item=cart.find(x=>x.id===id);
+ if(item){
+  if(item.qty>=available){alert(`Only ${available} unit${available===1?'':'s'} currently available.`);return;}
+  item.qty++;
+ }else cart.push({id,qty:1});
+ saveCart();
+ renderCart();
+}
 
 window.showProduct=id=>{
  const p=products.find(x=>x._id===id);if(!p)return;
@@ -135,10 +160,42 @@ window.orderProduct=id=>{
 document.querySelectorAll('[data-close-product]').forEach(x=>x.addEventListener('click',closeProduct));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProduct();});
 
-function renderCart(){$('cartCount').textContent=cart.reduce((n,x)=>n+x.qty,0);$('cartItems').innerHTML=cart.length?cart.map(x=>{const p=products.find(z=>z._id===x.id);return p?`<div class="cartline"><div><strong>${esc(p.name)}</strong><div class="muted">${money(p.price)} each</div><div class="qty"><button onclick="changeQty('${p._id}',-1)">−</button>${x.qty}<button onclick="changeQty('${p._id}',1)">+</button></div></div><strong>${money(p.price*x.qty)}</strong></div>`:''}).join(''):'<p class="muted">Your cart is empty.</p>';$('cartTotal').textContent=money(cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0));}
-window.addToCart=addToCart;window.changeQty=(id,d)=>{const x=cart.find(z=>z.id===id);if(x){x.qty+=d;if(x.qty<=0)cart=cart.filter(z=>z.id!==id);}renderCart();};
+function renderCart(){
+ const count=cart.reduce((n,x)=>n+x.qty,0);
+ $('cartCount').textContent=count;
+ $('cartItems').innerHTML=cart.length?cart.map(x=>{
+  const p=products.find(z=>z._id===x.id);
+  if(!p)return '';
+  const available=Math.max(0,Number(p.stock)||0);
+  return `<div class="cartline"><div><strong>${esc(p.name)}</strong><div class="muted">${money(p.price)} each · ${available} available</div><div class="qty"><button aria-label="Decrease ${esc(p.name)} quantity" onclick="changeQty('${p._id}',-1)">−</button><span>${x.qty}</span><button aria-label="Increase ${esc(p.name)} quantity" onclick="changeQty('${p._id}',1)" ${x.qty>=available?'disabled':''}>+</button></div>${x.qty>available?'<small style="color:#b00000">Quantity exceeds current stock. Please reduce it.</small>':''}</div><strong>${money(p.price*x.qty)}</strong></div>`;
+ }).join(''):'<p class="muted">Your cart is empty.</p>';
+ $('cartTotal').textContent=money(cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0));
+}
+window.addToCart=addToCart;
+window.changeQty=(id,d)=>{
+ const x=cart.find(z=>z.id===id);
+ const p=products.find(z=>z._id===id);
+ if(!x)return;
+ if(d>0&&p&&x.qty>=Math.max(0,Number(p.stock)||0)){alert('You have reached the available stock for this product.');return;}
+ x.qty+=d;
+ if(x.qty<=0)cart=cart.filter(z=>z.id!==id);
+ saveCart();
+ renderCart();
+};
 $('openCart').onclick=()=>$('drawer').classList.add('open');$('closeCart').onclick=()=>$('drawer').classList.remove('open');$('drawer').onclick=e=>{if(e.target===$('drawer'))$('drawer').classList.remove('open')};
-$('checkout').onclick=()=>{if(!cart.length){alert('Your cart is empty.');return;}const lines=cart.map(x=>{const p=products.find(z=>z._id===x.id);return p?`${x.qty} x ${p.name} (${money(p.price)} each)`:''}).filter(Boolean);const total=cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0);const text=`Hello IT Elements, I would like to place an order:\n\n${lines.join('\n')}\n\nEstimated total: ${money(total)}\n\nPlease confirm availability, payment and delivery options.`;window.open('https://wa.me/27606181229?text='+encodeURIComponent(text),'_blank');};
+$('checkout').onclick=()=>{
+ if(!cart.length){alert('Your cart is empty.');return;}
+ const orderLines=[];
+ for(const item of cart){
+  const p=products.find(z=>z._id===item.id);
+  if(!p){alert('A product in your cart is no longer available. Please refresh your store.');return;}
+  if(item.qty>Number(p.stock||0)){alert(`Only ${Number(p.stock)||0} unit(s) of ${p.name} are currently available. Please update your cart.`);return;}
+  orderLines.push(`${item.qty} x ${p.name} [SKU: ${p.sku||'N/A'}] (${money(p.price)} each)`);
+ }
+ const total=cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0);
+ const message=`Hello IT Elements, I would like to place an order:\n\n${orderLines.join('\n')}\n\nEstimated total: ${money(total)}\n\nPlease confirm availability, payment and delivery options.`;
+ window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank');
+};
 $('search').oninput=render;$('category').onchange=render;$('priceRange').onchange=render;$('availability').onchange=render;$('sort').onchange=render;$('year').textContent=new Date().getFullYear();
 $('clearFilters').onclick=()=>{$('search').value='';$('category').value='';$('priceRange').value='';$('availability').value='';$('sort').value='featured';render();};
 $('search').addEventListener('keydown',e=>{if(e.key==='/'){e.preventDefault();$('search').focus();}});
@@ -148,6 +205,27 @@ function buildDepartmentFilters(){
  document.querySelectorAll('.department-chip').forEach(b=>b.addEventListener('click',()=>{$('category').value=b.dataset.category;render();}));
  $('category').innerHTML='<option value="">All departments</option>'+STORE_CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
 }
-async function load(){try{const r=await fetch('/api/store/products');const d=await r.json();if(!r.ok)throw Error(d.message||'');products=d.products||[];buildDepartmentFilters();render();}catch(e){$('products').innerHTML='<div class="empty">The store is temporarily unavailable. Please try again later.</div>';}}
+async function load(){
+ try{
+  const r=await fetch('/api/store/products');
+  const d=await r.json();
+  if(!r.ok)throw Error(d.message||'');
+  products=d.products||[];
+  const liveIds=new Set(products.map(p=>p._id));
+  cart=cart.filter(item=>liveIds.has(item.id));
+  cart.forEach(item=>{
+   const p=products.find(product=>product._id===item.id);
+   item.qty=Math.min(item.qty,Math.max(0,Number(p&&p.stock)||0));
+  });
+  cart=cart.filter(item=>item.qty>0);
+  saveCart();
+  buildDepartmentFilters();
+  render();
+  renderCart();
+ }catch(e){
+  $('products').innerHTML='<div class="empty">The store is temporarily unavailable. Please try again later.</div>';
+  renderCart();
+ }
+}
 load();renderCart();
 </script></body></html>
