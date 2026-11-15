@@ -1171,6 +1171,51 @@ button[onclick*="addDetailToChat"] {
 /* Phone layout is intentionally not changed in this update. */
 </style>
 
+
+<style id="ite-store-show-full-product-images">
+/* Show each complete product photo: preserve its original aspect ratio. */
+#catalogue .products>.card>.photo{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  overflow:hidden!important;
+  padding:10px!important;
+  background:#fff!important;
+}
+#catalogue .products>.card>.photo img{
+  display:block!important;
+  position:static!important;
+  flex:0 1 auto!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  min-height:0!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  margin:0 auto!important;
+  padding:0!important;
+  transform:none!important;
+  mix-blend-mode:normal!important;
+}
+#catalogue .products>.card>.photo img[style]{
+  object-fit:contain!important;
+}
+#catalogue .products>.card>.photo .product-ribbon{
+  position:absolute!important;
+  top:7px!important;
+  left:7px!important;
+}
+@media(max-width:760px){
+  #catalogue .products>.card>.photo{padding:8px!important}
+  #catalogue .products>.card>.photo img{
+    max-width:100%!important;
+    max-height:100%!important;
+  }
+}
+</style>
+
 </head><body class="store-page">
 <header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
