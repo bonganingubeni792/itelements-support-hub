@@ -66,8 +66,26 @@
   account.setAttribute('aria-label', 'Log in to your IT Elements account');
   actions.appendChild(account);
   if (isStore) {
+    var chatList = document.createElement('button');
+    chatList.type = 'button'; chatList.id = 'openChatList'; chatList.className = 'ite-header-chatlist';
+    chatList.setAttribute('aria-label', 'Open chat list');
+    chatList.setAttribute('aria-controls', 'chatListDrawer');
+    chatList.setAttribute('aria-expanded', 'false');
+    chatList.innerHTML = '<span class="ite-chatlist-icon" aria-hidden="true">▢</span><span>Chat list</span><span class="ite-chatlist-count" id="chatListCount">0</span>';
+    try {
+      var savedChatItems = JSON.parse(localStorage.getItem('itelements_store_chat_list_v1') || '[]');
+      var savedChatCount = Array.isArray(savedChatItems) ? savedChatItems.reduce(function (n, item) { return n + (Number(item && item.qty) || 0); }, 0) : 0;
+      chatList.querySelector('#chatListCount').textContent = String(savedChatCount);
+    } catch (_) {}
+    actions.appendChild(chatList);
     var cart = oldCart || document.createElement('button'); cart.type = 'button'; cart.classList.add('ite-header-cart'); cart.id = 'openCart';
     if (!oldCart) cart.innerHTML = 'Cart (<span id="cartCount">0</span>)'; actions.appendChild(cart);
+    chatList.addEventListener('click', function () {
+      var drawer = document.getElementById('chatListDrawer');
+      if (!drawer) return;
+      drawer.classList.add('open'); drawer.setAttribute('aria-hidden', 'false'); chatList.setAttribute('aria-expanded', 'true');
+      if (typeof window.renderChatList === 'function') window.renderChatList();
+    });
   } else {
     var cartLink = makeLink('/store#cart', 'Cart (0)'); cartLink.className = 'ite-header-cart'; cartLink.setAttribute('aria-label','Open shopping cart'); actions.appendChild(cartLink);
   }

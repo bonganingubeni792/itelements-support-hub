@@ -1,11 +1,11 @@
 /* IT Elements approved shared header — white, compact, identical on public pages */
 :root{--ite-red:#e00000;--ite-ink:#171717;--ite-line:#e7e8eb}
 body.store-page>header,
-body:not(.store-page) nav.nav,
-body:not(.store-page) nav.navbar,
-body:not(.store-page) nav.site-nav,
-body:not(.store-page) nav.main-nav,
-body:not(.store-page) header.site-header{
+body:not(.store-page):not(.store-admin-page) nav.nav,
+body:not(.store-page):not(.store-admin-page) nav.navbar,
+body:not(.store-page):not(.store-admin-page) nav.site-nav,
+body:not(.store-page):not(.store-admin-page) nav.main-nav,
+body:not(.store-page):not(.store-admin-page) header.site-header{
   box-sizing:border-box!important;width:100%!important;max-width:none!important;min-height:82px!important;
   height:auto!important;margin:0!important;padding:12px clamp(22px,3.2vw,58px)!important;
   display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;
@@ -34,7 +34,7 @@ body:not(.store-page) header.site-header{
 .ite-mobile-menu-trigger{display:none!important}
 .ite-mobile-drawer{display:none}
 @media(max-width:760px){
- body.store-page>header,body:not(.store-page) nav.nav,body:not(.store-page) nav.navbar,body:not(.store-page) nav.site-nav,body:not(.store-page) nav.main-nav,body:not(.store-page) header.site-header{
+ body.store-page>header,body:not(.store-page):not(.store-admin-page) nav.nav,body:not(.store-page):not(.store-admin-page) nav.navbar,body:not(.store-page):not(.store-admin-page) nav.site-nav,body:not(.store-page):not(.store-admin-page) nav.main-nav,body:not(.store-page):not(.store-admin-page) header.site-header{
   min-height:72px!important;padding:9px 12px!important;gap:9px!important;justify-content:space-between!important}
  .ite-mobile-menu-trigger{display:inline-flex!important;order:0!important;flex:0 0 42px!important;width:42px!important;height:42px!important;
   align-items:center!important;justify-content:center!important;border:1px solid #e2e4e8!important;border-radius:9px!important;
@@ -60,14 +60,14 @@ body:not(.store-page) header.site-header{
 
 
 /* IT ELEMENTS — shared Store-style public page system */
-body:not(.store-page) {
+body:not(.store-page):not(.store-admin-page) {
   background:#fff;
   color:#171717;
 }
-body:not(.store-page) nav.nav,
-body:not(.store-page) nav.navbar,
-body:not(.store-page) nav.site-nav,
-body:not(.store-page) nav.main-nav {
+body:not(.store-page):not(.store-admin-page) nav.nav,
+body:not(.store-page):not(.store-admin-page) nav.navbar,
+body:not(.store-page):not(.store-admin-page) nav.site-nav,
+body:not(.store-page):not(.store-admin-page) nav.main-nav {
   position:sticky!important;top:0!important;z-index:1000!important;
   width:100%!important;max-width:none!important;min-height:76px!important;
   margin:0!important;padding:10px clamp(16px,4vw,64px)!important;
@@ -75,96 +75,96 @@ body:not(.store-page) nav.main-nav {
   background:#fff!important;box-shadow:0 2px 10px rgba(0,0,0,.045)!important;
   display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;
 }
-body:not(.store-page) nav.nav .brand,
-body:not(.store-page) nav.navbar .brand,
-body:not(.store-page) nav.site-nav .brand,
-body:not(.store-page) nav.main-nav .brand {
+body:not(.store-page):not(.store-admin-page) nav.nav .brand,
+body:not(.store-page):not(.store-admin-page) nav.navbar .brand,
+body:not(.store-page):not(.store-admin-page) nav.site-nav .brand,
+body:not(.store-page):not(.store-admin-page) nav.main-nav .brand {
   display:inline-flex!important;align-items:center!important;gap:9px!important;
   margin:0!important;color:#171717!important;font-size:21px!important;font-weight:900!important;white-space:nowrap!important;
 }
-body:not(.store-page) nav.nav .brand img,
-body:not(.store-page) nav.navbar .brand img,
-body:not(.store-page) nav.site-nav .brand img,
-body:not(.store-page) nav.main-nav .brand img {width:46px!important;height:46px!important;object-fit:contain!important}
-body:not(.store-page) nav.nav .brand-support,
-body:not(.store-page) nav.navbar .brand-support,
-body:not(.store-page) nav.site-nav .brand-support,
-body:not(.store-page) nav.main-nav .brand-support {display:none!important}
-body:not(.store-page) nav.nav .nav-links,
-body:not(.store-page) nav.nav .links,
-body:not(.store-page) nav.navbar .nav-links,
-body:not(.store-page) nav.navbar .links,
-body:not(.store-page) nav.site-nav .nav-links,
-body:not(.store-page) nav.site-nav .links,
-body:not(.store-page) nav.main-nav .nav-links,
-body:not(.store-page) nav.main-nav .links {
+body:not(.store-page):not(.store-admin-page) nav.nav .brand img,
+body:not(.store-page):not(.store-admin-page) nav.navbar .brand img,
+body:not(.store-page):not(.store-admin-page) nav.site-nav .brand img,
+body:not(.store-page):not(.store-admin-page) nav.main-nav .brand img {width:46px!important;height:46px!important;object-fit:contain!important}
+body:not(.store-page):not(.store-admin-page) nav.nav .brand-support,
+body:not(.store-page):not(.store-admin-page) nav.navbar .brand-support,
+body:not(.store-page):not(.store-admin-page) nav.site-nav .brand-support,
+body:not(.store-page):not(.store-admin-page) nav.main-nav .brand-support {display:none!important}
+body:not(.store-page):not(.store-admin-page) nav.nav .nav-links,
+body:not(.store-page):not(.store-admin-page) nav.nav .links,
+body:not(.store-page):not(.store-admin-page) nav.navbar .nav-links,
+body:not(.store-page):not(.store-admin-page) nav.navbar .links,
+body:not(.store-page):not(.store-admin-page) nav.site-nav .nav-links,
+body:not(.store-page):not(.store-admin-page) nav.site-nav .links,
+body:not(.store-page):not(.store-admin-page) nav.main-nav .nav-links,
+body:not(.store-page):not(.store-admin-page) nav.main-nav .links {
  display:flex!important;align-items:center!important;justify-content:center!important;flex:1 1 auto!important;
  gap:clamp(12px,2vw,28px)!important;width:auto!important;max-width:none!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;
 }
-body:not(.store-page) nav.nav .nav-links a,
-body:not(.store-page) nav.nav .links a,
-body:not(.store-page) nav.navbar .nav-links a,
-body:not(.store-page) nav.navbar .links a,
-body:not(.store-page) nav.site-nav .nav-links a,
-body:not(.store-page) nav.site-nav .links a,
-body:not(.store-page) nav.main-nav .nav-links a,
-body:not(.store-page) nav.main-nav .links a {
+body:not(.store-page):not(.store-admin-page) nav.nav .nav-links a,
+body:not(.store-page):not(.store-admin-page) nav.nav .links a,
+body:not(.store-page):not(.store-admin-page) nav.navbar .nav-links a,
+body:not(.store-page):not(.store-admin-page) nav.navbar .links a,
+body:not(.store-page):not(.store-admin-page) nav.site-nav .nav-links a,
+body:not(.store-page):not(.store-admin-page) nav.site-nav .links a,
+body:not(.store-page):not(.store-admin-page) nav.main-nav .nav-links a,
+body:not(.store-page):not(.store-admin-page) nav.main-nav .links a {
  display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:42px!important;
  padding:7px 2px!important;border:0!important;border-radius:0!important;background:transparent!important;
  color:#252833!important;font-size:14px!important;font-weight:750!important;text-decoration:none!important;white-space:nowrap!important;
 }
-body:not(.store-page) nav.nav .nav-links a:hover,
-body:not(.store-page) nav.nav .links a:hover {color:#e00000!important}
-body:not(.store-page) .ite-header-actions{display:flex!important;align-items:center!important;gap:10px!important;flex:0 0 auto!important}
-body:not(.store-page) .ite-account-action,
-body:not(.store-page) .ite-header-cart {
+body:not(.store-page):not(.store-admin-page) nav.nav .nav-links a:hover,
+body:not(.store-page):not(.store-admin-page) nav.nav .links a:hover {color:#e00000!important}
+body:not(.store-page):not(.store-admin-page) .ite-header-actions{display:flex!important;align-items:center!important;gap:10px!important;flex:0 0 auto!important}
+body:not(.store-page):not(.store-admin-page) .ite-account-action,
+body:not(.store-page):not(.store-admin-page) .ite-header-cart {
  display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:44px!important;
  padding:0 18px!important;border-radius:8px!important;font-size:14px!important;font-weight:850!important;text-decoration:none!important;white-space:nowrap!important;
 }
-body:not(.store-page) .ite-account-action{background:#e00000!important;color:#fff!important;border:1px solid #e00000!important}
-body:not(.store-page) .ite-header-cart{background:#fff!important;color:#e00000!important;border:1px solid #e00000!important}
-body:not(.store-page) .menu-toggle,body:not(.store-page) .ite-mobile-menu-trigger{display:none!important}
-body:not(.store-page) main{width:min(calc(100% - 48px),1480px)!important;max-width:1480px!important;margin:0 auto!important}
-body:not(.store-page) main>section{max-width:100%!important}
-body:not(.store-page) .container,body:not(.store-page) .content,body:not(.store-page) .wrap,body:not(.store-page) .page{
+body:not(.store-page):not(.store-admin-page) .ite-account-action{background:#e00000!important;color:#fff!important;border:1px solid #e00000!important}
+body:not(.store-page):not(.store-admin-page) .ite-header-cart{background:#fff!important;color:#e00000!important;border:1px solid #e00000!important}
+body:not(.store-page):not(.store-admin-page) .menu-toggle,body:not(.store-page):not(.store-admin-page) .ite-mobile-menu-trigger{display:none!important}
+body:not(.store-page):not(.store-admin-page) main{width:min(calc(100% - 48px),1480px)!important;max-width:1480px!important;margin:0 auto!important}
+body:not(.store-page):not(.store-admin-page) main>section{max-width:100%!important}
+body:not(.store-page):not(.store-admin-page) .container,body:not(.store-page):not(.store-admin-page) .content,body:not(.store-page):not(.store-admin-page) .wrap,body:not(.store-page):not(.store-admin-page) .page{
  width:min(100%,1400px)!important;max-width:1400px!important;margin-left:auto!important;margin-right:auto!important;
 }
-body:not(.store-page) .hero,body:not(.store-page) .hero-panel,body:not(.store-page) .hero-layout{border-radius:14px!important}
-body:not(.store-page) .feature-grid,body:not(.store-page) .services-grid,body:not(.store-page) .pricing-grid,
-body:not(.store-page) .plans-wrapper,body:not(.store-page) .cards-grid{
+body:not(.store-page):not(.store-admin-page) .hero,body:not(.store-page):not(.store-admin-page) .hero-panel,body:not(.store-page):not(.store-admin-page) .hero-layout{border-radius:14px!important}
+body:not(.store-page):not(.store-admin-page) .feature-grid,body:not(.store-page):not(.store-admin-page) .services-grid,body:not(.store-page):not(.store-admin-page) .pricing-grid,
+body:not(.store-page):not(.store-admin-page) .plans-wrapper,body:not(.store-page):not(.store-admin-page) .cards-grid{
  display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))!important;gap:18px!important;
 }
-body:not(.store-page) .feature-card,body:not(.store-page) .service-card,body:not(.store-page) .pricing-card,
-body:not(.store-page) .plan-box,body:not(.store-page) .contact-card{min-width:0!important;border-radius:12px!important}
+body:not(.store-page):not(.store-admin-page) .feature-card,body:not(.store-page):not(.store-admin-page) .service-card,body:not(.store-page):not(.store-admin-page) .pricing-card,
+body:not(.store-page):not(.store-admin-page) .plan-box,body:not(.store-page):not(.store-admin-page) .contact-card{min-width:0!important;border-radius:12px!important}
 body.store-page .ite-side-chat,body.store-page #iteSideChat,body.store-page #floatingChat,
 body.store-page .floating-chat,body.store-page .chat-float,body.store-page .floating-chat-button,
 body.store-page .whatsapp-float,body.store-page .whatsapp-fab,body.store-page .whatsapp-widget,
 body.store-page .wa-float,body.store-page .wa-widget,body.store-page [data-whatsapp-float] {display:none!important}
 @media(max-width:900px){
- body:not(.store-page) nav.nav,body:not(.store-page) nav.navbar,body:not(.store-page) nav.site-nav,body:not(.store-page) nav.main-nav{
+ body:not(.store-page):not(.store-admin-page) nav.nav,body:not(.store-page):not(.store-admin-page) nav.navbar,body:not(.store-page):not(.store-admin-page) nav.site-nav,body:not(.store-page):not(.store-admin-page) nav.main-nav{
   min-height:68px!important;padding:9px 14px!important;gap:8px!important;
  }
- body:not(.store-page) nav.nav .brand,body:not(.store-page) nav.navbar .brand,
- body:not(.store-page) nav.site-nav .brand,body:not(.store-page) nav.main-nav .brand{font-size:18px!important}
- body:not(.store-page) nav.nav .brand img,body:not(.store-page) nav.navbar .brand img,
- body:not(.store-page) nav.site-nav .brand img,body:not(.store-page) nav.main-nav .brand img{width:40px!important;height:40px!important}
- body:not(.store-page) .menu-toggle,body:not(.store-page) .ite-mobile-menu-trigger{
+ body:not(.store-page):not(.store-admin-page) nav.nav .brand,body:not(.store-page):not(.store-admin-page) nav.navbar .brand,
+ body:not(.store-page):not(.store-admin-page) nav.site-nav .brand,body:not(.store-page):not(.store-admin-page) nav.main-nav .brand{font-size:18px!important}
+ body:not(.store-page):not(.store-admin-page) nav.nav .brand img,body:not(.store-page):not(.store-admin-page) nav.navbar .brand img,
+ body:not(.store-page):not(.store-admin-page) nav.site-nav .brand img,body:not(.store-page):not(.store-admin-page) nav.main-nav .brand img{width:40px!important;height:40px!important}
+ body:not(.store-page):not(.store-admin-page) .menu-toggle,body:not(.store-page):not(.store-admin-page) .ite-mobile-menu-trigger{
   display:inline-flex!important;order:5!important;align-items:center!important;justify-content:center!important;
   width:44px!important;height:44px!important;min-width:44px!important;margin-left:auto!important;padding:0!important;
   border:1px solid #e7e7e7!important;border-radius:9px!important;background:#fff!important;color:#171717!important;font-size:24px!important;
  }
- body:not(.store-page) nav.nav .nav-links,body:not(.store-page) nav.nav .links,
- body:not(.store-page) nav.navbar .nav-links,body:not(.store-page) nav.navbar .links,
- body:not(.store-page) nav.site-nav .nav-links,body:not(.store-page) nav.site-nav .links,
- body:not(.store-page) nav.main-nav .nav-links,body:not(.store-page) nav.main-nav .links{display:none!important}
- body:not(.store-page) .ite-header-actions{margin-left:auto!important}
- body:not(.store-page) main{width:calc(100% - 28px)!important}
- body:not(.store-page) h1{font-size:clamp(28px,7vw,44px)!important;line-height:1.12!important}
+ body:not(.store-page):not(.store-admin-page) nav.nav .nav-links,body:not(.store-page):not(.store-admin-page) nav.nav .links,
+ body:not(.store-page):not(.store-admin-page) nav.navbar .nav-links,body:not(.store-page):not(.store-admin-page) nav.navbar .links,
+ body:not(.store-page):not(.store-admin-page) nav.site-nav .nav-links,body:not(.store-page):not(.store-admin-page) nav.site-nav .links,
+ body:not(.store-page):not(.store-admin-page) nav.main-nav .nav-links,body:not(.store-page):not(.store-admin-page) nav.main-nav .links{display:none!important}
+ body:not(.store-page):not(.store-admin-page) .ite-header-actions{margin-left:auto!important}
+ body:not(.store-page):not(.store-admin-page) main{width:calc(100% - 28px)!important}
+ body:not(.store-page):not(.store-admin-page) h1{font-size:clamp(28px,7vw,44px)!important;line-height:1.12!important}
 }
 @media(max-width:520px){
- body:not(.store-page) main{width:calc(100% - 22px)!important}
- body:not(.store-page) .feature-grid,body:not(.store-page) .services-grid,body:not(.store-page) .pricing-grid,
- body:not(.store-page) .plans-wrapper,body:not(.store-page) .cards-grid{grid-template-columns:minmax(0,1fr)!important}
+ body:not(.store-page):not(.store-admin-page) main{width:calc(100% - 22px)!important}
+ body:not(.store-page):not(.store-admin-page) .feature-grid,body:not(.store-page):not(.store-admin-page) .services-grid,body:not(.store-page):not(.store-admin-page) .pricing-grid,
+ body:not(.store-page):not(.store-admin-page) .plans-wrapper,body:not(.store-page):not(.store-admin-page) .cards-grid{grid-template-columns:minmax(0,1fr)!important}
 }
 
 
@@ -172,38 +172,38 @@ body.store-page .wa-float,body.store-page .wa-widget,body.store-page [data-whats
 html{width:100%;max-width:100%;overflow-x:hidden!important;scrollbar-gutter:stable}
 body{width:100%;max-width:100%;min-width:0;overflow-x:hidden!important}
 body *{box-sizing:border-box}
-body:not(.store-page) main,
-body:not(.store-page) main>section,
-body:not(.store-page) .container,
-body:not(.store-page) .content,
-body:not(.store-page) .wrap,
-body:not(.store-page) .page,
-body:not(.store-page) .hero,
-body:not(.store-page) .hero-panel,
-body:not(.store-page) .hero-layout{min-width:0!important;max-width:100%!important}
-body:not(.store-page) main{margin-left:auto!important;margin-right:auto!important}
-body:not(.store-page) img,body:not(.store-page) video,body:not(.store-page) iframe{max-width:100%;height:auto}
-body:not(.store-page) h1,body:not(.store-page) h2,body:not(.store-page) h3,
-body:not(.store-page) p,body:not(.store-page) a,body:not(.store-page) button,
-body:not(.store-page) label,body:not(.store-page) li{overflow-wrap:anywhere}
-body:not(.store-page) input,body:not(.store-page) select,body:not(.store-page) textarea{max-width:100%;min-width:0}
+body:not(.store-page):not(.store-admin-page) main,
+body:not(.store-page):not(.store-admin-page) main>section,
+body:not(.store-page):not(.store-admin-page) .container,
+body:not(.store-page):not(.store-admin-page) .content,
+body:not(.store-page):not(.store-admin-page) .wrap,
+body:not(.store-page):not(.store-admin-page) .page,
+body:not(.store-page):not(.store-admin-page) .hero,
+body:not(.store-page):not(.store-admin-page) .hero-panel,
+body:not(.store-page):not(.store-admin-page) .hero-layout{min-width:0!important;max-width:100%!important}
+body:not(.store-page):not(.store-admin-page) main{margin-left:auto!important;margin-right:auto!important}
+body:not(.store-page):not(.store-admin-page) img,body:not(.store-page):not(.store-admin-page) video,body:not(.store-page):not(.store-admin-page) iframe{max-width:100%;height:auto}
+body:not(.store-page):not(.store-admin-page) h1,body:not(.store-page):not(.store-admin-page) h2,body:not(.store-page):not(.store-admin-page) h3,
+body:not(.store-page):not(.store-admin-page) p,body:not(.store-page):not(.store-admin-page) a,body:not(.store-page):not(.store-admin-page) button,
+body:not(.store-page):not(.store-admin-page) label,body:not(.store-page):not(.store-admin-page) li{overflow-wrap:anywhere}
+body:not(.store-page):not(.store-admin-page) input,body:not(.store-page):not(.store-admin-page) select,body:not(.store-page):not(.store-admin-page) textarea{max-width:100%;min-width:0}
 body.store-page .hero{width:100%;max-width:1480px;margin:0 auto;padding-left:clamp(18px,5vw,72px);padding-right:clamp(18px,5vw,72px)}
 body.store-page main.wrap{width:min(calc(100% - 40px),1480px)!important;max-width:1480px!important;margin:0 auto!important}
 body.store-page .catalogue-layout,body.store-page .product-area{min-width:0!important;max-width:100%!important}
 body.store-page .products{min-width:0!important}
 body.store-page #iteSideCart{display:flex!important}
 @media(max-width:900px){
- body:not(.store-page) main{width:calc(100% - 32px)!important}
- body:not(.store-page) section{min-width:0!important;max-width:100%!important}
+ body:not(.store-page):not(.store-admin-page) main{width:calc(100% - 32px)!important}
+ body:not(.store-page):not(.store-admin-page) section{min-width:0!important;max-width:100%!important}
  body.store-page .hero{grid-template-columns:minmax(0,1fr)!important;gap:18px!important;min-height:0!important}
  body.store-page .hero-art{width:100%;max-width:100%;height:auto;min-height:170px}
  body.store-page main.wrap{width:calc(100% - 28px)!important}
 }
 @media(max-width:760px){
- body:not(.store-page) nav.nav,body:not(.store-page) nav.navbar,body:not(.store-page) nav.site-nav,body:not(.store-page) nav.main-nav,body:not(.store-page) header.site-header{width:100%!important;max-width:100%!important;overflow:visible!important}
- body:not(.store-page) .ite-mobile-menu-trigger{display:inline-flex!important}
- body:not(.store-page) .ite-header-links{display:none!important}
- body:not(.store-page) main{width:calc(100% - 24px)!important}
+ body:not(.store-page):not(.store-admin-page) nav.nav,body:not(.store-page):not(.store-admin-page) nav.navbar,body:not(.store-page):not(.store-admin-page) nav.site-nav,body:not(.store-page):not(.store-admin-page) nav.main-nav,body:not(.store-page):not(.store-admin-page) header.site-header{width:100%!important;max-width:100%!important;overflow:visible!important}
+ body:not(.store-page):not(.store-admin-page) .ite-mobile-menu-trigger{display:inline-flex!important}
+ body:not(.store-page):not(.store-admin-page) .ite-header-links{display:none!important}
+ body:not(.store-page):not(.store-admin-page) main{width:calc(100% - 24px)!important}
  body.store-page .catalogue-layout{display:block!important}
  body.store-page .department-sidebar{width:100%;max-width:100%;margin-bottom:16px}
  body.store-page .products{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
@@ -211,7 +211,7 @@ body.store-page #iteSideCart{display:flex!important}
  body.store-page .card img{max-width:100%;object-fit:contain}
 }
 @media(max-width:420px){
- body:not(.store-page) main{width:calc(100% - 18px)!important}
+ body:not(.store-page):not(.store-admin-page) main{width:calc(100% - 18px)!important}
  body.store-page main.wrap{width:calc(100% - 18px)!important}
  body.store-page .products{grid-template-columns:repeat(2,minmax(0,1fr))!important}
 }
@@ -227,3 +227,12 @@ body.store-page #iteSideCart{display:flex!important}
 .ite-more-menu-panel a{display:flex;align-items:center;min-height:38px;padding:8px 10px;border-radius:7px;color:#30333b;font-size:13px;font-weight:700;text-decoration:none;white-space:normal}
 .ite-more-menu-panel a:hover{background:#fff1f1;color:var(--ite-red)}
 @media(max-width:760px){.ite-more-menu{display:none!important}}
+
+
+/* Store top-navigation chat-list action; no floating chat button on any store view. */
+body.store-page .ite-header-chatlist{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:46px!important;padding:0 14px!important;border:1px solid #e00000!important;border-radius:8px!important;background:#fff!important;color:#e00000!important;font-size:14px!important;font-weight:850!important;white-space:nowrap!important;cursor:pointer!important}
+body.store-page .ite-chatlist-icon{font-size:18px!important;line-height:1!important}
+body.store-page .ite-chatlist-count{display:inline-grid!important;place-items:center!important;min-width:19px!important;height:19px!important;padding:0 5px!important;border-radius:999px!important;background:#171717!important;color:#fff!important;font-size:11px!important;font-weight:900!important}
+body.store-page #iteSideCart,body.store-page .ite-side-cart,body.store-page .ite-floating-chat-list,body.store-page .floating-chat-list,body.store-page .ite-chat-float,body.store-page .ite-store-whatsapp-float{display:none!important}
+@media(max-width:760px){body.store-page .ite-header-chatlist{min-height:40px!important;padding:0 8px!important;gap:4px!important;font-size:11px!important}body.store-page .ite-chatlist-count{min-width:17px!important;height:17px!important;font-size:10px!important}}
+@media(max-width:370px){body.store-page .ite-header-chatlist{padding:0 6px!important;font-size:10px!important}}
