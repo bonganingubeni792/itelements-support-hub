@@ -59,37 +59,33 @@
   // Remove old/duplicated account controls; exactly one is recreated below.
   Array.prototype.forEach.call(header.querySelectorAll('#accountAction, .ite-account-action, a[href="/client/login"].nav-cta'), function (node) { node.remove(); });
   var oldCart = isStore ? header.querySelector('#openCart') : null;
+  // Remove stale/duplicate cart labels from older page-specific headers so every page
+  // uses the same account-backed cart control created below.
+  Array.prototype.forEach.call(header.querySelectorAll('button, a'), function (node) {
+    if (node === oldCart) return;
+    if (/^cart(?:\s*\(|$)/i.test(String(node.textContent || '').trim())) node.remove();
+  });
   actions.innerHTML = '';
   var account = makeLink('/client/login', 'Login');
   account.id = 'accountAction';
   account.className = 'ite-account-action';
   account.setAttribute('aria-label', 'Log in to your IT Elements account');
   actions.appendChild(account);
+  var cartControl;
   if (isStore) {
-    var chatList = document.createElement('button');
-    chatList.type = 'button'; chatList.id = 'openChatList'; chatList.className = 'ite-header-chatlist';
-    chatList.hidden = true;
-    chatList.setAttribute('aria-label', 'Open chat');
-    chatList.setAttribute('aria-controls', 'chatListDrawer');
-    chatList.setAttribute('aria-expanded', 'false');
-    chatList.innerHTML = '<span class="ite-chatlist-icon" aria-hidden="true">💬</span><span>Chat</span><span class="ite-chatlist-count" id="chatListCount">0</span>';
-    try {
-      var savedChatItems = JSON.parse(localStorage.getItem('itelements_store_chat_list_v1') || '[]');
-      var savedChatCount = Array.isArray(savedChatItems) ? savedChatItems.reduce(function (n, item) { return n + (Number(item && item.qty) || 0); }, 0) : 0;
-      chatList.querySelector('#chatListCount').textContent = String(savedChatCount);
-    } catch (_) {}
-    actions.appendChild(chatList);
-    var cart = oldCart || document.createElement('button'); cart.type = 'button'; cart.classList.add('ite-header-cart'); cart.id = 'openCart';
-    cart.hidden = true;
-    if (!oldCart) cart.innerHTML = 'Cart (<span id="cartCount">0</span>)'; actions.appendChild(cart);
-    chatList.addEventListener('click', function () {
-      var drawer = document.getElementById('chatListDrawer');
-      if (!drawer) return;
-      drawer.classList.add('open'); drawer.setAttribute('aria-hidden', 'false'); chatList.setAttribute('aria-expanded', 'true');
-      if (typeof window.renderChatList === 'function') window.renderChatList();
-    });
+    cartControl = oldCart || document.createElement('button');
+    cartControl.type = 'button';
+    cartControl.classList.add('ite-header-cart');
+    cartControl.id = 'openCart';
+    if (!oldCart) cartControl.innerHTML = 'Cart (<span id="cartCount">0</span>)';
+    cartControl.hidden = true;
+    actions.appendChild(cartControl);
   } else {
-    var cartLink = makeLink('/store#cart', 'Cart (0)'); cartLink.className = 'ite-header-cart'; cartLink.hidden = true; cartLink.setAttribute('aria-label','Open shopping cart'); actions.appendChild(cartLink);
+    cartControl = makeLink('/store?openCart=1', 'Cart (0)');
+    cartControl.className = 'ite-header-cart';
+    cartControl.setAttribute('aria-label','Open your saved shopping cart');
+    cartControl.hidden = true;
+    actions.appendChild(cartControl);
   }
   var menu = header.querySelector('.menu-toggle, .ite-mobile-menu-trigger');
   if (!menu) { menu = document.createElement('button'); menu.type = 'button'; menu.className = 'ite-mobile-menu-trigger'; menu.textContent = '☰'; header.insertBefore(menu, brand || header.firstChild); }
@@ -99,50 +95,47 @@
   fetch('/api/store/auth-status', { credentials: 'same-origin', cache: 'no-store' })
     .then(function (response) { if (!response.ok) throw new Error('Authentication status unavailable'); return response.json(); })
     .then(function (auth) {
+      var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
         account.textContent = 'Logout'; account.href = '/client/logout';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
-        if (isStore) {
-          chatList.hidden = false;
-          cart.hidden = false;
-          var productCart = document.getElementById('openCartFromProduct');
-          if (productCart) productCart.hidden = false;
-          fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
-            .then(function (r) { return r.ok ? r.json() : null; })
-            .then(function (data) {
-              if (data && Array.isArray(data.items)) {
-                var total = data.items.reduce(function (n, item) { return n + (Number(item.qty) || 0); }, 0);
-                cart.textContent = 'Cart (' + total + ')';
-              }
-            }).catch(function () {});
-        }
-        if (!isStore) {
-          cartLink.hidden = false;
-          fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (data) { if (data && Array.isArray(data.items)) { var total = data.items.reduce(function (n, item) { return n + (Number(item.qty) || 0); }, 0); cartLink.textContent = 'Cart (' + total + ')'; } })
-          .catch(function () {});
-        }
-      } else {
-        if (isStore) {
-          chatList.hidden = true;
-          cart.hidden = true;
-          var productCart = document.getElementById('openCartFromProduct');
-          if (productCart) productCart.hidden = true;
-        }
-        account.textContent = 'Login'; account.href = '/client/login';
-        account.setAttribute('aria-label', 'Log in to your IT Elements account');
-        if (!isStore) cartLink.hidden = true;
+        if (cartControl) cartControl.hidden = false;
+        if (productCart) productCart.hidden = false;
+
+        return fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
+          .then(function (r) { if (!r.ok) throw new Error('Saved cart unavailable'); return r.json(); })
+          .then(function (data) {
+            if (!data || !data.success || !Array.isArray(data.items)) throw new Error('Saved cart response was invalid');
+            var total = data.items.reduce(function (n, item) { return n + (Number(item && item.qty) || 0); }, 0);
+            if (isStore) {
+              var count = document.getElementById('cartCount');
+              if (count) count.textContent = String(total);
+              var productCount = document.getElementById('productCartCount');
+              if (productCount) productCount.textContent = String(total);
+            } else if (cartControl) {
+              cartControl.textContent = 'Cart (' + total + ')';
+              cartControl.href = '/store?openCart=1';
+            }
+          })
+          .catch(function () {
+            if (cartControl) {
+              if (isStore) {
+                var count = document.getElementById('cartCount');
+                if (count) count.textContent = '—';
+              } else cartControl.textContent = 'Cart (—)';
+            }
+          });
       }
-    }).catch(function () {
-      if (isStore) {
-        chatList.hidden = true;
-        cart.hidden = true;
-        var productCart = document.getElementById('openCartFromProduct');
-        if (productCart) productCart.hidden = true;
-      } else {
-        cartLink.hidden = true;
-      }
+
       account.textContent = 'Login'; account.href = '/client/login';
+      account.setAttribute('aria-label', 'Log in to your IT Elements account');
+      if (cartControl) cartControl.hidden = true;
+      if (productCart) productCart.hidden = true;
+    })
+    .catch(function () {
+      account.textContent = 'Login'; account.href = '/client/login';
+      if (cartControl) cartControl.hidden = true;
+      var productCart = document.getElementById('openCartFromProduct');
+      if (productCart) productCart.hidden = true;
     });
 })();
