@@ -1457,19 +1457,21 @@ async function createPayFastCheckout({
     const config = payfastConfig();
 
     if (!config) {
+        console.error('[PAYMENT CONFIG] PayFast is not ready. Check PAYFAST_MERCHANT_ID (8 digits), PAYFAST_MERCHANT_KEY (13 characters), and PAYFAST_MODE (live or test). Secret values are not logged.');
         throw Object.assign(
             new Error(
-                'Secure payment is not configured correctly yet. Please contact IT Elements so we can complete the payment setup.'
+                'Secure payment is temporarily unavailable because the payment account configuration needs attention. Please contact IT Elements.'
             ),
             { statusCode: 503 }
         );
     }
 
-    const publicBaseUrl = String(
-        process.env.PUBLIC_BASE_URL || ''
-    ).replace(/\/$/, '');
+    // Render production fallback: keeps checkout return/notify URLs valid
+    // even if PUBLIC_BASE_URL was accidentally omitted from the service environment.
+    const configuredBaseUrl = String(process.env.PUBLIC_BASE_URL || '').trim();
+    const publicBaseUrl = (configuredBaseUrl || 'https://www.itelements.help').replace(/\/$/, '');
 
-    if (!publicBaseUrl.startsWith('https://')) {
+    if (!/^https:\/\//i.test(publicBaseUrl)) {
         throw Object.assign(
             new Error("Secure checkout needs the website HTTPS address to be configured. Please contact IT Elements."),
             { statusCode: 503 }
