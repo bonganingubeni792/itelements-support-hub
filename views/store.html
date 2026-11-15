@@ -1226,6 +1226,7 @@ button[onclick*="addDetailToChat"] {
 }
 </style>
 
+<link rel="stylesheet" href="/ite-store-mobile-app.css?v=20261115-mobile-app-v1">
 </head><body class="store-page">
 <header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
@@ -1939,6 +1940,31 @@ checkReturnedPayment();
 
 <!-- Same floating WhatsApp button as the IT Elements homepage -->
 <a class="whatsapp" href="https://wa.me/27606181229" target="_blank" rel="noopener noreferrer" aria-label="Chat with IT Elements on WhatsApp">WhatsApp Us</a>
+
+<nav class="ite-mobile-bottom-nav" aria-label="Mobile shopping navigation">
+ <button type="button" class="ite-mobile-nav-item active" data-mobile-action="home"><span class="ite-nav-icon">⌂</span><small>Home</small></button>
+ <button type="button" class="ite-mobile-nav-item" data-mobile-action="categories"><span class="ite-nav-icon">▦</span><small>Categories</small></button>
+ <button type="button" class="ite-mobile-nav-item" data-mobile-action="search"><span class="ite-nav-icon">⌕</span><small>Search</small></button>
+ <button type="button" class="ite-mobile-nav-item" data-mobile-action="cart"><span class="ite-nav-icon">🛒<b id="iteMobileCartCount">0</b></span><small>Cart</small></button>
+ <button type="button" class="ite-mobile-nav-item" data-mobile-action="account"><span class="ite-nav-icon">♙</span><small>Account</small></button>
+</nav>
+<script>
+(function(){
+ const nav=document.querySelector('.ite-mobile-bottom-nav'); if(!nav)return;
+ const count=document.getElementById('iteMobileCartCount');
+ function sync(){const source=document.getElementById('cartCount');if(count&&source)count.textContent=source.textContent||'0';}
+ sync();new MutationObserver(sync).observe(document.getElementById('cartCount')||document.body,{childList:true,characterData:true,subtree:true});
+ nav.addEventListener('click',function(e){const btn=e.target.closest('[data-mobile-action]');if(!btn)return;const action=btn.dataset.mobileAction;
+  nav.querySelectorAll('.ite-mobile-nav-item').forEach(x=>x.classList.toggle('active',x===btn));
+  if(action==='home'){window.scrollTo({top:0,behavior:'smooth'});}
+  if(action==='categories'){const picker=document.getElementById('departmentPicker');const target=picker||document.getElementById('catalogue');target?.scrollIntoView({behavior:'smooth',block:'center'});picker?.focus({preventScroll:true});}
+  if(action==='search'){const input=document.getElementById('search');input?.scrollIntoView({behavior:'smooth',block:'center'});input?.focus({preventScroll:true});}
+  if(action==='cart'){document.getElementById('openCart')?.click();}
+  if(action==='account'){document.getElementById('accountAction')?.click();}
+ });
+})();
+</script>
+
 </body></html>
 
 <style id="it-elements-full-page-checkout-v2">
