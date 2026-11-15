@@ -46,7 +46,7 @@ a{color:inherit;text-decoration:none}header{height:76px;border-bottom:1px solid 
 .product-modal-panel{position:relative;z-index:1;width:min(900px,100%);max-height:90vh;overflow:auto;border-radius:17px;background:#fff;box-shadow:0 25px 80px #0005}
 .product-modal-toolbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#fff;border-bottom:1px solid #eceef1}
 .product-modal-close{position:static;float:none;margin:0;width:auto;min-height:38px;padding:8px 12px;border:0;border-radius:9px;background:#f1f2f4;font-size:14px;font-weight:700;cursor:pointer}
-.product-modal-chatlist{min-height:38px;padding:8px 14px;border:1px solid #e00000;border-radius:9px;background:#fff;color:#e00000;font-weight:800;cursor:pointer}
+.product-modal-chatlist{min-height:38px;padding:8px 14px;border:1px solid #e00000;border-radius:9px;background:#e00000;color:#fff;font-weight:800;cursor:pointer}.product-modal-chatlist[hidden]{display:none!important}
 #chatListDrawer{z-index:1301!important}
 .product-modal-content{display:grid;grid-template-columns:1fr 1fr;gap:26px;padding:28px}
 .product-detail-image{display:grid;place-items:center;min-height:320px;border:1px solid #eceef1;border-radius:12px;background:#fafafa}
@@ -524,7 +524,7 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
  <section class="product-modal-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
   <div class="product-modal-toolbar">
    <button class="product-modal-close" type="button" data-close-product aria-label="Back to products">← Back to products</button>
-   <button class="product-modal-chatlist" type="button" id="openChatListFromProduct">Chat list (<span id="productChatListCount">0</span>)</button>
+   <button class="product-modal-chatlist" type="button" id="openChatListFromProduct" hidden aria-label="Open chat">💬 Chat (<span id="productChatListCount">0</span>)</button>
   </div>
   <div class="product-modal-content" id="productModalContent"></div>
  </section>
@@ -805,7 +805,7 @@ window.addDetailToChat=async id=>{
  if(existing)existing.qty+=qty;else chatList.push({id,qty});
  saveChatList();renderChatList();
  const notice=$('detailCartNotice')||(()=>{const n=document.createElement('p');n.id='detailCartNotice';n.setAttribute('role','status');n.style.cssText='margin:12px 0;padding:10px 12px;border-radius:9px;background:#eaf8ef;color:#176b35;font-weight:700';const actions=document.querySelector('.product-detail-actions');if(actions)actions.insertAdjacentElement('afterend',n);return n;})();
- notice.textContent=`${qty} item(s) added to your chat list. Your product details are still open. Use the Chat list button in the top navigation to view your list.`;notice.hidden=false;
+ notice.textContent=`${qty} item(s) added to your chat list. Your product details are still open. Use the Chat button to view your list.`;notice.hidden=false;
 };
 $('openChatListFromProduct')?.addEventListener('click',()=>{$('chatListDrawer').classList.add('open');$('chatListDrawer').setAttribute('aria-hidden','false');renderChatList();});
 $('closeChatList')?.addEventListener('click',()=>{$('chatListDrawer').classList.remove('open');$('chatListDrawer').setAttribute('aria-hidden','true');});
