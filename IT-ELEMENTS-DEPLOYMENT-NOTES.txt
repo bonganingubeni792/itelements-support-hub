@@ -46,3 +46,10 @@ Account cart privacy/persistence update:
 - Customer carts are stored in MongoDB collection storecustomercarts, scoped by the authenticated session's userEmail.
 - Requires the existing MONGODB_URI and session configuration to be working.
 - Verify two-account isolation and logout/login persistence after deployment. Do not test using a real customer payment.
+
+Store update 15 Nov 2026:
+- Deploy server.js, views/store.html and views/store-admin.html together.
+- StoreProduct documents now support productType: normal|sale; legacy records default to normal. Legacy discounted products (compareAtPrice > price) are also included in Sale Products for compatibility.
+- Admin product editor lets an administrator choose Normal product or Sale product.
+- Public store has Login/Logout based on current session and a fixed side-cart tab that opens the existing cart drawer.
+- Test login/logout, product type selection, sale collection and cart drawer after Render deployment.

@@ -155,3 +155,15 @@ ACCOUNT-SPECIFIC SAVED STORE CART — 15 NOVEMBER 2026
 STORE UNAVAILABLE AFTER ADDING COLLECTION TABS — 15 NOVEMBER 2026
 [FIXED IN CODE] In views/store.html render(), collectionTitle was referenced before its const declaration. JavaScript throws a ReferenceError (temporal dead zone), and the store's load() catch displays "The store is temporarily unavailable." Moved the collectionTitle declaration before it is used.
 [CHECKED] server.js and store inline JavaScript pass Node syntax checks. This does not replace a live Render/browser test.
+
+
+STORE ACCOUNT CONTROLS, PRODUCT COLLECTIONS AND SIDE CART — 15 NOVEMBER 2026
+[CODE UPDATED] Public store header now checks /api/store/auth-status and shows Login when signed out or Logout when signed in. Logout uses the existing /client/logout route.
+[CODE UPDATED] Removed the Just Arrived collection tab and its collection-specific sorting. All Products and Sale Products remain.
+[CODE UPDATED] Added explicit productType (normal/sale) to the StoreProduct MongoDB schema and cleanStoreProduct server sanitizer. Existing products default to normal.
+[CODE UPDATED] Added a Product collection selector to the one-by-one Store Admin product form. It is saved in create/update requests and restored when editing an existing product.
+[CODE UPDATED] Sale Products collection includes explicitly marked sale products; legacy products with compareAtPrice greater than price remain included for backwards compatibility.
+[CODE UPDATED] Sale product cards display a SALE ribbon.
+[CODE UPDATED] Added a fixed side Cart control with a live item count. It opens the existing cart drawer; product detail stays open when Add to cart is used, with the existing added-to-cart confirmation.
+[CHECKED] server.js and all inline JavaScript in store.html and store-admin.html pass Node syntax checks.
+[NEEDS LIVE TEST] Deploy and test Login/Logout state on customer accounts; create/edit one normal and one sale product; verify only sale product appears in Sale Products; add product from product detail and open side cart; verify account-specific cart isolation/persistence with two accounts.
