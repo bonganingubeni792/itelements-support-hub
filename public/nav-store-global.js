@@ -89,7 +89,7 @@
       if (typeof window.renderChatList === 'function') window.renderChatList();
     });
   } else {
-    var cartLink = makeLink('/store#cart', 'Cart (0)'); cartLink.className = 'ite-header-cart'; cartLink.setAttribute('aria-label','Open shopping cart'); actions.appendChild(cartLink);
+    var cartLink = makeLink('/store#cart', 'Cart (0)'); cartLink.className = 'ite-header-cart'; cartLink.hidden = true; cartLink.setAttribute('aria-label','Open shopping cart'); actions.appendChild(cartLink);
   }
   var menu = header.querySelector('.menu-toggle, .ite-mobile-menu-trigger');
   if (!menu) { menu = document.createElement('button'); menu.type = 'button'; menu.className = 'ite-mobile-menu-trigger'; menu.textContent = '☰'; header.insertBefore(menu, brand || header.firstChild); }
@@ -116,10 +116,13 @@
               }
             }).catch(function () {});
         }
-        if (!isStore) fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
+        if (!isStore) {
+          cartLink.hidden = false;
+          fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
           .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (data) { if (data && Array.isArray(data.items)) { var total = data.items.reduce(function (n, item) { return n + (Number(item.qty) || 0); }, 0); actions.querySelector('.ite-header-cart').textContent = 'Cart (' + total + ')'; } })
+          .then(function (data) { if (data && Array.isArray(data.items)) { var total = data.items.reduce(function (n, item) { return n + (Number(item.qty) || 0); }, 0); cartLink.textContent = 'Cart (' + total + ')'; } })
           .catch(function () {});
+        }
       } else {
         if (isStore) {
           chatList.hidden = true;
@@ -129,7 +132,7 @@
         }
         account.textContent = 'Login'; account.href = '/client/login';
         account.setAttribute('aria-label', 'Log in to your IT Elements account');
-        if (!isStore) { try { var guest = JSON.parse(localStorage.getItem('itelements_store_cart_guest_v2') || '[]'); var total = Array.isArray(guest) ? guest.reduce(function (n, item) { return n + (Number(item.qty) || 0); }, 0) : 0; actions.querySelector('.ite-header-cart').textContent = 'Cart (' + total + ')'; } catch (_) {} }
+        if (!isStore) cartLink.hidden = true;
       }
     }).catch(function () {
       if (isStore) {
@@ -137,6 +140,8 @@
         cart.hidden = true;
         var productChat = document.getElementById('openChatListFromProduct');
         if (productChat) productChat.hidden = true;
+      } else {
+        cartLink.hidden = true;
       }
       account.textContent = 'Login'; account.href = '/client/login';
     });

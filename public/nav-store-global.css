@@ -244,3 +244,9 @@ body.store-page .ite-header-actions #openChatList[hidden],
 body.store-page #openChatListFromProduct[hidden] {
   display: none !important;
 }
+
+/* Hide the public header cart until a signed-in account is confirmed. */
+body:not(.store-page) .ite-header-actions .ite-header-cart[hidden],
+body.store-page .ite-header-actions #openCart[hidden] {
+  display: none !important;
+}
