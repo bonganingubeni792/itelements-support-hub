@@ -891,6 +891,9 @@ app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 // Main website pages
 app.get('/', (req, res) => {
+    res.sendFile(path.join(viewsPath, 'store.html'));
+});
+app.get('/home', (req, res) => {
     res.sendFile(path.join(viewsPath, 'index.html'));
 });
 

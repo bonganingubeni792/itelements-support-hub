@@ -53,3 +53,12 @@ Store update 15 Nov 2026:
 - Admin product editor lets an administrator choose Normal product or Sale product.
 - Public store has Login/Logout based on current session and a fixed side-cart tab that opens the existing cart drawer.
 - Test login/logout, product type selection, sale collection and cart drawer after Render deployment.
+
+
+Website-wide Storefront reset — 15 Nov 2026:
+- Upload the full ZIP, not only the changed files.
+- GET / now serves views/store.html; GET /home serves the previous marketing homepage.
+- Shared navigation assets use cache key 20261115-storefront-refresh.
+- Existing Store and Client Logout routes were retained.
+- Verify root page, desktop/mobile navigation and authentication status after Render deployment.
+- No database collections or customer records were deleted or reset.

@@ -178,3 +178,15 @@ APPROVED SHARED HEADER AND LOGIN/LOGOUT CORRECTION — 15 NOVEMBER 2026
 [CODE UPDATED] Cache-busted shared header CSS/JS references across pages using the global navigation assets.
 [NEEDS LIVE TEST] Test signed-out and signed-in header states on Home, Services, Online Store, On-site, Plans, About, FAQ, Contact, Reviews and Business Support. Confirm only one Login or Logout appears and logout clears the session.
 [NEEDS LIVE TEST] Test cart button on store opens the real cart drawer; non-store Cart link opens the store cart. Check desktop and phone widths.
+
+
+LATEST WEBSITE-WIDE STOREFRONT RESET — 15 NOVEMBER 2026
+[CODE UPDATED] The website root route / now serves views/store.html, making the Online Store the first page visitors see.
+[CODE UPDATED] The former marketing homepage remains available at /home so its content is preserved.
+[CODE UPDATED] All public pages with the shared navigation load the unified Store-style header stylesheet.
+[CODE UPDATED] Desktop navigation is normalized by the existing shared nav script to Home, Services, Online Store, Contact, one session-aware Login/Logout action, and Cart.
+[CODE UPDATED] Mobile drawer retains the other destinations (On-site, Plans, Business, Reviews, About, FAQ, Contact, Client Portal) and its Home link now opens /home.
+[CODE UPDATED] Shared page styling aligns header, white background, content width, spacing, cards and responsive grids with the Store design.
+[CODE UPDATED] Store floating side-chat/WhatsApp overlay selectors are hidden while normal WhatsApp contact links remain available.
+[CHECKED IN SOURCE] Existing /store and /client/logout routes remain present; Store product/admin/cart/payment files are retained from the latest full project package.
+[NEEDS LIVE TEST] Check root URL, each public page, desktop header, mobile drawer, login/logout switching, cart count and Store overlay on Render after deployment.
