@@ -1187,116 +1187,47 @@ $('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render
 .row-validation-warning{display:inline-block;margin-top:4px}
 </style>
 
-<style id="ite-store-admin-clean-two-column-layout">
-/* One layout system only: sidebar owns its column; workspace owns the rest. */
-html,body{min-height:100%;width:100%;max-width:100%;margin:0;overflow-x:hidden}
-body{min-width:0}
-.app{
-  display:grid!important;
-  grid-template-columns:270px minmax(0,1fr)!important;
-  align-items:stretch!important;
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  min-height:100vh!important;
-  margin:0!important;
-  padding:0!important;
-  overflow:visible!important;
-}
-.app>.ite-store-sidebar{
-  grid-column:1!important;
-  grid-row:1!important;
-  position:sticky!important;
-  top:0!important;
-  left:auto!important;
-  align-self:start!important;
-  width:270px!important;
-  min-width:270px!important;
-  max-width:270px!important;
-  height:100vh!important;
-  min-height:100vh!important;
-  max-height:100vh!important;
-  overflow-x:hidden!important;
-  overflow-y:auto!important;
-  z-index:100!important;
-}
-.app>main{
-  grid-column:2!important;
-  grid-row:1!important;
-  position:relative!important;
-  display:block!important;
-  float:none!important;
-  left:auto!important;
-  right:auto!important;
-  width:100%!important;
-  min-width:0!important;
-  max-width:100%!important;
-  margin:0!important;
-  padding:0!important;
-  overflow-x:clip!important;
-}
-.app>main>.topbar{
-  position:sticky!important;
-  top:0!important;
-  z-index:50!important;
-  width:100%!important;
-  max-width:none!important;
-  box-sizing:border-box!important;
-}
-.app>main>.content{
-  display:block!important;
-  width:100%!important;
-  max-width:1720px!important;
-  min-width:0!important;
-  margin:0 auto!important;
-  box-sizing:border-box!important;
-}
-#catalogue,#catalogue .panelhead,#catalogue .toolbar,
-#catalogue .catalogue-pager,#productList{
-  width:100%!important;
-  max-width:100%!important;
-  min-width:0!important;
-  box-sizing:border-box!important;
-}
-#productList.catalogue{
-  display:grid!important;
-  grid-template-columns:repeat(auto-fill,minmax(min(245px,100%),1fr))!important;
-  align-items:stretch!important;
-  gap:14px!important;
-  margin-left:0!important;
-  margin-right:0!important;
-}
-#productList>.product{
-  min-width:0!important;
-  max-width:100%!important;
-  width:100%!important;
-  box-sizing:border-box!important;
-}
-#productList>.product *{min-width:0}
-@media(min-width:701px) and (max-width:1050px){
-  .app{grid-template-columns:235px minmax(0,1fr)!important}
-  .app>.ite-store-sidebar{width:235px!important;min-width:235px!important;max-width:235px!important}
-  #productList.catalogue{grid-template-columns:repeat(auto-fill,minmax(min(220px,100%),1fr))!important}
-}
-@media(max-width:700px){
-  .app{display:block!important}
-  .app>.ite-store-sidebar{
-    position:relative!important;
-    top:auto!important;left:auto!important;
-    width:100%!important;min-width:0!important;max-width:none!important;
-    height:auto!important;min-height:0!important;max-height:none!important;
+<style id="ite-store-admin-locked-sidebar-final">
+/* Desktop: pin the admin navigation to the browser viewport.
+   Only the main workspace scrolls; the sidebar itself never scrolls. */
+@media(min-width:701px){
+  html,body{min-height:100%;width:100%;max-width:100%;overflow-x:hidden}
+  body{min-width:0}
+  .app{
+    display:block!important;
+    width:100%!important;max-width:100%!important;min-width:0!important;
+    min-height:100vh!important;margin:0!important;padding:0!important;
     overflow:visible!important;
   }
-  .app>main{
-    display:block!important;
-    width:100%!important;min-width:0!important;max-width:100%!important;
-    margin:0!important;
+  .app>.ite-store-sidebar{
+    position:fixed!important;
+    top:0!important;bottom:0!important;left:0!important;
+    width:270px!important;min-width:270px!important;max-width:270px!important;
+    height:100vh!important;min-height:100vh!important;max-height:100vh!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+    z-index:1000!important;
+    align-self:auto!important;
   }
-  .app>main>.content{width:100%!important;max-width:none!important;margin:0!important}
-  #productList.catalogue{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-}
-@media(max-width:440px){
-  #productList.catalogue{grid-template-columns:minmax(0,1fr)!important}
+  .app>main{
+    display:block!important;position:relative!important;
+    width:auto!important;min-width:0!important;max-width:none!important;
+    margin:0 0 0 270px!important;padding:0!important;
+    left:auto!important;right:auto!important;float:none!important;
+    overflow-x:clip!important;
+  }
+  .app>main>.topbar{position:sticky!important;top:0!important;z-index:100!important;width:100%!important;box-sizing:border-box!important}
+  .app>main>.content{width:100%!important;max-width:1720px!important;min-width:0!important;margin:0 auto!important;box-sizing:border-box!important}
+  #catalogue,#catalogue .panelhead,#catalogue .toolbar,#catalogue .catalogue-pager,#productList{
+    width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;
+  }
+  #productList.catalogue{
+    display:grid!important;
+    grid-template-columns:repeat(auto-fill,minmax(min(245px,100%),1fr))!important;
+    align-items:stretch!important;gap:14px!important;margin-left:0!important;margin-right:0!important;
+  }
+  #productList>.product{min-width:0!important;max-width:100%!important;width:100%!important;box-sizing:border-box!important}
+  #productList>.product *{min-width:0}
 }
 </style>
 
