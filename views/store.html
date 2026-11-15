@@ -1746,7 +1746,7 @@ $('search').oninput=()=>{currentProductPage=1;render();};
 $('priceRange').onchange=()=>{currentProductPage=1;render();};
 $('availability').onchange=()=>{currentProductPage=1;render();};
 $('sort').onchange=()=>{currentProductPage=1;render();};
-$('year').textContent=new Date().getFullYear();
+$('year').textContent=2007;
 $('clearFilters').onclick=()=>{$('search').value='';$('departmentPicker').value='';$('priceRange').value='';$('availability').value='';$('sort').value='featured';currentProductPage=1;render();};
 $('search').addEventListener('keydown',e=>{if(e.key==='/'){e.preventDefault();$('search').focus();}});
 $('productPagination')?.addEventListener('click',event=>{
