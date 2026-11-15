@@ -451,7 +451,7 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 }
 
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-drawer-v3"><link rel="stylesheet" href="/ite-mobile.css?v=20261114-mobile2"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"></head><body class="store-page">
-<header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
+<header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
 <main class="wrap" id="catalogue"><div class="intro"><div><div class="eyebrow">Browse products</div><h2>Find what you need</h2><div class="muted">Products and prices are managed by IT Elements.</div></div><div class="muted" id="resultCount"></div></div>
@@ -477,7 +477,6 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
       <span class="toolbar-kicker">THE IT ELEMENTS COLLECTION</span>
       <nav class="collection-tabs" aria-label="Product collections">
         <button type="button" class="collection-tab active" data-collection="all">All Products</button>
-        <button type="button" class="collection-tab" data-collection="new">Just Arrived</button>
         <button type="button" class="collection-tab" data-collection="sale">Sale Products</button>
       </nav>
     </div>
@@ -512,6 +511,26 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 <div class="store-payment-notice" id="storePaymentNotice" role="status" aria-live="polite"></div>
 <div class="drawer" id="drawer"><aside class="cartpanel"><div class="carthead"><h2>Your cart</h2><button class="x" id="closeCart">✕</button></div><div id="cartItems"></div><div class="total"><span>Products subtotal</span><span id="cartTotal">R 0.00</span></div><p class="muted cart-delivery-rule">Delivery: R80 on product subtotals below R755; free on R755 or more.</p><button class="checkout" id="checkout">Continue to secure checkout</button><p class="muted" style="font-size:12px">Secure online payment. Delivery is R80 below R755 and free on orders of R755 or more.</p></aside></div>
 
+<button type="button" id="iteSideCart" aria-label="Open your cart">Cart <span id="iteSideCartCount">0</span></button>
+<style>
+#iteSideCart{position:fixed;right:0;top:48%;z-index:1100;border:0;border-radius:12px 0 0 12px;background:#e00000;color:#fff;padding:14px 16px;font:800 14px Arial,sans-serif;box-shadow:0 5px 22px #0002;cursor:pointer}
+#iteSideCart span{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-left:5px;border-radius:20px;background:#fff;color:#e00000}
+@media(max-width:700px){#iteSideCart{top:auto;bottom:115px;padding:11px 13px;font-size:13px}}
+</style>
+<script>
+(()=>{const b=document.getElementById('iteSideCart');if(!b)return;b.addEventListener('click',()=>document.getElementById('openCart')?.click());})();
+</script>
+
+<button type="button" id="iteSideCart" aria-label="Open your cart">Cart <span id="iteSideCartCount">0</span></button>
+<style>
+#iteSideCart{position:fixed;right:0;top:48%;z-index:1100;border:0;border-radius:12px 0 0 12px;background:#e00000;color:#fff;padding:14px 16px;font:800 14px Arial,sans-serif;box-shadow:0 5px 22px #0002;cursor:pointer}
+#iteSideCart span{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-left:5px;border-radius:20px;background:#fff;color:#e00000}
+@media(max-width:700px){#iteSideCart{top:auto;bottom:115px;padding:11px 13px;font-size:13px}}
+</style>
+<script>
+(()=>{const b=document.getElementById('iteSideCart');if(!b)return;b.addEventListener('click',()=>document.getElementById('openCart')?.click());})();
+</script>
+
 <div class="product-modal" id="productModal" aria-hidden="true">
  <div class="product-modal-backdrop" data-close-product></div>
  <section class="product-modal-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
@@ -537,6 +556,34 @@ let activeProductId=null;
 let galleryIndex=0;
 let storeAccountKey='guest';
 let cartSaveQueue=Promise.resolve();
+
+async function refreshStoreAccountAction(){
+ const button=$('accountAction');if(!button)return;
+ try{
+  const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
+  const auth=await response.json();
+  if(response.ok&&auth.authenticated){
+   button.textContent='Logout';button.href='/client/logout';button.setAttribute('aria-label','Log out of your IT Elements account');
+  }else{
+   button.textContent='Login';button.href='/client/login';button.setAttribute('aria-label','Log in to your IT Elements account');
+  }
+ }catch(_){button.textContent='Login';button.href='/client/login';}
+}
+
+
+async function refreshStoreAccountAction(){
+ const button=$('accountAction');if(!button)return;
+ try{
+  const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
+  const auth=await response.json();
+  if(response.ok&&auth.authenticated){
+   button.textContent='Logout';button.href='/client/logout';button.setAttribute('aria-label','Log out of your IT Elements account');
+  }else{
+   button.textContent='Login';button.href='/client/login';button.setAttribute('aria-label','Log in to your IT Elements account');
+  }
+ }catch(_){button.textContent='Login';button.href='/client/login';}
+}
+
 async function loadAccountCart(){
  // Clear in-memory state before checking the current session so a previous
  // customer's cart can never flash on screen for the next signed-in account.
@@ -596,7 +643,7 @@ function render(){
  let list=products.filter(p=>{
   const hay=[p.name,p.description,p.category,p.sku,p.brand,p.model,p.specifications].join(' ').toLowerCase();
   if(q&&!hay.includes(q))return false;
-  if(activeCollection==='sale'&&!(Number(p.compareAtPrice||0)>Number(p.price||0)))return false;
+  if(activeCollection==='sale'&&!(p.productType==='sale'||Number(p.compareAtPrice||0)>Number(p.price||0)))return false;
   if(cat&&String(p.category||'').toLowerCase()!==cat.toLowerCase())return false;
   const n=Number(p.price||0);
   if(price==='0-500'&&n>=500)return false;
@@ -613,13 +660,13 @@ function render(){
  if(sort==='name')list.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
  if(sort==='featured')list.sort((a,b)=>Number(!!b.featured)-Number(!!a.featured));
  if(sort==='newest')list.sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
- if(activeCollection==='new')list.sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
+ 
  $('resultCount').textContent='';
- const collectionTitle=activeCollection==='new'?'Just Arrived':activeCollection==='sale'?'Sale Products':'All Products';
+ const collectionTitle=activeCollection==='sale'?'Sale Products':'All Products';
  document.querySelectorAll('.collection-tab').forEach(b=>b.classList.toggle('active',b.dataset.collection===activeCollection));
  document.querySelector('.collection-tabs')?.setAttribute('aria-label',collectionTitle+' collection');
  document.querySelectorAll('.department-link').forEach(b=>b.classList.toggle('active',b.dataset.category===cat));
- $('products').innerHTML=list.length?list.map(p=>`<article class="card" role="button" tabindex="0" aria-label="View ${esc(p.name)}" onclick="showProduct('${p._id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showProduct('${p._id}')}"><div class="photo">${p.featured?'<span class="product-ribbon">FEATURED</span>':''}${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" loading="lazy">`:'<span aria-hidden="true">💻</span>'}</div><div class="cardbody"><div class="category">${esc(p.category||'IT products')}</div><h3>${esc(p.name)}</h3><p class="desc">${esc(p.description||'Contact us for more product information.')}</p><div class="card-price-row"><span class="price">${money(p.price)}</span>${p.compareAtPrice>p.price?`<span class="old">${money(p.compareAtPrice)}</span>`:''}</div><div class="stock"><span class="stock-dot ${Number(p.stock)>0?'in-stock':'out-stock'}"></span>${p.stock>0?`${p.stock} available`:'Contact us to confirm availability'}</div><div class="card-actions"><button class="add" onclick="event.stopPropagation();addToCart('${p._id}')" ${p.stock<=0?'disabled':''}>${p.stock>0?'Add to cart':'Check availability'}</button><button class="add secondary" onclick="event.stopPropagation();showProduct('${p._id}')">View product</button></div></div></article>`).join(''):'<div class="empty"><strong style="display:block;color:#252932;margin-bottom:7px">No products found</strong>Try a different search or clear your filters.<br><button class="filter-reset" style="margin-top:15px;padding:10px 15px" onclick="document.getElementById(\'clearFilters\').click()">Clear all filters</button></div>';
+ $('products').innerHTML=list.length?list.map(p=>`<article class="card" role="button" tabindex="0" aria-label="View ${esc(p.name)}" onclick="showProduct('${p._id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showProduct('${p._id}')}"><div class="photo">${p.productType==='sale'||Number(p.compareAtPrice||0)>Number(p.price||0)?'<span class="product-ribbon">SALE</span>':(p.featured?'<span class="product-ribbon">FEATURED</span>':'')}${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" loading="lazy">`:'<span aria-hidden="true">💻</span>'}</div><div class="cardbody"><div class="category">${esc(p.category||'IT products')}</div><h3>${esc(p.name)}</h3><p class="desc">${esc(p.description||'Contact us for more product information.')}</p><div class="card-price-row"><span class="price">${money(p.price)}</span>${p.compareAtPrice>p.price?`<span class="old">${money(p.compareAtPrice)}</span>`:''}</div><div class="stock"><span class="stock-dot ${Number(p.stock)>0?'in-stock':'out-stock'}"></span>${p.stock>0?`${p.stock} available`:'Contact us to confirm availability'}</div><div class="card-actions"><button class="add" onclick="event.stopPropagation();addToCart('${p._id}')" ${p.stock<=0?'disabled':''}>${p.stock>0?'Add to cart':'Check availability'}</button><button class="add secondary" onclick="event.stopPropagation();showProduct('${p._id}')">View product</button></div></div></article>`).join(''):'<div class="empty"><strong style="display:block;color:#252932;margin-bottom:7px">No products found</strong>Try a different search or clear your filters.<br><button class="filter-reset" style="margin-top:15px;padding:10px 15px" onclick="document.getElementById(\'clearFilters\').click()">Clear all filters</button></div>';
  document.querySelectorAll('.department-chip').forEach(b=>b.classList.toggle('active',b.dataset.category===cat));
 }
 document.querySelectorAll('.collection-tab').forEach(button=>button.addEventListener('click',()=>{
@@ -799,6 +846,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProduct();});
 function renderCart(){
  const count=cart.reduce((n,x)=>n+x.qty,0);
  $('cartCount').textContent=count;
+ const sideCount=$('iteSideCartCount');if(sideCount)sideCount.textContent=count;
  $('cartItems').innerHTML=cart.length?cart.map(x=>{
   const p=products.find(z=>z._id===x.id);
   if(!p)return '';
@@ -980,7 +1028,7 @@ async function load(){
   renderCart();
  }
 }
-load();renderCart();
+load();renderCart();refreshStoreAccountAction();
 checkReturnedPayment();
 </script><script src="/nav-store-global.js?v=20261115-drawer-v3" defer></script><script src="/ite-mobile.js?v=20261114-mobile2" defer></script>
 <a class="ite-store-whatsapp-float" href="https://wa.me/27606181229" target="_blank" rel="noopener" aria-label="Chat with IT Elements on WhatsApp">
