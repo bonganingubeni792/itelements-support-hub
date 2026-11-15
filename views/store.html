@@ -974,6 +974,71 @@ button[onclick*="addDetailToChat"] {
 }
 </style>
 
+
+<style id="ite-elements-desktop-sticky-departments-only">
+/* DESKTOP ONLY: keep Shop by Department beside the catalogue and visible while
+   the products scroll. The phone layout below is restored to its prior layout. */
+@media (min-width:761px){
+  #catalogue,
+  #catalogue .catalogue-layout,
+  #catalogue .product-area{
+    overflow:visible!important;
+  }
+  #catalogue .catalogue-layout{
+    display:grid!important;
+    grid-template-columns:minmax(220px,245px) minmax(0,1fr)!important;
+    align-items:start!important;
+    gap:20px!important;
+  }
+  #catalogue .department-sidebar{
+    position:-webkit-sticky!important;
+    position:sticky!important;
+    top:92px!important;
+    align-self:start!important;
+    width:100%!important;
+    max-height:calc(100vh - 112px)!important;
+    overflow:hidden!important;
+    z-index:30!important;
+    background:#fff!important;
+  }
+  #catalogue .department-links{
+    display:flex!important;
+    flex-direction:column!important;
+    max-height:calc(100vh - 190px)!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    scrollbar-width:thin!important;
+  }
+}
+
+/* PHONE: leave the phone catalogue in its previous stacked layout for now.
+   This is a responsive override only; no phone features or markup are removed. */
+@media (max-width:760px){
+  #catalogue .catalogue-layout{
+    display:block!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+  #catalogue .department-sidebar{
+    position:static!important;
+    top:auto!important;
+    width:auto!important;
+    max-height:none!important;
+    margin:0 0 12px!important;
+    overflow:visible!important;
+  }
+  #catalogue .department-links{
+    display:flex!important;
+    flex-direction:row!important;
+    max-height:none!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    white-space:nowrap!important;
+  }
+}
+</style>
+
 </head><body class="store-page">
 <header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
