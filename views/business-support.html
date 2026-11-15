@@ -686,7 +686,7 @@
 .ite-utility-right{margin-left:auto}.ite-utility-right a{white-space:nowrap}
 .ite-utility-right .ite-account-primary{font-weight:800}
 @media(max-width:650px){.ite-utility-bar{padding:7px 12px;font-size:10px}.ite-utility-left{gap:8px}.ite-utility-left .ite-location{display:none}.ite-utility-right{gap:10px}}
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-sticky-overflow-clip-v8"><!-- IT Elements unified Store-style responsive header build: 2026-11-15 -->
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-guest-cart-auth-v6"><!-- IT Elements unified Store-style responsive header build: 2026-11-15 -->
 </head>
 
 <body>
@@ -694,7 +694,7 @@
   <!-- HEADER -->
   <nav class="nav" aria-label="Main navigation">
 
-    <a class="brand" href="/" aria-label="IT Elements home">
+    <a class="brand" href="/store" aria-label="IT Elements home">
       <img
         src="/assets/itel-support-icon.png?v=3"
         alt="IT Elements logo"
@@ -715,7 +715,7 @@
     >☰</button>
 
     <div class="links" id="mainLinks">
-      <a href="/">Home</a>
+      <a href="/home">Home</a>
       <a href="/services">Services</a><a href="/store">Online Store</a>
       <a href="/pricing">Pricing</a>
       <a href="/onsite-support">On-site</a>
@@ -1128,7 +1128,7 @@
       <div class="footer-grid">
 
         <div>
-          <a href="/" class="brand" aria-label="IT Elements home">
+          <a href="/store" class="brand" aria-label="IT Elements home">
             <img
               src="/assets/itel-support-icon.png?v=3"
               alt="IT Elements logo"
@@ -1147,7 +1147,7 @@
 
         <div>
           <h3>Explore</h3>
-          <a href="/">Home</a>
+          <a href="/home">Home</a>
           <a href="/services">IT Services</a>
           <a href="/pricing">Pricing</a>
           <a href="/onsite-support">On-site Support</a>
@@ -1219,7 +1219,7 @@
       const year = document.getElementById("year");
 
       if (year) {
-        year.textContent = 2007;
+        year.textContent = new Date().getFullYear();
       }
 
       /* BUSINESS ENQUIRY WHATSAPP SUBMISSION */
@@ -1284,5 +1284,5 @@
   </script>
 
 
-<script src="/nav-store-global.js?v=20261115-shared-cart-sticky-v7" defer></script></body>
+<script src="/nav-store-global.js?v=20261115-guest-cart-auth-v6" defer></script></body>
 </html>
