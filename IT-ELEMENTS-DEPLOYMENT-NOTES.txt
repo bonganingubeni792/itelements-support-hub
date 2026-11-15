@@ -29,3 +29,9 @@ Latest update:
 - Buy Now does not double-add a product already in the cart.
 - Customer checkout is delivery-only; no collection-free wording.
 - Delivery is R80 below R755 and free at R755 or above.
+
+Latest order safety update:
+- Admin Orders now lists only store orders with PayFast status=paid.
+- Unpaid, pending, failed, or abandoned checkout attempts remain in the payment records for reconciliation but are not shown as completed orders.
+- Fulfilment updates are rejected unless the store order has status=paid.
+- Inventory decrement remains tied to the validated PayFast notification and one-time pending-to-paid transition.

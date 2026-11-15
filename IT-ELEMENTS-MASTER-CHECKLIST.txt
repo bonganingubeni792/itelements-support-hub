@@ -118,3 +118,18 @@ LATEST CUSTOMER-REPORTED FIXES — 15 NOVEMBER 2026
 [NEEDS LIVE TEST] Verify product photos load in cart and checkout against actual production image URLs.
 [NEEDS LIVE TEST] Test login, return to store, pending add-to-cart, Buy Now with existing cart quantity, and exactly available stock.
 [NEEDS LIVE TEST] Test valid customer details through PayFast redirect and webhook. Do not mark payment fixed until a controlled payment succeeds.
+
+
+LATEST CUSTOMER-REPORTED FIXES — ACCOUNT CART AND PRODUCT DETAIL
+[CODE UPDATED] Store cart storage is now isolated per signed-in customer email, with a separate guest cart. Switching accounts on the same browser no longer loads the previous account's cart.
+[CODE UPDATED] Add to cart from the product detail view no longer closes the product modal. A visible confirmation appears in the detail view; the customer stays on the product until choosing Back to products or Close.
+[NEEDS LIVE TEST] Sign in as customer A, add product A; sign out and sign in as customer B on the same browser; verify B sees only B's cart. Sign back into A and verify A's cart is retained.
+[NEEDS LIVE TEST] Open a product, press Add to cart, verify detail stays open and the confirmation is visible; press Back to products and verify the catalogue returns.
+
+
+LATEST ORDER/PAYMENT SAFETY FIX — 15 NOVEMBER 2026
+[CODE UPDATED] Store Admin orders API now returns only storeOrder records with status='paid'. Pending/failed/abandoned PayFast checkout attempts remain stored for payment reconciliation but are not presented as completed customer orders.
+[CODE UPDATED] Store fulfilment status endpoint now only permits updates to PayFast-paid store orders.
+[CONFIRMED IN CODE] Product stock is decremented only after a valid PayFast ITN has been verified and the purchase status transitions from pending to paid.
+[NEEDS LIVE TEST] Make a checkout and cancel/leave PayFast without paying; confirm it does not appear in Admin Orders and stock does not decrease.
+[NEEDS LIVE TEST] Complete a successful PayFast payment; confirm it appears in Admin Orders, is marked paid, and stock decreases exactly once.

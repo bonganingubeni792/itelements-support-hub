@@ -1125,7 +1125,7 @@ app.get('/api/store/products/:id', async (req, res) => {
 // ADMIN: Store orders created through the PayFast product checkout.
 app.get('/api/admin/store/orders', checkAdminAuth, async (req, res) => {
     try {
-        const orders = await PayFastPurchase.find({ purchaseType: 'storeOrder' })
+        const orders = await PayFastPurchase.find({ purchaseType: 'storeOrder', status: 'paid' })
             .select('paymentId userEmail orderDetails amount mode status pfPaymentId paidAt createdAt fulfilmentStatus')
             .sort({ createdAt: -1 })
             .limit(500)
@@ -1146,7 +1146,7 @@ app.patch('/api/admin/store/orders/:id/fulfilment', checkAdminAuth, async (req, 
     }
     try {
         const order = await PayFastPurchase.findOneAndUpdate(
-            { _id: req.params.id, purchaseType: 'storeOrder' },
+            { _id: req.params.id, purchaseType: 'storeOrder', status: 'paid' },
             { $set: { fulfilmentStatus } },
             { new: true }
         ).select('paymentId fulfilmentStatus status');
