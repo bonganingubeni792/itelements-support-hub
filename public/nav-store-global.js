@@ -80,6 +80,7 @@
     } catch (_) {}
     actions.appendChild(chatList);
     var cart = oldCart || document.createElement('button'); cart.type = 'button'; cart.classList.add('ite-header-cart'); cart.id = 'openCart';
+    cart.hidden = true;
     if (!oldCart) cart.innerHTML = 'Cart (<span id="cartCount">0</span>)'; actions.appendChild(cart);
     chatList.addEventListener('click', function () {
       var drawer = document.getElementById('chatListDrawer');
@@ -103,8 +104,17 @@
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
         if (isStore) {
           chatList.hidden = false;
+          cart.hidden = false;
           var productChat = document.getElementById('openChatListFromProduct');
           if (productChat) productChat.hidden = false;
+          fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (data) {
+              if (data && Array.isArray(data.items)) {
+                var total = data.items.reduce(function (n, item) { return n + (Number(item.qty) || 0); }, 0);
+                cart.textContent = 'Cart (' + total + ')';
+              }
+            }).catch(function () {});
         }
         if (!isStore) fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -113,6 +123,7 @@
       } else {
         if (isStore) {
           chatList.hidden = true;
+          cart.hidden = true;
           var productChat = document.getElementById('openChatListFromProduct');
           if (productChat) productChat.hidden = true;
         }
@@ -123,6 +134,7 @@
     }).catch(function () {
       if (isStore) {
         chatList.hidden = true;
+        cart.hidden = true;
         var productChat = document.getElementById('openChatListFromProduct');
         if (productChat) productChat.hidden = true;
       }

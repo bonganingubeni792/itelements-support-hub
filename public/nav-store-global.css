@@ -237,3 +237,10 @@ body.store-page .ite-chatlist-count{display:inline-grid!important;place-items:ce
 body.store-page #iteSideCart,body.store-page .ite-side-cart,body.store-page .ite-floating-chat-list,body.store-page .floating-chat-list,body.store-page .ite-chat-float,body.store-page .ite-store-whatsapp-float{display:none!important}
 @media(max-width:760px){body.store-page .ite-header-chatlist{min-height:40px!important;padding:0 8px!important;gap:4px!important;font-size:11px!important}body.store-page .ite-chatlist-count{min-width:17px!important;height:17px!important;font-size:10px!important}}
 @media(max-width:370px){body.store-page .ite-header-chatlist{padding:0 6px!important;font-size:10px!important}}
+
+/* Keep account-only store actions hidden until authentication is confirmed. */
+body.store-page .ite-header-actions #openCart[hidden],
+body.store-page .ite-header-actions #openChatList[hidden],
+body.store-page #openChatListFromProduct[hidden] {
+  display: none !important;
+}
