@@ -209,3 +209,91 @@
  body.store-page .department-emoji{display:block!important;font-size:21px!important;line-height:1.1!important}
  body.store-page .department-link:before{display:none!important}
 }
+
+
+/* HOTFIX v2 — force the exact two-up mobile catalogue and side-by-side collection tabs.
+   Cache-busted from store.html; scoped strictly to phone widths. */
+@media screen and (max-width:700px){
+  body.store-page #catalogue .catalogue-layout .product-area .catalogue-toolbar .catalogue-heading .collection-tabs{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important;
+    grid-auto-flow:column!important;
+    align-items:stretch!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+  }
+  body.store-page #catalogue .catalogue-layout .product-area .catalogue-toolbar .catalogue-heading .collection-tabs .collection-tab{
+    display:flex!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:44px!important;
+    white-space:normal!important;
+    text-align:center!important;
+    justify-content:center!important;
+    align-items:center!important;
+    padding:8px 5px!important;
+    border:1px solid #dfe3e9!important;
+    border-radius:10px!important;
+    background:#fff!important;
+    color:#252a32!important;
+    font-size:clamp(10px,3vw,13px)!important;
+    line-height:1.15!important;
+  }
+  body.store-page #catalogue .catalogue-layout .product-area .catalogue-toolbar .catalogue-heading .collection-tabs .collection-tab.active{
+    border-color:#e00000!important;
+    background:#e00000!important;
+    color:#fff!important;
+    box-shadow:0 3px 8px #e0000026!important;
+  }
+  body.store-page #catalogue .catalogue-layout .product-area #products.products,
+  body.store-page #catalogue #products.products{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;
+    grid-auto-rows:auto!important;
+    align-items:stretch!important;
+    justify-items:stretch!important;
+    gap:9px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+  }
+  body.store-page #catalogue #products.products > .card{
+    display:flex!important;
+    flex-direction:column!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    float:none!important;
+    box-sizing:border-box!important;
+  }
+  body.store-page #catalogue #products.products > .card > .photo{
+    display:grid!important;
+    place-items:center!important;
+    width:100%!important;
+    height:clamp(112px,32vw,145px)!important;
+    min-height:0!important;
+    max-height:145px!important;
+    flex:0 0 auto!important;
+    margin:0!important;
+    padding:7px!important;
+    box-sizing:border-box!important;
+  }
+  body.store-page #catalogue #products.products > .card > .photo img{
+    width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;
+    object-fit:contain!important;object-position:center!important;
+  }
+  body.store-page #catalogue #products.products > .card .cardbody{padding:8px!important;min-width:0!important}
+  body.store-page #catalogue #products.products > .card .card-actions{grid-template-columns:minmax(0,1fr)!important}
+  body.store-page #catalogue #products.products > .card .card-actions button{width:100%!important;min-width:0!important}
+}
+@media screen and (max-width:390px){
+  body.store-page #catalogue .catalogue-layout .product-area .catalogue-toolbar .catalogue-heading .collection-tabs{gap:6px!important}
+  body.store-page #catalogue #products.products{gap:7px!important}
+  body.store-page #catalogue #products.products > .card > .photo{height:112px!important}
+  body.store-page #catalogue #products.products > .card .cardbody{padding:7px!important}
+}
