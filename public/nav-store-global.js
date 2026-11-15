@@ -8,6 +8,37 @@
   function makeLink(href, label) {
     var a = document.createElement('a'); a.href = href; a.textContent = label; return a;
   }
+  function accountCartKey(email) {
+    return 'itelements_store_cart_v2:' + encodeURIComponent('user:' + String(email || '').trim().toLowerCase());
+  }
+  function readAccountCart(email) {
+    try {
+      var value = JSON.parse(localStorage.getItem(accountCartKey(email)) || '[]');
+      return Array.isArray(value) ? value.filter(function (item) {
+        return item && typeof item.id === 'string' && Number.isInteger(Number(item.qty)) && Number(item.qty) > 0;
+      }) : [];
+    } catch (_) { return []; }
+  }
+  function mirrorIsFresh(email) {
+    try {
+      var stamp = Number(localStorage.getItem(accountCartKey(email) + ':savedAt') || 0);
+      return stamp > 0 && Date.now() - stamp < 60000;
+    } catch (_) { return false; }
+  }
+  function cartTotal(items) {
+    return (items || []).reduce(function (n, item) { return n + (Number(item && item.qty) || 0); }, 0);
+  }
+  function updateCartBadge(total) {
+    if (isStore) {
+      var count = document.getElementById('cartCount');
+      if (count) count.textContent = String(total);
+      var productCount = document.getElementById('productCartCount');
+      if (productCount) productCount.textContent = String(total);
+    } else if (cartControl) {
+      cartControl.textContent = 'Cart (' + total + ')';
+      cartControl.href = '/store?openCart=1';
+    }
+  }
   function addDrawer(trigger) {
     if (!trigger || document.getElementById('iteMobileDrawer')) return;
     trigger.setAttribute('aria-expanded', 'false');
@@ -87,6 +118,19 @@
     cartControl.hidden = true;
     actions.appendChild(cartControl);
   }
+  window.addEventListener('storage', function (event) {
+    if (!event || !event.key || !authEmailForCart) return;
+    if (event.key === accountCartKey(authEmailForCart)) {
+      try { updateCartBadge(cartTotal(JSON.parse(event.newValue || '[]'))); } catch (_) {}
+    }
+  });
+  window.addEventListener('ite:cart-updated', function (event) {
+    if (event && event.detail && Number.isFinite(Number(event.detail.count))) {
+      updateCartBadge(Number(event.detail.count));
+    }
+  });
+  var authEmailForCart = '';
+
   var menu = header.querySelector('.menu-toggle, .ite-mobile-menu-trigger');
   if (!menu) { menu = document.createElement('button'); menu.type = 'button'; menu.className = 'ite-mobile-menu-trigger'; menu.textContent = '☰'; header.insertBefore(menu, brand || header.firstChild); }
   menu.classList.add('ite-mobile-menu-trigger');
@@ -97,33 +141,38 @@
     .then(function (auth) {
       var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
+        authEmailForCart = auth.email || '';
         account.textContent = 'Logout'; account.href = '/client/logout';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
         if (cartControl) cartControl.hidden = false;
         if (productCart) productCart.hidden = false;
 
+        // Paint the account's most recent cart immediately. This mirror is written
+        // by the Store page before the server save completes, so moving to another
+        // page cannot briefly reset the shared badge to zero.
+        var mirroredItems = readAccountCart(auth.email);
+        var hasFreshMirror = mirrorIsFresh(auth.email);
+        updateCartBadge(cartTotal(mirroredItems));
+
         return fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
           .then(function (r) { if (!r.ok) throw new Error('Saved cart unavailable'); return r.json(); })
           .then(function (data) {
             if (!data || !data.success || !Array.isArray(data.items)) throw new Error('Saved cart response was invalid');
-            var total = data.items.reduce(function (n, item) { return n + (Number(item && item.qty) || 0); }, 0);
-            if (isStore) {
-              var count = document.getElementById('cartCount');
-              if (count) count.textContent = String(total);
-              var productCount = document.getElementById('productCartCount');
-              if (productCount) productCount.textContent = String(total);
-            } else if (cartControl) {
-              cartControl.textContent = 'Cart (' + total + ')';
-              cartControl.href = '/store?openCart=1';
+            var serverTotal = cartTotal(data.items);
+            if (hasFreshMirror) {
+              updateCartBadge(cartTotal(mirroredItems));
+            } else {
+              updateCartBadge(serverTotal);
+              try {
+                localStorage.setItem(accountCartKey(auth.email), JSON.stringify(data.items));
+                localStorage.setItem(accountCartKey(auth.email) + ':savedAt', String(Date.now()));
+              } catch (_) {}
             }
           })
           .catch(function () {
-            if (cartControl) {
-              if (isStore) {
-                var count = document.getElementById('cartCount');
-                if (count) count.textContent = '—';
-              } else cartControl.textContent = 'Cart (—)';
-            }
+            // Keep the last locally mirrored account count visible if the cart
+            // endpoint is temporarily unavailable.
+            updateCartBadge(cartTotal(mirroredItems));
           });
       }
 
