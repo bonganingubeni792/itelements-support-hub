@@ -169,8 +169,10 @@ body.store-page .wa-float,body.store-page .wa-widget,body.store-page [data-whats
 
 
 /* IT ELEMENTS GLOBAL PAGE ALIGNMENT — prevent side-shift and horizontal overflow */
-html{width:100%;max-width:100%;overflow-x:hidden!important;scrollbar-gutter:stable}
-body{width:100%;max-width:100%;min-width:0;overflow-x:hidden!important}
+/* Keep horizontal overflow clipped without creating an overflow scroll container.
+   This allows the shared sticky navigation to follow the document viewport. */
+html{width:100%;max-width:100%;overflow-x:clip!important;overflow-y:visible;scrollbar-gutter:stable}
+body{width:100%;max-width:100%;min-width:0;overflow-x:clip!important;overflow-y:visible}
 body *{box-sizing:border-box}
 body:not(.store-page):not(.store-admin-page) main,
 body:not(.store-page):not(.store-admin-page) main>section,
@@ -253,3 +255,17 @@ body.store-page .ite-header-actions #openCart[hidden] {
 
 /* Product details: cart access is account-only and replaces the product-page Chat button. */
 body.store-page #openCartFromProduct[hidden] { display: none !important; }
+
+
+/* STICKY PUBLIC HEADER — use the browser viewport as the scroll container. */
+body.store-page>header,
+body:not(.store-page):not(.store-admin-page) nav.nav,
+body:not(.store-page):not(.store-admin-page) nav.navbar,
+body:not(.store-page):not(.store-admin-page) nav.site-nav,
+body:not(.store-page):not(.store-admin-page) nav.main-nav,
+body:not(.store-page):not(.store-admin-page) header.site-header{
+  position:sticky!important;
+  top:0!important;
+  z-index:10000!important;
+  align-self:flex-start!important;
+}
