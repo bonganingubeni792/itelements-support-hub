@@ -105,8 +105,8 @@
         if (isStore) {
           chatList.hidden = false;
           cart.hidden = false;
-          var productChat = document.getElementById('openChatListFromProduct');
-          if (productChat) productChat.hidden = false;
+          var productCart = document.getElementById('openCartFromProduct');
+          if (productCart) productCart.hidden = false;
           fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
             .then(function (r) { return r.ok ? r.json() : null; })
             .then(function (data) {
@@ -127,8 +127,8 @@
         if (isStore) {
           chatList.hidden = true;
           cart.hidden = true;
-          var productChat = document.getElementById('openChatListFromProduct');
-          if (productChat) productChat.hidden = true;
+          var productCart = document.getElementById('openCartFromProduct');
+          if (productCart) productCart.hidden = true;
         }
         account.textContent = 'Login'; account.href = '/client/login';
         account.setAttribute('aria-label', 'Log in to your IT Elements account');
@@ -138,8 +138,8 @@
       if (isStore) {
         chatList.hidden = true;
         cart.hidden = true;
-        var productChat = document.getElementById('openChatListFromProduct');
-        if (productChat) productChat.hidden = true;
+        var productCart = document.getElementById('openCartFromProduct');
+        if (productCart) productCart.hidden = true;
       } else {
         cartLink.hidden = true;
       }

@@ -250,3 +250,6 @@ body:not(.store-page) .ite-header-actions .ite-header-cart[hidden],
 body.store-page .ite-header-actions #openCart[hidden] {
   display: none !important;
 }
+
+/* Product details: cart access is account-only and replaces the product-page Chat button. */
+body.store-page #openCartFromProduct[hidden] { display: none !important; }
