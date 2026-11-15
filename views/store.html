@@ -594,141 +594,7 @@ button[onclick*="addDetailToChat"] {
 
 
 
-<div class="drawer" id="chatListDrawer" aria-hidden="true"><aside class="cartpanel" aria-label="Products added to chat"><div class="carthead"><h2>Your chat list</h2><button class="x" id="closeChatList" type="button" aria-label="Close chat list">✕</button></div><div id="chatListItems"><p class="muted">No products added yet.</p></div><button type="button" class="checkout" id="sendChatList" style="margin-top:16px">Send enquiry on WhatsApp</button><p class="muted" style="font-size:12px">This list is separate from your shopping cart. Adding products here does not reserve stock or start checkout.</p></aside></div>
-<div class="product-modal" id="productModal" aria-hidden="true">
- <div class="product-modal-backdrop" data-close-product></div>
- <section class="product-modal-panel" role="dialog" aria-modal="true" aria-labelledby="detailName">
-  <div class="product-modal-toolbar">
-   <button class="product-modal-close" type="button" data-close-product aria-label="Back to products">← Back to products</button>
-   <button class="product-modal-cart" type="button" id="openCartFromProduct" hidden aria-label="Open cart">Cart (<span id="productCartCount">0</span>)</button>
-  </div>
-  <div class="product-modal-content" id="productModalContent"></div>
- </section>
-</div>
-
-<script>
-const $=id=>document.getElementById(id);
-let products=[];
-// Keep carts separate for guests and for each signed-in customer on shared devices.
-let CART_STORAGE_KEY='itelements_store_cart_guest_v2';
-function readSavedCart(key=CART_STORAGE_KEY){
- try{
-  const saved=JSON.parse(localStorage.getItem(key)||'[]');
-  return Array.isArray(saved)?saved.filter(x=>x&&typeof x.id==='string'&&Number.isInteger(x.qty)&&x.qty>0):[];
- }catch(_){return [];}
-}
-let cart=[];
-let detailQuantity=1;
-let activeProductId=null;
-let galleryIndex=0;
-let storeAccountKey='guest';
-let cartSaveQueue=Promise.resolve();
-
-async function refreshStoreAccountAction(){
- const button=$('accountAction');if(!button)return;
- try{
-  const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
-  const auth=await response.json();
-  if(response.ok&&auth.authenticated){
-   button.textContent='Logout';button.href='/client/logout';button.setAttribute('aria-label','Log out of your IT Elements account');
-  }else{
-   button.textContent='Login';button.href='/client/login';button.setAttribute('aria-label','Log in to your IT Elements account');
-  }
- }catch(_){button.textContent='Login';button.href='/client/login';}
-}
-
-async function loadAccountCart(){
- // Clear in-memory state before checking the current session so a previous
- // customer's cart can never flash on screen for the next signed-in account.
- cart=[];
- try{
-  const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
-  const auth=await response.json();
-  if(response.ok&&auth.authenticated&&auth.email){
-   storeAccountKey='user:'+String(auth.email).trim().toLowerCase();
-   CART_STORAGE_KEY='itelements_store_cart_v2:'+encodeURIComponent(storeAccountKey);
-   const saved=await fetch('/api/store/cart',{credentials:'same-origin',cache:'no-store'});
-   const payload=await saved.json();
-   if(!saved.ok||!payload.success)throw new Error(payload.message||'Could not load saved cart');
-   cart=Array.isArray(payload.items)?payload.items.filter(x=>x&&typeof x.id==='string'&&Number.isInteger(x.qty)&&x.qty>0):[];
-   return;
-  }
- }catch(error){
-  console.warn('Could not load private saved cart:',error.message);
-  // Do not fall back to another account's browser data. A signed-in cart is
-  // only displayed when the server confirms the account-owned cart.
-  storeAccountKey='guest';
-  CART_STORAGE_KEY='itelements_store_cart_guest_v2';
-  cart=[];
-  return;
- }
- storeAccountKey='guest';
- CART_STORAGE_KEY='itelements_store_cart_guest_v2';
- cart=readSavedCart(CART_STORAGE_KEY);
-}
-function saveCart(){
- const snapshot=cart.map(item=>({id:String(item.id),qty:Number(item.qty)}));
- if(storeAccountKey==='guest'){
-  try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(snapshot));}catch(_){}
-  return;
- }
- // Signed-in carts are stored server-side under the authenticated session,
- // never under an email or account identifier supplied by the browser.
- cartSaveQueue=cartSaveQueue.then(async()=>{
-  try{
-   await fetch('/api/store/cart',{
-    method:'PUT',
-    credentials:'same-origin',
-    headers:{'Content-Type':'application/json'},
-    cache:'no-store',
-    body:JSON.stringify({items:snapshot})
-   });
-  }catch(error){console.warn('Could not sync saved cart:',error.message);}
- }).catch(()=>{});
-}
-const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-
-const STORE_CATEGORIES = ["Computers & Laptops", "Gaming PCs", "Gaming Laptops", "Gaming Components", "Graphics Cards", "Processors (CPU)", "Motherboards", "RAM & Memory", "SSD & NVMe Storage", "Hard Drives (HDD)", "External Storage", "PC Cases", "Power Supplies (PSU)", "CPU Cooling & Fans", "Monitors & Displays", "Gaming Monitors", "Keyboards", "Gaming Keyboards", "Mice & Gaming Mice", "Headsets & Audio", "Controllers & Gamepads", "Webcams & Streaming", "Networking & Wi-Fi", "Routers & Mesh Wi-Fi", "Network Switches", "Cables & Adapters", "Docks & Hubs", "Printers & Scanners", "Printer Ink & Toner", "Software & Security", "Operating Systems", "Office Accessories", "UPS & Power Protection", "Refurbished Computers", "Special Offers", "Other Accessories"];
-let activeCollection='all';
-let currentProductPage=1;
-const PRODUCTS_PER_PAGE=50;
-function render(){
- const q=$('search').value.trim().toLowerCase(),cat=$('departmentPicker').value,price=$('priceRange').value,avail=$('availability').value,sort=$('sort').value;
- let list=products.filter(p=>{
-  const hay=[p.name,p.description,p.category,p.sku,p.brand,p.model,p.specifications].join(' ').toLowerCase();
-  if(q&&!hay.includes(q))return false;
-  if(activeCollection==='sale'&&!(p.productType==='sale'||Number(p.compareAtPrice||0)>Number(p.price||0)))return false;
-  if(cat&&String(p.category||'').toLowerCase()!==cat.toLowerCase())return false;
-  const n=Number(p.price||0);
-  if(price==='0-500'&&n>=500)return false;
-  if(price==='500-1500'&&(n<500||n>1500))return false;
-  if(price==='1500-5000'&&(n<1500||n>5000))return false;
-  if(price==='5000-10000'&&(n<5000||n>10000))return false;
-  if(price==='10000+'&&n<=10000)return false;
-  if(avail==='in'&&Number(p.stock||0)<=0)return false;
-  if(avail==='out'&&Number(p.stock||0)>0)return false;
-  return true;
- });
- if(sort==='price-low')list.sort((a,b)=>Number(a.price||0)-Number(b.price||0));
- if(sort==='price-high')list.sort((a,b)=>Number(b.price||0)-Number(a.price||0));
- if(sort==='name')list.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
- if(sort==='featured')list.sort((a,b)=>Number(!!b.featured)-Number(!!a.featured));
- if(sort==='newest')list.sort((a,b)=>new Date(b.createdAt||b.date||0)-new Date(a.createdAt||a.date||0));
-
- const total=list.length;
- const totalPages=Math.max(1,Math.ceil(total/PRODUCTS_PER_PAGE));
- currentProductPage=Math.min(Math.max(1,currentProductPage),totalPages);
- const startIndex=(currentProductPage-1)*PRODUCTS_PER_PAGE;
- const pageItems=list.slice(startIndex,startIndex+PRODUCTS_PER_PAGE);
- $('resultCount').textContent=total
-  ? `Showing ${startIndex+1}–${Math.min(startIndex+PRODUCTS_PER_PAGE,total)} of ${total} products`
-  : '0 products';
- const collectionTitle=activeCollection==='sale'?'Sale Products':'All Products';
- document.querySelectorAll('.collection-tab').forEach(b=>b.classList.toggle('active',b.dataset.collection===activeCollection));
- document.querySelector('.collection-tabs')?.setAttribute('aria-label',collectionTitle+' collection');
- document.querySelectorAll('.department-link').forEach(b=>b.classList.toggle('active',b.dataset.category===cat));
- $('products').innerHTML=pageItems.length?pageItems.map(p=>`<article class="card" role="button" tabindex="0" aria-label="View ${esc(p.name)}" onclick="showProduct('${p._id}')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showProduct('${p._id}')}"><div class="photo">${p.productType==='sale'||Number(p.compareAtPrice||0)>Number(p.price||0)?'<span class="product-ribbon">SALE</span>':(p.featured?'<span class="product-ribbon">FEATURED</span>':'')}${p.imageUrl?`<img src="${esc(p.imageUrl)}" alt="${esc(p.name)}" loading="lazy">`:'<span aria-hidden="true">💻</span>'}</div><div class="cardbody"><div class="category">${esc(p.category||'IT products')}</div><h3>${esc(p.name)}</h3><p class="desc">${esc(p.description||'Contact us for more product information.')}</p><div class="card-price-row"><span class="price">${money(p.price)}</span>${p.compareAtPrice>p.price?`<span class="old">${money(p.compareAtPrice)}</span>`:''}</div><div class="stock"><span class="stock-dot ${Number(p.stock)>0?'in-stock':'out-stock'}"></span>${p.stock>0?`${p.stock} available`:'Contact us to confirm availability'}</div><div class="card-actions"><button class="add" onclick="event.stopPropagation();addToCart('${p._id}')" ${p.stock<=0?'disabled':''}>${p.stock>0?'Add to cart':'Check availability'}</button><button class="add secondary" onclick="event.stopPropagation();showProduct('${p._id}')">View product</button></div></div></article>`).join(''):'<div class="empty"><strong style="display:block;color:#252932;margin-bottom:7px">No products found</strong>Try a different search or clear your filters.<br><button class="filter-reset" style="margin-top:15px;padding:10px 15px" onclick="document.getElementById(\'clearFilters\').click()">Clear all filters</button></div>';
+</article>`).join(''):'<div class="empty"><strong style="display:block;color:#252932;margin-bottom:7px">No products found</strong>Try a different search or clear your filters.<br><button class="filter-reset" style="margin-top:15px;padding:10px 15px" onclick="document.getElementById(\'clearFilters\').click()">Clear all filters</button></div>';
 
  const pager=$('productPagination');
  if(pager){
@@ -753,6 +619,10 @@ document.querySelectorAll('.collection-tab').forEach(button=>button.addEventList
  render();
 }));
 async function addToCart(id, quantity=1){
+ if(!storeCartReady){
+  alert(storeCartError||'Your saved cart is still loading. Please refresh the store and try again.');
+  return false;
+ }
  const p=products.find(x=>x._id===id);
  quantity=Math.floor(Number(quantity));
  if(!p||!Number.isInteger(quantity)||quantity<1){alert('Please choose a valid quantity.');return false;}
@@ -767,6 +637,8 @@ async function addToCart(id, quantity=1){
    return false;
   }
  }catch(_){alert('We could not verify your sign-in. Please try again.');return false;}
+
+ const previous=cart.map(item=>({id:item.id,qty:item.qty}));
  const item=cart.find(x=>x.id===id);
  if(item){
   if(item.qty+quantity>available){alert(`Only ${available} unit${available===1?'':'s'} currently available. Your cart already contains ${item.qty}.`);return false;}
@@ -775,9 +647,17 @@ async function addToCart(id, quantity=1){
   if(quantity>available){alert(`Only ${available} unit${available===1?'':'s'} currently available.`);return false;}
   cart.push({id,qty:quantity});
  }
- saveCart();renderCart();return true;
+ try{
+  await saveCart();
+  renderCart();
+  return true;
+ }catch(error){
+  cart=previous;
+  renderCart();
+  alert(error.message||'Your cart could not be saved. Please try again.');
+  return false;
+ }
 }
-
 
 function renderSafeProductDescription(value){
  const source=String(value||'').trim();
@@ -951,9 +831,14 @@ function renderCart(){
  const count=cart.reduce((n,x)=>n+x.qty,0);
  $('cartCount').textContent=count;
  const productCartCount=$('productCartCount');if(productCartCount)productCartCount.textContent=count;
+ if(storeCartError){
+  $('cartItems').innerHTML=`<p class="muted">${esc(storeCartError)} Please refresh the page. Your account cart has not been replaced with a guest cart.</p>`;
+  $('cartTotal').textContent=money(0);
+  return;
+ }
  $('cartItems').innerHTML=cart.length?cart.map(x=>{
   const p=products.find(z=>z._id===x.id);
-  if(!p)return '';
+  if(!p)return `<div class="cartline"><div><strong>Product no longer available</strong><div class="muted">This saved item is not currently listed.</div><button type="button" class="cart-remove" onclick="removeCartItem('${esc(x.id)}')">Remove</button></div><strong>—</strong></div>`;
   const available=Math.max(0,Number(p.stock)||0);
   const cartImage=p.imageUrl||(Array.isArray(p.images)?p.images.find(Boolean):'');
   const cartImageHtml=cartImage?`<img class="cartline-image" src="${esc(cartImage)}" alt="${esc(p.name)}" loading="lazy">`:'<span class="cartline-image-placeholder">📦</span>';
@@ -961,9 +846,12 @@ function renderCart(){
  }).join(''):'<p class="muted">Your cart is empty.</p>';
  $('cartTotal').textContent=money(cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0));
 }
-window.removeCartItem=id=>{
+window.removeCartItem=async id=>{
+ if(!storeCartReady){alert(storeCartError||'Your saved cart is not ready yet.');return;}
+ const previous=cart.map(item=>({id:item.id,qty:item.qty}));
  cart=cart.filter(item=>item.id!==id);
- saveCart();
+ try{await saveCart();}
+ catch(error){cart=previous;alert(error.message||'Could not update your saved cart.');}
  renderCart();
  if($('checkoutModal').classList.contains('open')){
   if(cart.length)checkoutMoneySummary();
@@ -971,14 +859,17 @@ window.removeCartItem=id=>{
  }
 };
 window.addToCart=addToCart;
-window.changeQty=(id,d)=>{
+window.changeQty=async(id,d)=>{
+ if(!storeCartReady){alert(storeCartError||'Your saved cart is not ready yet.');return;}
  const x=cart.find(z=>z.id===id);
  const p=products.find(z=>z._id===id);
  if(!x)return;
  if(d>0&&p&&x.qty>=Math.max(0,Number(p.stock)||0)){alert('You have reached the available stock for this product.');return;}
+ const previous=cart.map(item=>({id:item.id,qty:item.qty}));
  x.qty+=d;
  if(x.qty<=0)cart=cart.filter(z=>z.id!==id);
- saveCart();
+ try{await saveCart();}
+ catch(error){cart=previous;alert(error.message||'Could not update your saved cart.');}
  renderCart();
 };
 $('openCart').onclick=()=>$('drawer').classList.add('open');$('closeCart').onclick=()=>$('drawer').classList.remove('open');$('drawer').onclick=e=>{if(e.target===$('drawer'))$('drawer').classList.remove('open')};
@@ -1119,17 +1010,13 @@ async function load(){
  try{
   await loadAccountCart();
  }catch(error){
-  console.warn('IT Elements saved cart could not be loaded:',error);
+  console.error('IT Elements saved cart could not be loaded:',error);
+  storeCartReady=false;
+  storeCartError='Could not load your saved account cart: '+(error.message||'Unknown error.');
   cart=[];
  }
- const liveIds=new Set(products.map(p=>p._id));
- cart=cart.filter(item=>liveIds.has(item.id));
- cart.forEach(item=>{
-  const p=products.find(product=>product._id===item.id);
-  item.qty=Math.min(item.qty,Math.max(0,Number(p&&p.stock)||0));
- });
- cart=cart.filter(item=>item.qty>0);
- saveCart();
+ // Keep saved quantities visible even if stock has changed; checkout validates stock separately.
+ if(storeCartReady)saveCart();
  currentProductPage=1;
  render();
  try{renderCart();}catch(error){console.warn('Cart panel render failed:',error);}
@@ -1137,6 +1024,10 @@ async function load(){
  const requestedProduct=new URLSearchParams(location.search).get('product');
  if(requestedProduct&&products.some(p=>p._id===requestedProduct))showProduct(requestedProduct);
  const params=new URLSearchParams(location.search);
+ if(params.get('openCart')==='1'&&storeCartReady){
+  $('drawer').classList.add('open');
+  history.replaceState({},'',location.pathname+location.hash);
+ }
  if(params.get('resumeCart')==='1'){
   try{
    const authResponse=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
@@ -1162,7 +1053,7 @@ async function load(){
 
 load();renderCart();
 checkReturnedPayment();
-</script><script src="/nav-store-global.js?v=20261115-guest-cart-auth-v6" defer></script>
+</script><script src="/nav-store-global.js?v=20261115-cart-unified-v8" defer></script>
 
 
 
@@ -1185,6 +1076,14 @@ checkReturnedPayment();
   });
 })();
 </script>
+
+
+<style id="ite-store-whatsapp-bubble-style">
+.ite-store-whatsapp-bubble{position:fixed;right:20px;bottom:20px;z-index:1600;display:inline-flex;align-items:center;justify-content:center;gap:9px;background:#168d4d;color:#fff!important;text-decoration:none!important;border-radius:999px;padding:14px 20px;font-size:15px;font-weight:850;line-height:1;box-shadow:0 6px 20px rgba(0,0,0,.22)}
+.ite-store-whatsapp-bubble:hover{background:#0e713c}
+@media(max-width:600px){.ite-store-whatsapp-bubble{right:14px;bottom:18px;padding:13px 17px;font-size:14px}}
+</style>
+<a class="ite-store-whatsapp-bubble" href="https://wa.me/27606181229" target="_blank" rel="noopener noreferrer" aria-label="Chat with IT Elements on WhatsApp">WhatsApp Us</a>
 
 </body></html>
 
