@@ -1102,16 +1102,27 @@ app.post('/api/admin/store/upload-image', checkAdminAuth, async (req, res) => {
 });
 
 // PUBLIC: Load active products for the online store
+function getStoreCartOwner(req) {
+    const customerEmail = String(req.session?.userEmail || '').trim().toLowerCase();
+    if (customerEmail) return customerEmail;
+    // Admin sessions do not carry a customer email. Give the single IT Elements
+    // admin account its own stable cart identity instead of silently using guest storage.
+    if (req.session?.isAdmin) return 'admin@itelements.help';
+    return '';
+}
+
 app.get('/api/store/auth-status', (req, res) => {
     res.set('Cache-Control', 'no-store');
-    res.json({ authenticated: !!(req.session && (req.session.isUser || req.session.isAdmin)), email: req.session?.userEmail || '' });
+    const authenticated = !!(req.session && (req.session.isUser || req.session.isAdmin));
+    const cartOwner = authenticated ? getStoreCartOwner(req) : '';
+    res.json({ authenticated, email: req.session?.userEmail || '', cartOwner });
 });
 
 // A customer's saved cart is private to their signed-in account and persists
 // in MongoDB across logout, browser restarts, and other devices.
 app.get('/api/store/cart', async (req, res) => {
     res.set('Cache-Control', 'no-store, private');
-    const email = String(req.session?.userEmail || '').trim().toLowerCase();
+    const email = getStoreCartOwner(req);
     if (!req.session || !(req.session.isUser || req.session.isAdmin) || !email) {
         return res.status(401).json({ success: false, message: 'Please sign in to view your saved cart.' });
     }
@@ -1130,7 +1141,7 @@ app.get('/api/store/cart', async (req, res) => {
 
 app.put('/api/store/cart', async (req, res) => {
     res.set('Cache-Control', 'no-store, private');
-    const email = String(req.session?.userEmail || '').trim().toLowerCase();
+    const email = getStoreCartOwner(req);
     if (!req.session || !(req.session.isUser || req.session.isAdmin) || !email) {
         return res.status(401).json({ success: false, message: 'Please sign in to save your cart.' });
     }
