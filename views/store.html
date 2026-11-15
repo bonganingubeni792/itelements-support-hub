@@ -512,12 +512,7 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 <div class="store-payment-notice" id="storePaymentNotice" role="status" aria-live="polite"></div>
 <div class="drawer" id="drawer"><aside class="cartpanel"><div class="carthead"><h2>Your selected products</h2><button class="x" id="closeCart">✕</button></div><div id="cartItems"></div><div class="total"><span>Products subtotal</span><span id="cartTotal">R 0.00</span></div><p class="muted cart-delivery-rule">Delivery: R80 on product subtotals below R755; free on R755 or more.</p><button class="checkout" id="checkout">Continue to secure checkout</button><p class="muted" style="font-size:12px">Secure online payment. Delivery is R80 below R755 and free on orders of R755 or more.</p></aside></div>
 
-<button type="button" id="iteSideCart" aria-label="Open your chat list" title="View products added to chat"><span aria-hidden="true">💬</span><b id="iteSideCartCount">0</b></button>
-<style>
-#iteSideCart{position:fixed;right:22px;bottom:100px;z-index:1100;width:54px;height:54px;border:0;border-radius:50%;background:#e00000;color:#fff;display:flex;align-items:center;justify-content:center;gap:2px;box-shadow:0 5px 22px #0003;cursor:pointer}
-#iteSideCart>span{font-size:23px;line-height:1}#iteSideCart b{position:absolute;right:-3px;top:-4px;min-width:19px;height:19px;padding:0 4px;border-radius:20px;background:#171717;color:#fff;font:800 11px/19px Arial;text-align:center}
-@media(max-width:700px){#iteSideCart{right:14px;bottom:88px;width:48px;height:48px}}
-</style>
+
 
 
 <div class="drawer" id="chatListDrawer" aria-hidden="true"><aside class="cartpanel" aria-label="Products added to chat"><div class="carthead"><h2>Your chat list</h2><button class="x" id="closeChatList" type="button" aria-label="Close chat list">✕</button></div><div id="chatListItems"><p class="muted">No products added yet.</p></div><button type="button" class="checkout" id="sendChatList" style="margin-top:16px">Send enquiry on WhatsApp</button><p class="muted" style="font-size:12px">This list is separate from your shopping cart. Adding products here does not reserve stock or start checkout.</p></aside></div>
@@ -792,10 +787,11 @@ function readChatList(){try{const v=JSON.parse(localStorage.getItem(CHAT_LIST_KE
 let chatList=readChatList();
 function saveChatList(){try{localStorage.setItem(CHAT_LIST_KEY,JSON.stringify(chatList));}catch(_){}}
 function renderChatList(){
- const count=chatList.reduce((n,x)=>n+x.qty,0);const badge=$('iteSideCartCount');if(badge)badge.textContent=count;
+ const count=chatList.reduce((n,x)=>n+x.qty,0);const badge=$('chatListCount');if(badge)badge.textContent=count;
  const host=$('chatListItems');if(!host)return;
  host.innerHTML=chatList.length?chatList.map(item=>{const p=products.find(x=>x._id===item.id);if(!p)return '';const img=p.imageUrl||(Array.isArray(p.images)?p.images.find(Boolean):'');return `<div class="cartline"><div class="cartline-product">${img?`<img class="cartline-image" src="${esc(img)}" alt="${esc(p.name)}">`:'<span class="cartline-image-placeholder">📦</span>'}<div class="cartline-details"><strong>${esc(p.name)}</strong><div class="muted">${money(p.price)} · Enquiry quantity: ${item.qty}</div><button type="button" class="cart-remove" onclick="removeChatListItem('${p._id}')">Remove</button></div></div></div>`;}).join(''):'<p class="muted">No products added yet. Open a product and choose Add to chat.</p>';
 }
+window.renderChatList=renderChatList;
 window.removeChatListItem=id=>{chatList=chatList.filter(x=>x.id!==id);saveChatList();renderChatList();};
 window.addDetailToChat=async id=>{
  const p=products.find(x=>x._id===id);if(!p)return;
@@ -803,9 +799,8 @@ window.addDetailToChat=async id=>{
  if(existing)existing.qty+=qty;else chatList.push({id,qty});
  saveChatList();renderChatList();
  const notice=$('detailCartNotice')||(()=>{const n=document.createElement('p');n.id='detailCartNotice';n.setAttribute('role','status');n.style.cssText='margin:12px 0;padding:10px 12px;border-radius:9px;background:#eaf8ef;color:#176b35;font-weight:700';const actions=document.querySelector('.product-detail-actions');if(actions)actions.insertAdjacentElement('afterend',n);return n;})();
- notice.textContent=`${qty} item(s) added to your chat list. Your product details are still open. Tap the small chat icon to view your list.`;notice.hidden=false;
+ notice.textContent=`${qty} item(s) added to your chat list. Your product details are still open. Use the Chat list button in the top navigation to view your list.`;notice.hidden=false;
 };
-$('iteSideCart')?.addEventListener('click',()=>{$('chatListDrawer').classList.add('open');$('chatListDrawer').setAttribute('aria-hidden','false');renderChatList();});
 $('closeChatList')?.addEventListener('click',()=>{$('chatListDrawer').classList.remove('open');$('chatListDrawer').setAttribute('aria-hidden','true');});
 $('chatListDrawer')?.addEventListener('click',e=>{if(e.target===$('chatListDrawer')){$('chatListDrawer').classList.remove('open');$('chatListDrawer').setAttribute('aria-hidden','true');}});
 $('sendChatList')?.addEventListener('click',()=>{if(!chatList.length){alert('Your chat list is empty.');return;}const lines=chatList.map(item=>{const p=products.find(x=>x._id===item.id);return p?`${p.name} (SKU: ${p.sku||'N/A'}) — quantity ${item.qty}, listed price ${money(p.price)}`:'';}).filter(Boolean);const msg='Hello IT Elements, please help me with these products:\n'+lines.join('\n')+'\nPlease confirm availability and delivery.';window.open('https://wa.me/27606181229?text='+encodeURIComponent(msg),'_blank','noopener');});
@@ -1032,15 +1027,7 @@ async function load(){
 load();renderCart();
 checkReturnedPayment();
 </script><script src="/nav-store-global.js?v=20261115-approved-header-v4" defer></script>
-<a class="ite-store-whatsapp-float" href="https://wa.me/27606181229" target="_blank" rel="noopener" aria-label="Chat with IT Elements on WhatsApp">
-  <span aria-hidden="true">◉</span><strong>WhatsApp Us</strong>
-</a>
-<style id="ite-store-whatsapp-float-style">
-.ite-store-whatsapp-float{position:fixed!important;right:22px!important;bottom:24px!important;z-index:850!important;display:flex!important;align-items:center!important;gap:9px!important;padding:14px 19px!important;border-radius:999px!important;background:#087f43!important;color:#fff!important;font-size:15px!important;font-weight:800!important;text-decoration:none!important;box-shadow:0 8px 24px #0003!important}
-.ite-store-whatsapp-float span{font-size:19px!important;line-height:1!important}
-.ite-store-whatsapp-float:hover{background:#066b38!important;transform:translateY(-1px)}
-@media(max-width:760px){.ite-store-whatsapp-float{right:14px!important;bottom:16px!important;padding:12px 15px!important;font-size:13px!important}}
-</style>
+
 
 </body></html>
 
