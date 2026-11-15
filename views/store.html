@@ -1171,7 +1171,14 @@ button[onclick*="addDetailToChat"] {
 /* Phone layout is intentionally not changed in this update. */
 </style>
 
-</head><body class="store-page">
+</head><style id="ite-cart-view-product-actions">
+.cartline-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px}
+.cartline-actions .cart-view-product,.cartline-actions .cart-remove{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:7px 11px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer}
+.cartline-actions .cart-view-product{border:1px solid #dfe3e8;background:#fff;color:#222}
+.cartline-actions .cart-view-product:hover{border-color:#e00000;color:#e00000}
+.cartline-actions .cart-remove{margin:0;border:1px solid #e7b7b7;background:#fff;color:#b42323}
+</style>
+<body class="store-page">
 <header><a class="brand" href="/store" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/home">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
@@ -1578,7 +1585,31 @@ window.askAboutProduct=id=>{
  window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank','noopener');
 };
 window.copyProductLink=id=>{const url=location.origin+location.pathname+'?product='+encodeURIComponent(id);if(navigator.clipboard?.writeText)navigator.clipboard.writeText(url).then(()=>alert('Product link copied.')).catch(()=>alert(url));else alert(url);};
-window.closeProduct=()=>{$('productModal').classList.remove('open');$('productModal').setAttribute('aria-hidden','true');document.body.style.overflow='';activeProductId=null;};
+let productReturnDrawer=null;
+function restoreProductReturnDrawer(){
+ if(!productReturnDrawer)return;
+ const state=productReturnDrawer;productReturnDrawer=null;
+ const drawer=$(state.id);
+ if(drawer){
+  drawer.classList.add('open');
+  drawer.scrollTop=state.scrollTop||0;
+  if(state.id==='drawer')renderCart();
+  if(state.id==='chatListDrawer'&&typeof renderChatList==='function')renderChatList();
+ }
+}
+window.openProductFromDrawer=async(id,drawerId)=>{
+ const drawer=$(drawerId);if(!drawer)return;
+ productReturnDrawer={id:drawerId,scrollTop:drawer.scrollTop};
+ drawer.classList.remove('open');
+ await window.showProduct(id);
+ if($('productModal').classList.contains('open')){
+  const back=$('productModal').querySelector('.product-modal-close');
+  if(back)back.textContent=drawerId==='drawer'?'← Back to cart':'← Back to chat list';
+ }else{
+  restoreProductReturnDrawer();
+ }
+};
+window.closeProduct=()=>{$('productModal').classList.remove('open');$('productModal').setAttribute('aria-hidden','true');document.body.style.overflow='';activeProductId=null;const back=$('productModal').querySelector('.product-modal-close');if(back)back.textContent='← Back to products';restoreProductReturnDrawer();};
 window.orderProduct=id=>{
  const p=products.find(x=>x._id===id);if(!p)return;
  const productUrl=location.origin+location.pathname+'?product='+encodeURIComponent(id);
@@ -1599,7 +1630,7 @@ function renderCart(){
   const available=Math.max(0,Number(p.stock)||0);
   const cartImage=p.imageUrl||(Array.isArray(p.images)?p.images.find(Boolean):'');
   const cartImageHtml=cartImage?`<img class="cartline-image" src="${esc(cartImage)}" alt="${esc(p.name)}" loading="lazy">`:'<span class="cartline-image-placeholder">📦</span>';
-  return `<div class="cartline"><div class="cartline-product">${cartImageHtml}<div class="cartline-details"><strong>${esc(p.name)}</strong><div class="muted">${money(p.price)} each · ${available} available</div><div class="qty"><button aria-label="Decrease ${esc(p.name)} quantity" onclick="changeQty('${p._id}',-1)">−</button><span>${x.qty}</span><button aria-label="Increase ${esc(p.name)} quantity" onclick="changeQty('${p._id}',1)" ${x.qty>=available?'disabled':''}>+</button></div><button type="button" class="cart-remove" onclick="removeCartItem('${p._id}')">Remove</button>${x.qty>available?'<small style="color:#b00000">Quantity exceeds current stock. Please reduce it.</small>':''}</div></div><strong>${money(p.price*x.qty)}</strong></div>`;
+  return `<div class="cartline"><div class="cartline-product">${cartImageHtml}<div class="cartline-details"><strong>${esc(p.name)}</strong><div class="muted">${money(p.price)} each · ${available} available</div><div class="qty"><button aria-label="Decrease ${esc(p.name)} quantity" onclick="changeQty('${p._id}',-1)">−</button><span>${x.qty}</span><button aria-label="Increase ${esc(p.name)} quantity" onclick="changeQty('${p._id}',1)" ${x.qty>=available?'disabled':''}>+</button></div><div class="cartline-actions"><button type="button" class="cart-view-product" onclick="openProductFromDrawer('${p._id}','drawer')">View product</button><button type="button" class="cart-remove" onclick="removeCartItem('${p._id}')">Remove</button></div>${x.qty>available?'<small style="color:#b00000">Quantity exceeds current stock. Please reduce it.</small>':''}</div></div><strong>${money(p.price*x.qty)}</strong></div>`;
  }).join(''):'<p class="muted">Your cart is empty.</p>';
  $('cartTotal').textContent=money(cart.reduce((n,x)=>{const p=products.find(z=>z._id===x.id);return n+(p?p.price*x.qty:0)},0));
 }
