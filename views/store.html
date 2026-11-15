@@ -454,6 +454,71 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
  .product-detail-actions{grid-template-columns:1fr!important}
 }
 
+
+
+/* ADDITIVE FIX: keep the shopping-cart button visible on the product-detail view.
+   This only styles the existing cart control; it does not replace or remove any feature. */
+.product-modal-toolbar{
+  display:flex!important;
+  flex-direction:row!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  width:100%!important;
+  min-height:56px!important;
+  box-sizing:border-box!important;
+  overflow:visible!important;
+}
+.product-modal-toolbar .product-modal-close{
+  display:inline-flex!important;
+  flex:1 1 auto!important;
+  width:auto!important;
+  max-width:none!important;
+  min-width:0!important;
+}
+#openCartFromProduct.product-modal-cart{
+  display:inline-flex!important;
+  flex:0 0 auto!important;
+  align-items:center!important;
+  justify-content:center!important;
+  visibility:visible!important;
+  opacity:1!important;
+  position:relative!important;
+  z-index:1310!important;
+  min-width:112px!important;
+  width:auto!important;
+  height:42px!important;
+  min-height:42px!important;
+  margin:0 0 0 10px!important;
+  padding:8px 14px!important;
+  border:1px solid #e00000!important;
+  border-radius:9px!important;
+  background:#e00000!important;
+  color:#fff!important;
+  font-size:13px!important;
+  font-weight:800!important;
+  line-height:1.2!important;
+  white-space:nowrap!important;
+  cursor:pointer!important;
+}
+#openCartFromProduct.product-modal-cart[hidden]{
+  display:inline-flex!important;
+}
+@media(max-width:480px){
+  .product-modal-toolbar{padding:6px 10px!important;gap:7px!important}
+  .product-modal-toolbar .product-modal-close{
+    flex:1 1 auto!important;
+    max-width:none!important;
+    font-size:12px!important;
+    padding:0 7px!important;
+  }
+  #openCartFromProduct.product-modal-cart{
+    min-width:96px!important;
+    margin-left:6px!important;
+    padding:7px 9px!important;
+    font-size:12px!important;
+  }
+}
+
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-guest-cart-auth-v6"><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"><style>
 
 /* IT Elements: hide the product-detail Add to Chat action; keep the header Chat access. */
@@ -760,6 +825,153 @@ button[onclick*="addDetailToChat"] {
  .product-modal-toolbar .product-modal-cart{min-width:98px!important;padding:7px 10px!important;font-size:12px!important}
 }
 
+</style>
+
+
+<style id="ite-elements-mobile-side-by-side-sticky-departments">
+/* ADDITIVE LAYOUT UPDATE:
+   Keep Shop by Department beside the product list on phones, like desktop.
+   The department list remains independently scrollable and sticky while browsing. */
+@media (max-width:760px){
+  #catalogue .catalogue-layout{
+    display:grid!important;
+    grid-template-columns:minmax(112px, 34%) minmax(0,1fr)!important;
+    align-items:start!important;
+    gap:10px!important;
+    overflow:visible!important;
+  }
+  #catalogue .department-sidebar{
+    position:sticky!important;
+    position:-webkit-sticky!important;
+    top:66px!important;
+    align-self:start!important;
+    width:100%!important;
+    min-width:0!important;
+    max-height:calc(100dvh - 82px)!important;
+    margin:0!important;
+    padding:10px 7px!important;
+    overflow:hidden!important;
+    z-index:40!important;
+    background:#fff!important;
+    border:1px solid #e2e5e9!important;
+    border-radius:10px!important;
+    box-shadow:0 4px 14px rgba(0,0,0,.055)!important;
+  }
+  #catalogue .department-sidebar h3{
+    display:block!important;
+    font-size:clamp(11px,2.6vw,14px)!important;
+    line-height:1.25!important;
+    margin:0 0 7px!important;
+    padding:0 3px 8px!important;
+    white-space:normal!important;
+  }
+  #catalogue .department-links{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:3px!important;
+    max-height:calc(100dvh - 145px)!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+    overscroll-behavior:contain!important;
+    scrollbar-width:thin!important;
+    white-space:normal!important;
+    padding:0 2px 4px!important;
+  }
+  #catalogue .department-link{
+    display:flex!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:35px!important;
+    flex:0 0 auto!important;
+    align-items:flex-start!important;
+    justify-content:flex-start!important;
+    gap:5px!important;
+    padding:8px 5px!important;
+    border:0!important;
+    border-radius:6px!important;
+    font-size:clamp(10px,2.45vw,12px)!important;
+    line-height:1.25!important;
+    text-align:left!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+  #catalogue .department-link:before{
+    display:inline-block!important;
+    flex:0 0 auto!important;
+    font-size:15px!important;
+    line-height:1!important;
+  }
+  #catalogue .product-area{
+    display:block!important;
+    min-width:0!important;
+    width:100%!important;
+    overflow:visible!important;
+  }
+  #catalogue .products{
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+    min-width:0!important;
+  }
+  #catalogue .products>.card{
+    min-width:0!important;
+    width:100%!important;
+  }
+}
+@media (max-width:430px){
+  #catalogue .catalogue-layout{
+    grid-template-columns:minmax(104px, 35%) minmax(0,1fr)!important;
+    gap:8px!important;
+  }
+  #catalogue .department-sidebar{
+    top:58px!important;
+    padding:9px 6px!important;
+    max-height:calc(100dvh - 72px)!important;
+  }
+  #catalogue .department-links{
+    max-height:calc(100dvh - 132px)!important;
+  }
+  #catalogue .department-link{
+    min-height:34px!important;
+    padding:7px 4px!important;
+    font-size:10px!important;
+  }
+  #catalogue .products{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:9px!important;
+  }
+  #catalogue .products>.card>.photo{
+    height:clamp(125px,38vw,165px)!important;
+    min-height:clamp(125px,38vw,165px)!important;
+    flex-basis:clamp(125px,38vw,165px)!important;
+  }
+  #catalogue .products>.card h3{
+    font-size:11px!important;
+    min-height:0!important;
+  }
+}
+@media (min-width:761px){
+  #catalogue .catalogue-layout{
+    display:grid!important;
+    grid-template-columns:minmax(220px,245px) minmax(0,1fr)!important;
+    align-items:start!important;
+    gap:20px!important;
+    overflow:visible!important;
+  }
+  #catalogue .department-sidebar{
+    position:sticky!important;
+    position:-webkit-sticky!important;
+    top:88px!important;
+    align-self:start!important;
+    max-height:calc(100dvh - 108px)!important;
+  }
+  #catalogue .department-links{
+    max-height:calc(100dvh - 190px)!important;
+    overflow-y:auto!important;
+    overflow-x:hidden!important;
+  }
+}
 </style>
 
 </head><body class="store-page">
