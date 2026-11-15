@@ -438,6 +438,7 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 .product-detail-copy{min-width:0}
 .product-detail-actions{grid-template-columns:1fr 1fr!important}
 .product-detail-actions .secondary{grid-column:1/-1!important}
+.product-detail-actions .chat-action{background:#fff!important;color:#e00000!important;border:1px solid #e00000!important}
 @media(max-width:900px){
  .product-modal-panel{max-width:100%!important}
  .product-modal-content{grid-template-columns:minmax(0,1fr)!important;gap:16px!important;padding:16px!important}
@@ -450,7 +451,7 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
  .product-detail-actions{grid-template-columns:1fr!important}
 }
 
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-approved-header-v4"><link rel="stylesheet" href="/ite-mobile.css?v=20261114-mobile2"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"></head><body class="store-page">
+</style><link rel="stylesheet" href="P261115-storefront-refresh"><link rel="stylesheet" href="/ite-mobile.css?v=20261114-mobile2"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"></head><body class="store-page">
 <header><a class="brand" href="/"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
@@ -509,9 +510,9 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
  </section>
 </div>
 <div class="store-payment-notice" id="storePaymentNotice" role="status" aria-live="polite"></div>
-<div class="drawer" id="drawer"><aside class="cartpanel"><div class="carthead"><h2>Your cart</h2><button class="x" id="closeCart">✕</button></div><div id="cartItems"></div><div class="total"><span>Products subtotal</span><span id="cartTotal">R 0.00</span></div><p class="muted cart-delivery-rule">Delivery: R80 on product subtotals below R755; free on R755 or more.</p><button class="checkout" id="checkout">Continue to secure checkout</button><p class="muted" style="font-size:12px">Secure online payment. Delivery is R80 below R755 and free on orders of R755 or more.</p></aside></div>
+<div class="drawer" id="drawer"><aside class="cartpanel"><div class="carthead"><h2>Your selected products</h2><button class="x" id="closeCart">✕</button></div><div id="cartItems"></div><div class="total"><span>Products subtotal</span><span id="cartTotal">R 0.00</span></div><p class="muted cart-delivery-rule">Delivery: R80 on product subtotals below R755; free on R755 or more.</p><button class="checkout" id="checkout">Continue to secure checkout</button><p class="muted" style="font-size:12px">Secure online payment. Delivery is R80 below R755 and free on orders of R755 or more.</p></aside></div>
 
-<button type="button" id="iteSideCart" aria-label="Open your cart">Cart <span id="iteSideCartCount">0</span></button>
+<button type="button" id="iteSideCart" aria-label="Open your selected products">Chat <span id="iteSideCartCount">0</span></button>
 <style>
 #iteSideCart{position:fixed;right:0;top:48%;z-index:1100;border:0;border-radius:12px 0 0 12px;background:#e00000;color:#fff;padding:14px 16px;font:800 14px Arial,sans-serif;box-shadow:0 5px 22px #0002;cursor:pointer}
 #iteSideCart span{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-left:5px;border-radius:20px;background:#fff;color:#e00000}
@@ -521,15 +522,6 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 (()=>{const b=document.getElementById('iteSideCart');if(!b)return;b.addEventListener('click',()=>document.getElementById('openCart')?.click());})();
 </script>
 
-<button type="button" id="iteSideCart" aria-label="Open your cart">Cart <span id="iteSideCartCount">0</span></button>
-<style>
-#iteSideCart{position:fixed;right:0;top:48%;z-index:1100;border:0;border-radius:12px 0 0 12px;background:#e00000;color:#fff;padding:14px 16px;font:800 14px Arial,sans-serif;box-shadow:0 5px 22px #0002;cursor:pointer}
-#iteSideCart span{display:inline-grid;place-items:center;min-width:22px;height:22px;margin-left:5px;border-radius:20px;background:#fff;color:#e00000}
-@media(max-width:700px){#iteSideCart{top:auto;bottom:115px;padding:11px 13px;font-size:13px}}
-</style>
-<script>
-(()=>{const b=document.getElementById('iteSideCart');if(!b)return;b.addEventListener('click',()=>document.getElementById('openCart')?.click());})();
-</script>
 
 <div class="product-modal" id="productModal" aria-hidden="true">
  <div class="product-modal-backdrop" data-close-product></div>
@@ -752,7 +744,7 @@ window.showProduct=async id=>{
   }
  }
  detailQuantity=1;
- $('productModalContent').innerHTML=`<div class="product-detail-left"><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><div class="detail-meta"><span class="detail-pill">SKU: ${esc(p.sku||'On request')}</span><span class="detail-pill">${Number(p.stock)>0?'In stock':'Check availability'}</span></div><div class="detail-qty" aria-label="Choose product quantity"><span>Quantity</span><button type="button" id="detailQtyMinus" onclick="changeDetailQty(-1)" aria-label="Decrease quantity" disabled>−</button><input id="detailQtyInput" type="number" inputmode="numeric" min="1" max="${Math.max(1,Number(p.stock)||1)}" value="1" aria-label="Product quantity" onchange="setDetailQty(this.value)" oninput="setDetailQty(this.value)" ${Number(p.stock)>0?'':'disabled'}><button type="button" id="detailQtyPlus" onclick="changeDetailQty(1)" aria-label="Increase quantity" ${Number(p.stock)>1?'':'disabled'}>+</button><small id="detailStockHint">${Number(p.stock)>0?`${Number(p.stock)} available`:'Currently unavailable'}</small></div><div class="product-detail-actions"><button type="button" onclick="addDetailToCart('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to cart</button><button type="button" class="buy-now" onclick="buyDetailNow('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Buy now</button><button type="button" class="secondary" onclick="askAboutProduct('${p._id}')">Ask about product</button></div><div class="detail-section"><details><summary>Delivery information</summary><div class="detail-description"><strong>Estimated delivery: 3–5 business days.</strong><br>Delivery times may vary depending on your location and product availability. We will confirm your order and delivery arrangements after checkout. Contact IT Elements if you need help checking product compatibility.</div></details></div><div class="detail-section"><button type="button" class="filter-reset" style="height:38px" onclick="copyProductLink('${p._id}')">Copy product link</button></div></div><div class="detail-section detail-description-under-image detail-description-full"><details open><summary>Product description & details</summary><div class="detail-description">${renderSafeProductDescription(p.description)}</div></details></div>`;
+ $('productModalContent').innerHTML=`<div class="product-detail-left"><div class="product-detail-image">${image}</div></div><div class="product-detail-copy"><div class="category">${esc(p.category||'Technology')}</div><h2 id="detailName">${esc(p.name)}</h2><div class="product-detail-price">${money(p.price)} ${p.compareAtPrice>p.price?`<small style="font-size:14px;color:#999;text-decoration:line-through">${money(p.compareAtPrice)}</small>`:''}</div><div class="detail-meta"><span class="detail-pill">SKU: ${esc(p.sku||'On request')}</span><span class="detail-pill">${Number(p.stock)>0?'In stock':'Check availability'}</span></div><div class="detail-qty" aria-label="Choose product quantity"><span>Quantity</span><button type="button" id="detailQtyMinus" onclick="changeDetailQty(-1)" aria-label="Decrease quantity" disabled>−</button><input id="detailQtyInput" type="number" inputmode="numeric" min="1" max="${Math.max(1,Number(p.stock)||1)}" value="1" aria-label="Product quantity" onchange="setDetailQty(this.value)" oninput="setDetailQty(this.value)" ${Number(p.stock)>0?'':'disabled'}><button type="button" id="detailQtyPlus" onclick="changeDetailQty(1)" aria-label="Increase quantity" ${Number(p.stock)>1?'':'disabled'}>+</button><small id="detailStockHint">${Number(p.stock)>0?`${Number(p.stock)} available`:'Currently unavailable'}</small></div><div class="product-detail-actions"><button type="button" onclick="addDetailToCart('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to cart</button><button type="button" class="chat-action" onclick="addDetailToChat('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Add to chat</button><button type="button" class="buy-now" onclick="buyDetailNow('${p._id}')" ${Number(p.stock)>0?'':'disabled'}>Buy now</button><button type="button" class="secondary" onclick="askAboutProduct('${p._id}')">Ask about product</button></div><div class="detail-section"><details><summary>Delivery information</summary><div class="detail-description"><strong>Estimated delivery: 3–5 business days.</strong><br>Delivery times may vary depending on your location and product availability. We will confirm your order and delivery arrangements after checkout. Contact IT Elements if you need help checking product compatibility.</div></details></div><div class="detail-section"><button type="button" class="filter-reset" style="height:38px" onclick="copyProductLink('${p._id}')">Copy product link</button></div></div><div class="detail-section detail-description-under-image detail-description-full"><details open><summary>Product description & details</summary><div class="detail-description">${renderSafeProductDescription(p.description)}</div></details></div>`;
  $('productModal').classList.add('open');$('productModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
 };
 window.changeDetailQty=delta=>{
@@ -796,6 +788,15 @@ window.addDetailToCart=async id=>{
   if(notice){notice.textContent=`${detailQuantity} item(s) added to your cart. Your product details are still open.`;notice.hidden=false;}
  }
 };
+window.addDetailToChat=async id=>{
+ const added=await addToCart(id,detailQuantity);
+ if(!added)return;
+ renderCart();
+ const notice=$('detailCartNotice')||(()=>{const n=document.createElement('p');n.id='detailCartNotice';n.setAttribute('role','status');n.style.cssText='margin:12px 0;padding:10px 12px;border-radius:9px;background:#eaf8ef;color:#176b35;font-weight:700';const actions=document.querySelector('.product-detail-actions');if(actions)actions.insertAdjacentElement('afterend',n);return n;})();
+ notice.textContent=`${detailQuantity} item(s) added to your chat list. Your product details are still open. Use the Chat button on the side to view your selected products.`;
+ notice.hidden=false;
+};
+
 window.buyDetailNow=async id=>{
  const existing=cart.find(item=>item.id===id);
  if(!existing&&!await addToCart(id,detailQuantity))return;
@@ -833,6 +834,7 @@ function renderCart(){
  const count=cart.reduce((n,x)=>n+x.qty,0);
  $('cartCount').textContent=count;
  const sideCount=$('iteSideCartCount');if(sideCount)sideCount.textContent=count;
+ const sideButton=$('iteSideCart');if(sideButton)sideButton.setAttribute('aria-label',`Open your selected products (${count})`);
  $('cartItems').innerHTML=cart.length?cart.map(x=>{
   const p=products.find(z=>z._id===x.id);
   if(!p)return '';
