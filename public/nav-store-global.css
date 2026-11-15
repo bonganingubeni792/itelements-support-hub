@@ -57,3 +57,112 @@ body:not(.store-page) header.site-header{
  .ite-mobile-drawer-links a:hover{color:var(--ite-red)!important;background:#fafafa!important}
 }
 @media(max-width:370px){.ite-header-brand{font-size:14px!important}.ite-header-brand img{width:34px!important;height:34px!important;flex-basis:34px!important}.ite-account-action{min-width:61px!important;padding:0 7px!important}.ite-header-cart,.ite-header-actions #openCart{min-width:68px!important;padding:0 7px!important}}
+
+
+/* IT ELEMENTS — shared Store-style public page system */
+body:not(.store-page) {
+  background:#fff;
+  color:#171717;
+}
+body:not(.store-page) nav.nav,
+body:not(.store-page) nav.navbar,
+body:not(.store-page) nav.site-nav,
+body:not(.store-page) nav.main-nav {
+  position:sticky!important;top:0!important;z-index:1000!important;
+  width:100%!important;max-width:none!important;min-height:76px!important;
+  margin:0!important;padding:10px clamp(16px,4vw,64px)!important;
+  border:0!important;border-bottom:1px solid #e9e9e9!important;border-radius:0!important;
+  background:#fff!important;box-shadow:0 2px 10px rgba(0,0,0,.045)!important;
+  display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;
+}
+body:not(.store-page) nav.nav .brand,
+body:not(.store-page) nav.navbar .brand,
+body:not(.store-page) nav.site-nav .brand,
+body:not(.store-page) nav.main-nav .brand {
+  display:inline-flex!important;align-items:center!important;gap:9px!important;
+  margin:0!important;color:#171717!important;font-size:21px!important;font-weight:900!important;white-space:nowrap!important;
+}
+body:not(.store-page) nav.nav .brand img,
+body:not(.store-page) nav.navbar .brand img,
+body:not(.store-page) nav.site-nav .brand img,
+body:not(.store-page) nav.main-nav .brand img {width:46px!important;height:46px!important;object-fit:contain!important}
+body:not(.store-page) nav.nav .brand-support,
+body:not(.store-page) nav.navbar .brand-support,
+body:not(.store-page) nav.site-nav .brand-support,
+body:not(.store-page) nav.main-nav .brand-support {display:none!important}
+body:not(.store-page) nav.nav .nav-links,
+body:not(.store-page) nav.nav .links,
+body:not(.store-page) nav.navbar .nav-links,
+body:not(.store-page) nav.navbar .links,
+body:not(.store-page) nav.site-nav .nav-links,
+body:not(.store-page) nav.site-nav .links,
+body:not(.store-page) nav.main-nav .nav-links,
+body:not(.store-page) nav.main-nav .links {
+ display:flex!important;align-items:center!important;justify-content:center!important;flex:1 1 auto!important;
+ gap:clamp(12px,2vw,28px)!important;width:auto!important;max-width:none!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important;
+}
+body:not(.store-page) nav.nav .nav-links a,
+body:not(.store-page) nav.nav .links a,
+body:not(.store-page) nav.navbar .nav-links a,
+body:not(.store-page) nav.navbar .links a,
+body:not(.store-page) nav.site-nav .nav-links a,
+body:not(.store-page) nav.site-nav .links a,
+body:not(.store-page) nav.main-nav .nav-links a,
+body:not(.store-page) nav.main-nav .links a {
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:42px!important;
+ padding:7px 2px!important;border:0!important;border-radius:0!important;background:transparent!important;
+ color:#252833!important;font-size:14px!important;font-weight:750!important;text-decoration:none!important;white-space:nowrap!important;
+}
+body:not(.store-page) nav.nav .nav-links a:hover,
+body:not(.store-page) nav.nav .links a:hover {color:#e00000!important}
+body:not(.store-page) .ite-header-actions{display:flex!important;align-items:center!important;gap:10px!important;flex:0 0 auto!important}
+body:not(.store-page) .ite-account-action,
+body:not(.store-page) .ite-header-cart {
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:44px!important;
+ padding:0 18px!important;border-radius:8px!important;font-size:14px!important;font-weight:850!important;text-decoration:none!important;white-space:nowrap!important;
+}
+body:not(.store-page) .ite-account-action{background:#e00000!important;color:#fff!important;border:1px solid #e00000!important}
+body:not(.store-page) .ite-header-cart{background:#fff!important;color:#e00000!important;border:1px solid #e00000!important}
+body:not(.store-page) .menu-toggle,body:not(.store-page) .ite-mobile-menu-trigger{display:none!important}
+body:not(.store-page) main{width:min(calc(100% - 48px),1480px)!important;max-width:1480px!important;margin:0 auto!important}
+body:not(.store-page) main>section{max-width:100%!important}
+body:not(.store-page) .container,body:not(.store-page) .content,body:not(.store-page) .wrap,body:not(.store-page) .page{
+ width:min(100%,1400px)!important;max-width:1400px!important;margin-left:auto!important;margin-right:auto!important;
+}
+body:not(.store-page) .hero,body:not(.store-page) .hero-panel,body:not(.store-page) .hero-layout{border-radius:14px!important}
+body:not(.store-page) .feature-grid,body:not(.store-page) .services-grid,body:not(.store-page) .pricing-grid,
+body:not(.store-page) .plans-wrapper,body:not(.store-page) .cards-grid{
+ display:grid!important;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))!important;gap:18px!important;
+}
+body:not(.store-page) .feature-card,body:not(.store-page) .service-card,body:not(.store-page) .pricing-card,
+body:not(.store-page) .plan-box,body:not(.store-page) .contact-card{min-width:0!important;border-radius:12px!important}
+body.store-page .ite-side-chat,body.store-page #iteSideChat,body.store-page #floatingChat,
+body.store-page .floating-chat,body.store-page .chat-float,body.store-page .floating-chat-button,
+body.store-page .whatsapp-float,body.store-page .whatsapp-fab,body.store-page .whatsapp-widget,
+body.store-page .wa-float,body.store-page .wa-widget,body.store-page [data-whatsapp-float] {display:none!important}
+@media(max-width:900px){
+ body:not(.store-page) nav.nav,body:not(.store-page) nav.navbar,body:not(.store-page) nav.site-nav,body:not(.store-page) nav.main-nav{
+  min-height:68px!important;padding:9px 14px!important;gap:8px!important;
+ }
+ body:not(.store-page) nav.nav .brand,body:not(.store-page) nav.navbar .brand,
+ body:not(.store-page) nav.site-nav .brand,body:not(.store-page) nav.main-nav .brand{font-size:18px!important}
+ body:not(.store-page) nav.nav .brand img,body:not(.store-page) nav.navbar .brand img,
+ body:not(.store-page) nav.site-nav .brand img,body:not(.store-page) nav.main-nav .brand img{width:40px!important;height:40px!important}
+ body:not(.store-page) .menu-toggle,body:not(.store-page) .ite-mobile-menu-trigger{
+  display:inline-flex!important;order:5!important;align-items:center!important;justify-content:center!important;
+  width:44px!important;height:44px!important;min-width:44px!important;margin-left:auto!important;padding:0!important;
+  border:1px solid #e7e7e7!important;border-radius:9px!important;background:#fff!important;color:#171717!important;font-size:24px!important;
+ }
+ body:not(.store-page) nav.nav .nav-links,body:not(.store-page) nav.nav .links,
+ body:not(.store-page) nav.navbar .nav-links,body:not(.store-page) nav.navbar .links,
+ body:not(.store-page) nav.site-nav .nav-links,body:not(.store-page) nav.site-nav .links,
+ body:not(.store-page) nav.main-nav .nav-links,body:not(.store-page) nav.main-nav .links{display:none!important}
+ body:not(.store-page) .ite-header-actions{margin-left:auto!important}
+ body:not(.store-page) main{width:calc(100% - 28px)!important}
+ body:not(.store-page) h1{font-size:clamp(28px,7vw,44px)!important;line-height:1.12!important}
+}
+@media(max-width:520px){
+ body:not(.store-page) main{width:calc(100% - 22px)!important}
+ body:not(.store-page) .feature-grid,body:not(.store-page) .services-grid,body:not(.store-page) .pricing-grid,
+ body:not(.store-page) .plans-wrapper,body:not(.store-page) .cards-grid{grid-template-columns:minmax(0,1fr)!important}
+}
