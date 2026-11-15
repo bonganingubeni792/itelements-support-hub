@@ -267,6 +267,13 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 #productList .stock-admin-edit input,#productList .stock-admin-edit select{
   width:100%!important;min-width:0!important;box-sizing:border-box!important;
 }
+#productList .stock-save-one{
+  grid-column:1 / -1!important;width:100%!important;min-height:34px!important;
+  padding:7px 12px!important;font-size:11px!important;font-weight:850!important;
+  justify-content:center!important;
+}
+#productList .stock-save-one:disabled{opacity:.65;cursor:wait}
+
 #productList .price{font-size:14px!important;margin-top:8px!important}
 #productList>.product>.rowactions{
   grid-row:4!important;display:flex!important;align-items:center!important;
@@ -671,7 +678,7 @@ function render(){
  <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" decoding="async">`:'No image'}</div>
  <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''}</div>
  <div class="stock-admin-line"><span class="stock-admin-state ${Number(p.stock)>0?'available':'unavailable'}">${Number(p.stock)>0?'IN STOCK':'OUT OF STOCK'}</span><strong>${Number(p.stock)||0} left</strong></div>
- <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label></div>
+ <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label><button class="btn primary stock-save-one" type="button" data-save-stock="${p._id}">Save stock</button></div>
  <div class="price">${money(p.price)}${Number(p.compareAtPrice)>Number(p.price)?` <s style="color:#999;font-weight:500">${money(p.compareAtPrice)}</s>`:''}</div>
  <span class="pill ${p.status==='draft'?'draft':''}">${p.status==='draft'?'DRAFT':'PUBLISHED'}</span>${p.featured?' <span class="pill">FEATURED</span>':''}</div>
  <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products match these filters.</div>';
@@ -702,6 +709,41 @@ $('productList').addEventListener('change',e=>{
  if(!qty)return;
  if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
  updateStockPreviewForControl(mode);
+});
+
+// Save one product's stock independently; other unsaved card edits stay intact.
+$('productList').addEventListener('click',async e=>{
+ const button=e.target.closest('[data-save-stock]');
+ if(!button)return;
+ const id=button.getAttribute('data-save-stock');
+ const card=button.closest('.product');
+ const input=card?.querySelector('[data-stock-qty]');
+ const mode=card?.querySelector('[data-stock-mode]');
+ if(!input||!mode)return;
+ const qty=Math.floor(Number(input.value));
+ const stock=mode.value==='out'?0:qty;
+ const product=products.find(p=>String(p._id)===String(id));
+ if(!Number.isInteger(stock)||stock<0||stock>10000000||(mode.value==='in'&&stock<1)){
+  notice(`Enter a valid stock quantity for ${product?.name||'this product'}. In-stock products need at least 1 unit.`,'error');
+  input.focus();return;
+ }
+ const originalText=button.textContent;
+ button.disabled=true;button.textContent='Saving…';
+ try{
+  const result=await api('/api/admin/store/products/stock',{
+   method:'PATCH',body:JSON.stringify({updates:[{id,stock}]})
+  });
+  if(product)product.stock=stock;
+  updateStockPreviewForControl(input);
+  const low=$('lowCount');
+  if(low)low.textContent=products.filter(p=>Number(p.stock)<=5).length;
+  button.textContent='Saved ✓';
+  notice(`${product?.name||'Product'} stock saved: ${stock} unit(s).`,'ok');
+  setTimeout(()=>{if(button.isConnected){button.textContent=originalText;button.disabled=false;}},1400);
+ }catch(err){
+  notice(err.message||'Could not save this product stock.','error');
+  button.textContent=originalText;button.disabled=false;
+ }
 });
 
 
