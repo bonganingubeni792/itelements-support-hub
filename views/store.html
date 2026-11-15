@@ -506,17 +506,30 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 <script>
 const $=id=>document.getElementById(id);
 let products=[];
-const CART_STORAGE_KEY='itelements_store_cart_v1';
-function readSavedCart(){
+// Keep carts separate for guests and for each signed-in customer on shared devices.
+let CART_STORAGE_KEY='itelements_store_cart_guest_v2';
+function readSavedCart(key=CART_STORAGE_KEY){
  try{
-  const saved=JSON.parse(localStorage.getItem(CART_STORAGE_KEY)||'[]');
+  const saved=JSON.parse(localStorage.getItem(key)||'[]');
   return Array.isArray(saved)?saved.filter(x=>x&&typeof x.id==='string'&&Number.isInteger(x.qty)&&x.qty>0):[];
  }catch(_){return [];}
 }
-let cart=readSavedCart();
+let cart=[];
 let detailQuantity=1;
 let activeProductId=null;
 let galleryIndex=0;
+let storeAccountKey='guest';
+async function loadAccountCart(){
+ try{
+  const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
+  const auth=await response.json();
+  storeAccountKey=response.ok&&auth.authenticated&&auth.email
+   ? 'user:'+String(auth.email).trim().toLowerCase()
+   : 'guest';
+ }catch(_){storeAccountKey='guest';}
+ CART_STORAGE_KEY='itelements_store_cart_v2:'+encodeURIComponent(storeAccountKey);
+ cart=readSavedCart();
+}
 function saveCart(){
  try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart));}catch(_){}
 }
@@ -561,7 +574,7 @@ async function addToCart(id, quantity=1){
   const auth=await authResponse.json();
   if(!authResponse.ok||!auth.authenticated){
    sessionStorage.setItem('itePendingStoreAdd',JSON.stringify({id,quantity}));
-   location.href='/client/login?next='+encodeURIComponent('/store?resumeCart=1');
+   location.href='/client/login?next='+encodeURIComponent('/store?resumeCart=1&product='+encodeURIComponent(id));
    return false;
   }
  }catch(_){alert('We could not verify your sign-in. Please try again.');return false;}
@@ -606,6 +619,7 @@ function renderSafeProductDescription(value){
 
 window.showProduct=async id=>{
  activeProductId=id;
+ const priorNotice=$('detailCartNotice');if(priorNotice)priorNotice.remove();
  let p=products.find(x=>x._id===id);if(!p)return;
  try{
   const response=await fetch('/api/store/products/'+encodeURIComponent(id));
@@ -672,9 +686,17 @@ function syncDetailQuantity(){
 }
 window.addDetailToCart=async id=>{
  if(await addToCart(id,detailQuantity)){
-  closeProduct();
-  const notice=$('storePaymentNotice');
-  if(notice){notice.textContent=`${detailQuantity} item(s) added to your cart.`;notice.className='store-payment-notice show success';setTimeout(()=>notice.classList.remove('show'),2600);}
+  // Keep the product detail open; the customer closes it only with Back/Close.
+  let notice=$('detailCartNotice');
+  if(!notice){
+   notice=document.createElement('p');
+   notice.id='detailCartNotice';
+   notice.setAttribute('role','status');
+   notice.style.cssText='margin:12px 0;padding:10px 12px;border-radius:9px;background:#eaf8ef;color:#176b35;font-weight:700';
+   const actions=document.querySelector('.product-detail-actions');
+   if(actions)actions.insertAdjacentElement('afterend',notice);
+  }
+  if(notice){notice.textContent=`${detailQuantity} item(s) added to your cart. Your product details are still open.`;notice.hidden=false;}
  }
 };
 window.buyDetailNow=async id=>{
@@ -851,6 +873,7 @@ $('clearFilters').onclick=()=>{$('search').value='';$('departmentPicker').value=
 $('search').addEventListener('keydown',e=>{if(e.key==='/'){e.preventDefault();$('search').focus();}});
 async function load(){
  try{
+  await loadAccountCart();
   const r=await fetch('/api/store/products');
   const d=await r.json();
   if(!r.ok)throw Error(d.message||'');

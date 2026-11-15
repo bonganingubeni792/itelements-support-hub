@@ -191,10 +191,10 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 </section>
 
 <section class="panel" id="orders">
- <div class="panelhead"><div><h2>Customer orders</h2><p class="sub">Orders placed through the online store and their PayFast payment status.</p></div><button class="btn" id="refreshOrders">↻ Refresh orders</button></div>
+ <div class="panelhead"><div><h2>Customer orders</h2><p class="sub">Only orders with a verified, completed PayFast payment appear here. Unpaid or abandoned checkouts are not sales.</p></div><button class="btn" id="refreshOrders">↻ Refresh orders</button></div>
  <div class="toolbar admin-filterbar" style="grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) auto">
   <input id="orderSearch" type="search" placeholder="Search order number, customer or email…">
-  <label>Payment status<select id="orderPaymentFilter"><option value="all">All payments</option><option value="paid">Paid</option><option value="pending">Pending</option><option value="failed">Failed</option></select></label>
+  <label>Payment status<select id="orderPaymentFilter"><option value="paid">Paid orders only</option></select></label>
   <label>Order progress<select id="orderFulfilFilter"><option value="all">All stages</option><option value="new">New</option><option value="processing">Processing</option><option value="ready">Ready</option><option value="shipped">Shipped</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></label>
  </div>
  <div id="ordersSummary" class="sub" style="margin:10px 0 14px">Loading orders…</div>
@@ -512,7 +512,7 @@ function renderOrders(){
  });
  const paid=storeOrders.filter(o=>o.status==='paid').length;
  $('orderNavCount').textContent=storeOrders.length?`(${storeOrders.length})`:'';
- $('ordersSummary').textContent=`${list.length} shown · ${storeOrders.length} total · ${paid} paid`;
+ $('ordersSummary').textContent=`${list.length} paid orders shown · ${paid} verified payments`;
  $('ordersList').innerHTML=list.length?list.map(o=>{
   const d=o.orderDetails||{},items=Array.isArray(d.items)?d.items:[];
   const itemText=items.map(i=>`${Number(i.quantity)||1} × ${escapeHtml(i.name||'Product')}${i.sku?' · '+escapeHtml(i.sku):''} — ${orderMoney((Number(i.unitPriceCents)||0)*(Number(i.quantity)||1))}`).join('<br>')||'No item details saved';
@@ -524,7 +524,7 @@ function renderOrders(){
    <div class="order-meta">${d.deliveryMethod==='collection'?'Collection':'Delivery'}${d.deliveryAddress?' · '+escapeHtml(d.deliveryAddress):''}${o.pfPaymentId?' · PayFast ref: '+escapeHtml(o.pfPaymentId):''}</div>
    <div class="order-controls"><label style="font-size:10px;font-weight:800">Order progress</label><select data-order-status="${escapeHtml(o._id)}">${[['new','New'],['processing','Processing'],['ready','Ready for collection'],['shipped','Shipped'],['completed','Completed'],['cancelled','Cancelled']].map(([v,l])=>`<option value="${v}" ${ful===v?'selected':''}>${l}</option>`).join('')}</select><span class="order-meta">Payment status is confirmed separately by PayFast.</span></div>
   </article>`;
- }).join(''):'<div class="empty">No orders match these filters yet. New store checkouts will appear here.</div>';
+ }).join(''):'<div class="empty">No paid orders yet. Unpaid or abandoned checkout attempts are not shown as orders.</div>';
 }
 async function loadOrders(){
  $('ordersList').innerHTML='<div class="empty">Loading orders…</div>';
