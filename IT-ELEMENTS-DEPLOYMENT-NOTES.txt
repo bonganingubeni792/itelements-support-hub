@@ -20,3 +20,12 @@ The checkout computes:
 The server recalculates this from database product prices and stock.
 
 After deployment, if checkout fails, inspect Render logs for [STORE CHECKOUT]. Check the message and correct the matching environment/database issue. A successful syntax check alone does not prove that PayFast credentials or webhook configuration are valid.
+
+Latest update:
+- Store checkout API now returns product gallery image URLs.
+- Customer cart and checkout rows show product images and Remove controls.
+- Valid email regex corrected; phone validation accepts common formatting.
+- Add-to-cart redirects unsigned customers to login and resumes the intended add on return.
+- Buy Now does not double-add a product already in the cart.
+- Customer checkout is delivery-only; no collection-free wording.
+- Delivery is R80 below R755 and free at R755 or above.

@@ -1082,7 +1082,7 @@ app.get('/api/store/products', async (req, res) => {
         res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
 
         const products = await StoreProduct.find({ status: 'active' })
-            .select('name sku category description price compareAtPrice stock imageUrl status featured createdAt')
+            .select('name sku category description price compareAtPrice stock imageUrl images status featured createdAt')
             .sort({ featured: -1, createdAt: -1 })
             .lean();
 
@@ -1585,14 +1585,21 @@ app.post('/api/payment/payfast-product-checkout', async (req, res) => {
         const email = String((req.session && req.session.userEmail) || req.body.email || '').trim().toLowerCase();
         const customerName = String(req.body.customerName || '').trim().slice(0, 100);
         const phone = String(req.body.phone || '').trim().slice(0, 30);
-        const deliveryMethod = req.body.deliveryMethod === 'collection' ? 'collection' : 'delivery';
+        const deliveryMethod = 'delivery';
         const deliveryAddress = String(req.body.deliveryAddress || '').trim().slice(0, 500);
         const rawItems = Array.isArray(req.body.items) ? req.body.items : [];
 
-        if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || !customerName || phone.length < 7 || phone.length > 30) {
-            return res.status(400).json({ success: false, message: 'Please provide your full name, a valid email address and a valid phone number.' });
+        const normalizedPhone = phone.replace(/[\s().-]/g, '');
+        if (customerName.length < 2) {
+            return res.status(400).json({ success: false, message: 'Please enter your full name.' });
         }
-        if (deliveryMethod === 'delivery' && deliveryAddress.length < 8) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).json({ success: false, message: 'Please enter a valid email address.' });
+        }
+        if (!/^\+?[0-9]{7,20}$/.test(normalizedPhone)) {
+            return res.status(400).json({ success: false, message: 'Please enter a valid phone number, including your country code.' });
+        }
+        if (deliveryAddress.length < 8) {
             return res.status(400).json({ success: false, message: 'Please enter your delivery address.' });
         }
         if (!rawItems.length || rawItems.length > 30) {
@@ -1627,7 +1634,7 @@ app.post('/api/payment/payfast-product-checkout', async (req, res) => {
                 productId: String(product._id),
                 name: product.name,
                 sku: product.sku || '',
-                imageUrl: String(product.imageUrl || ''),
+                imageUrl: String(product.imageUrl || (Array.isArray(product.images) ? product.images.find(Boolean) : '') || ''),
                 quantity,
                 unitPriceCents
             };
@@ -1637,9 +1644,9 @@ app.post('/api/payment/payfast-product-checkout', async (req, res) => {
             return res.status(400).json({ success: false, message: 'The order subtotal is invalid.' });
         }
 
-        // IT Elements delivery policy: R80 below R750; free at R750 and above.
+        // IT Elements delivery policy: R80 below R755; free at R755 and above.
         // Collection never incurs a delivery charge.
-        const deliveryFeeCents = deliveryMethod === 'delivery' && subtotalCents < 75000 ? 8000 : 0;
+        const deliveryFeeCents = deliveryMethod === 'delivery' && subtotalCents < 75500 ? 8000 : 0;
         const totalCents = subtotalCents + deliveryFeeCents;
 
         const checkout = await createPayFastCheckout({
@@ -1648,7 +1655,7 @@ app.post('/api/payment/payfast-product-checkout', async (req, res) => {
             purchaseType: 'storeOrder',
             orderDetails: {
                 customerName,
-                phone,
+                phone: normalizedPhone,
                 deliveryMethod,
                 deliveryAddress: deliveryMethod === 'delivery' ? deliveryAddress : '',
                 subtotalCents,

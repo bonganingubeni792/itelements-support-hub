@@ -101,3 +101,20 @@ INSTALLATION
 7. Test the actual PayFast redirect and webhook. Do not mark payment fixed until a controlled payment succeeds.
 
 Important honesty note: syntax and static code checks are performed before packaging. Live MongoDB, PayFast merchant credentials, webhook, browser rendering and real phone layout cannot be verified from this offline project package.
+
+
+LATEST CUSTOMER-REPORTED FIXES — 15 NOVEMBER 2026
+[CODE UPDATED] Public products API now includes the images[] gallery field so checkout can render product photos when imageUrl is blank.
+[CODE UPDATED] Checkout product summary displays the product image, name, quantity, unit price and line total.
+[CODE UPDATED] Cart rows display product pictures and a Remove button.
+[CODE UPDATED] Checkout item rows also display a Remove button; removing an item refreshes totals, and removing the final item closes checkout.
+[CODE UPDATED] Fixed the double-escaped email regex in the store payment endpoint that rejected valid email addresses.
+[CODE UPDATED] Checkout validation now reports whether the name, email, phone number or delivery address is invalid.
+[CODE UPDATED] Phone validation normalizes spaces, parentheses, dots and hyphens before checking an international number.
+[CODE UPDATED] Buy Now no longer adds a second copy of a product already in the cart; it proceeds with the existing quantity.
+[CODE UPDATED] Add to cart requires sign-in. Unauthenticated customers are sent to /client/login and the pending product/quantity is restored after returning to the Store.
+[CODE UPDATED] Removed collection as a checkout choice and removed customer-facing collection-free wording.
+[CODE UPDATED] Delivery charge is R80 for product subtotals below R755 and free at R755 or above.
+[NEEDS LIVE TEST] Verify product photos load in cart and checkout against actual production image URLs.
+[NEEDS LIVE TEST] Test login, return to store, pending add-to-cart, Buy Now with existing cart quantity, and exactly available stock.
+[NEEDS LIVE TEST] Test valid customer details through PayFast redirect and webhook. Do not mark payment fixed until a controlled payment succeeds.
