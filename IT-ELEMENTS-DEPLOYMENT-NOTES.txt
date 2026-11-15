@@ -14,9 +14,9 @@ Render environment:
 Do not send merchant keys, passphrases, database URIs or session secrets in chat or commit them to GitHub.
 
 The checkout computes:
-- Product subtotal below R750: R80 delivery.
-- Product subtotal R750 or above: free delivery.
-- Collection: free.
+- Product subtotal below R755: R80 delivery.
+- Product subtotal R755 or above: free delivery.
+- Collection is not offered.
 The server recalculates this from database product prices and stock.
 
 After deployment, if checkout fails, inspect Render logs for [STORE CHECKOUT]. Check the message and correct the matching environment/database issue. A successful syntax check alone does not prove that PayFast credentials or webhook configuration are valid.
@@ -62,3 +62,32 @@ Website-wide Storefront reset — 15 Nov 2026:
 - Existing Store and Client Logout routes were retained.
 - Verify root page, desktop/mobile navigation and authentication status after Render deployment.
 - No database collections or customer records were deleted or reset.
+
+
+CURRENT CONSOLIDATED WEBSITE UPDATE — 15 NOVEMBER 2026
+This update supersedes older deployment-note statements that made the Store the root homepage or used the earlier R750 delivery threshold.
+- GET / serves the IT Elements business homepage (views/index.html).
+- GET /store serves the Online Store (views/store.html).
+- GET /home redirects to / for backwards-compatible Home links.
+- Shared header CSS/JS are served from the public folder at root URLs.
+- Home, Services, Online Store and Contact remain in the desktop header; the mobile drawer links to On-site, Plans, Business, Reviews, About, FAQ, Contact and Client Portal as well.
+- Successful customer/admin login explicitly saves a regenerated session. Header account action uses the same stable accountAction element and should show Logout after authentication. Logout clears the session and returns to Home.
+- Store Add to chat uses a separate enquiry list and does not change the purchase cart or decrement/reserve stock. The small chat icon opens the enquiry list; WhatsApp Us remains at the bottom-right. The normal cart and checkout remain separate.
+- Delivery remains R80 for product subtotals below R755 and free at R755 or above. Collection is not offered.
+- Upload the entire ZIP to GitHub/Render. Keep existing Render environment variables (MONGODB_URI, SESSION_SECRET, PayFast values, and email settings). Never commit secrets.
+
+OFFLINE CHECKS COMPLETED
+- node --check server.js: passed.
+- node --check public/nav-store-global.js: passed.
+- 22 inline scripts across views/*.html: passed Node syntax checks.
+- Archive/file retention: 45 project files retained from the latest supplied full project archive.
+
+LIVE DEPLOYMENT TESTS STILL REQUIRED
+1. Confirm / opens the business homepage and /store opens the Store.
+2. Log in, refresh, move between Home and Store, verify Logout remains; click Logout and verify Login returns. Repeat for customer and admin accounts.
+3. Add products to chat; open the small corner icon; verify items and counts; ensure the purchase cart is unchanged. Send a WhatsApp enquiry.
+4. Add products to cart and test stock limits, delivery fee, checkout and PayFast sandbox/live webhook as appropriate.
+5. Check all page layouts, links and mobile menu on actual phone and laptop browsers.
+6. Check Render logs and MongoDB connection after deployment.
+
+Desktop navigation includes a More dropdown for the remaining public pages; mobile drawer includes the same secondary destinations.

@@ -190,3 +190,24 @@ LATEST WEBSITE-WIDE STOREFRONT RESET — 15 NOVEMBER 2026
 [CODE UPDATED] Store floating side-chat/WhatsApp overlay selectors are hidden while normal WhatsApp contact links remain available.
 [CHECKED IN SOURCE] Existing /store and /client/logout routes remain present; Store product/admin/cart/payment files are retained from the latest full project package.
 [NEEDS LIVE TEST] Check root URL, each public page, desktop header, mobile drawer, login/logout switching, cart count and Store overlay on Render after deployment.
+
+
+CURRENT CONSOLIDATED FIX UPDATE — 15 NOVEMBER 2026 (SUPERSEDES OLDER ROUTE/CHAT NOTES ABOVE)
+[CODE UPDATED] Corrected the main site route: / now serves the IT Elements business homepage (views/index.html). The Online Store remains a separate page at /store. /home redirects to / so old Home links continue to work.
+[CODE UPDATED] Corrected shared desktop and mobile Home navigation destinations to /. All other public destinations remain in the shared navigation drawer.
+[CODE UPDATED] Fixed the shared navigation account control so it retains the stable accountAction ID. This allows the Store's session-aware control and shared header to update the same button instead of leaving a stale Login label.
+[CODE UPDATED] Successful customer and admin login now regenerates and explicitly saves the session before redirecting. Customer/admin Logout destroys the session, clears the session cookie and returns to the public Home page.
+[CODE UPDATED] Mounted the public/ folder at the site root so shared nav-store-global.css and nav-store-global.js references resolve. Repaired malformed stylesheet href values across pages and removed references to missing ite-mobile.css/ite-mobile.js files from the Store.
+[CODE UPDATED] Added shared page-width, overflow, centring, responsive image/form and mobile layout safeguards to prevent page content from shifting sideways or being clipped.
+[CODE UPDATED] Replaced the large red mid-screen Store Chat tab with one small corner chat icon and count. The WhatsApp Us button remains at the bottom-right.
+[CODE UPDATED] Add to chat now adds the product to a separate chat enquiry list; it does not call addToCart, reserve stock, require login or trigger the cart stock warning. The small chat icon opens the separate list; customers can remove items and send the enquiry to IT Elements on WhatsApp. The purchase cart remains separate.
+[CODE UPDATED] Removed the old side-cart count coupling so the chat icon count reflects the chat enquiry list, not the purchase cart.
+[CHECKED] node --check server.js passed. node --check public/nav-store-global.js passed. All 22 inline JavaScript blocks in views/*.html passed Node syntax checks.
+[CHECKED] Source inspection confirms / serves the business homepage, /store serves views/store.html, /client/logout remains present, and the full 45-file project package is retained.
+[NEEDS LIVE TEST] Deploy the full ZIP to Render and verify login/logout in a real browser on Home, Store and other pages; test session persistence after refresh and across pages.
+[NEEDS LIVE TEST] Test chat list on guest and signed-in customer accounts; add multiple products, open the small icon, remove an item, send WhatsApp enquiry, and verify the purchase cart is unchanged.
+[NEEDS LIVE TEST] Test stock messages and checkout with real product records; verify Add to chat no longer displays purchase-cart stock warnings.
+[NEEDS LIVE TEST] Check every public page on laptop and phone for centring, overflow, navigation and working links. Verify live MongoDB and PayFast flows with controlled test orders.
+[IMPORTANT] No Render deployment, live MongoDB session, PayFast payment or real-device browser test was possible from this offline project workspace. Do not treat those live checks as completed.
+
+[CODE UPDATED — DESKTOP PAGE LINKS] Added a desktop More dropdown for On-site, Plans, Business Support, Reviews, About, FAQ, Request Help, Booking, Business Tools and Client Portal; mobile drawer continues to expose all destinations.

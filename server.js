@@ -883,18 +883,21 @@ app.get('/invoice-maker.html', (req, res) => {
     res.sendFile(path.join(viewsPath, 'invoice-maker.html'));
 });
 
-// Public website files
+// Public static assets (shared CSS/JS) are referenced from the site root.
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
+
+// Public website pages.
 app.use(express.static(viewsPath, { index: false }));
 
-// Assets are stored directly inside public/, not public/assets/.
+// Backwards-compatible asset URL used by product images and logos.
 app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 // Main website pages
 app.get('/', (req, res) => {
-    res.sendFile(path.join(viewsPath, 'store.html'));
+    res.sendFile(path.join(viewsPath, 'index.html'));
 });
 app.get('/home', (req, res) => {
-    res.sendFile(path.join(viewsPath, 'index.html'));
+    res.redirect(301, '/');
 });
 
 app.get('/pricing', (req, res) => {
@@ -928,6 +931,18 @@ app.get('/faq', (req, res) => {
 
 app.get('/contact', (req, res) => {
     res.sendFile(path.join(viewsPath, 'contact.html'));
+});
+
+app.get(['/booking', '/booking/'], (req, res) => {
+    res.sendFile(path.join(viewsPath, 'booking.html'));
+});
+
+app.get(['/billing', '/billing/'], checkUserAuth, (req, res) => {
+    res.sendFile(path.join(viewsPath, 'billing.html'));
+});
+
+app.get(['/business-tools', '/business-tools/'], (req, res) => {
+    res.sendFile(path.join(viewsPath, 'business-tools.html'));
 });
 
 // IT Elements Online Store
@@ -2244,11 +2259,21 @@ app.post('/client/login', async (req, res) => {
             process.env.ADMIN_PASSWORD &&
             password === process.env.ADMIN_PASSWORD
         ) {
-            req.session.isAdmin = true;
-
-            return res.send(
-                '<script>window.location.href="/admin";</script>'
-            );
+            req.session.regenerate((regenerateError) => {
+                if (regenerateError) {
+                    console.error('Admin session creation failed:', regenerateError.message);
+                    return res.status(500).send('Unable to start your session. Please try again.');
+                }
+                req.session.isAdmin = true;
+                req.session.save((saveError) => {
+                    if (saveError) {
+                        console.error('Admin session save failed:', saveError.message);
+                        return res.status(500).send('Unable to save your session. Please try again.');
+                    }
+                    return res.redirect('/admin');
+                });
+            });
+            return;
         }
 
         const normalizedEmail = String(email).toLowerCase().trim();
@@ -2258,9 +2283,6 @@ app.post('/client/login', async (req, res) => {
         });
 
         if (user && await verifyAndUpgradePassword(user, password)) {
-            req.session.isUser = true;
-            req.session.userEmail = user.email;
-
             const nextUrl = req.session.returnTo === '/tools/invoices'
                 ? '/tools/invoices'
                 : req.session.returnTo === '/store?resumeCart=1'
@@ -2269,11 +2291,22 @@ app.post('/client/login', async (req, res) => {
                     ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
                     : '/dashboard';
 
-            delete req.session.returnTo;
-
-            return res.send(
-                `<script>window.location.href=${JSON.stringify(nextUrl)};</script>`
-            );
+            req.session.regenerate((regenerateError) => {
+                if (regenerateError) {
+                    console.error('Customer session creation failed:', regenerateError.message);
+                    return res.status(500).send('Unable to start your session. Please try again.');
+                }
+                req.session.isUser = true;
+                req.session.userEmail = user.email;
+                req.session.save((saveError) => {
+                    if (saveError) {
+                        console.error('Customer session save failed:', saveError.message);
+                        return res.status(500).send('Unable to save your session. Please try again.');
+                    }
+                    return res.redirect(nextUrl);
+                });
+            });
+            return;
         }
 
         res.send(
@@ -2451,14 +2484,14 @@ app.post('/api/auth/reset-password', async (req, res) => {
 app.get('/admin/logout', (req, res) => {
     req.session.destroy(() => {
         res.clearCookie('connect.sid');
-        res.redirect('/client/login');
+        res.redirect('/');
     });
 });
 
 app.get('/client/logout', (req, res) => {
     req.session.destroy(() => {
-        res.clearCookie('connect.sid');
-        res.redirect('/client/login');
+        res.clearCookie('connect.sid', { path: '/' });
+        res.redirect('/');
     });
 });
 
