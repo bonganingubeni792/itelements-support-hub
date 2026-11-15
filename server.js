@@ -893,11 +893,12 @@ app.use(express.static(viewsPath, { index: false }));
 app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 // Main website pages
+// The Online Store is the main landing page. Keep the original Home page available.
 app.get('/', (req, res) => {
-    res.sendFile(path.join(viewsPath, 'index.html'));
+    res.redirect(302, '/store');
 });
 app.get('/home', (req, res) => {
-    res.redirect(301, '/');
+    res.sendFile(path.join(viewsPath, 'index.html'));
 });
 
 app.get('/pricing', (req, res) => {
