@@ -519,7 +519,7 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
   }
 }
 
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-guest-cart-auth-v6"><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"><style>
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-shared-cart-sticky-v7"><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"><style>
 
 /* IT Elements: hide the product-detail Add to Chat action; keep the header Chat access. */
 .product-detail-actions button[onclick*="addDetailToChat"],
@@ -1292,7 +1292,20 @@ async function loadAccountCart(){
    const saved=await fetch('/api/store/cart',{credentials:'same-origin',cache:'no-store'});
    const payload=await saved.json();
    if(!saved.ok||!payload.success)throw new Error(payload.message||'Could not load saved cart');
-   cart=Array.isArray(payload.items)?payload.items.filter(x=>x&&typeof x.id==='string'&&Number.isInteger(x.qty)&&x.qty>0):[];
+   const serverItems=Array.isArray(payload.items)?payload.items.filter(x=>x&&typeof x.id==='string'&&Number.isInteger(x.qty)&&x.qty>0):[];
+   let mirrorItems=null,mirrorFresh=false;
+   try{
+    const mirrorStamp=Number(localStorage.getItem(CART_STORAGE_KEY+':savedAt')||0);
+    mirrorFresh=mirrorStamp>0&&Date.now()-mirrorStamp<60000;
+    const parsed=JSON.parse(localStorage.getItem(CART_STORAGE_KEY)||'null');
+    if(Array.isArray(parsed))mirrorItems=parsed.filter(x=>x&&typeof x.id==='string'&&Number.isInteger(x.qty)&&x.qty>0);
+   }catch(_){}
+   cart=mirrorFresh&&mirrorItems?mirrorItems:serverItems;
+   if(!mirrorFresh){
+    try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(cart));localStorage.setItem(CART_STORAGE_KEY+':savedAt',String(Date.now()));}catch(_){}
+   }else if(mirrorItems){
+    cartSaveQueue=cartSaveQueue.then(()=>fetch('/api/store/cart',{method:'PUT',credentials:'same-origin',headers:{'Content-Type':'application/json'},cache:'no-store',body:JSON.stringify({items:cart})})).catch(()=>{});
+   }
    return;
   }
  }catch(error){
@@ -1310,21 +1323,25 @@ async function loadAccountCart(){
 }
 function saveCart(){
  const snapshot=cart.map(item=>({id:String(item.id),qty:Number(item.qty)}));
- if(storeAccountKey==='guest'){
-  try{localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(snapshot));}catch(_){}
-  return;
- }
- // Signed-in carts are stored server-side under the authenticated session,
- // never under an email or account identifier supplied by the browser.
+ // Keep an account-scoped local mirror so the shared header on every public
+ // page can display the same count immediately after navigation.
+ try{
+  localStorage.setItem(CART_STORAGE_KEY,JSON.stringify(snapshot));
+  if(storeAccountKey!=='guest')localStorage.setItem(CART_STORAGE_KEY+':savedAt',String(Date.now()));
+ }catch(_){}
+ try{window.dispatchEvent(new CustomEvent('ite:cart-updated',{detail:{count:snapshot.reduce((n,item)=>n+item.qty,0)}}));}catch(_){}
+ if(storeAccountKey==='guest')return;
+ // Preserve the existing private MongoDB cart API and account ownership.
  cartSaveQueue=cartSaveQueue.then(async()=>{
   try{
-   await fetch('/api/store/cart',{
+   const response=await fetch('/api/store/cart',{
     method:'PUT',
     credentials:'same-origin',
     headers:{'Content-Type':'application/json'},
     cache:'no-store',
     body:JSON.stringify({items:snapshot})
    });
+   if(!response.ok)throw new Error('Server rejected the cart update');
   }catch(error){console.warn('Could not sync saved cart:',error.message);}
  }).catch(()=>{});
 }
@@ -1804,7 +1821,7 @@ async function load(){
 
 load();renderCart();
 checkReturnedPayment();
-</script><script src="/nav-store-global.js?v=20261115-guest-cart-auth-v6" defer></script>
+</script><script src="/nav-store-global.js?v=20261115-shared-cart-sticky-v7" defer></script>
 
 
 
