@@ -1227,8 +1227,6 @@ button[onclick*="addDetailToChat"] {
 </style>
 
 <link rel="stylesheet" href="/ite-store-mobile-app.css?v=20261115-mobile-app-v1">
-
-<link rel="stylesheet" href="/ite-mobile-experience.css?v=20261115-premium-mobile-v1">
 </head><body class="store-page">
 <header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
@@ -1817,6 +1815,19 @@ async function checkReturnedPayment(){
   show('Your payment is still being confirmed. Please do not pay again. Contact IT Elements with your PayFast reference if you received a receipt.');
  }catch(_){show('We could not check payment status. Your order is only marked paid after PayFast confirms it. Please contact IT Elements if you received a receipt.');}
 }
+function departmentIcon(label){
+ const value=String(label||'').toLowerCase();
+ if(value.includes('laptop')||value.includes('notebook'))return '💻';
+ if(value.includes('desktop')||value.includes('computer')||value.includes('pc'))return '🖥️';
+ if(value.includes('printer')||value.includes('ink'))return '🖨️';
+ if(value.includes('gaming')||value.includes('controller'))return '🎮';
+ if(value.includes('audio')||value.includes('headset')||value.includes('speaker'))return '🎧';
+ if(value.includes('network')||value.includes('router')||value.includes('wifi'))return '📶';
+ if(value.includes('storage')||value.includes('drive')||value.includes('ssd'))return '💾';
+ if(value.includes('accessor'))return '🔌';
+ if(value.includes('component'))return '⚙️';
+ return '▦';
+}
 function buildDepartmentFilters(){
  const options='<option value="">All departments</option>'+STORE_CATEGORIES.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
  const picker=$('departmentPicker');
@@ -1826,7 +1837,7 @@ function buildDepartmentFilters(){
  picker.onchange=render;
  const links=$('departmentLinks');
  if(links){
-  links.innerHTML=[{value:'',label:'All departments'},...STORE_CATEGORIES.map(c=>({value:c,label:c}))].map(item=>`<button type="button" class="department-link${item.value===''?' active':''}" data-category="${esc(item.value)}" onclick="chooseDepartment('${esc(item.value).replace(/\'/g,"\\'")}')">${esc(item.label)}</button>`).join('');
+  links.innerHTML=[{value:'',label:'All Categories'},...STORE_CATEGORIES.map(c=>({value:c,label:c}))].map(item=>`<button type="button" class="department-link${item.value===''?' active':''}" data-category="${esc(item.value)}" onclick="chooseDepartment('${esc(item.value).replace(/\'/g,"\\'")}')"><span class="department-emoji" style="display:none" aria-hidden="true">${departmentIcon(item.label)}</span><span>${esc(item.label)}</span></button>`).join('');
  }
 }
 window.chooseDepartment=value=>{
@@ -1967,6 +1978,35 @@ checkReturnedPayment();
 })();
 </script>
 
+<script id="ite-mobile-store-reference-order">
+(function(){
+  const mq=window.matchMedia('(max-width:700px)');
+  const hero=document.querySelector('body.store-page > .hero');
+  const benefits=document.querySelector('body.store-page > .store-benefits');
+  const wrap=document.querySelector('body.store-page > main.wrap');
+  const layout=wrap?.querySelector('.catalogue-layout');
+  const sidebar=layout?.querySelector('.department-sidebar');
+  const filters=wrap?.querySelector('.shop-filters');
+  if(!hero||!benefits||!wrap||!layout||!sidebar||!filters)return;
+  const marker=(node)=>{const m=document.createComment('original-position');node.parentNode.insertBefore(m,node);return m;};
+  const marks={hero:marker(hero),benefits:marker(benefits),wrap:marker(wrap),sidebar:marker(sidebar)};
+  function arrange(){
+    if(mq.matches){
+      marks.wrap.parentNode.insertBefore(wrap,marks.hero);
+      filters.insertAdjacentElement('afterend',sidebar);
+      sidebar.insertAdjacentElement('afterend',hero);
+      hero.insertAdjacentElement('afterend',benefits);
+    }else{
+      marks.hero.parentNode.insertBefore(hero,marks.hero);
+      marks.benefits.parentNode.insertBefore(benefits,marks.benefits);
+      marks.sidebar.parentNode.insertBefore(sidebar,marks.sidebar);
+      marks.wrap.parentNode.insertBefore(wrap,marks.wrap);
+    }
+  }
+  arrange();
+  if(mq.addEventListener)mq.addEventListener('change',arrange);else mq.addListener(arrange);
+})();
+</script>
 </body></html>
 
 <style id="it-elements-full-page-checkout-v2">
