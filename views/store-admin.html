@@ -42,7 +42,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .hint{font-size:10px;color:#9298a1;line-height:1.55;margin-top:7px}
 .notice{margin-top:12px;padding:11px 13px;border-radius:9px;background:#f3f4f6;color:#444b55;font-size:12px}.notice.error{background:#fff0f0;color:#a00000}.notice.ok{background:#edfff3;color:#176b35}
 #catalogue{margin-top:18px}.toolbar{display:flex;gap:9px;margin:14px 0}.toolbar input{flex:1;min-width:130px;background:#fff}.toolbar select{max-width:165px;background:#fff}
-.catalogue{display:grid;gap:10px;min-width:0}.panel{min-width:0}.bulk-toolbar{min-width:0;flex-wrap:wrap}
+.catalogue{display:grid;gap:9px}
 .admin-filterbar{display:grid;grid-template-columns:minmax(230px,2fr) repeat(3,minmax(135px,1fr)) auto;align-items:end;gap:10px;padding:14px;border:1px solid var(--line);border-radius:11px;background:#fff}
 .admin-filterbar label{display:grid;gap:5px;color:#777f8a;font-size:10px;font-weight:800}
 .admin-filterbar input,.admin-filterbar select{width:100%;min-width:0;border:1px solid #dfe2e7;border-radius:8px;padding:11px 12px;background:#fff;color:#303640;font-size:12px}
@@ -50,11 +50,10 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .catalogue-pager>div{display:flex;align-items:center;gap:10px}
 .catalogue-pager .btn{padding:8px 11px;font-size:10px}
 @media(max-width:1050px){.admin-filterbar{grid-template-columns:1fr 1fr}}
-@media(max-width:720px){.admin-filterbar{grid-template-columns:1fr}.catalogue-pager{align-items:flex-start;flex-direction:column}.catalogue-pager>div{width:100%;justify-content:space-between}}.product{display:grid;grid-template-columns:142px minmax(0,1fr) auto;align-items:center;gap:16px;border:1px solid #eceef1;border-radius:12px;padding:14px;min-width:0;transition:.16s}.product:hover{border-color:#d7dbe1;box-shadow:0 4px 14px #11100008}
-.product-visual{display:flex;align-items:center;gap:10px;min-width:0}.product-select{display:flex;align-items:center;gap:6px;color:#68707c;font-size:10px;font-weight:800;flex:0 0 auto}.product-select input,.bulk-select-all input{accent-color:#e00000;width:16px;height:16px}.thumb{width:94px;height:94px;flex:0 0 94px;background:#f5f6f8;border:1px solid #edf0f3;border-radius:10px;overflow:hidden;display:grid;place-items:center;color:#a2a7af;font-size:10px}.thumb img{width:100%;height:100%;object-fit:contain;padding:5px}.product-info{min-width:0}.pname{font-weight:850;font-size:13px;line-height:1.4;color:#282d35;overflow-wrap:anywhere}.meta{font-size:10px;color:#9298a2;margin-top:4px}.price{font-size:14px;font-weight:900;color:#252a32;margin-top:7px}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#eaf8ef;color:#087443;font-size:9px;font-weight:900;margin-top:7px}.pill.draft{background:#fff4df;color:#8a5a00}.rowactions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end;align-items:center}.rowactions .btn{padding:9px 12px;font-size:11px;white-space:nowrap}.empty{padding:32px;text-align:center;color:#9298a2;font-size:12px;border:1px dashed #e1e4e8;border-radius:11px;background:#fbfbfc}
-@media(max-width:1050px){.product{grid-template-columns:125px minmax(0,1fr)}.rowactions{grid-column:2;justify-content:flex-start}.thumb{width:82px;height:82px;flex-basis:82px}.product-visual{gap:8px}}
+@media(max-width:720px){.admin-filterbar{grid-template-columns:1fr}.catalogue-pager{align-items:flex-start;flex-direction:column}.catalogue-pager>div{width:100%;justify-content:space-between}}.product{display:grid;grid-template-columns:72px minmax(0,1fr) auto;align-items:center;gap:14px;border:1px solid #eceef1;border-radius:11px;padding:11px;transition:.16s}.product:hover{border-color:#d7dbe1;box-shadow:0 4px 14px #11100008}
+.thumb{width:72px;height:72px;background:#f5f6f8;border-radius:9px;overflow:hidden;display:grid;place-items:center;color:#a2a7af;font-size:10px}.thumb img{width:100%;height:100%;object-fit:contain}.pname{font-weight:850;font-size:12px;color:#282d35}.meta{font-size:10px;color:#9298a2;margin-top:4px}.price{font-size:13px;font-weight:900;color:#252a32;margin-top:5px}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#eaf8ef;color:#087443;font-size:9px;font-weight:900;margin-top:6px}.pill.draft{background:#fff4df;color:#8a5a00}.rowactions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.rowactions .btn{padding:8px 10px;font-size:10px}.empty{padding:32px;text-align:center;color:#9298a2;font-size:12px;border:1px dashed #e1e4e8;border-radius:11px;background:#fbfbfc}
 @media(max-width:1050px){.app{grid-template-columns:218px minmax(0,1fr)}.stats{grid-template-columns:repeat(2,1fr)}#productForm{grid-template-columns:minmax(0,1fr)}#productForm>.formlayout{grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr)}}
-@media(max-width:720px){#productForm>.formlayout{grid-template-columns:1fr}.app{display:block}aside{height:auto;position:relative;padding:12px 14px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:0 4px 11px}.nav{display:flex;overflow:auto;gap:4px}.navlabel{display:none}.nav a{white-space:nowrap;padding:9px 11px}.sidefoot{display:none}.topbar{height:58px;padding:0 14px}.content{padding:20px 13px 36px}.pagehead{align-items:flex-start;flex-direction:column}.pagehead h1{font-size:25px}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:22px}.panel{padding:15px}#productForm{display:block}.two{grid-template-columns:1fr;gap:0}.product{grid-template-columns:minmax(0,1fr);gap:10px;padding:12px}.product-visual{justify-content:flex-start}.thumb{width:76px;height:76px;flex-basis:76px}.product-info{width:100%}.stock-admin-edit{align-items:flex-end}.rowactions{grid-column:1;justify-content:flex-start}.rowactions .btn{flex:1;min-width:100px}.toolbar{flex-direction:column}.toolbar select{max-width:none}.topright{gap:8px}.topright a:first-child{display:none}}
+@media(max-width:720px){#productForm>.formlayout{grid-template-columns:1fr}.app{display:block}aside{height:auto;position:relative;padding:12px 14px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:0 4px 11px}.nav{display:flex;overflow:auto;gap:4px}.navlabel{display:none}.nav a{white-space:nowrap;padding:9px 11px}.sidefoot{display:none}.topbar{height:58px;padding:0 14px}.content{padding:20px 13px 36px}.pagehead{align-items:flex-start;flex-direction:column}.pagehead h1{font-size:25px}.stats{gap:8px}.stat{padding:13px}.stat strong{font-size:22px}.panel{padding:15px}#productForm{display:block}.two{grid-template-columns:1fr;gap:0}.product{grid-template-columns:55px minmax(0,1fr)}.thumb{width:55px;height:55px}.rowactions{grid-column:2;justify-content:flex-start}.toolbar{flex-direction:column}.toolbar select{max-width:none}.topright{gap:8px}.topright a:first-child{display:none}}
 
 
 /* Unified two-workspace switcher: Online Support / Store */
@@ -176,7 +175,47 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 
 .bulk-stock-qty{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;color:#707782}
 .bulk-stock-qty input{width:76px;padding:8px;border:1px solid #dfe2e7;border-radius:8px;font-size:11px}
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261114"></head><body><div class="app">
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261114">
+<style id="ite-admin-store-grid-and-layout-fix">
+/* Additive desktop layout repair for IT Elements Store Management */
+@media (min-width:761px){
+  html,body{max-width:100%;overflow-x:hidden}
+  .app{display:grid!important;grid-template-columns:224px minmax(0,1fr)!important;align-items:start!important;width:100%!important;max-width:none!important;min-width:0!important}
+  .app>aside{position:sticky!important;top:0!important;width:224px!important;min-width:224px!important;height:100vh!important;max-height:100vh!important;overflow-y:auto!important;overflow-x:hidden!important;box-sizing:border-box!important}
+  .app>main{width:100%!important;min-width:0!important;max-width:none!important;overflow:visible!important}
+  .content{width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;padding-left:clamp(16px,2vw,30px)!important;padding-right:clamp(16px,2vw,30px)!important}
+  .workspace-switch{width:auto!important;max-width:none!important;min-width:0!important;margin-left:clamp(16px,2vw,30px)!important;margin-right:clamp(16px,2vw,30px)!important;padding:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .workspace-tab,.workspace-tab>span{min-width:0!important;overflow:hidden!important}
+  .workspace-tab strong,.workspace-tab small{display:block!important;white-space:normal!important;overflow-wrap:anywhere!important}
+  .pagehead,.pagehead>div{min-width:0!important;gap:18px!important}
+  .stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
+  .panel{min-width:0!important}
+  .admin-filterbar{display:grid!important;grid-template-columns:minmax(220px,1.7fr) repeat(3,minmax(125px,1fr)) auto!important;align-items:end!important;gap:10px!important}
+  .admin-filterbar>*{min-width:0!important;width:100%!important}
+  .catalogue{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(225px,1fr))!important;align-items:stretch!important;gap:14px!important}
+  .product{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;min-width:0!important;height:100%!important;box-sizing:border-box!important;gap:10px!important;padding:12px!important;border:1px solid #e7e9ed!important;border-radius:12px!important;background:#fff!important}
+  .product-select{order:0!important;align-self:flex-start!important;min-height:20px!important}
+  .product>.thumb{order:1!important;width:100%!important;height:150px!important;min-height:150px!important;flex:0 0 150px!important;background:#f7f8fa!important;border:1px solid #f0f1f3!important;border-radius:9px!important}
+  .product>.thumb img{width:100%!important;height:100%!important;object-fit:contain!important}
+  .product>div:not(.thumb):not(.rowactions){order:2!important;display:block!important;width:100%!important;min-width:0!important}
+  .product .pname{min-height:36px!important;font-size:12px!important;line-height:1.45!important;overflow-wrap:anywhere!important}
+  .product .meta{min-height:24px!important;line-height:1.4!important}
+  .product .stock-admin-line{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
+  .product .stock-admin-edit{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin-top:8px!important;padding:9px!important;border-radius:9px!important;background:#f7f8fa!important}
+  .product .stock-admin-edit label{min-width:0!important;font-size:9px!important}
+  .product .stock-admin-edit input,.product .stock-admin-edit select{width:100%!important;min-width:0!important;box-sizing:border-box!important}
+  .product .price{margin-top:8px!important;font-size:14px!important}
+  .product>.rowactions{order:3!important;display:flex!important;width:100%!important;justify-content:stretch!important;gap:8px!important;margin-top:auto!important}
+  .product>.rowactions .btn{flex:1 1 0!important;min-width:0!important;justify-content:center!important}
+}
+@media (min-width:761px) and (max-width:1100px){
+  .admin-filterbar{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .catalogue{grid-template-columns:repeat(auto-fill,minmax(205px,1fr))!important}
+}
+</style>
+
+</head><body><div class="app">
 <aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#orders"><span class="ico">▣</span>Orders <span id="orderNavCount" style="margin-left:auto;color:#e00000;font-weight:900"></span></a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
 <nav class="workspace-switch" aria-label="Admin workspaces">
@@ -386,11 +425,11 @@ function render(){
  $('adminResultCount').textContent=shown.length?`Showing ${(adminPage-1)*ADMIN_PAGE_SIZE+1}–${Math.min(adminPage*ADMIN_PAGE_SIZE,shown.length)} of ${shown.length} products`:'No products found';
  $('adminPageLabel').textContent=`Page ${adminPage} of ${pages}`;$('adminPrev').disabled=adminPage<=1;$('adminNext').disabled=adminPage>=pages;
  $('productList').innerHTML=pageItems.length?pageItems.map(p=>`<article class="product">
- <div class="product-visual"><label class="product-select"><input class="product-check" type="checkbox" value="${escapeHtml(p._id)}" aria-label="Select ${escapeHtml(p.name)}"></label>
- <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.name)}" loading="lazy" decoding="async">`:'No image'}</div></div>
- <div class="product-info"><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''}</div>
+ <label class="product-select"><input class="product-check" type="checkbox" value="${escapeHtml(p._id)}"> Select</label>
+ <div class="thumb">${p.imageUrl?`<img src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" decoding="async">`:'No image'}</div>
+ <div><div class="pname">${escapeHtml(p.name)}</div><div class="meta">${escapeHtml(p.category)}${p.sku?' · '+escapeHtml(p.sku):''}</div>
  <div class="stock-admin-line"><span class="stock-admin-state ${Number(p.stock)>0?'available':'unavailable'}">${Number(p.stock)>0?'IN STOCK':'OUT OF STOCK'}</span><strong>${Number(p.stock)||0} left</strong></div>
- <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label><button class="btn primary" type="button" data-save-stock="${p._id}">Save stock</button></div>
+ <div class="stock-admin-edit"><label>Units left <input type="number" min="0" step="1" value="${Math.max(0,Number(p.stock)||0)}" data-stock-qty="${p._id}"></label><label>Availability <select data-stock-mode="${p._id}"><option value="in" ${Number(p.stock)>0?'selected':''}>In stock</option><option value="out" ${Number(p.stock)<=0?'selected':''}>Out of stock</option></select></label></div>
  <div class="price">${money(p.price)}${Number(p.compareAtPrice)>Number(p.price)?` <s style="color:#999;font-weight:500">${money(p.compareAtPrice)}</s>`:''}</div>
  <span class="pill ${p.status==='draft'?'draft':''}">${p.status==='draft'?'DRAFT':'PUBLISHED'}</span>${p.featured?' <span class="pill">FEATURED</span>':''}</div>
  <div class="rowactions"><button class="btn" onclick="editProduct('${p._id}')">Edit</button><button class="btn softred" onclick="deleteProduct('${p._id}')">Delete</button></div></article>`).join(''):'<div class="empty">No products match these filters.</div>';
@@ -422,23 +461,11 @@ $('productList').addEventListener('change',e=>{
  if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
  updateStockPreviewForControl(mode);
 });
-$('productList').addEventListener('click',async e=>{
- const button=e.target.closest('[data-save-stock]');if(!button)return;
- const id=button.dataset.saveStock,card=button.closest('.product');
- const input=card?.querySelector('[data-stock-qty]'),mode=card?.querySelector('[data-stock-mode]');
- if(!input||!mode)return;
- const qty=mode.value==='out'?0:Math.floor(Number(input.value));
- if(!Number.isInteger(qty)||qty<0||qty>10000000||(mode.value==='in'&&qty<1)){
-  notice('Enter a valid stock quantity. In-stock products need at least 1 unit.','error');input.focus();return;
- }
- button.disabled=true;button.textContent='Saving…';
- try{
-  const result=await api('/api/admin/store/products/stock',{method:'PATCH',body:JSON.stringify({updates:[{id,stock:qty}]})});
-  await load();notice(`Stock saved for ${result.updated??1} product.`,'ok');
- }catch(err){notice(err.message||'Could not save this stock quantity.','error');}
- finally{button.disabled=false;button.textContent='Save stock';}
-});
 
+ const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
+ const id=mode.dataset.stockMode,qty=document.querySelector(`[data-stock-qty="${id}"]`);
+ if(!qty)return;if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
+});
 
 async function setBulkStock(ids,qty,label){
  ids=[...new Set(ids)].filter(id=>products.some(p=>p._id===id));
