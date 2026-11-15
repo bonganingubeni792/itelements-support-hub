@@ -133,3 +133,11 @@ LATEST ORDER/PAYMENT SAFETY FIX — 15 NOVEMBER 2026
 [CONFIRMED IN CODE] Product stock is decremented only after a valid PayFast ITN has been verified and the purchase status transitions from pending to paid.
 [NEEDS LIVE TEST] Make a checkout and cancel/leave PayFast without paying; confirm it does not appear in Admin Orders and stock does not decrease.
 [NEEDS LIVE TEST] Complete a successful PayFast payment; confirm it appears in Admin Orders, is marked paid, and stock decreases exactly once.
+
+
+LATEST PUBLIC STORE COLLECTION NAVIGATION — 15 NOVEMBER 2026
+[CODE UPDATED] Added collection tabs beside the existing All Products heading: All Products, Just Arrived, and Sale Products.
+[CODE UPDATED] Just Arrived sorts the catalogue newest-first using each product's createdAt/date field.
+[CODE UPDATED] Sale Products filters to products with a compare-at price greater than the current selling price.
+[CONFIRMED] Existing search, department, price, availability, product cards, View product, Add to cart and cart behavior remain in the same store page.
+[NEEDS LIVE TEST] Verify the collection tabs on desktop and mobile and confirm the product feed includes createdAt and compareAtPrice values.

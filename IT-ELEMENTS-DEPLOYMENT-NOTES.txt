@@ -35,3 +35,8 @@ Latest order safety update:
 - Unpaid, pending, failed, or abandoned checkout attempts remain in the payment records for reconciliation but are not shown as completed orders.
 - Fulfilment updates are rejected unless the store order has status=paid.
 - Inventory decrement remains tied to the validated PayFast notification and one-time pending-to-paid transition.
+
+Latest public store update:
+- Added All Products, Just Arrived, and Sale Products tabs alongside the catalogue heading.
+- Just Arrived sorts products by newest available createdAt/date value.
+- Sale Products displays products where compareAtPrice is greater than price.
