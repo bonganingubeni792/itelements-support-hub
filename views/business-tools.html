@@ -137,6 +137,81 @@
       cursor: pointer;
     }
 
+    /* Match the live Online Store navigation: Home, Services, Online Store,
+       Contact and a More menu. Business Tools stays available under More. */
+    .more-menu {
+      position: relative;
+      color: #292929;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .more-menu > summary {
+      list-style: none;
+      cursor: pointer;
+      white-space: nowrap;
+      padding: 8px 0;
+      color: #292929;
+      transition: color .2s ease;
+    }
+    .more-menu > summary::-webkit-details-marker { display: none; }
+    .more-menu > summary:hover,
+    .more-menu[open] > summary { color: var(--red); }
+    .more-menu > summary span { margin-left: 3px; color: #777; }
+    .more-dropdown {
+      position: absolute;
+      top: calc(100% + 12px);
+      right: 0;
+      z-index: 1100;
+      display: none;
+      min-width: 205px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 14px 32px rgba(0,0,0,.13);
+    }
+    .more-menu[open] .more-dropdown { display: grid; gap: 3px; }
+    .more-dropdown a {
+      display: block;
+      padding: 10px 11px !important;
+      border-radius: 7px;
+      color: #292929;
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .more-dropdown a:hover,
+    .more-dropdown a[aria-current="page"] {
+      color: var(--red);
+      background: #fff1f1;
+    }
+    @media (max-width: 650px) {
+      .more-menu { width: 100%; }
+      .more-menu > summary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 40px;
+        padding: 8px 5px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: #f7f7f8;
+        font-size: 12px;
+      }
+      .more-dropdown {
+        position: static;
+        min-width: 0;
+        margin-top: 6px;
+        padding: 5px;
+        box-shadow: none;
+        background: #fff;
+      }
+      .more-dropdown a {
+        text-align: center;
+        border: 1px solid var(--border);
+        background: #fff;
+      }
+    }
+
     /* PAGE INTRODUCTION */
     main {
       width: min(1500px, 92%);
@@ -876,16 +951,23 @@
     >☰</button>
 
     <div class="links" id="mainLinks">
-      <a href="/business-tools" aria-current="page">Business Tools</a>
       <a href="/">Home</a>
       <a href="/services">Services</a>
-      <a href="/onsite-support">On-site</a>
-      <a href="/pricing">Plans</a>
-      <a href="/business-support">Business IT</a>
-      <a href="/about">About</a>
-      <a href="/faq">FAQ</a>
+      <a href="/store">Online Store</a>
       <a href="/contact">Contact</a>
-      <a href="/client/login" class="nav-cta">Client Portal</a>
+      <details class="more-menu">
+        <summary>More <span aria-hidden="true">⌄</span></summary>
+        <div class="more-dropdown">
+          <a href="/business-tools" aria-current="page">Business Tools</a>
+          <a href="/onsite-support">On-site Support</a>
+          <a href="/pricing">Support Plans</a>
+          <a href="/business-support">Business IT</a>
+          <a href="/tools/invoices">Invoice Studio</a>
+          <a href="/about">About</a>
+          <a href="/faq">FAQ</a>
+          <a href="/client/login">Client Portal</a>
+        </div>
+      </details>
     </div>
 
   </nav>
