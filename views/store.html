@@ -1096,6 +1096,81 @@ button[onclick*="addDetailToChat"] {
 /* Phone layout deliberately left unchanged for the later mobile pass. */
 </style>
 
+
+<style id="ite-elements-desktop-reserve-space-for-department-rail">
+/* DESKTOP PAGE LAYOUT:
+   Reserve a real left column for the fixed department rail.
+   Shift every store section to its right so the rail never covers content. */
+@media (min-width:761px){
+  :root{
+    --ite-department-rail-width:245px;
+    --ite-department-rail-gap:24px;
+    --ite-department-page-offset:269px;
+  }
+
+  body.store-page > .hero,
+  body.store-page > .store-benefits,
+  body.store-page > main.wrap#catalogue,
+  body.store-page > footer.foot,
+  body.store-page > .foot{
+    box-sizing:border-box!important;
+    width:calc(100% - var(--ite-department-page-offset))!important;
+    max-width:none!important;
+    margin-left:var(--ite-department-page-offset)!important;
+    margin-right:0!important;
+  }
+
+  body.store-page > .hero{
+    min-width:0!important;
+    padding-left:clamp(20px,3.2vw,48px)!important;
+    padding-right:clamp(18px,3vw,42px)!important;
+  }
+
+  body.store-page > .store-benefits{
+    padding-left:clamp(12px,2vw,24px)!important;
+    padding-right:clamp(12px,2vw,24px)!important;
+  }
+
+  body.store-page > main.wrap#catalogue{
+    padding-left:clamp(14px,2vw,28px)!important;
+    padding-right:clamp(14px,2vw,28px)!important;
+  }
+
+  /* The department rail is fixed separately, so the catalogue itself uses
+     the complete right-hand content column rather than leaving a second gap. */
+  #catalogue .catalogue-layout{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+  #catalogue .catalogue-layout::before{
+    display:none!important;
+    content:none!important;
+  }
+  #catalogue .product-area{
+    display:block!important;
+    grid-column:auto!important;
+    width:100%!important;
+    min-width:0!important;
+    overflow:visible!important;
+  }
+
+  #catalogue .department-sidebar{
+    position:fixed!important;
+    top:92px!important;
+    left:24px!important;
+    width:var(--ite-department-rail-width)!important;
+    max-width:calc(100vw - 48px)!important;
+    max-height:calc(100vh - 112px)!important;
+    box-sizing:border-box!important;
+    z-index:100!important;
+  }
+}
+
+/* Phone layout is intentionally not changed in this update. */
+</style>
+
 </head><body class="store-page">
 <header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
