@@ -473,6 +473,59 @@ body{overflow-x:hidden}
 }
 </style>
 
+
+<style id="ite-store-main-content-no-sidebar-overlap">
+/* Keep the entire Store Manager content to the RIGHT of the fixed sidebar.
+   Prevent the first product card, toolbar and filters from sitting underneath it. */
+@media(min-width:701px){
+  .app>main{
+    position:relative!important;
+    display:block!important;
+    width:calc(100% - 270px)!important;
+    min-width:0!important;
+    max-width:none!important;
+    margin-left:270px!important;
+    margin-right:0!important;
+    box-sizing:border-box!important;
+    overflow-x:clip!important;
+  }
+  .app>main>.topbar{
+    width:100%!important;
+    max-width:none!important;
+    box-sizing:border-box!important;
+  }
+  .app>main>.content{
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding-left:clamp(18px,2.2vw,38px)!important;
+    padding-right:clamp(18px,2.2vw,38px)!important;
+    box-sizing:border-box!important;
+  }
+  #catalogue,#catalogue .panelhead,#catalogue .toolbar,
+  #catalogue .catalogue-pager,#productList{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+  #productList.catalogue{
+    grid-template-columns:repeat(auto-fill,minmax(min(245px,100%),1fr))!important;
+    margin-left:0!important;margin-right:0!important;
+    padding-left:0!important;padding-right:0!important;
+  }
+}
+@media(min-width:701px) and (max-width:900px){
+  .app>main{width:calc(100% - 235px)!important;margin-left:235px!important}
+}
+@media(max-width:700px){
+  .app>main{width:100%!important;margin-left:0!important;overflow-x:hidden!important}
+  .app>main>.content{width:100%!important;max-width:none!important;margin:0!important;box-sizing:border-box!important}
+}
+</style>
+
 </head><body><div class="app">
 <aside class="sidebar ite-store-sidebar" aria-label="IT Elements administration navigation">
   <div class="brand">
