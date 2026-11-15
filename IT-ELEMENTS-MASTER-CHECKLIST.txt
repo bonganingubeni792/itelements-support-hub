@@ -151,3 +151,7 @@ ACCOUNT-SPECIFIC SAVED STORE CART — 15 NOVEMBER 2026
 [CODE UPDATED] Store clears in-memory cart state before checking the current login, preventing a previous account's cart from appearing while a different account is being checked.
 [SECURITY] Cart endpoints send private/no-store cache headers and validate product IDs and quantities.
 [NEEDS LIVE TEST] Test with two separate customer accounts on the same browser: add product under Account A, log out, sign in as Account B (A's cart must not appear), log out, sign back into A (A's cart must return). Also test on a second device.
+
+STORE UNAVAILABLE AFTER ADDING COLLECTION TABS — 15 NOVEMBER 2026
+[FIXED IN CODE] In views/store.html render(), collectionTitle was referenced before its const declaration. JavaScript throws a ReferenceError (temporal dead zone), and the store's load() catch displays "The store is temporarily unavailable." Moved the collectionTitle declaration before it is used.
+[CHECKED] server.js and store inline JavaScript pass Node syntax checks. This does not replace a live Render/browser test.
