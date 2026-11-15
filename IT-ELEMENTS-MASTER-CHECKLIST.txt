@@ -167,3 +167,14 @@ STORE ACCOUNT CONTROLS, PRODUCT COLLECTIONS AND SIDE CART — 15 NOVEMBER 2026
 [CODE UPDATED] Added a fixed side Cart control with a live item count. It opens the existing cart drawer; product detail stays open when Add to cart is used, with the existing added-to-cart confirmation.
 [CHECKED] server.js and all inline JavaScript in store.html and store-admin.html pass Node syntax checks.
 [NEEDS LIVE TEST] Deploy and test Login/Logout state on customer accounts; create/edit one normal and one sale product; verify only sale product appears in Sale Products; add product from product detail and open side cart; verify account-specific cart isolation/persistence with two accounts.
+
+
+APPROVED SHARED HEADER AND LOGIN/LOGOUT CORRECTION — 15 NOVEMBER 2026
+[CODE UPDATED] Replaced the inconsistent public-page header styling with the approved clean white header: original IT Elements logo/name at left, Home / Services / Online Store / Contact centred, and red account + Cart controls at right.
+[CODE UPDATED] Removed the unwanted red “support” word from the shared public header brand.
+[CODE UPDATED] Shared header script now creates exactly one account control. It checks /api/store/auth-status with same-origin credentials and displays Login when signed out or Logout when authenticated; it never renders duplicate Login buttons.
+[CODE UPDATED] Store cart button is preserved as the existing functional cart trigger; non-store pages link to the store cart and display the available account/guest cart count where accessible.
+[CODE UPDATED] Public mobile headers use a compact version of the same white design with a menu drawer; drawer navigation no longer creates a second Login button.
+[CODE UPDATED] Cache-busted shared header CSS/JS references across pages using the global navigation assets.
+[NEEDS LIVE TEST] Test signed-out and signed-in header states on Home, Services, Online Store, On-site, Plans, About, FAQ, Contact, Reviews and Business Support. Confirm only one Login or Logout appears and logout clears the session.
+[NEEDS LIVE TEST] Test cart button on store opens the real cart drawer; non-store Cart link opens the store cart. Check desktop and phone widths.
