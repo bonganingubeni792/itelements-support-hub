@@ -429,6 +429,50 @@ body{overflow-x:hidden}
 }
 </style>
 
+
+<style id="ite-store-sidebar-fixed-desktop-final">
+/* Desktop: pin the admin menu to the viewport, like the Support Dashboard.
+   The document/main content remains the scrolling area. */
+@media(min-width:701px){
+  html,body{min-height:100%!important;height:auto!important;overflow-x:hidden!important;overflow-y:auto!important}
+  body{position:relative!important}
+  .app{
+    display:block!important;
+    min-height:100vh!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  .app>.ite-store-sidebar{
+    position:fixed!important;
+    top:0!important;bottom:0!important;left:0!important;
+    z-index:1000!important;
+    width:270px!important;min-width:270px!important;max-width:270px!important;
+    height:100vh!important;min-height:100vh!important;max-height:100vh!important;
+    overflow-x:hidden!important;overflow-y:auto!important;
+    overscroll-behavior:contain!important;
+  }
+  .app>main{
+    display:block!important;
+    width:auto!important;min-width:0!important;max-width:none!important;
+    margin-left:270px!important;
+    overflow:visible!important;
+  }
+  .app>main>.topbar{position:sticky!important;top:0!important;z-index:50!important}
+}
+@media(min-width:701px) and (max-width:900px){
+  .app>.ite-store-sidebar{
+    width:235px!important;min-width:235px!important;max-width:235px!important;
+  }
+  .app>main{margin-left:235px!important}
+}
+@media(max-width:700px){
+  .app{display:block!important}
+  .app>.ite-store-sidebar{position:relative!important;top:auto!important;bottom:auto!important;left:auto!important}
+  .app>main{margin-left:0!important}
+}
+</style>
+
 </head><body><div class="app">
 <aside class="sidebar ite-store-sidebar" aria-label="IT Elements administration navigation">
   <div class="brand">
