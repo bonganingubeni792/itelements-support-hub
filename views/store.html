@@ -1227,7 +1227,7 @@ button[onclick*="addDetailToChat"] {
 </style>
 
 </head><body class="store-page">
-<header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/home">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
+<header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
 <main class="wrap" id="catalogue"><div class="intro"><div><div class="eyebrow">Browse products</div><h2>Find what you need</h2><div class="muted">Products and prices are managed by IT Elements.</div></div><div class="muted" id="resultCount"></div></div>
@@ -1266,7 +1266,7 @@ button[onclick*="addDetailToChat"] {
 <div class="checkout-modal" id="checkoutModal" aria-hidden="true">
  <div class="checkout-backdrop" data-close-checkout></div>
  <section class="checkout-panel" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
-  <button type="button" class="checkout-close" data-close-checkout aria-label="Close checkout">×</button>
+  <button type="button" class="checkout-close" data-close-checkout aria-label="Cancel checkout">×</button>
   <div class="checkout-eyebrow">SECURE CHECKOUT</div><h2 id="checkoutTitle">Complete your order</h2>
   <p class="checkout-intro">Check your products, delivery charge and total before secure payment.</p>
   <div id="checkoutItemsSummary" class="checkout-items-summary" aria-live="polite"></div><form id="productCheckoutForm">
@@ -1274,13 +1274,25 @@ button[onclick*="addDetailToChat"] {
    <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
    <label>Phone number<input name="phone" type="tel" autocomplete="tel" required placeholder="+27 ..."></label>
    <label>Delivery method<select name="deliveryMethod" id="deliveryMethod"><option value="delivery">Nationwide delivery</option></select></label>
-   <label id="deliveryAddressField">Delivery address<textarea name="deliveryAddress" rows="3" autocomplete="street-address" required placeholder="Street, suburb, city, province and postal code"></textarea></label>
+   <div class="checkout-address-block" id="deliveryAddressField">
+    <div class="checkout-section-heading"><strong>Delivery address</strong><span>Enter the full address where your order must be delivered.</span></div>
+    <label>Street address / house or building number<input name="addressLine1" autocomplete="address-line1" required maxlength="180" placeholder="e.g. 12 Main Road"></label>
+    <label>Complex, unit or apartment <span class="optional-label">(optional)</span><input name="addressLine2" autocomplete="address-line2" maxlength="180" placeholder="Complex name, unit or apartment number"></label>
+    <div class="checkout-address-grid">
+     <label>Suburb<input name="suburb" autocomplete="address-level3" required maxlength="100" placeholder="Your suburb"></label>
+     <label>City / town<input name="city" autocomplete="address-level2" required maxlength="100" placeholder="Your city or town"></label>
+     <label>Province<select name="province" autocomplete="address-level1" required><option value="">Select province</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></label>
+     <label>Postal code<input name="postalCode" autocomplete="postal-code" inputmode="numeric" required maxlength="10" pattern="[0-9]{4}" placeholder="e.g. 2000" title="Enter a 4-digit South African postal code"></label>
+    </div>
+    <label>Delivery instructions <span class="optional-label">(optional)</span><textarea name="deliveryInstructions" rows="2" maxlength="300" placeholder="Gate code, landmark or instructions for the driver"></textarea></label>
+   </div>
    <div class="checkout-note" id="checkoutDeliveryNote">Delivery is R80 for orders below R755. Delivery is free for orders of R755 or more.</div>
    <div class="checkout-total"><span>Products subtotal</span><strong id="checkoutSubtotal">R 0.00</strong></div>
    <div class="checkout-total"><span>Delivery</span><strong id="checkoutDeliveryFee">R 0.00</strong></div>
    <div class="checkout-total grand-total"><span>Order total</span><strong id="checkoutTotal">R 0.00</strong></div>
    <button type="submit" class="payfast-submit" id="payfastSubmit">Continue to secure payment →</button>
    <div id="checkoutError" role="alert" class="checkout-error"></div>
+   <div class="checkout-actions"><button type="button" class="checkout-back-button" id="checkoutBackToCart">← Back to cart</button><button type="button" class="checkout-cancel-button" data-close-checkout>Cancel checkout</button></div>
    <div class="payfast-trust">🔒 Secure payment</div>
   </form>
  </section>
@@ -1743,9 +1755,10 @@ function checkoutMoneySummary(){
 
 function closeCheckout(){ $('checkoutModal').classList.remove('open');$('checkoutModal').setAttribute('aria-hidden','true');}
 document.querySelectorAll('[data-close-checkout]').forEach(el=>el.addEventListener('click',closeCheckout));
+$('checkoutBackToCart').addEventListener('click',()=>{closeCheckout();$('drawer').classList.add('open');});
 $('deliveryMethod').addEventListener('change',()=>{
  $('deliveryAddressField').style.display='grid';
- $('deliveryAddressField').querySelector('textarea').required=true;
+ $('deliveryAddressField').querySelector('[name="addressLine1"]').required=true;
  checkoutMoneySummary();
 });
 $('productCheckoutForm').addEventListener('submit',async event=>{
@@ -1759,7 +1772,15 @@ $('productCheckoutForm').addEventListener('submit',async event=>{
   email:String(data.get('email')||'').trim(),
   phone:String(data.get('phone')||'').trim(),
   deliveryMethod:String(data.get('deliveryMethod')||'delivery'),
-  deliveryAddress:String(data.get('deliveryAddress')||'').trim(),
+  deliveryAddress:[
+   String(data.get('addressLine1')||'').trim(),
+   String(data.get('addressLine2')||'').trim(),
+   String(data.get('suburb')||'').trim(),
+   String(data.get('city')||'').trim(),
+   String(data.get('province')||'').trim(),
+   String(data.get('postalCode')||'').trim(),
+   String(data.get('deliveryInstructions')||'').trim()?`Delivery instructions: ${String(data.get('deliveryInstructions')).trim()}`:''
+  ].filter(Boolean).join(', '),
   items:cart.map(item=>({id:item.id,qty:item.qty}))
  };
  checkoutMoneySummary();
@@ -1919,3 +1940,45 @@ checkReturnedPayment();
 <!-- Same floating WhatsApp button as the IT Elements homepage -->
 <a class="whatsapp" href="https://wa.me/27606181229" target="_blank" rel="noopener noreferrer" aria-label="Chat with IT Elements on WhatsApp">WhatsApp Us</a>
 </body></html>
+
+<style id="it-elements-full-page-checkout-v2">
+/* Full-page checkout: clear, spacious and easy to complete on desktop and mobile. */
+.checkout-modal{position:fixed!important;inset:0!important;padding:0!important;align-items:stretch!important;justify-content:stretch!important;overflow:auto!important;background:#fff;z-index:3000!important}
+.checkout-modal.open{display:flex!important}
+.checkout-backdrop{display:none!important}
+.checkout-panel{position:relative!important;width:100%!important;max-width:none!important;height:100dvh!important;max-height:none!important;min-height:100vh!important;margin:0!important;padding:clamp(22px,4vw,54px)!important;border-radius:0!important;overflow-y:auto!important;box-shadow:none!important;background:#fff!important}
+.checkout-panel>*{max-width:1180px;margin-left:auto;margin-right:auto}
+.checkout-panel .checkout-close{position:fixed!important;top:18px!important;right:22px!important;width:46px!important;height:46px!important;z-index:5!important;border:1px solid #e4e6eb!important;background:#fff!important;color:#252525!important;font-size:27px!important;cursor:pointer}
+.checkout-eyebrow,.checkout-panel h2,.checkout-intro{max-width:1180px}
+.checkout-panel h2{font-size:clamp(30px,4vw,42px)!important;margin-top:10px!important}
+.checkout-intro{font-size:15px!important;margin-bottom:24px!important}
+#checkoutItemsSummary{max-width:1180px!important;margin:0 auto 24px!important}
+#productCheckoutForm{max-width:1180px!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px 22px!important;align-items:start!important}
+#productCheckoutForm>label{min-width:0!important}
+#productCheckoutForm input,#productCheckoutForm select,#productCheckoutForm textarea{min-height:52px!important;padding:14px 15px!important;font-size:15px!important;border:1px solid #d9dde5!important;border-radius:10px!important}
+#productCheckoutForm textarea{min-height:86px!important;resize:vertical!important}
+.checkout-address-block{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px 22px!important;padding:22px!important;border:1px solid #e3e5e9!important;border-radius:16px!important;background:#fafafa!important}
+.checkout-section-heading{grid-column:1/-1!important;display:grid!important;gap:5px!important}
+.checkout-section-heading strong{font-size:18px!important;color:#17191f!important}
+.checkout-section-heading span,.optional-label{font-size:12px!important;color:#737984!important;font-weight:500!important}
+.checkout-address-block>label,.checkout-address-grid>label{display:grid!important;gap:7px!important}
+.checkout-address-grid{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px 22px!important}
+.checkout-address-block>label:last-child{grid-column:1/-1!important}
+#checkoutDeliveryNote,.checkout-total,.payfast-submit,.checkout-error,.checkout-actions,.payfast-trust{grid-column:1/-1!important}
+.checkout-total{max-width:none!important;margin:0!important;padding:12px 0!important}
+.payfast-submit{width:100%!important;min-height:58px!important;font-size:16px!important;border-radius:11px!important}
+.checkout-actions{display:flex!important;justify-content:space-between!important;gap:12px!important;flex-wrap:wrap!important;margin-top:4px!important}
+.checkout-back-button,.checkout-cancel-button{min-height:48px!important;padding:0 20px!important;border-radius:10px!important;border:1px solid #dfe2e7!important;background:#fff!important;color:#292d34!important;font-weight:800!important;cursor:pointer!important}
+.checkout-cancel-button{color:#b42318!important}
+.payfast-trust{text-align:center!important;margin:4px auto 20px!important}
+@media(max-width:700px){
+ .checkout-panel{padding:22px 16px 30px!important;padding-top:72px!important}
+ .checkout-panel .checkout-close{top:12px!important;right:14px!important;width:42px!important;height:42px!important}
+ #productCheckoutForm{grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+ .checkout-address-block{grid-column:1!important;grid-template-columns:minmax(0,1fr)!important;padding:16px!important;gap:14px!important}
+ .checkout-address-grid{grid-column:1!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important}
+ .checkout-address-block>label:last-child{grid-column:1!important}
+ .checkout-actions{display:grid!important;grid-template-columns:1fr!important}
+ .checkout-back-button,.checkout-cancel-button{width:100%!important}
+}
+</style>
