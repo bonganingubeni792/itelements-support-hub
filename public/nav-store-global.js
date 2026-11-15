@@ -19,7 +19,7 @@
       '<div class="ite-mobile-drawer-head"><strong>Menu</strong><button class="ite-mobile-drawer-close" type="button" aria-label="Close menu">×</button></div>' +
       '<nav class="ite-mobile-drawer-links" aria-label="Website links"></nav></aside>';
     var list = overlay.querySelector('.ite-mobile-drawer-links');
-    [['/home','Home'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login','Client Portal']]
+    [['/','Home'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login','Client Portal']]
       .forEach(function (item) { list.appendChild(makeLink(item[0], item[1])); });
     document.body.appendChild(overlay);
     function close() { overlay.classList.remove('open'); document.body.classList.remove('ite-drawer-open'); trigger.setAttribute('aria-expanded','false'); }
@@ -44,6 +44,14 @@
     nav.innerHTML = '';
     [['/','Home'],['/services','Services'],['/store','Online Store'],['/contact','Contact']]
       .forEach(function (item) { nav.appendChild(makeLink(item[0], item[1])); });
+    // Keep the compact approved primary header while making every other page
+    // reachable on desktop as well as in the mobile drawer.
+    var more = document.createElement('details'); more.className = 'ite-more-menu';
+    var summary = document.createElement('summary'); summary.textContent = 'More'; more.appendChild(summary);
+    var panel = document.createElement('div'); panel.className = 'ite-more-menu-panel';
+    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/booking','Booking'],['/business-tools','Business Tools'],['/client/login','Client Portal']]
+      .forEach(function (item) { panel.appendChild(makeLink(item[0], item[1])); });
+    more.appendChild(panel); nav.appendChild(more);
   }
 
   var actions = header.querySelector('.ite-header-actions');
@@ -53,6 +61,7 @@
   var oldCart = isStore ? header.querySelector('#openCart') : null;
   actions.innerHTML = '';
   var account = makeLink('/client/login', 'Login');
+  account.id = 'accountAction';
   account.className = 'ite-account-action';
   account.setAttribute('aria-label', 'Log in to your IT Elements account');
   actions.appendChild(account);

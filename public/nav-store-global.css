@@ -166,3 +166,64 @@ body.store-page .wa-float,body.store-page .wa-widget,body.store-page [data-whats
  body:not(.store-page) .feature-grid,body:not(.store-page) .services-grid,body:not(.store-page) .pricing-grid,
  body:not(.store-page) .plans-wrapper,body:not(.store-page) .cards-grid{grid-template-columns:minmax(0,1fr)!important}
 }
+
+
+/* IT ELEMENTS GLOBAL PAGE ALIGNMENT — prevent side-shift and horizontal overflow */
+html{width:100%;max-width:100%;overflow-x:hidden!important;scrollbar-gutter:stable}
+body{width:100%;max-width:100%;min-width:0;overflow-x:hidden!important}
+body *{box-sizing:border-box}
+body:not(.store-page) main,
+body:not(.store-page) main>section,
+body:not(.store-page) .container,
+body:not(.store-page) .content,
+body:not(.store-page) .wrap,
+body:not(.store-page) .page,
+body:not(.store-page) .hero,
+body:not(.store-page) .hero-panel,
+body:not(.store-page) .hero-layout{min-width:0!important;max-width:100%!important}
+body:not(.store-page) main{margin-left:auto!important;margin-right:auto!important}
+body:not(.store-page) img,body:not(.store-page) video,body:not(.store-page) iframe{max-width:100%;height:auto}
+body:not(.store-page) h1,body:not(.store-page) h2,body:not(.store-page) h3,
+body:not(.store-page) p,body:not(.store-page) a,body:not(.store-page) button,
+body:not(.store-page) label,body:not(.store-page) li{overflow-wrap:anywhere}
+body:not(.store-page) input,body:not(.store-page) select,body:not(.store-page) textarea{max-width:100%;min-width:0}
+body.store-page .hero{width:100%;max-width:1480px;margin:0 auto;padding-left:clamp(18px,5vw,72px);padding-right:clamp(18px,5vw,72px)}
+body.store-page main.wrap{width:min(calc(100% - 40px),1480px)!important;max-width:1480px!important;margin:0 auto!important}
+body.store-page .catalogue-layout,body.store-page .product-area{min-width:0!important;max-width:100%!important}
+body.store-page .products{min-width:0!important}
+body.store-page #iteSideCart{display:flex!important}
+@media(max-width:900px){
+ body:not(.store-page) main{width:calc(100% - 32px)!important}
+ body:not(.store-page) section{min-width:0!important;max-width:100%!important}
+ body.store-page .hero{grid-template-columns:minmax(0,1fr)!important;gap:18px!important;min-height:0!important}
+ body.store-page .hero-art{width:100%;max-width:100%;height:auto;min-height:170px}
+ body.store-page main.wrap{width:calc(100% - 28px)!important}
+}
+@media(max-width:760px){
+ body:not(.store-page) nav.nav,body:not(.store-page) nav.navbar,body:not(.store-page) nav.site-nav,body:not(.store-page) nav.main-nav,body:not(.store-page) header.site-header{width:100%!important;max-width:100%!important;overflow:visible!important}
+ body:not(.store-page) .ite-mobile-menu-trigger{display:inline-flex!important}
+ body:not(.store-page) .ite-header-links{display:none!important}
+ body:not(.store-page) main{width:calc(100% - 24px)!important}
+ body.store-page .catalogue-layout{display:block!important}
+ body.store-page .department-sidebar{width:100%;max-width:100%;margin-bottom:16px}
+ body.store-page .products{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+ body.store-page .card{min-width:0!important}
+ body.store-page .card img{max-width:100%;object-fit:contain}
+}
+@media(max-width:420px){
+ body:not(.store-page) main{width:calc(100% - 18px)!important}
+ body.store-page main.wrap{width:calc(100% - 18px)!important}
+ body.store-page .products{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+
+/* Desktop More menu keeps secondary IT Elements pages connected without crowding the header */
+.ite-more-menu{position:relative;display:inline-flex;align-items:center;flex:0 0 auto}
+.ite-more-menu>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;padding:9px 2px;color:#30333b;font-size:14px;font-weight:750;white-space:nowrap}
+.ite-more-menu>summary::-webkit-details-marker{display:none}
+.ite-more-menu>summary:after{content:'⌄';margin-left:5px;color:#777}
+.ite-more-menu[open]>summary,.ite-more-menu>summary:hover{color:var(--ite-red)}
+.ite-more-menu-panel{position:absolute;top:calc(100% + 12px);right:0;z-index:10000;display:grid;grid-template-columns:1fr 1fr;gap:2px;width:min(390px,80vw);padding:9px;background:#fff;border:1px solid #e7e8eb;border-radius:12px;box-shadow:0 14px 36px #0002}
+.ite-more-menu-panel a{display:flex;align-items:center;min-height:38px;padding:8px 10px;border-radius:7px;color:#30333b;font-size:13px;font-weight:700;text-decoration:none;white-space:normal}
+.ite-more-menu-panel a:hover{background:#fff1f1;color:var(--ite-red)}
+@media(max-width:760px){.ite-more-menu{display:none!important}}
