@@ -688,15 +688,32 @@ window.buyDetailNow=id=>{
 };
 window.askAboutProduct=id=>{
  const p=products.find(x=>x._id===id);if(!p)return;
- const message=`Hello IT Elements, I would like to ask about ${p.name} (SKU: ${p.sku||'N/A'}). Please help me with availability and compatibility.`;
+ const productUrl=location.origin+location.pathname+'?product='+encodeURIComponent(id);
+ const imageUrl=p.imageUrl?new URL(p.imageUrl,location.origin).href:'';
+ const message=[
+  `Hello IT Elements, I would like to ask about ${p.name} (SKU: ${p.sku||'N/A'}).`,
+  `Listed price: ${money(p.price)}`,
+  imageUrl?`Product picture: ${imageUrl}`:'',
+  `Product page: ${productUrl}`,
+  'Please help me with availability and compatibility.'
+ ].filter(Boolean).join('\\n');
  window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank','noopener');
 };
 window.copyProductLink=id=>{const url=location.origin+location.pathname+'?product='+encodeURIComponent(id);if(navigator.clipboard?.writeText)navigator.clipboard.writeText(url).then(()=>alert('Product link copied.')).catch(()=>alert(url));else alert(url);};
 window.closeProduct=()=>{$('productModal').classList.remove('open');$('productModal').setAttribute('aria-hidden','true');document.body.style.overflow='';activeProductId=null;};
 window.orderProduct=id=>{
  const p=products.find(x=>x._id===id);if(!p)return;
- const message=`Hello IT Elements, I am interested in: ${p.name}\\nSKU: ${p.sku||'N/A'}\\nListed price: ${money(p.price)}\\nPlease confirm availability, specifications, payment and delivery.`;
- window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank');
+ const productUrl=location.origin+location.pathname+'?product='+encodeURIComponent(id);
+ const imageUrl=p.imageUrl?new URL(p.imageUrl,location.origin).href:'';
+ const message=[
+  `Hello IT Elements, I am interested in: ${p.name}`,
+  `SKU: ${p.sku||'N/A'}`,
+  `Listed price: ${money(p.price)}`,
+  imageUrl?`Product picture: ${imageUrl}`:'',
+  `Product page: ${productUrl}`,
+  'Please confirm availability, specifications, payment and delivery.'
+ ].filter(Boolean).join('\\n');
+ window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank','noopener');
 };
 document.querySelectorAll('[data-close-product]').forEach(x=>x.addEventListener('click',closeProduct));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProduct();});
@@ -832,3 +849,21 @@ async function load(){
 load();renderCart();
 checkReturnedPayment();
 </script><script src="/nav-store-global.js?v=20261115-master-fix" defer></script><script src="/ite-mobile.js?v=20261114-mobile2" defer></script></body></html>
+
+
+<style id="ite-final-phone-product-layout">
+@media(max-width:760px){
+  .product-modal-panel{width:calc(100vw - 16px)!important;max-width:calc(100vw - 16px)!important;max-height:94dvh!important;overflow-y:auto!important}
+  .product-modal-content{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important;padding:14px 12px 28px!important}
+  .product-detail-left,.product-detail-copy,.detail-description-full{grid-column:1!important;width:100%!important;min-width:0!important}
+  .product-detail-image{width:100%!important;min-height:0!important;padding:8px!important;position:static!important}
+  .product-gallery-main{height:clamp(220px,65vw,320px)!important;min-height:220px!important}
+  .product-gallery-main img,.product-detail-image img{max-width:100%!important;max-height:100%!important;object-fit:contain!important}
+  .product-gallery-thumbs{display:flex!important;justify-content:center!important;flex-wrap:wrap!important;gap:8px!important;margin-top:10px!important}
+  .product-detail-copy h2{font-size:21px!important;line-height:1.25!important}
+  .product-detail-actions{grid-template-columns:1fr 1fr!important;gap:8px!important}
+  .product-detail-actions button{min-height:46px!important;font-size:13px!important}
+  .detail-description-full{margin-top:4px!important;padding-top:16px!important}
+  .detail-description{font-size:14px!important;line-height:1.65!important;overflow-wrap:anywhere!important}
+}
+</style>
