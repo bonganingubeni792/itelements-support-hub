@@ -454,7 +454,18 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
  .product-detail-actions{grid-template-columns:1fr!important}
 }
 
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-layout-v5"><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"></head><body class="store-page">
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-layout-v5"><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"><style>
+
+/* IT Elements: hide the product-detail Add to Chat action; keep the header Chat access. */
+.product-detail-actions button[onclick*="addDetailToChat"],
+.product-detail-actions button.chat-action,
+.product-detail-actions .chat-action,
+button[onclick*="addDetailToChat"] {
+  display: none !important;
+}
+
+</style>
+</head><body class="store-page">
 <header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
@@ -1035,6 +1046,27 @@ load();renderCart();
 checkReturnedPayment();
 </script><script src="/nav-store-global.js?v=20261115-approved-header-v4" defer></script>
 
+
+
+<script>
+(function () {
+  function removeProductAddToChat() {
+    document.querySelectorAll(
+      '.product-detail-actions button[onclick*="addDetailToChat"], ' +
+      '.product-detail-actions button.chat-action, ' +
+      'button[onclick*="addDetailToChat"]'
+    ).forEach(function (button) { button.remove(); });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', removeProductAddToChat);
+  } else {
+    removeProductAddToChat();
+  }
+  new MutationObserver(removeProductAddToChat).observe(document.documentElement, {
+    childList: true, subtree: true
+  });
+})();
+</script>
 
 </body></html>
 
