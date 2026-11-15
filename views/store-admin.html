@@ -176,42 +176,136 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 .bulk-stock-qty{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;color:#707782}
 .bulk-stock-qty input{width:76px;padding:8px;border:1px solid #dfe2e7;border-radius:8px;font-size:11px}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261114">
-<style id="ite-admin-store-grid-and-layout-fix">
-/* Additive desktop layout repair for IT Elements Store Management */
-@media (min-width:761px){
-  html,body{max-width:100%;overflow-x:hidden}
-  .app{display:grid!important;grid-template-columns:224px minmax(0,1fr)!important;align-items:start!important;width:100%!important;max-width:none!important;min-width:0!important}
-  .app>aside{position:sticky!important;top:0!important;width:224px!important;min-width:224px!important;height:100vh!important;max-height:100vh!important;overflow-y:auto!important;overflow-x:hidden!important;box-sizing:border-box!important}
-  .app>main{width:100%!important;min-width:0!important;max-width:none!important;overflow:visible!important}
-  .content{width:100%!important;max-width:none!important;min-width:0!important;box-sizing:border-box!important;padding-left:clamp(16px,2vw,30px)!important;padding-right:clamp(16px,2vw,30px)!important}
-  .workspace-switch{width:auto!important;max-width:none!important;min-width:0!important;margin-left:clamp(16px,2vw,30px)!important;margin-right:clamp(16px,2vw,30px)!important;padding:0!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .workspace-tab,.workspace-tab>span{min-width:0!important;overflow:hidden!important}
-  .workspace-tab strong,.workspace-tab small{display:block!important;white-space:normal!important;overflow-wrap:anywhere!important}
-  .pagehead,.pagehead>div{min-width:0!important;gap:18px!important}
-  .stats{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
-  .panel{min-width:0!important}
-  .admin-filterbar{display:grid!important;grid-template-columns:minmax(220px,1.7fr) repeat(3,minmax(125px,1fr)) auto!important;align-items:end!important;gap:10px!important}
-  .admin-filterbar>*{min-width:0!important;width:100%!important}
-  .catalogue{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(225px,1fr))!important;align-items:stretch!important;gap:14px!important}
-  .product{display:flex!important;flex-direction:column!important;align-items:stretch!important;justify-content:flex-start!important;min-width:0!important;height:100%!important;box-sizing:border-box!important;gap:10px!important;padding:12px!important;border:1px solid #e7e9ed!important;border-radius:12px!important;background:#fff!important}
-  .product-select{order:0!important;align-self:flex-start!important;min-height:20px!important}
-  .product>.thumb{order:1!important;width:100%!important;height:150px!important;min-height:150px!important;flex:0 0 150px!important;background:#f7f8fa!important;border:1px solid #f0f1f3!important;border-radius:9px!important}
-  .product>.thumb img{width:100%!important;height:100%!important;object-fit:contain!important}
-  .product>div:not(.thumb):not(.rowactions){order:2!important;display:block!important;width:100%!important;min-width:0!important}
-  .product .pname{min-height:36px!important;font-size:12px!important;line-height:1.45!important;overflow-wrap:anywhere!important}
-  .product .meta{min-height:24px!important;line-height:1.4!important}
-  .product .stock-admin-line{display:flex!important;flex-wrap:wrap!important;gap:6px!important}
-  .product .stock-admin-edit{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin-top:8px!important;padding:9px!important;border-radius:9px!important;background:#f7f8fa!important}
-  .product .stock-admin-edit label{min-width:0!important;font-size:9px!important}
-  .product .stock-admin-edit input,.product .stock-admin-edit select{width:100%!important;min-width:0!important;box-sizing:border-box!important}
-  .product .price{margin-top:8px!important;font-size:14px!important}
-  .product>.rowactions{order:3!important;display:flex!important;width:100%!important;justify-content:stretch!important;gap:8px!important;margin-top:auto!important}
-  .product>.rowactions .btn{flex:1 1 0!important;min-width:0!important;justify-content:center!important}
+<style id="ite-store-manager-layout-final">
+/* Store workspace: keep the same two-workspace switch shown in the reference */
+.app{grid-template-columns:250px minmax(0,1fr)!important;min-width:0!important}
+.app>aside{
+  position:sticky!important;top:0!important;left:auto!important;
+  width:250px!important;min-width:250px!important;height:100vh!important;
+  max-height:100vh!important;box-sizing:border-box!important;
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  overflow-y:auto!important;overflow-x:hidden!important;padding:22px 16px 16px!important;
+  background:#fff!important;border-right:1px solid #e5e7eb!important;
 }
-@media (min-width:761px) and (max-width:1100px){
-  .admin-filterbar{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.app>aside .brand{display:flex!important;align-items:center!important;gap:11px!important;width:100%!important;padding:0 7px 25px!important;white-space:nowrap!important}
+.app>aside nav.nav{
+  display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+  align-items:stretch!important;justify-content:flex-start!important;gap:4px!important;
+  width:100%!important;min-width:0!important;overflow:visible!important;
+  writing-mode:horizontal-tb!important;transform:none!important;
+}
+.app>aside nav.nav .navlabel{
+  display:block!important;position:static!important;width:auto!important;height:auto!important;
+  margin:8px 0 4px!important;padding:12px 10px 6px!important;
+  white-space:normal!important;writing-mode:horizontal-tb!important;
+  transform:none!important;letter-spacing:1.2px!important;
+}
+.app>aside nav.nav a{
+  display:flex!important;flex:0 0 auto!important;align-items:center!important;
+  justify-content:flex-start!important;gap:11px!important;width:100%!important;
+  min-width:0!important;min-height:43px!important;height:auto!important;
+  margin:2px 0!important;padding:10px 11px!important;box-sizing:border-box!important;
+  white-space:normal!important;writing-mode:horizontal-tb!important;
+  transform:none!important;overflow:visible!important;
+}
+.app>aside nav.nav a .ico{display:inline-block!important;flex:0 0 20px!important;width:20px!important}
+.app>aside .sidefoot{display:block!important;flex:0 0 auto!important;margin-top:auto!important}
+.app>main{min-width:0!important;width:100%!important;max-width:none!important;overflow:visible!important}
+.app>main>.topbar{width:100%!important;box-sizing:border-box!important}
+.workspace-switch{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  width:auto!important;max-width:1720px!important;margin:18px auto 0!important;
+  padding:0 clamp(16px,2.4vw,36px)!important;gap:12px!important;
+}
+.workspace-tab{display:flex!important;flex-direction:row!important;align-items:center!important;
+  min-width:0!important;min-height:78px!important;gap:14px!important;padding:13px 17px!important;
+  writing-mode:horizontal-tb!important;transform:none!important}
+.workspace-tab>span:nth-child(2){display:flex!important;flex-direction:column!important;
+  min-width:0!important;white-space:normal!important}
+.workspace-tab strong,.workspace-tab small{display:block!important;white-space:normal!important;overflow-wrap:anywhere!important}
+.workspace-tab .workspace-symbol,.workspace-tab .workspace-arrow,.workspace-tab .workspace-state{flex:0 0 auto!important}
+.content{width:100%!important;max-width:1720px!important;box-sizing:border-box!important}
+.pagehead{min-width:0!important}
+.stats{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+#catalogue{margin-top:18px!important}
+#catalogue .panelhead{align-items:center!important;flex-wrap:wrap!important}
+#catalogue .toolbar{display:grid!important;grid-template-columns:minmax(220px,2fr) repeat(3,minmax(130px,1fr)) auto!important;gap:10px!important}
+#catalogue .toolbar>*{min-width:0!important;width:100%!important}
+#productList.catalogue{
+  display:grid!important;
+  grid-template-columns:repeat(auto-fill,minmax(245px,1fr))!important;
+  align-items:stretch!important;gap:14px!important;
+}
+#productList>.product{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  grid-template-rows:auto 150px auto auto!important;
+  align-items:stretch!important;gap:9px!important;
+  min-width:0!important;height:100%!important;box-sizing:border-box!important;
+  padding:13px!important;border:1px solid #e5e7eb!important;border-radius:13px!important;
+  background:#fff!important;box-shadow:0 3px 12px rgba(20,25,35,.035)!important;
+}
+#productList>.product>.product-select{grid-row:1!important;display:flex!important;align-items:center!important;gap:7px!important;font-size:10px!important}
+#productList>.product>.thumb{
+  grid-row:2!important;width:100%!important;height:150px!important;min-height:150px!important;
+  display:grid!important;place-items:center!important;background:#f7f8fa!important;
+  border:1px solid #eff0f2!important;border-radius:10px!important;overflow:hidden!important;
+}
+#productList>.product>.thumb img{width:100%!important;height:100%!important;object-fit:contain!important}
+#productList>.product>div:not(.thumb):not(.rowactions){
+  grid-row:3!important;display:block!important;min-width:0!important;width:100%!important;
+}
+#productList .pname{font-size:12px!important;line-height:1.45!important;min-height:34px!important;overflow-wrap:anywhere!important}
+#productList .meta{line-height:1.4!important;min-height:24px!important}
+#productList .stock-admin-line{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:7px!important;margin-top:8px!important}
+#productList .stock-admin-edit{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:8px!important;margin-top:8px!important;padding:9px!important;
+  border-radius:9px!important;background:#f7f8fa!important;
+}
+#productList .stock-admin-edit label{display:grid!important;gap:5px!important;min-width:0!important;font-size:9px!important}
+#productList .stock-admin-edit input,#productList .stock-admin-edit select{
+  width:100%!important;min-width:0!important;box-sizing:border-box!important;
+}
+#productList .price{font-size:14px!important;margin-top:8px!important}
+#productList>.product>.rowactions{
+  grid-row:4!important;display:flex!important;align-items:center!important;
+  justify-content:stretch!important;gap:8px!important;width:100%!important;margin-top:auto!important;
+}
+#productList>.product>.rowactions .btn{flex:1 1 0!important;min-width:0!important;justify-content:center!important}
+#catalogue .bulk-toolbar{display:flex!important;flex-wrap:wrap!important;align-items:center!important;gap:8px!important}
+#catalogue .bulk-toolbar>*{max-width:100%!important}
+@media(max-width:1100px){
+  .app{grid-template-columns:215px minmax(0,1fr)!important}
+  .app>aside{width:215px!important;min-width:215px!important}
   .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important}
-  .catalogue{grid-template-columns:repeat(auto-fill,minmax(205px,1fr))!important}
+  #catalogue .toolbar{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #productList.catalogue{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))!important}
+}
+@media(max-width:720px){
+  .app{display:block!important}
+  .app>aside{position:relative!important;width:100%!important;min-width:0!important;height:auto!important;max-height:none!important;padding:12px 14px!important;border-right:0!important;border-bottom:1px solid #e5e7eb!important}
+  .app>aside .brand{padding:0 4px 10px!important}
+  .app>aside nav.nav{display:flex!important;flex-direction:row!important;align-items:center!important;overflow-x:auto!important;overflow-y:hidden!important;gap:5px!important}
+  .app>aside nav.nav .navlabel,.app>aside .sidefoot{display:none!important}
+  .app>aside nav.nav a{flex:0 0 auto!important;width:auto!important;white-space:nowrap!important}
+  .workspace-switch{grid-template-columns:1fr!important;margin:12px 0 0!important;padding:0 13px!important;gap:8px!important}
+  .workspace-tab{min-height:64px!important;padding:10px!important}
+  .content{padding:18px 13px 35px!important}
+  .pagehead{align-items:flex-start!important;flex-direction:column!important}
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  #catalogue .toolbar{grid-template-columns:1fr!important}
+  #productList.catalogue{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  #productList>.product{padding:9px!important;gap:7px!important}
+  #productList>.product>.thumb{height:112px!important;min-height:112px!important}
+  #productList .stock-admin-edit{grid-template-columns:1fr!important}
+  #productList>.product>.rowactions{flex-wrap:wrap!important}
+  #productList>.product>.rowactions .btn{padding:8px 7px!important;font-size:10px!important}
+  .catalogue-pager{align-items:flex-start!important;flex-direction:column!important}
+}
+@media(max-width:390px){
+  #productList.catalogue{grid-template-columns:1fr!important}
+  .stats{grid-template-columns:1fr 1fr!important}
 }
 </style>
 
@@ -226,6 +320,36 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 <section class="stats"><article class="stat"><small>Total products</small><strong id="totalCount">0</strong><em>All products in your catalogue</em></article><article class="stat"><small>Published in store</small><strong id="activeCount">0</strong><em>Visible to customers</em></article><article class="stat"><small>Private drafts</small><strong id="draftCount">0</strong><em>Only visible to administrators</em></article><article class="stat"><small>Low stock</small><strong id="lowCount">0</strong><em>Products with 5 or fewer units</em></article>
 </section>
 
+<section class="panel" id="catalogue"><div class="panelhead"><div><h2>Product catalogue</h2><p class="sub">Edit, publish, hide or remove products</p></div><button class="btn" id="refreshBtn">↻ Refresh</button></div><div class="toolbar admin-filterbar">
+<input id="search" type="search" placeholder="⌕  Search products, brands, model, SKU or category...">
+<label>Price range<select id="priceFilter"><option value="all">Any price</option><option value="0-500">Under R500</option><option value="500-1500">R500 – R1,500</option><option value="1500-5000">R1,500 – R5,000</option><option value="5000-10000">R5,000 – R10,000</option><option value="10000+">R10,000+</option></select></label>
+<label>Availability<select id="filter"><option value="all">All products</option><option value="active">Published</option><option value="draft">Drafts</option><option value="in">In stock</option><option value="out">Out of stock</option></select></label>
+<label>Sort by<select id="sortFilter"><option value="featured">Featured first</option><option value="newest">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="name">Product name</option></select></label>
+<button class="btn" type="button" id="clearAdminFilters">Clear filters</button></div>
+<div class="catalogue-pager"><span id="adminResultCount">Showing 0 products</span><div><button class="btn" id="adminPrev" type="button">Previous</button><span id="adminPageLabel">Page 1 of 1</span><button class="btn" id="adminNext" type="button">Next 50</button></div></div>
+<div class="bulk-toolbar">
+  <label class="bulk-select-all"><input type="checkbox" id="selectAllProducts"> Select all shown</label>
+  <span id="selectedCount">0 selected</span>
+  <button class="btn" type="button" id="publishSelected">Publish selected</button>
+  <button class="btn" type="button" id="draftSelected">Set selected to draft</button>
+  <button class="btn softred" type="button" id="deleteSelected">Delete selected</button>
+  <button class="btn" type="button" id="publishAll">Publish ALL products</button>
+  <button class="btn" type="button" id="draftAll">Set ALL to draft</button>
+  <button class="btn primary" type="button" id="savePageStock">Save all 50 stock changes</button>
+  <label class="bulk-stock-qty">Units per product <input id="bulkStockQty" type="number" min="1" step="1" value="1"></label>
+  <button class="btn" type="button" id="stockAllIn">Set ALL IN STOCK</button>
+  <button class="btn softred" type="button" id="stockAllOut">Set ALL OUT OF STOCK</button>
+  <button class="btn" type="button" id="stockSelectedIn">Set selected IN STOCK</button>
+  <button class="btn softred" type="button" id="stockSelectedOut">Set selected OUT OF STOCK</button>
+</div><div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
+
+<section class="panel" id="editor"><div class="panelhead"><div><h2 id="formTitle">Add new product</h2><p class="sub">Product details, image, pricing and availability</p></div><span class="eyebrow">PRODUCT EDITOR</span></div>
+<form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="2000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="productImageFile">Choose image from your computer</label><input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="hint">JPG, PNG, WebP or AVIF · maximum 5 MB. The uploaded image is attached to this product.</p></div><div class="field"><label for="imageUrl">Or use an image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint" id="imageUploadStatus" aria-live="polite">You can upload a picture or paste an existing image URL.</p></div></div>
+<div class="two"><div class="field"><label for="sku">SKU / Product code</label><input id="sku" maxlength="60" placeholder="ITE-SSD-001"></div><div class="field"><label for="category">Category *</label><input id="category" list="categoryOptions" maxlength="80" required placeholder="Choose or type a category"><datalist id="categoryOptions"></datalist></div></div>
+<div class="two"><div class="field"><label for="price">Selling price (ZAR) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="1299.00"></div><div class="field"><label for="compareAtPrice">Previous price (ZAR)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="1499.00"></div></div>
+<div class="two"><div class="field"><label for="stock">Stock quantity (units left)</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="stockAvailability">Stock availability</label><select id="stockAvailability"><option value="in">In stock</option><option value="out">Out of stock</option></select></div></div><div class="two"><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div><div class="field"><label>Stock rule</label><small style="color:#777">In stock requires at least 1 unit. Out of stock sets quantity to 0.</small></div></div>
+<label class="check"><input type="checkbox" id="featured"> Feature this product in the public store</label><div class="formactions"><button class="btn primary" id="saveBtn" type="submit">Save product</button><button class="btn" type="button" id="resetBtn">Clear form</button></div><div id="message" aria-live="polite"></div></form></section>
+
 <section class="panel" id="orders">
  <div class="panelhead"><div><h2>Customer orders</h2><p class="sub">Orders placed through the online store and their PayFast payment status.</p></div><button class="btn" id="refreshOrders">↻ Refresh orders</button></div>
  <div class="toolbar admin-filterbar" style="grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) auto">
@@ -236,6 +360,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
  <div id="ordersSummary" class="sub" style="margin:10px 0 14px">Loading orders…</div>
  <div id="ordersList" class="catalogue"><div class="empty">Loading orders…</div></div>
 </section>
+
 
 <section class="panel import-panel" id="bulk-tools">
   <div class="panelhead"><div><h2>Product import &amp; catalogue tools</h2><p class="sub">Bring in a complete product list using CSV or Excel, or download your catalogue for editing.</p></div><span class="eyebrow">BULK MANAGEMENT</span></div>
@@ -342,35 +467,7 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
         </button></div></section></div>
 </section>
 
-<div class="workspace"><section class="panel" id="editor"><div class="panelhead"><div><h2 id="formTitle">Add new product</h2><p class="sub">Product details, image, pricing and availability</p></div><span class="eyebrow">PRODUCT EDITOR</span></div>
-<form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="2000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="productImageFile">Choose image from your computer</label><input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="hint">JPG, PNG, WebP or AVIF · maximum 5 MB. The uploaded image is attached to this product.</p></div><div class="field"><label for="imageUrl">Or use an image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint" id="imageUploadStatus" aria-live="polite">You can upload a picture or paste an existing image URL.</p></div></div>
-<div class="two"><div class="field"><label for="sku">SKU / Product code</label><input id="sku" maxlength="60" placeholder="ITE-SSD-001"></div><div class="field"><label for="category">Category *</label><input id="category" list="categoryOptions" maxlength="80" required placeholder="Choose or type a category"><datalist id="categoryOptions"></datalist></div></div>
-<div class="two"><div class="field"><label for="price">Selling price (ZAR) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="1299.00"></div><div class="field"><label for="compareAtPrice">Previous price (ZAR)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="1499.00"></div></div>
-<div class="two"><div class="field"><label for="stock">Stock quantity (units left)</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="stockAvailability">Stock availability</label><select id="stockAvailability"><option value="in">In stock</option><option value="out">Out of stock</option></select></div></div><div class="two"><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div><div class="field"><label>Stock rule</label><small style="color:#777">In stock requires at least 1 unit. Out of stock sets quantity to 0.</small></div></div>
-<label class="check"><input type="checkbox" id="featured"> Feature this product in the public store</label><div class="formactions"><button class="btn primary" id="saveBtn" type="submit">Save product</button><button class="btn" type="button" id="resetBtn">Clear form</button></div><div id="message" aria-live="polite"></div></form></section>
-<section class="panel" id="catalogue"><div class="panelhead"><div><h2>Product catalogue</h2><p class="sub">Edit, publish, hide or remove products</p></div><button class="btn" id="refreshBtn">↻ Refresh</button></div><div class="toolbar admin-filterbar">
-<input id="search" type="search" placeholder="⌕  Search products, brands, model, SKU or category...">
-<label>Price range<select id="priceFilter"><option value="all">Any price</option><option value="0-500">Under R500</option><option value="500-1500">R500 – R1,500</option><option value="1500-5000">R1,500 – R5,000</option><option value="5000-10000">R5,000 – R10,000</option><option value="10000+">R10,000+</option></select></label>
-<label>Availability<select id="filter"><option value="all">All products</option><option value="active">Published</option><option value="draft">Drafts</option><option value="in">In stock</option><option value="out">Out of stock</option></select></label>
-<label>Sort by<select id="sortFilter"><option value="featured">Featured first</option><option value="newest">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="name">Product name</option></select></label>
-<button class="btn" type="button" id="clearAdminFilters">Clear filters</button></div>
-<div class="catalogue-pager"><span id="adminResultCount">Showing 0 products</span><div><button class="btn" id="adminPrev" type="button">Previous</button><span id="adminPageLabel">Page 1 of 1</span><button class="btn" id="adminNext" type="button">Next 50</button></div></div>
-<div class="bulk-toolbar">
-  <label class="bulk-select-all"><input type="checkbox" id="selectAllProducts"> Select all shown</label>
-  <span id="selectedCount">0 selected</span>
-  <button class="btn" type="button" id="publishSelected">Publish selected</button>
-  <button class="btn" type="button" id="draftSelected">Set selected to draft</button>
-  <button class="btn softred" type="button" id="deleteSelected">Delete selected</button>
-  <button class="btn" type="button" id="publishAll">Publish ALL products</button>
-  <button class="btn" type="button" id="draftAll">Set ALL to draft</button>
-  <button class="btn primary" type="button" id="savePageStock">Save all 50 stock changes</button>
-  <label class="bulk-stock-qty">Units per product <input id="bulkStockQty" type="number" min="1" step="1" value="1"></label>
-  <button class="btn" type="button" id="stockAllIn">Set ALL IN STOCK</button>
-  <button class="btn softred" type="button" id="stockAllOut">Set ALL OUT OF STOCK</button>
-  <button class="btn" type="button" id="stockSelectedIn">Set selected IN STOCK</button>
-  <button class="btn softred" type="button" id="stockSelectedOut">Set selected OUT OF STOCK</button>
-</div><div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
-</div></main></div>
+<div class="workspace"></div></main></div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 const $=id=>document.getElementById(id);let products=[];let adminPage=1;const ADMIN_PAGE_SIZE=50;const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -462,10 +559,6 @@ $('productList').addEventListener('change',e=>{
  updateStockPreviewForControl(mode);
 });
 
- const mode=e.target.closest('[data-stock-mode]');if(!mode)return;
- const id=mode.dataset.stockMode,qty=document.querySelector(`[data-stock-qty="${id}"]`);
- if(!qty)return;if(mode.value==='out')qty.value=0;else if(Number(qty.value)<1)qty.value=1;
-});
 
 async function setBulkStock(ids,qty,label){
  ids=[...new Set(ids)].filter(id=>products.some(p=>p._id===id));
