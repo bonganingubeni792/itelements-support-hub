@@ -1,0 +1,103 @@
+IT ELEMENTS — MASTER PROBLEMS CHECKLIST
+Updated: 15 November 2026
+
+This checklist carries forward every issue reported in the project conversations. Items marked "code updated" still require live verification where noted.
+
+FIXES INCLUDED IN THIS BUILD
+[CODE UPDATED] Store checkout shows each product image, product name, quantity, unit price and line total.
+[CODE UPDATED] Delivery is R80 when product subtotal is below R750.
+[CODE UPDATED] Delivery is FREE when product subtotal is R750 or more.
+[CODE UPDATED] Collection has no delivery charge.
+[CODE UPDATED] Server recalculates product subtotal, delivery fee and total from MongoDB product prices. It does not trust a client-supplied price.
+[CODE UPDATED] PayFast checkout function declared async so its awaited MongoDB write can run.
+[CODE UPDATED] Store checkout API accepts validated customer email for guest checkout; server still validates stock and prices.
+[CODE UPDATED] PayFast checkout uses PUBLIC_BASE_URL or the production HTTPS fallback https://www.itelements.help.
+[CODE UPDATED] Server returns clearer errors for missing payment configuration or unavailable MongoDB connection.
+[CODE UPDATED] Render logs include a safe [STORE CHECKOUT] failure reason. No merchant secret is logged.
+[CODE UPDATED] Customer-facing payment wording says Secure payment.
+[CODE UPDATED] Product WhatsApp enquiry/order messages include product image URL and product page link where an image URL exists.
+[CODE UPDATED] Product descriptions render safe formatted headings, paragraphs, lists and emphasis rather than raw HTML.
+[CODE UPDATED] Product description is a full-width section below the desktop image and product information columns.
+[CODE UPDATED] Product detail view stacks neatly on phones.
+[CODE UPDATED] Shared mobile Welcome drawer styles are applied across pages, with logo left and hamburger right.
+[CODE UPDATED] Added shared mobile navigation to business-tools.html, the previously missed navigation page.
+[CODE UPDATED] Restored fixed green WhatsApp Us floating button on Store page.
+[CODE UPDATED] Kept View product, Add to cart, Buy now, delivery information, product gallery and thumbnails.
+
+MASTER CHECKLIST — OLDER COMPLAINTS
+MOBILE NAVIGATION AND DESIGN
+[CODE UPDATED] Same Welcome drawer structure on Home, Store, Services, On-site, Plans, Business, Reviews, About, FAQ, Contact, Client Portal and other pages loading shared nav assets.
+[CODE UPDATED] Welcome heading and close button.
+[CODE UPDATED] Sign-in message, red Login button and Register link.
+[CODE UPDATED] Full-width stacked menu rows: Home, Shop by Category, Deals & featured products, Orders & order history, My Account, Cart, plus existing site destinations.
+[CODE UPDATED] Mobile header logo on left and hamburger on right.
+[CODE UPDATED] Desktop navigation remains governed by desktop styles and is not replaced by the mobile drawer.
+[NEEDS LIVE VISUAL TEST] Confirm every mobile page matches the user's approved screenshot and no legacy grid/horizontal nav appears.
+[NEEDS LIVE VISUAL TEST] Confirm desktop menu and page layouts are intact.
+
+STORE / PRODUCTS
+[CODE UPDATED] Checkout item pictures, names, quantities and prices shown.
+[CODE UPDATED] Product image gallery and thumbnails preserved.
+[CODE UPDATED] Product description safe formatting.
+[CODE UPDATED] Description full-width below both desktop columns; mobile stacks.
+[CODE UPDATED] View product button preserved.
+[CODE UPDATED] Add to cart button preserved.
+[CODE UPDATED] Buy now button preserved.
+[CODE UPDATED] Delivery information preserved (estimated 3–5 business days; timing can vary).
+[CODE UPDATED] WhatsApp enquiry/order includes product image URL and product link.
+[CODE UPDATED] Store floating WhatsApp Us button restored.
+[NEEDS LIVE TEST] Confirm public image URLs load in checkout and WhatsApp product page previews.
+
+DELIVERY / CHECKOUT / PAYMENT
+[CODE UPDATED] R80 delivery below R750 product subtotal.
+[CODE UPDATED] Free delivery at R750 and above.
+[CODE UPDATED] Collection is free.
+[CODE UPDATED] Server-side recalculation prevents changing delivery fees in browser.
+[CODE UPDATED] Product summary shown in checkout before payment.
+[CODE UPDATED] PayFast server function async syntax fixed.
+[CODE UPDATED] Guest checkout uses validated email supplied in checkout form.
+[CODE UPDATED] HTTPS website base URL fallback included.
+[CODE UPDATED] Clear database/payment configuration errors and safe Render logs.
+[NEEDS RENDER ENV CHECK] PAYFAST_MERCHANT_ID must be the correct 8-digit ID.
+[NEEDS RENDER ENV CHECK] PAYFAST_MERCHANT_KEY must be the correct 13-character Merchant Key, not the passphrase.
+[NEEDS RENDER ENV CHECK] PAYFAST_MODE must be live or test as intended.
+[NEEDS RENDER ENV CHECK] PAYFAST_PASSPHRASE must match the PayFast dashboard if configured.
+[NEEDS RENDER ENV CHECK] MONGODB_URI must connect successfully.
+[NEEDS RENDER ENV CHECK] PUBLIC_BASE_URL should be https://www.itelements.help.
+[NEEDS LIVE PAYMENT TEST] A real or controlled PayFast payment, ITN webhook, order status, return/cancel path and fulfilment record must be tested. Code edits cannot validate merchant account credentials.
+
+STORE ADMIN / STOCK
+[PRESERVED; NEEDS LIVE TEST] Individual stock quantity controls.
+[ PENDING LIVE TEST ] Individual Save buttons and database persistence.
+[ PENDING LIVE TEST ] Bulk quantity setting and Save all.
+[ PENDING LIVE TEST ] Set all products In Stock / Out of Stock.
+[ PENDING LIVE TEST ] Set selected products In Stock / Out of Stock.
+[ PENDING LIVE TEST ] 50 products per page with Next / Previous.
+[ PENDING LIVE TEST ] Bulk publish, draft and delete.
+[ PENDING LIVE TEST ] Product import with image selection.
+[ PENDING LIVE TEST ] Confirm stock changes persist in MongoDB and affect customer availability.
+
+EXISTING SITE FEATURES TO PRESERVE
+[PRESERVED IN PROJECT] Home, Services, Pricing, On-site, Business Support, Reviews, About, FAQ, Contact, Client Portal, Invoice Studio, Store and Admin pages.
+[PRESERVED IN PROJECT] PayFast, MongoDB, session authentication, support requests, reviews, tickets and admin functionality.
+[NEEDS REGRESSION TEST] Client Portal login, profile, tickets and account flows.
+[NEEDS REGRESSION TEST] Admin Dashboard, Store Admin, order management and product management.
+[NEEDS REGRESSION TEST] Store cart, stock validation, checkout and order history.
+[NEEDS REGRESSION TEST] Mobile and desktop responsive layout on every page.
+
+BRAND / UI
+[PRESERVED] IT Elements original logo references.
+[PRESERVED] White background and strong red #e00000.
+[PRESERVED] WhatsApp floating button in Store page.
+[NEEDS LIVE TEST] Check all pages for logo sizing, real red, spacing, overflow and phone/desktop layout.
+
+INSTALLATION
+1. Back up the current project and database before deploying.
+2. Extract this full ZIP and replace the project files in your GitHub repository.
+3. Keep Render environment variables. Do not put merchant keys or passwords into source code.
+4. Confirm Render environment values listed above.
+5. Deploy and check the newest Render logs.
+6. Test checkout using a product subtotal below R750 (expect R80 delivery), exactly R750 (expect free delivery), and above R750 (expect free delivery). Test collection (expect free delivery).
+7. Test the actual PayFast redirect and webhook. Do not mark payment fixed until a controlled payment succeeds.
+
+Important honesty note: syntax and static code checks are performed before packaging. Live MongoDB, PayFast merchant credentials, webhook, browser rendering and real phone layout cannot be verified from this offline project package.

@@ -1457,28 +1457,32 @@ async function createPayFastCheckout({
     const config = payfastConfig();
 
     if (!config) {
-        console.error('[PAYMENT CONFIG] PayFast is not ready. Check PAYFAST_MERCHANT_ID (8 digits), PAYFAST_MERCHANT_KEY (13 characters), and PAYFAST_MODE (live or test). Secret values are not logged.');
         throw Object.assign(
             new Error(
-                'Secure payment is temporarily unavailable because the payment account configuration needs attention. Please contact IT Elements.'
+                'Check the PayFast Render settings: PAYFAST_MERCHANT_ID must be the 8-digit Merchant ID and PAYFAST_MERCHANT_KEY must be the 13-character Merchant Key. Do not enter your passphrase as the Merchant Key.'
             ),
             { statusCode: 503 }
         );
     }
 
-    // Render production fallback: keeps checkout return/notify URLs valid
-    // even if PUBLIC_BASE_URL was accidentally omitted from the service environment.
     const configuredBaseUrl = String(process.env.PUBLIC_BASE_URL || '').trim();
     const publicBaseUrl = (configuredBaseUrl || 'https://www.itelements.help').replace(/\/$/, '');
 
     if (!/^https:\/\//i.test(publicBaseUrl)) {
         throw Object.assign(
-            new Error("Secure checkout needs the website HTTPS address to be configured. Please contact IT Elements."),
+            new Error('Set PUBLIC_BASE_URL to your deployed HTTPS website address.'),
             { statusCode: 503 }
         );
     }
 
     const paymentId = `ite-${randomUUID()}`;
+
+    if (mongoose.connection.readyState !== 1) {
+        throw Object.assign(
+            new Error('Secure payment is temporarily unavailable because the order database is not connected. Please try again shortly.'),
+            { statusCode: 503 }
+        );
+    }
 
     await PayFastPurchase.create({
         paymentId,
@@ -1576,17 +1580,17 @@ app.post('/api/payment/payfast-quickfix', async (req, res) => {
 });
 
 // Online store checkout: account required; all prices and stock are verified server-side.
-app.post('/api/payment/payfast-product-checkout', checkUserAuth, async (req, res) => {
+app.post('/api/payment/payfast-product-checkout', async (req, res) => {
     try {
-        const email = String(req.session.userEmail || '').trim().toLowerCase();
+        const email = String((req.session && req.session.userEmail) || req.body.email || '').trim().toLowerCase();
         const customerName = String(req.body.customerName || '').trim().slice(0, 100);
         const phone = String(req.body.phone || '').trim().slice(0, 30);
         const deliveryMethod = req.body.deliveryMethod === 'collection' ? 'collection' : 'delivery';
         const deliveryAddress = String(req.body.deliveryAddress || '').trim().slice(0, 500);
         const rawItems = Array.isArray(req.body.items) ? req.body.items : [];
 
-        if (!email || !customerName || phone.length < 7 || phone.length > 30) {
-            return res.status(400).json({ success: false, message: 'Please provide your name and a valid phone number.' });
+        if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) || !customerName || phone.length < 7 || phone.length > 30) {
+            return res.status(400).json({ success: false, message: 'Please provide your full name, a valid email address and a valid phone number.' });
         }
         if (deliveryMethod === 'delivery' && deliveryAddress.length < 8) {
             return res.status(400).json({ success: false, message: 'Please enter your delivery address.' });
@@ -1611,24 +1615,32 @@ app.post('/api/payment/payfast-product-checkout', checkUserAuth, async (req, res
             return res.status(409).json({ success: false, message: 'A product in your cart is no longer available. Please refresh the store.' });
         }
 
-        let totalCents = 0;
+        let subtotalCents = 0;
         const orderItems = products.map(product => {
             const quantity = quantities.get(String(product._id));
             const stock = Math.max(0, Number(product.stock) || 0);
             if (stock < quantity) throw Object.assign(new Error(`${product.name} has only ${stock} available.`), { statusCode: 409 });
             const unitPriceCents = Math.round(Number(product.price) * 100);
             if (!Number.isSafeInteger(unitPriceCents) || unitPriceCents < 1) throw Object.assign(new Error(`Invalid price for ${product.name}.`), { statusCode: 400 });
-            totalCents += unitPriceCents * quantity;
-            return { productId: String(product._id), name: product.name, sku: product.sku || '', quantity, unitPriceCents };
+            subtotalCents += unitPriceCents * quantity;
+            return {
+                productId: String(product._id),
+                name: product.name,
+                sku: product.sku || '',
+                imageUrl: String(product.imageUrl || ''),
+                quantity,
+                unitPriceCents
+            };
         });
 
-        if (!Number.isSafeInteger(totalCents) || totalCents < 1) {
-            return res.status(400).json({ success: false, message: 'The order total is invalid.' });
+        if (!Number.isSafeInteger(subtotalCents) || subtotalCents < 1) {
+            return res.status(400).json({ success: false, message: 'The order subtotal is invalid.' });
         }
 
-        if (mongoose.connection.readyState !== 1) {
-            throw Object.assign(new Error('The order service is temporarily unavailable. Please try again shortly or contact IT Elements.'), { statusCode: 503 });
-        }
+        // IT Elements delivery policy: R80 below R750; free at R750 and above.
+        // Collection never incurs a delivery charge.
+        const deliveryFeeCents = deliveryMethod === 'delivery' && subtotalCents < 75000 ? 8000 : 0;
+        const totalCents = subtotalCents + deliveryFeeCents;
 
         const checkout = await createPayFastCheckout({
             email,
@@ -1639,13 +1651,19 @@ app.post('/api/payment/payfast-product-checkout', checkUserAuth, async (req, res
                 phone,
                 deliveryMethod,
                 deliveryAddress: deliveryMethod === 'delivery' ? deliveryAddress : '',
+                subtotalCents,
+                deliveryFeeCents,
+                totalCents,
                 items: orderItems
             }
         });
         return res.json({ success: true, ...checkout });
     } catch (err) {
-        console.error('[STORE CHECKOUT] Secure payment preparation failed:', err && (err.stack || err.message || err));
-        return res.status(err.statusCode || 502).json({ success: false, message: err.message || 'Secure payment could not be prepared. Please try again or contact IT Elements.' });
+        console.error('[STORE CHECKOUT] Payment preparation failed:', err && err.message ? err.message : err);
+        return res.status(err.statusCode || 502).json({
+            success: false,
+            message: err.message || 'Secure payment could not be prepared. Please contact IT Elements.'
+        });
     }
 });
 

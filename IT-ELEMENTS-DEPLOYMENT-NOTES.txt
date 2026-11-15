@@ -1,0 +1,22 @@
+IT ELEMENTS DEPLOYMENT NOTES
+
+This package contains the complete project, not just a patch. Upload all files to the existing GitHub repository so Render deploys the corrected server.js, store checkout and shared mobile navigation together.
+
+Render environment:
+- PUBLIC_BASE_URL=https://www.itelements.help
+- PAYFAST_MERCHANT_ID=your actual 8-digit Merchant ID
+- PAYFAST_MERCHANT_KEY=your actual 13-character Merchant Key
+- PAYFAST_MODE=live (or test while testing)
+- PAYFAST_PASSPHRASE=the exact passphrase configured in PayFast, if one is set
+- MONGODB_URI=your existing MongoDB connection string
+- SESSION_SECRET=your existing strong secret
+
+Do not send merchant keys, passphrases, database URIs or session secrets in chat or commit them to GitHub.
+
+The checkout computes:
+- Product subtotal below R750: R80 delivery.
+- Product subtotal R750 or above: free delivery.
+- Collection: free.
+The server recalculates this from database product prices and stock.
+
+After deployment, if checkout fails, inspect Render logs for [STORE CHECKOUT]. Check the message and correct the matching environment/database issue. A successful syntax check alone does not prove that PayFast credentials or webhook configuration are valid.
