@@ -230,7 +230,8 @@ body.store-page #iteSideCart{display:flex!important}
 
 
 /* Store top-navigation chat-list action; no floating chat button on any store view. */
-body.store-page .ite-header-chatlist{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:46px!important;padding:0 14px!important;border:1px solid #e00000!important;border-radius:8px!important;background:#fff!important;color:#e00000!important;font-size:14px!important;font-weight:850!important;white-space:nowrap!important;cursor:pointer!important}
+body.store-page .ite-header-chatlist{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;min-height:46px!important;padding:0 14px!important;border:1px solid #e00000!important;border-radius:8px!important;background:#e00000!important;color:#fff!important;font-size:14px!important;font-weight:850!important;white-space:nowrap!important;cursor:pointer!important;box-shadow:0 5px 14px rgba(224,0,0,.12)!important}
+body.store-page .ite-header-chatlist[hidden],body.store-page #openChatListFromProduct[hidden]{display:none!important}
 body.store-page .ite-chatlist-icon{font-size:18px!important;line-height:1!important}
 body.store-page .ite-chatlist-count{display:inline-grid!important;place-items:center!important;min-width:19px!important;height:19px!important;padding:0 5px!important;border-radius:999px!important;background:#171717!important;color:#fff!important;font-size:11px!important;font-weight:900!important}
 body.store-page #iteSideCart,body.store-page .ite-side-cart,body.store-page .ite-floating-chat-list,body.store-page .floating-chat-list,body.store-page .ite-chat-float,body.store-page .ite-store-whatsapp-float{display:none!important}

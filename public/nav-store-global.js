@@ -68,10 +68,11 @@
   if (isStore) {
     var chatList = document.createElement('button');
     chatList.type = 'button'; chatList.id = 'openChatList'; chatList.className = 'ite-header-chatlist';
-    chatList.setAttribute('aria-label', 'Open chat list');
+    chatList.hidden = true;
+    chatList.setAttribute('aria-label', 'Open chat');
     chatList.setAttribute('aria-controls', 'chatListDrawer');
     chatList.setAttribute('aria-expanded', 'false');
-    chatList.innerHTML = '<span class="ite-chatlist-icon" aria-hidden="true">▢</span><span>Chat list</span><span class="ite-chatlist-count" id="chatListCount">0</span>';
+    chatList.innerHTML = '<span class="ite-chatlist-icon" aria-hidden="true">💬</span><span>Chat</span><span class="ite-chatlist-count" id="chatListCount">0</span>';
     try {
       var savedChatItems = JSON.parse(localStorage.getItem('itelements_store_chat_list_v1') || '[]');
       var savedChatCount = Array.isArray(savedChatItems) ? savedChatItems.reduce(function (n, item) { return n + (Number(item && item.qty) || 0); }, 0) : 0;
@@ -100,16 +101,31 @@
       if (auth && auth.authenticated) {
         account.textContent = 'Logout'; account.href = '/client/logout';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
+        if (isStore) {
+          chatList.hidden = false;
+          var productChat = document.getElementById('openChatListFromProduct');
+          if (productChat) productChat.hidden = false;
+        }
         if (!isStore) fetch('/api/store/cart', { credentials: 'same-origin', cache: 'no-store' })
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (data) { if (data && Array.isArray(data.items)) { var total = data.items.reduce(function (n, item) { return n + (Number(item.qty) || 0); }, 0); actions.querySelector('.ite-header-cart').textContent = 'Cart (' + total + ')'; } })
           .catch(function () {});
       } else {
+        if (isStore) {
+          chatList.hidden = true;
+          var productChat = document.getElementById('openChatListFromProduct');
+          if (productChat) productChat.hidden = true;
+        }
         account.textContent = 'Login'; account.href = '/client/login';
         account.setAttribute('aria-label', 'Log in to your IT Elements account');
         if (!isStore) { try { var guest = JSON.parse(localStorage.getItem('itelements_store_cart_guest_v2') || '[]'); var total = Array.isArray(guest) ? guest.reduce(function (n, item) { return n + (Number(item.qty) || 0); }, 0) : 0; actions.querySelector('.ite-header-cart').textContent = 'Cart (' + total + ')'; } catch (_) {} }
       }
     }).catch(function () {
+      if (isStore) {
+        chatList.hidden = true;
+        var productChat = document.getElementById('openChatListFromProduct');
+        if (productChat) productChat.hidden = true;
+      }
       account.textContent = 'Login'; account.href = '/client/login';
     });
 })();
