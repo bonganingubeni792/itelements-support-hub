@@ -309,13 +309,152 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 }
 </style>
 
+
+<style id="ite-store-sidebar-match-support">
+/* Match the Support Dashboard's fixed left-hand admin navigation. */
+html,body{min-height:100%;margin:0}
+body{overflow-x:hidden}
+.app{
+  min-height:100vh!important;
+  display:grid!important;
+  grid-template-columns:270px minmax(0,1fr)!important;
+  align-items:stretch!important;
+}
+.app>.ite-store-sidebar{
+  position:sticky!important;top:0!important;left:auto!important;
+  z-index:100!important;
+  width:270px!important;min-width:270px!important;max-width:270px!important;
+  height:100vh!important;min-height:100vh!important;max-height:100vh!important;
+  box-sizing:border-box!important;
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  gap:0!important;padding:20px 17px 16px!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  background:#fff!important;border-right:1px solid #e5e7eb!important;
+  box-shadow:2px 0 12px rgba(0,0,0,.025)!important;
+}
+.ite-store-sidebar .brand{
+  display:flex!important;align-items:center!important;justify-content:flex-start!important;
+  gap:11px!important;min-width:0!important;width:100%!important;
+  margin:0 0 18px!important;padding:0 7px 19px!important;
+  border:0!important;border-bottom:1px solid #eceef1!important;
+  white-space:nowrap!important;
+}
+.ite-store-sidebar .brand img{display:block!important;flex:0 0 46px!important;width:46px!important;height:46px!important;object-fit:contain!important}
+.ite-store-sidebar .brand>span{font-size:19px!important;font-weight:900!important;letter-spacing:-.6px!important;color:#171717!important}
+.ite-store-sidebar .brand .brand-period{color:#e00000!important}
+.ite-store-sidebar .side-nav{
+  display:flex!important;flex:1 0 auto!important;flex-direction:column!important;
+  align-items:stretch!important;justify-content:flex-start!important;
+  gap:4px!important;width:100%!important;min-width:0!important;
+  margin:0!important;padding:0!important;overflow:visible!important;
+  writing-mode:horizontal-tb!important;transform:none!important;
+}
+.ite-store-sidebar .side-nav a{
+  display:flex!important;flex:0 0 auto!important;flex-direction:row!important;
+  align-items:center!important;justify-content:flex-start!important;
+  gap:11px!important;width:100%!important;min-width:0!important;
+  min-height:47px!important;height:auto!important;box-sizing:border-box!important;
+  margin:2px 0!important;padding:11px 12px!important;
+  border:1px solid transparent!important;border-radius:10px!important;
+  color:#30343a!important;background:transparent!important;
+  font-size:13px!important;font-weight:700!important;line-height:1.25!important;
+  text-decoration:none!important;white-space:normal!important;
+  writing-mode:horizontal-tb!important;transform:none!important;
+}
+.ite-store-sidebar .side-nav a:hover{background:#fff5f5!important;color:#b50e24!important}
+.ite-store-sidebar .side-nav a.active{
+  background:#fff0f0!important;border-color:#ffd0d0!important;color:#b50e24!important;
+}
+.ite-store-sidebar .side-nav .nav-icon{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  flex:0 0 20px!important;width:20px!important;min-width:20px!important;
+  color:#e00000!important;font-size:17px!important;text-align:center!important;
+}
+.ite-store-sidebar .help-box.whatsapp-help{
+  display:grid!important;grid-template-columns:34px minmax(0,1fr)!important;
+  align-items:center!important;gap:7px 9px!important;
+  width:100%!important;max-width:none!important;min-width:0!important;
+  box-sizing:border-box!important;margin:18px 0 13px!important;padding:12px 10px!important;
+  border:1px solid #ccebd8!important;border-radius:12px!important;
+  background:#f2fbf5!important;color:#171717!important;
+}
+.ite-store-sidebar .help-box .wa-icon{
+  grid-column:1!important;grid-row:1 / span 2!important;
+  display:grid!important;place-items:center!important;
+  width:34px!important;height:34px!important;border-radius:50%!important;
+  background:#e3f7e9!important;color:#128c4a!important;font-size:19px!important;
+}
+.ite-store-sidebar .help-box .wa-copy{grid-column:2!important;grid-row:1!important;min-width:0!important;line-height:1.25!important}
+.ite-store-sidebar .help-box strong{display:block!important;font-size:11px!important}
+.ite-store-sidebar .help-box p{margin:3px 0 0!important;color:#68736c!important;font-size:10px!important}
+.ite-store-sidebar .help-box a{
+  grid-column:1 / -1!important;grid-row:2!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  width:100%!important;box-sizing:border-box!important;margin:2px 0 0!important;
+  padding:9px 8px!important;border-radius:7px!important;
+  background:#168c4a!important;color:#fff!important;text-decoration:none!important;
+  font-size:10px!important;font-weight:800!important;white-space:nowrap!important;
+}
+.ite-store-sidebar .sidebar-foot{
+  display:block!important;flex:0 0 auto!important;
+  margin-top:auto!important;padding:13px 7px 0!important;
+  border-top:1px solid #eceef1!important;
+  color:#9298a1!important;font-size:10px!important;line-height:1.8!important;
+}
+.app>main{min-width:0!important;width:100%!important;max-width:none!important;overflow:visible!important}
+.app>main>.topbar{width:100%!important;box-sizing:border-box!important}
+.workspace-switch{display:none!important}
+.content{width:100%!important;max-width:1720px!important;box-sizing:border-box!important}
+@media(max-width:900px){
+  .app{grid-template-columns:235px minmax(0,1fr)!important}
+  .app>.ite-store-sidebar{width:235px!important;min-width:235px!important;max-width:235px!important;padding:17px 12px 13px!important}
+}
+@media(max-width:700px){
+  .app{display:block!important}
+  .app>.ite-store-sidebar{
+    position:relative!important;top:auto!important;left:auto!important;
+    width:100%!important;min-width:0!important;max-width:none!important;
+    height:auto!important;min-height:0!important;max-height:none!important;
+    padding:12px 14px!important;border-right:0!important;border-bottom:1px solid #e5e7eb!important;
+    overflow:visible!important;
+  }
+  .ite-store-sidebar .brand{padding:0 4px 10px!important;margin-bottom:8px!important}
+  .ite-store-sidebar .side-nav{
+    flex-direction:row!important;align-items:center!important;overflow-x:auto!important;
+    overflow-y:hidden!important;gap:5px!important;padding-bottom:3px!important;
+  }
+  .ite-store-sidebar .side-nav a{flex:0 0 auto!important;width:auto!important;min-height:40px!important;white-space:nowrap!important}
+  .ite-store-sidebar .help-box.whatsapp-help,.ite-store-sidebar .sidebar-foot{display:none!important}
+  .content{padding:18px 13px 35px!important}
+}
+</style>
+
 </head><body><div class="app">
-<aside><div class="brand"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo"><div>IT Elements<span>.</span></div></div><nav class="nav" aria-label="Store management"><div class="navlabel">Store workspace</div><a class="active" href="#overview"><span class="ico">▦</span>Overview</a><a href="#editor"><span class="ico">＋</span>Add product</a><a href="#catalogue"><span class="ico">▤</span>Product catalogue</a><a href="#orders"><span class="ico">▣</span>Orders <span id="orderNavCount" style="margin-left:auto;color:#e00000;font-weight:900"></span></a><a href="#catalogue"><span class="ico">▦</span>Categories</a><div class="navlabel">Website</div><a href="/store" target="_blank"><span class="ico">↗</span>View public store</a><a href="/admin"><span class="ico">⌂</span>Support admin</a></nav><div class="sidefoot">PRIVATE STORE MANAGEMENT<br>Only signed-in administrators can manage products.<br>© 2026 IT Elements</div></aside>
+<aside class="sidebar ite-store-sidebar" aria-label="IT Elements administration navigation">
+  <div class="brand">
+    <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo">
+    <span>IT Elements<span class="brand-period">.</span></span>
+  </div>
+  <nav class="side-nav" aria-label="Admin navigation">
+    <a href="/admin"><span class="nav-icon">⌂</span><span>Dashboard</span></a>
+    <a class="active" href="/admin/store" aria-current="page"><span class="nav-icon">▣</span><span>Store Management</span></a>
+    <a href="/admin#tickets-section"><span class="nav-icon">♧</span><span>Support Tickets</span></a>
+    <a href="/admin#onsite-section"><span class="nav-icon">♦</span><span>On-Site Visits</span></a>
+    <a href="/admin#active-section"><span class="nav-icon">♟</span><span>Subscribers</span></a>
+    <a href="/admin#inactive-section"><span class="nav-icon">⊗</span><span>Accounts</span></a>
+    <a href="/admin#history-section"><span class="nav-icon">◷</span><span>Job History</span></a>
+    <a href="/admin#reviews-section"><span class="nav-icon">★</span><span>Reviews</span></a>
+    <a href="/admin#settings-section"><span class="nav-icon">⚙</span><span>Settings</span></a>
+  </nav>
+  <div class="help-box whatsapp-help">
+    <div class="wa-icon" aria-hidden="true">◉</div>
+    <div class="wa-copy"><strong>WhatsApp Support</strong><p>Message IT Elements directly for assistance.</p></div>
+    <a href="https://wa.me/27606181229?text=Hello%20IT%20Elements%2C%20I%20need%20support." target="_blank" rel="noopener">Chat on WhatsApp</a>
+  </div>
+  <div class="sidebar-foot">© 2026 IT Elements<br>Admin Console v2.0</div>
+</aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
-<nav class="workspace-switch" aria-label="Admin workspaces">
-<a class="workspace-tab" href="/admin"><span class="workspace-symbol">⌂</span><span><strong>Online Support</strong><small>Tickets, clients &amp; service operations</small></span><span class="workspace-arrow">↗</span></a>
-<a class="workspace-tab active store-active" href="/admin/store" aria-current="page"><span class="workspace-symbol store-symbol">▣</span><span><strong>Store</strong><small>Products, pricing &amp; inventory</small></span><span class="workspace-state">ACTIVE</span></a>
-</nav>
+
 <div class="content" id="overview"><section class="pagehead"><div><div class="eyebrow">IT Elements commerce</div><h1>Store Management</h1><p>Add products, control pricing and stock, and choose what customers can see in your online store.</p></div><button class="btn primary" id="newBtn">＋ Add new product</button></section>
 <section class="stats"><article class="stat"><small>Total products</small><strong id="totalCount">0</strong><em>All products in your catalogue</em></article><article class="stat"><small>Published in store</small><strong id="activeCount">0</strong><em>Visible to customers</em></article><article class="stat"><small>Private drafts</small><strong id="draftCount">0</strong><em>Only visible to administrators</em></article><article class="stat"><small>Low stock</small><strong id="lowCount">0</strong><em>Products with 5 or fewer units</em></article>
 </section>
