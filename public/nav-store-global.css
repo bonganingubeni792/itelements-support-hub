@@ -759,31 +759,20 @@ body:not(.store-page) .navbar .ite-mobile-menu-trigger{
 @media(max-width:380px){body.store-page header .brand{font-size:16px!important;gap:5px!important}body.store-page header .brand img{width:44px!important;height:44px!important;min-width:44px!important}body.store-page header .cartbtn{min-width:78px!important;padding-inline:7px!important;font-size:12px!important}}
 
 
-/* MASTER MOBILE HEADER + WELCOME DRAWER — one layout across all customer pages. */
+/* IT ELEMENTS MASTER MOBILE DRAWER — approved Welcome reference */
 @media (max-width:760px){
- body:not(.store-page) nav.nav,body:not(.store-page) nav.navbar,body:not(.store-page) nav.site-nav,body:not(.store-page) nav.main-nav{
-  box-sizing:border-box!important;width:100%!important;max-width:none!important;min-height:86px!important;height:auto!important;margin:0!important;padding:10px 18px!important;
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;
-  background:#fff!important;border:0!important;border-bottom:1px solid #e5e7eb!important;border-radius:0!important;box-shadow:0 2px 8px #11108!important;position:relative!important;z-index:1200!important;
- }
- body:not(.store-page) nav.nav .brand,body:not(.store-page) nav.navbar .nav-brand{order:0!important;flex:1 1 auto!important;min-width:0!important;display:flex!important;align-items:center!important;gap:9px!important;margin:0!important;font-size:clamp(18px,4.8vw,26px)!important;white-space:nowrap!important;overflow:hidden!important}
- body:not(.store-page) nav.nav .brand img,body:not(.store-page) nav.navbar .brand-icon{width:54px!important;height:54px!important;min-width:54px!important;object-fit:contain!important}
- body:not(.store-page) nav.nav .ite-mobile-menu-trigger,body:not(.store-page) nav.navbar .ite-mobile-menu-trigger,body:not(.store-page) nav.nav .menu-toggle,body:not(.store-page) nav.navbar .menu-toggle{
-  order:2!important;display:flex!important;flex:0 0 58px!important;width:58px!important;min-width:58px!important;height:58px!important;align-items:center!important;justify-content:center!important;
-  border:2px solid #e3e5e8!important;border-radius:15px!important;background:#fff!important;color:#171717!important;font-size:0!important;padding:0!important;box-shadow:none!important
- }
- body:not(.store-page) nav.nav .ite-mobile-menu-trigger:before,body:not(.store-page) nav.navbar .ite-mobile-menu-trigger:before,body:not(.store-page) nav.nav .menu-toggle:before,body:not(.store-page) nav.navbar .menu-toggle:before{content:'☰';font-size:30px!important;line-height:1!important}
- body:not(.store-page) nav.nav .nav-links,body:not(.store-page) nav.nav .links,body:not(.store-page) nav.navbar .nav-links,body:not(.store-page) nav.site-nav .nav-links,body:not(.store-page) nav.main-nav .nav-links{display:none!important}
- body.store-page header{box-sizing:border-box!important;display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;width:100%!important;min-height:86px!important;padding:10px 18px!important;background:#fff!important;border-bottom:1px solid #e5e7eb!important}
- body.store-page header .brand{order:0!important;flex:1 1 auto!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:9px!important;font-size:clamp(18px,4.8vw,26px)!important;white-space:nowrap!important;overflow:hidden!important}
- body.store-page header .brand img{width:54px!important;height:54px!important;min-width:54px!important;object-fit:contain!important}
- body.store-page header .ite-generated-menu{order:2!important;display:flex!important;flex:0 0 58px!important;width:58px!important;min-width:58px!important;height:58px!important;align-items:center!important;justify-content:center!important;border:2px solid #e3e5e8!important;border-radius:15px!important;background:#fff!important;color:#171717!important;font-size:30px!important;line-height:1!important}
- body.store-page header nav,body.store-page header .cartbtn{display:none!important}
  body.ite-drawer-open{overflow:hidden!important}
- .ite-mobile-drawer{position:fixed!important;inset:0!important;z-index:999999!important;display:none!important;justify-content:flex-start!important;background:rgba(0,0,0,.42)!important}
+ header{box-sizing:border-box!important;width:100%!important;min-height:82px!important;height:auto!important;padding:10px 16px!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;background:#fff!important;border-bottom:1px solid #e5e7eb!important;border-radius:0!important;box-shadow:none!important}
+ header>.brand,header>.nav-brand,nav.nav>.brand,nav.navbar>.nav-brand,nav.site-nav>.brand,nav.main-nav>.brand{order:0!important;flex:1 1 auto!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;margin:0!important;gap:9px!important}
+ header .brand img,nav .brand img,header .nav-brand img{width:56px!important;height:56px!important;min-width:56px!important;object-fit:contain!important}
+ header nav,header .header-links,header .nav-links,header .links{display:none!important}
+ header .cartbtn{display:none!important}
+ .ite-mobile-menu-trigger,.ite-generated-menu,header .menu-toggle{order:2!important;display:flex!important;flex:0 0 58px!important;width:58px!important;min-width:58px!important;height:58px!important;align-items:center!important;justify-content:center!important;padding:0!important;border:2px solid #e2e4e8!important;border-radius:15px!important;background:#fff!important;color:#171717!important;font-size:29px!important;line-height:1!important;box-shadow:none!important}
+ nav.nav,nav.navbar,nav.site-nav,nav.main-nav{display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important;flex-wrap:nowrap!important;width:100%!important;min-height:82px!important;padding:10px 16px!important;background:#fff!important;border-bottom:1px solid #e5e7eb!important}
+ nav.nav .nav-links,nav.navbar .nav-links,nav.site-nav .nav-links,nav.main-nav .nav-links,nav.nav .links,nav.navbar .links{display:none!important}
+ .ite-mobile-drawer{position:fixed!important;inset:0!important;z-index:999999!important;display:none!important;align-items:stretch!important;justify-content:flex-start!important;background:rgba(0,0,0,.48)!important}
  .ite-mobile-drawer.open{display:flex!important}
- .ite-mobile-drawer-panel{width:min(440px,88vw)!important;max-width:88vw!important;height:100dvh!important;max-height:100dvh!important;overflow-y:auto!important;overscroll-behavior:contain!important;background:#fff!important;box-shadow:12px 0 40px #0002!important;transform:translateX(-100%);transition:transform .22s ease!important}
- .ite-mobile-drawer.open .ite-mobile-drawer-panel{transform:translateX(0)!important}
+ .ite-mobile-drawer-panel{width:min(88vw,440px)!important;max-width:88vw!important;height:100dvh!important;max-height:100dvh!important;overflow-y:auto!important;overscroll-behavior:contain!important;background:#fff!important;box-shadow:12px 0 40px #0003!important}
  .ite-mobile-drawer-head{height:78px!important;min-height:78px!important;padding:0 24px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;border-bottom:1px solid #e7e9ed!important}
  .ite-mobile-drawer-head strong{font-size:25px!important;font-weight:800!important;color:#171d2a!important}
  .ite-mobile-drawer-close{width:48px!important;height:48px!important;border:0!important;border-radius:50%!important;background:#fff!important;color:#555!important;font-size:36px!important;line-height:1!important}
@@ -791,93 +780,7 @@ body:not(.store-page) .navbar .ite-mobile-menu-trigger{
  .ite-mobile-drawer-welcome p{margin:0 0 38px!important;font-size:20px!important;line-height:1.45!important}
  .ite-mobile-drawer-welcome>a.ite-drawer-login{display:block!important;width:100%!important;box-sizing:border-box!important;margin:0 0 36px!important;padding:22px 14px!important;border-radius:15px!important;background:#e00000!important;color:#fff!important;font-size:22px!important;font-weight:850!important;text-align:center!important;text-decoration:none!important}
  .ite-mobile-drawer-welcome span{display:block!important;color:#242832!important;font-size:19px!important}
- .ite-mobile-drawer-welcome span a{display:inline!important;margin:0!important;padding:0!important;background:none!important;color:#c90000!important;font-weight:850!important;text-decoration:none!important}
+ .ite-mobile-drawer-welcome span a{display:inline!important;margin:0!important;padding:0!important;background:none!important;color:#c90000!important;font-weight:850!important}
  .ite-mobile-drawer-links{display:flex!important;flex-direction:column!important;padding:0!important}
  .ite-mobile-drawer-links a{display:flex!important;align-items:center!important;min-height:80px!important;box-sizing:border-box!important;padding:20px 28px!important;border:0!important;border-bottom:9px solid #f3f3f5!important;background:#fff!important;color:#575757!important;text-align:left!important;font-size:20px!important;font-weight:750!important;text-decoration:none!important}
-}
-
-@media(max-width:760px){
- body:not(.store-page) .navbar:not(nav),body:not(.store-page) header.site-header,body:not(.store-page) header.header{
-  box-sizing:border-box!important;width:100%!important;max-width:none!important;min-height:86px!important;margin:0!important;padding:10px 18px!important;
-  display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;
-  background:#fff!important;border:0!important;border-bottom:1px solid #e5e7eb!important;border-radius:0!important;box-shadow:0 2px 8px #11108!important
- }
- body:not(.store-page) .navbar:not(nav) .brand,body:not(.store-page) header.site-header .logo,body:not(.store-page) header.site-header .brand,body:not(.store-page) header.header h1{order:0!important;flex:1 1 auto!important;min-width:0!important;margin:0!important;display:flex!important;align-items:center!important;gap:9px!important;white-space:nowrap!important;overflow:hidden!important}
- body:not(.store-page) .navbar:not(nav) .ite-mobile-menu-trigger,body:not(.store-page) header.site-header .ite-mobile-menu-trigger,body:not(.store-page) header.header .ite-mobile-menu-trigger{order:2!important;display:flex!important;flex:0 0 58px!important;width:58px!important;min-width:58px!important;height:58px!important;align-items:center!important;justify-content:center!important;border:2px solid #e3e5e8!important;border-radius:15px!important;background:#fff!important;color:#171717!important;font-size:30px!important;line-height:1!important}
- body:not(.store-page) .navbar:not(nav) .nav-links,body:not(.store-page) header.header .header-actions{display:none!important}
- body:not(.store-page) header.site-header .header-link{display:none!important}
-}
-
-
-/* FINAL SITE-WIDE MOBILE OVERRIDE — approved Welcome drawer reference */
-@media (max-width: 760px) {
-  body:not(.store-page) nav.nav,
-  body:not(.store-page) nav.navbar,
-  body:not(.store-page) nav.site-nav,
-  body:not(.store-page) nav.main-nav,
-  body:not(.store-page) header.site-header,
-  body:not(.store-page) header.header,
-  body.store-page header {
-    box-sizing:border-box!important; width:100%!important; min-height:82px!important;
-    height:auto!important; padding:10px 16px!important; margin:0!important;
-    display:flex!important; flex-direction:row!important; flex-wrap:nowrap!important;
-    align-items:center!important; justify-content:space-between!important; gap:10px!important;
-    background:#fff!important; border:0!important; border-bottom:1px solid #e5e7eb!important;
-    border-radius:0!important; box-shadow:none!important;
-  }
-  body:not(.store-page) nav.nav .nav-links,
-  body:not(.store-page) nav.nav .links,
-  body:not(.store-page) nav.navbar .nav-links,
-  body:not(.store-page) nav.site-nav .nav-links,
-  body:not(.store-page) nav.main-nav .nav-links,
-  body:not(.store-page) header.header .header-actions,
-  body:not(.store-page) header.site-header .header-link,
-  body.store-page header nav,
-  body.store-page header .cartbtn { display:none!important; }
-  body:not(.store-page) nav.nav .brand,
-  body:not(.store-page) nav.navbar .nav-brand,
-  body:not(.store-page) header.site-header .brand,
-  body:not(.store-page) header.site-header .logo,
-  body:not(.store-page) header.header h1,
-  body.store-page header .brand {
-    order:0!important; flex:1 1 auto!important; min-width:0!important; margin:0!important;
-    display:flex!important; align-items:center!important; justify-content:flex-start!important;
-    gap:9px!important; white-space:nowrap!important; overflow:hidden!important;
-  }
-  body:not(.store-page) nav.nav .ite-mobile-menu-trigger,
-  body:not(.store-page) nav.navbar .ite-mobile-menu-trigger,
-  body:not(.store-page) nav.nav .menu-toggle,
-  body:not(.store-page) nav.navbar .menu-toggle,
-  body:not(.store-page) header.site-header .ite-mobile-menu-trigger,
-  body:not(.store-page) header.header .ite-mobile-menu-trigger,
-  body.store-page header .ite-generated-menu {
-    order:2!important; flex:0 0 58px!important; width:58px!important; min-width:58px!important;
-    height:58px!important; display:flex!important; align-items:center!important;
-    justify-content:center!important; padding:0!important; border:2px solid #e3e5e8!important;
-    border-radius:15px!important; background:#fff!important; color:#171717!important;
-    font-size:30px!important; line-height:1!important; box-shadow:none!important;
-  }
-  body:not(.store-page) nav.nav .ite-mobile-menu-trigger,
-  body:not(.store-page) nav.navbar .ite-mobile-menu-trigger { font-size:0!important; }
-  body:not(.store-page) nav.nav .ite-mobile-menu-trigger:before,
-  body:not(.store-page) nav.navbar .ite-mobile-menu-trigger:before { content:'☰'; font-size:30px!important; }
-  body:not(.store-page) nav.nav .brand img,
-  body:not(.store-page) nav.navbar .brand-icon,
-  body:not(.store-page) header.site-header .logo img,
-  body.store-page header .brand img { width:54px!important; height:54px!important; min-width:54px!important; object-fit:contain!important; }
-  body.ite-drawer-open { overflow:hidden!important; }
-  .ite-mobile-drawer { position:fixed!important; inset:0!important; z-index:999999!important; display:none!important; justify-content:flex-start!important; background:rgba(0,0,0,.42)!important; }
-  .ite-mobile-drawer.open { display:flex!important; }
-  .ite-mobile-drawer-panel { width:min(440px,88vw)!important; max-width:88vw!important; height:100dvh!important; max-height:100dvh!important; overflow-y:auto!important; overscroll-behavior:contain!important; background:#fff!important; box-shadow:12px 0 40px #0002!important; transform:translateX(-100%); transition:transform .22s ease!important; }
-  .ite-mobile-drawer.open .ite-mobile-drawer-panel { transform:translateX(0)!important; }
-  .ite-mobile-drawer-head { height:78px!important; min-height:78px!important; padding:0 24px!important; display:flex!important; align-items:center!important; justify-content:space-between!important; border-bottom:1px solid #e7e9ed!important; }
-  .ite-mobile-drawer-head strong { font-size:25px!important; font-weight:800!important; color:#171d2a!important; }
-  .ite-mobile-drawer-close { width:48px!important; height:48px!important; border:0!important; border-radius:50%!important; background:#fff!important; color:#555!important; font-size:36px!important; line-height:1!important; }
-  .ite-mobile-drawer-welcome { padding:46px 24px 54px!important; text-align:center!important; border-bottom:10px solid #f3f3f5!important; color:#30343b!important; }
-  .ite-mobile-drawer-welcome p { margin:0 0 38px!important; font-size:20px!important; line-height:1.45!important; }
-  .ite-mobile-drawer-welcome>a.ite-drawer-login { display:block!important; width:100%!important; box-sizing:border-box!important; margin:0 0 36px!important; padding:22px 14px!important; border-radius:15px!important; background:#e00000!important; color:#fff!important; font-size:22px!important; font-weight:850!important; text-align:center!important; text-decoration:none!important; }
-  .ite-mobile-drawer-welcome span { display:block!important; color:#242832!important; font-size:19px!important; }
-  .ite-mobile-drawer-welcome span a { display:inline!important; margin:0!important; padding:0!important; background:none!important; color:#c90000!important; font-weight:850!important; text-decoration:none!important; }
-  .ite-mobile-drawer-links { display:flex!important; flex-direction:column!important; padding:0!important; }
-  .ite-mobile-drawer-links a { display:flex!important; align-items:center!important; min-height:80px!important; box-sizing:border-box!important; padding:20px 28px!important; border:0!important; border-bottom:9px solid #f3f3f5!important; background:#fff!important; color:#575757!important; text-align:left!important; font-size:20px!important; font-weight:750!important; text-decoration:none!important; }
 }

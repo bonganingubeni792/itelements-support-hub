@@ -51,35 +51,25 @@
     document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer(overlay,trigger);});
   }
   function setup(){
-    // Public navigation variants: standard pages, reviews, customer portal and account headers.
-    Array.prototype.forEach.call(document.querySelectorAll('nav.nav, nav.navbar, nav.site-nav, nav.main-nav, nav.nav-links, nav.header-actions'),function(nav){
+    // Main public navigation on Home, Services, On-site, Plans, About, FAQ, Contact, etc.
+    Array.prototype.forEach.call(document.querySelectorAll('nav.nav, nav.navbar, nav.site-nav, nav.main-nav'),function(nav){
       if(nav.closest('.app') || nav.getAttribute('aria-label')==='Store management')return;
-      var header=nav.closest('header');
-      var brand=nav.querySelector('.brand, .nav-brand') || (header && header.querySelector('.brand, .nav-brand, h1'));
-      if(!brand)return;
-      var links=nav.querySelector('.nav-links, .links') || nav;
-      var trigger=nav.querySelector('.menu-toggle, .ite-mobile-menu-trigger') || (header && header.querySelector('.menu-toggle, .ite-mobile-menu-trigger'));
-      if(!trigger){trigger=document.createElement('button');trigger.type='button';trigger.className='ite-mobile-menu-trigger';trigger.textContent='☰';brand.insertAdjacentElement('afterend',trigger);}
+      var brand=nav.querySelector('.brand, .nav-brand'); if(!brand)return;
+      var links=nav.querySelector('.nav-links, .links');
+      var trigger=nav.querySelector('.menu-toggle, .ite-mobile-menu-trigger');
+      if(!trigger){trigger=document.createElement('button');trigger.type='button';trigger.className='ite-mobile-menu-trigger';trigger.textContent='☰';nav.insertBefore(trigger,brand);}
       trigger.classList.add('ite-mobile-menu-trigger'); createDrawer(nav,links,trigger);
     });
-    // Account-only pages have a logo header but no page navigation; give them the same drawer.
-    Array.prototype.forEach.call(document.querySelectorAll('header.site-header'),function(header){
-      if(header.querySelector('.ite-mobile-menu-trigger'))return;
-      var brand=header.querySelector('.logo, .brand');if(!brand)return;
-      var trigger=document.createElement('button');trigger.type='button';trigger.className='ite-mobile-menu-trigger';trigger.textContent='☰';header.appendChild(trigger);
-      createDrawer(header,null,trigger);
-    });
-    // Store keeps its cart logic and product catalogue; mobile uses the same Welcome drawer.
-    var storeHeader=document.querySelector('body.store-page header');
-    if(storeHeader && storeHeader.querySelector('.cartbtn')){
-      var brand=storeHeader.querySelector('.brand'), links=storeHeader.querySelector('nav');
-      if(brand){var trigger=storeHeader.querySelector('.ite-generated-menu');
-        if(!trigger){trigger=document.createElement('button');trigger.type='button';trigger.className='ite-generated-menu';trigger.textContent='☰';storeHeader.appendChild(trigger);}
-        createDrawer(storeHeader,links,trigger);
+    // Store keeps its existing live cart button and uses the same drawer.
+    var header=document.querySelector('body.store-page header, body:has(.store-benefits) header, header');
+    if(header && header.querySelector('.cartbtn')){
+      var brand=header.querySelector('.brand'), links=header.querySelector('nav');
+      if(brand){var trigger=header.querySelector('.ite-generated-menu');
+        if(!trigger){trigger=document.createElement('button');trigger.type='button';trigger.className='ite-generated-menu';trigger.textContent='☰';header.insertBefore(trigger,brand);}
+        createDrawer(header,links,trigger);
       }
     }
   }
-
   document.addEventListener('click',function(e){
     if(!window.matchMedia || !window.matchMedia(mobileQuery).matches)return;
     var trigger=e.target.closest && e.target.closest('.menu-toggle, .ite-mobile-menu-trigger, .ite-generated-menu');
