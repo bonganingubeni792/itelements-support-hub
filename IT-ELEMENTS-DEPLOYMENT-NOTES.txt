@@ -40,3 +40,9 @@ Latest public store update:
 - Added All Products, Just Arrived, and Sale Products tabs alongside the catalogue heading.
 - Just Arrived sorts products by newest available createdAt/date value.
 - Sale Products displays products where compareAtPrice is greater than price.
+
+Account cart privacy/persistence update:
+- Deploy server.js and views/store.html together.
+- Customer carts are stored in MongoDB collection storecustomercarts, scoped by the authenticated session's userEmail.
+- Requires the existing MONGODB_URI and session configuration to be working.
+- Verify two-account isolation and logout/login persistence after deployment. Do not test using a real customer payment.

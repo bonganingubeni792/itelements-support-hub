@@ -141,3 +141,13 @@ LATEST PUBLIC STORE COLLECTION NAVIGATION — 15 NOVEMBER 2026
 [CODE UPDATED] Sale Products filters to products with a compare-at price greater than the current selling price.
 [CONFIRMED] Existing search, department, price, availability, product cards, View product, Add to cart and cart behavior remain in the same store page.
 [NEEDS LIVE TEST] Verify the collection tabs on desktop and mobile and confirm the product feed includes createdAt and compareAtPrice values.
+
+
+ACCOUNT-SPECIFIC SAVED STORE CART — 15 NOVEMBER 2026
+[CODE UPDATED] Added MongoDB-backed saved carts, one document per customer email identity.
+[CODE UPDATED] Cart GET/PUT endpoints require an authenticated session; the server derives ownership from req.session.userEmail and ignores any client-supplied owner identity.
+[CODE UPDATED] Signed-in customers load and save only their own server-side cart. Cart contents persist after logout and can be restored after signing back in.
+[CODE UPDATED] Guest cart remains separate from signed-in carts. Authenticated cart contents are no longer written to browser localStorage.
+[CODE UPDATED] Store clears in-memory cart state before checking the current login, preventing a previous account's cart from appearing while a different account is being checked.
+[SECURITY] Cart endpoints send private/no-store cache headers and validate product IDs and quantities.
+[NEEDS LIVE TEST] Test with two separate customer accounts on the same browser: add product under Account A, log out, sign in as Account B (A's cart must not appear), log out, sign back into A (A's cart must return). Also test on a second device.

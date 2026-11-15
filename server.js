@@ -111,6 +111,18 @@ const StoreProduct = mongoose.model('StoreProduct', new mongoose.Schema({
 }, { collection: 'storeproducts' }));
 
 
+// Private customer carts: one MongoDB document per signed-in account.
+// Cart contents are never fetched by email supplied by the browser; the session
+// identity is the only source of ownership.
+const StoreCustomerCart = mongoose.model('StoreCustomerCart', new mongoose.Schema({
+    ownerEmail: { type: String, required: true, lowercase: true, trim: true, unique: true, index: true },
+    items: [{
+        productId: { type: mongoose.Schema.Types.ObjectId, required: true },
+        quantity: { type: Number, required: true, min: 1, max: 999 }
+    }],
+    updatedAt: { type: Date, default: Date.now }
+}, { collection: 'storecustomercarts' }));
+
 // PayFast purchases
 const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     paymentId: { type: String, required: true, unique: true },
@@ -1074,6 +1086,72 @@ app.get('/api/store/auth-status', (req, res) => {
     res.set('Cache-Control', 'no-store');
     res.json({ authenticated: !!(req.session && (req.session.isUser || req.session.isAdmin)), email: req.session?.userEmail || '' });
 });
+
+// A customer's saved cart is private to their signed-in account and persists
+// in MongoDB across logout, browser restarts, and other devices.
+app.get('/api/store/cart', async (req, res) => {
+    res.set('Cache-Control', 'no-store, private');
+    const email = String(req.session?.userEmail || '').trim().toLowerCase();
+    if (!req.session || !(req.session.isUser || req.session.isAdmin) || !email) {
+        return res.status(401).json({ success: false, message: 'Please sign in to view your saved cart.' });
+    }
+    try {
+        const saved = await StoreCustomerCart.findOne({ ownerEmail: email }).lean();
+        const items = (saved?.items || []).map(item => ({
+            id: String(item.productId),
+            qty: Math.max(1, Math.floor(Number(item.quantity) || 1))
+        }));
+        return res.json({ success: true, items });
+    } catch (err) {
+        console.error('Store cart load failed:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not load your saved cart.' });
+    }
+});
+
+app.put('/api/store/cart', async (req, res) => {
+    res.set('Cache-Control', 'no-store, private');
+    const email = String(req.session?.userEmail || '').trim().toLowerCase();
+    if (!req.session || !(req.session.isUser || req.session.isAdmin) || !email) {
+        return res.status(401).json({ success: false, message: 'Please sign in to save your cart.' });
+    }
+    try {
+        const incoming = Array.isArray(req.body?.items) ? req.body.items : [];
+        if (incoming.length > 100) {
+            return res.status(400).json({ success: false, message: 'Your cart contains too many different products.' });
+        }
+        const merged = new Map();
+        for (const item of incoming) {
+            const id = String(item?.id || item?.productId || '');
+            const qty = Math.floor(Number(item?.qty ?? item?.quantity));
+            if (!mongoose.isValidObjectId(id) || !Number.isInteger(qty) || qty < 1 || qty > 999) {
+                return res.status(400).json({ success: false, message: 'One of the cart items is invalid.' });
+            }
+            merged.set(id, (merged.get(id) || 0) + qty);
+        }
+        const ids = [...merged.keys()];
+        const products = ids.length
+            ? await StoreProduct.find({ _id: { $in: ids }, status: 'active' }).select('_id stock').lean()
+            : [];
+        const productMap = new Map(products.map(p => [String(p._id), Math.max(0, Number(p.stock) || 0)]));
+        const items = [];
+        for (const [id, qty] of merged) {
+            if (!productMap.has(id)) continue;
+            // Preserve requested quantity in the saved cart; checkout performs
+            // the final stock validation so a temporary stock change is visible.
+            items.push({ productId: id, quantity: qty });
+        }
+        await StoreCustomerCart.findOneAndUpdate(
+            { ownerEmail: email },
+            { $set: { items, updatedAt: new Date() }, $setOnInsert: { ownerEmail: email } },
+            { upsert: true, new: true, runValidators: true }
+        );
+        return res.json({ success: true, saved: items.length });
+    } catch (err) {
+        console.error('Store cart save failed:', err.message);
+        return res.status(500).json({ success: false, message: 'Could not save your cart. Please try again.' });
+    }
+});
+
 
 app.get('/api/store/products', async (req, res) => {
     try {
