@@ -882,7 +882,7 @@ app.get('/store-admin.html', checkAdminAuth, (req, res) => {
 });
 
 app.get('/dashboard.html', checkUserAuth, (req, res) => {
-    res.redirect(302, '/account');
+    res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
 
 // Invoice Maker is public. Customer dashboards remain protected.
@@ -1531,13 +1531,8 @@ app.get('/admin/login', (req, res) => {
 });
 
 app.get('/client/login', (req, res) => {
-    // Account is a protected destination: remember it for guests, and never
-    // show the login form to a customer who is already signed in.
-    if (req.session && req.session.isAdmin) return res.redirect('/admin');
-    if (req.session && req.session.isUser) return res.redirect('/account');
     if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
     else if (req.query.next === '/account') req.session.returnTo = '/account';
-    res.set('Cache-Control', 'no-store, private');
     res.sendFile(path.join(viewsPath, 'client-login.html'));
 });
 
@@ -1556,12 +1551,12 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/dashboard', checkUserAuth, (req, res) => {
-    res.redirect(302, '/account');
+    res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
 
 app.get('/account', checkUserAuth, (req, res) => {
     res.set('Cache-Control', 'no-store, private');
-    res.sendFile(path.join(viewsPath, 'dashboard.html'));
+    res.sendFile(path.join(viewsPath, 'account.html'));
 });
 
 
