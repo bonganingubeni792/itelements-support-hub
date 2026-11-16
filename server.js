@@ -923,26 +923,15 @@ app.get('/onsite-support', (req, res) => {
     res.sendFile(path.join(viewsPath, 'onsite-support.html'));
 });
 
-app.get('/about', (req, res) => {
-    res.sendFile(path.join(viewsPath, 'about.html'));
-});
-
-// These two page routes were missing.
-app.get(['/reviews', '/reviews/'], (req, res) => {
-    res.sendFile(path.join(viewsPath, 'reviews.html'));
-});
-
-app.get(['/business-support', '/business-support/'], (req, res) => {
-    res.sendFile(path.join(viewsPath, 'business-support.html'));
+// Retired public pages now return visitors to the main Online Store.
+app.get(['/about', '/about/', '/reviews', '/reviews/', '/contact', '/contact/', '/business-support', '/business-support/'], (req, res) => {
+    res.redirect(301, '/');
 });
 
 app.get('/faq', (req, res) => {
     res.sendFile(path.join(viewsPath, 'faq.html'));
 });
 
-app.get('/contact', (req, res) => {
-    res.sendFile(path.join(viewsPath, 'contact.html'));
-});
 
 app.get(['/booking', '/booking/'], (req, res) => {
     res.sendFile(path.join(viewsPath, 'booking.html'));
@@ -1118,7 +1107,7 @@ function getStoreCartOwner(req) {
     if (customerEmail) return customerEmail;
     // Admin sessions do not carry a customer email. Give the single IT Elements
     // admin account its own stable cart identity instead of silently using guest storage.
-    if (req.session?.isAdmin) return 'admin@itelements.help';
+    if (req.session?.isAdmin) return 'admin@itelements.co.za';
     return '';
 }
 
@@ -1596,7 +1585,7 @@ async function createPayFastCheckout({
     }
 
     const configuredBaseUrl = String(process.env.PUBLIC_BASE_URL || '').trim();
-    const publicBaseUrl = (configuredBaseUrl || 'https://www.itelements.help').replace(/\/$/, '');
+    const publicBaseUrl = (configuredBaseUrl || 'https://www.itelements.co.za').replace(/\/$/, '');
 
     if (!/^https:\/\//i.test(publicBaseUrl)) {
         throw Object.assign(

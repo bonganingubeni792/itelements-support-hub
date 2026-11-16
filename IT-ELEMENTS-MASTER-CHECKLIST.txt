@@ -11,7 +11,7 @@ FIXES INCLUDED IN THIS BUILD
 [CODE UPDATED] Server recalculates product subtotal, delivery fee and total from MongoDB product prices. It does not trust a client-supplied price.
 [CODE UPDATED] PayFast checkout function declared async so its awaited MongoDB write can run.
 [CODE UPDATED] Store checkout API accepts validated customer email for guest checkout; server still validates stock and prices.
-[CODE UPDATED] PayFast checkout uses PUBLIC_BASE_URL or the production HTTPS fallback https://www.itelements.help.
+[CODE UPDATED] PayFast checkout uses PUBLIC_BASE_URL or the production HTTPS fallback https://www.itelements.co.za.
 [CODE UPDATED] Server returns clearer errors for missing payment configuration or unavailable MongoDB connection.
 [CODE UPDATED] Render logs include a safe [STORE CHECKOUT] failure reason. No merchant secret is logged.
 [CODE UPDATED] Customer-facing payment wording says Secure payment.
@@ -63,7 +63,7 @@ DELIVERY / CHECKOUT / PAYMENT
 [NEEDS RENDER ENV CHECK] PAYFAST_MODE must be live or test as intended.
 [NEEDS RENDER ENV CHECK] PAYFAST_PASSPHRASE must match the PayFast dashboard if configured.
 [NEEDS RENDER ENV CHECK] MONGODB_URI must connect successfully.
-[NEEDS RENDER ENV CHECK] PUBLIC_BASE_URL should be https://www.itelements.help.
+[NEEDS RENDER ENV CHECK] PUBLIC_BASE_URL should be https://www.itelements.co.za.
 [NEEDS LIVE PAYMENT TEST] A real or controlled PayFast payment, ITN webhook, order status, return/cancel path and fulfilment record must be tested. Code edits cannot validate merchant account credentials.
 
 STORE ADMIN / STOCK
