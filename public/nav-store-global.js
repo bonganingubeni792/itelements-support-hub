@@ -50,7 +50,7 @@
       '<div class="ite-mobile-drawer-head"><strong>Menu</strong><button class="ite-mobile-drawer-close" type="button" aria-label="Close menu">×</button></div>' +
       '<nav class="ite-mobile-drawer-links" aria-label="Website links"></nav></aside>';
     var list = overlay.querySelector('.ite-mobile-drawer-links');
-    [['/','Home'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login','Client Portal']]
+    [['/','Home'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/account','Account']]
       .forEach(function (item) { list.appendChild(makeLink(item[0], item[1])); });
     document.body.appendChild(overlay);
     function close() { overlay.classList.remove('open'); document.body.classList.remove('ite-drawer-open'); trigger.setAttribute('aria-expanded','false'); }
@@ -80,7 +80,7 @@
     var more = document.createElement('details'); more.className = 'ite-more-menu';
     var summary = document.createElement('summary'); summary.textContent = 'More'; more.appendChild(summary);
     var panel = document.createElement('div'); panel.className = 'ite-more-menu-panel';
-    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/booking','Booking'],['/business-tools','Business Tools'],['/client/login','Client Portal']]
+    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/booking','Booking'],['/business-tools','Business Tools'],['/account','Account']]
       .forEach(function (item) { panel.appendChild(makeLink(item[0], item[1])); });
     more.appendChild(panel); nav.appendChild(more);
   }
@@ -97,12 +97,11 @@
     if (/^cart(?:\s*\(|$)/i.test(String(node.textContent || '').trim())) node.remove();
   });
   actions.innerHTML = '';
-  var account = makeLink('/account', 'Account');
+  var account = makeLink('/client/login?next=%2Faccount', 'Account');
   account.id = 'accountAction';
   account.className = 'ite-account-action';
-  account.setAttribute('aria-label', 'Log in to your IT Elements account');
+  account.setAttribute('aria-label', 'Open your IT Elements account');
   actions.appendChild(account);
-  var logoutControl = null;
   var cartControl;
   if (isStore) {
     cartControl = oldCart || document.createElement('button');
@@ -145,10 +144,6 @@
         authEmailForCart = auth.email || '';
         account.textContent = 'Account'; account.href = '/account';
         account.setAttribute('aria-label', 'Open your IT Elements account');
-        logoutControl = makeLink('/client/logout', 'Logout');
-        logoutControl.className = 'ite-logout-action';
-        logoutControl.setAttribute('aria-label', 'Log out of your IT Elements account');
-        actions.insertBefore(logoutControl, cartControl || null);
         if (cartControl) cartControl.hidden = false;
         if (productCart) productCart.hidden = false;
 
@@ -181,14 +176,13 @@
           });
       }
 
-      account.textContent = 'Account'; account.href = '/account';
-      account.setAttribute('aria-label', 'Open your IT Elements account');
+      account.textContent = 'Account'; account.href = '/client/login?next=%2Faccount';
+      account.setAttribute('aria-label', 'Sign in to open your IT Elements account');
       if (cartControl) cartControl.hidden = true;
       if (productCart) productCart.hidden = true;
     })
     .catch(function () {
-      account.textContent = 'Account'; account.href = '/account';
-      account.setAttribute('aria-label', 'Open your IT Elements account');
+      account.textContent = 'Account'; account.href = '/client/login?next=%2Faccount';
       if (cartControl) cartControl.hidden = true;
       var productCart = document.getElementById('openCartFromProduct');
       if (productCart) productCart.hidden = true;
