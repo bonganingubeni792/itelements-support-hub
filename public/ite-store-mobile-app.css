@@ -448,3 +448,101 @@
   body.store-page #catalogue #products.products > .card > .cardbody{padding:7px!important}
   body.store-page #catalogue #products.products > .card .card-actions button{font-size:9px!important;min-height:33px!important}
 }
+
+
+/* ================================================================
+   IT ELEMENTS PHONE — TWO-ROW HORIZONTAL PRODUCT SHELVES (v4)
+   Phone only: keep two products high and swipe sideways for the next
+   pair of columns. Desktop/tablet layouts are deliberately untouched.
+   ================================================================ */
+@media screen and (max-width:700px){
+  body.store-page #catalogue #products.products{
+    display:grid!important;
+    grid-template-columns:none!important;
+    grid-template-rows:repeat(2,minmax(0,1fr))!important;
+    grid-auto-flow:column!important;
+    grid-auto-columns:calc((100% - 10px)/2)!important;
+    grid-auto-rows:minmax(0,1fr)!important;
+    align-items:stretch!important;
+    justify-items:stretch!important;
+    gap:10px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    height:auto!important;
+    max-height:none!important;
+    margin:0!important;
+    padding:2px 2px 12px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    overscroll-behavior-x:contain!important;
+    -webkit-overflow-scrolling:touch!important;
+    scroll-snap-type:x mandatory!important;
+    scrollbar-width:thin!important;
+    scrollbar-color:#d9dde4 transparent!important;
+  }
+  body.store-page #catalogue #products.products > .card{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+    height:100%!important;
+    min-height:0!important;
+    margin:0!important;
+    scroll-snap-align:start!important;
+  }
+  body.store-page #catalogue #products.products > .card > .photo{
+    height:clamp(94px,27vw,128px)!important;
+    min-height:94px!important;
+    max-height:128px!important;
+    flex:0 0 auto!important;
+  }
+  body.store-page #catalogue #products.products > .card .cardbody{
+    min-height:0!important;
+    padding:8px!important;
+  }
+  body.store-page #catalogue #products.products > .card .card-actions{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:5px!important;
+    margin-top:auto!important;
+  }
+  body.store-page #catalogue #products.products > .card .card-actions button{
+    width:100%!important;
+    min-width:0!important;
+    min-height:34px!important;
+    padding:6px 5px!important;
+    font-size:clamp(9px,2.6vw,11px)!important;
+    white-space:normal!important;
+  }
+  body.store-page #catalogue #products.products{position:relative!important}
+  body.store-page #catalogue #products.products:after{
+    content:"SWIPE SIDEWAYS FOR MORE PRODUCTS  →";
+    position:absolute!important;
+    left:5px!important;
+    bottom:0!important;
+    width:max-content!important;
+    max-width:calc(100vw - 48px)!important;
+    padding:5px 9px!important;
+    border-radius:20px!important;
+    background:#fff!important;
+    color:#697386!important;
+    border:1px solid #e6e9ef!important;
+    font-size:9px!important;
+    font-weight:800!important;
+    letter-spacing:.045em!important;
+    pointer-events:none!important;
+    z-index:2!important;
+  }
+  body.store-page #catalogue .product-pagination{
+    margin-top:8px!important;
+  }
+}
+@media screen and (max-width:390px){
+  body.store-page #catalogue #products.products{
+    grid-auto-columns:calc((100% - 8px)/2)!important;
+    gap:8px!important;
+  }
+  body.store-page #catalogue #products.products > .card > .photo{
+    height:100px!important;min-height:90px!important;
+  }
+}
