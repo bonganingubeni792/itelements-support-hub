@@ -1618,7 +1618,7 @@ window.addDetailToChat=async id=>{
  const notice=$('detailCartNotice')||(()=>{const n=document.createElement('p');n.id='detailCartNotice';n.setAttribute('role','status');n.style.cssText='margin:12px 0;padding:10px 12px;border-radius:9px;background:#eaf8ef;color:#176b35;font-weight:700';const actions=document.querySelector('.product-detail-actions');if(actions)actions.insertAdjacentElement('afterend',n);return n;})();
  notice.textContent=`${qty} item(s) added to your chat list. Your product details are still open. Use the Chat button to view your list.`;notice.hidden=false;
 };
-$('openCartFromProduct')?.addEventListener('click',()=>{$('drawer').classList.add('open');renderCart();});
+$('openCartFromProduct')?.addEventListener('click',openStoreCart);
 $('closeChatList')?.addEventListener('click',()=>{$('chatListDrawer').classList.remove('open');$('chatListDrawer').setAttribute('aria-hidden','true');});
 $('chatListDrawer')?.addEventListener('click',e=>{if(e.target===$('chatListDrawer')){$('chatListDrawer').classList.remove('open');$('chatListDrawer').setAttribute('aria-hidden','true');}});
 $('sendChatList')?.addEventListener('click',()=>{if(!chatList.length){alert('Your chat list is empty.');return;}const lines=chatList.map(item=>{const p=products.find(x=>x._id===item.id);return p?`${p.name} (SKU: ${p.sku||'N/A'}) — quantity ${item.qty}, listed price ${money(p.price)}`:'';}).filter(Boolean);const msg='Hello IT Elements, please help me with these products:\n'+lines.join('\n')+'\nPlease confirm availability and delivery.';window.open('https://wa.me/27606181229?text='+encodeURIComponent(msg),'_blank','noopener');});
@@ -1723,7 +1723,23 @@ window.changeQty=(id,d)=>{
  saveCart();
  renderCart();
 };
-$('openCart').onclick=()=>$('drawer').classList.add('open');$('closeCart').onclick=()=>$('drawer').classList.remove('open');$('drawer').onclick=e=>{if(e.target===$('drawer'))$('drawer').classList.remove('open')};
+async function openStoreCart(){
+ try{
+  const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
+  const auth=await response.json();
+  if(!response.ok||!auth.authenticated){
+   window.location.href='/client/login?next='+encodeURIComponent('/store?resumeCart=1');
+   return;
+  }
+  $('drawer').classList.add('open');
+  renderCart();
+ }catch(_){
+  window.location.href='/client/login?next='+encodeURIComponent('/store?resumeCart=1');
+ }
+}
+$('openCart').onclick=openStoreCart;
+$('closeCart').onclick=()=>$('drawer').classList.remove('open');
+$('drawer').onclick=e=>{if(e.target===$('drawer'))$('drawer').classList.remove('open')};
 $('checkout').onclick=()=>{
  if(!cart.length){alert('Your cart is empty.');return;}
  const invalid=cart.find(item=>{const p=products.find(z=>z._id===item.id);return !p||item.qty>Number(p.stock||0);});
@@ -1957,10 +1973,16 @@ checkReturnedPayment();
  nav.addEventListener('click',function(e){const btn=e.target.closest('[data-mobile-action]');if(!btn)return;const action=btn.dataset.mobileAction;
   nav.querySelectorAll('.ite-mobile-nav-item').forEach(x=>x.classList.toggle('active',x===btn));
   if(action==='home'){window.scrollTo({top:0,behavior:'smooth'});}
-  if(action==='categories'){const picker=document.getElementById('departmentPicker');const target=picker||document.getElementById('catalogue');target?.scrollIntoView({behavior:'smooth',block:'center'});picker?.focus({preventScroll:true});}
+  if(action==='categories'){
+   const picker=document.getElementById('departmentPicker');
+   if(picker){picker.value='';picker.dispatchEvent(new Event('change',{bubbles:true}));}
+   if(typeof chooseDepartment==='function')chooseDepartment('');
+   const target=document.querySelector('.catalogue-toolbar')||document.getElementById('catalogue');
+   target?.scrollIntoView({behavior:'smooth',block:'start'});
+  }
   if(action==='search'){const input=document.getElementById('search');input?.scrollIntoView({behavior:'smooth',block:'center'});input?.focus({preventScroll:true});}
-  if(action==='cart'){document.getElementById('openCart')?.click();}
-  if(action==='account'){const account=document.getElementById('accountAction');if(account)window.location.href=account.href;}
+  if(action==='cart'){openStoreCart();}
+  if(action==='account'){const account=document.getElementById('accountAction');if(account)window.location.href=account.href||'/client/login';}
  });
 })();
 </script>
