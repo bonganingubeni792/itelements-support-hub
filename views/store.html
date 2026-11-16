@@ -519,6 +519,23 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
   }
 }
 
+
+/* Restore the original store header: brand at left, menu centred, auth/cart grouped right */
+header{width:100%;max-width:none;min-height:76px;height:auto;padding:0 clamp(18px,3.2vw,60px);display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:22px;position:sticky;top:0;z-index:10000;background:#fff}
+header>.brand{flex:0 0 auto;margin:0}
+header>nav{display:flex;flex:1 1 auto;justify-content:center;align-items:center;gap:clamp(14px,2vw,30px);min-width:0;margin:0}
+.store-header-actions{display:flex;flex:0 0 auto;align-items:center;justify-content:flex-end;gap:10px;white-space:nowrap}
+.store-header-actions .cartbtn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 17px;margin:0!important;border-radius:8px;font-size:14px}
+.store-header-actions #logoutAction{background:#fff;color:#e00000;border:1px solid #e00000}
+.store-header-actions #openCart{background:#e00000;color:#fff}
+@media(max-width:760px){
+ header{min-height:68px;padding:9px 12px;gap:8px;flex-wrap:nowrap}
+ header>.brand{gap:6px;font-size:17px}
+ header>.brand img{width:38px;height:38px}
+ header>nav{display:none}
+ .store-header-actions{gap:6px}
+ .store-header-actions .cartbtn{min-height:39px;padding:0 10px;font-size:12px}
+}
 </style><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"><style>
 
 /* IT Elements: hide the product-detail Add to Chat action; keep the header Chat access. */
@@ -1228,7 +1245,7 @@ button[onclick*="addDetailToChat"] {
 
 <link rel="stylesheet" href="/ite-store-mobile-app.css?v=20261115-mobile-app-v1">
 </head><body class="store-page">
-<header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login?next=%2Faccount" style="text-decoration:none;margin-right:10px">Log in</a><a class="cartbtn" id="logoutAction" href="/client/logout" hidden style="text-decoration:none;margin-right:10px">Log out</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
+<header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><div class="store-header-actions"><a class="cartbtn" id="accountAction" href="/client/login?next=%2Faccount" style="text-decoration:none">Log in</a><a class="cartbtn" id="logoutAction" href="/client/logout" hidden style="text-decoration:none">Log out</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></div></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
 <main class="wrap" id="catalogue"><div class="intro"><div><div class="eyebrow">Browse products</div><h2>Find what you need</h2><div class="muted">Products and prices are managed by IT Elements.</div></div><div class="muted" id="resultCount"></div></div>
@@ -1334,18 +1351,7 @@ let galleryIndex=0;
 let storeAccountKey='guest';
 let cartSaveQueue=Promise.resolve();
 
-async function refreshStoreAccountAction(){
- const button=$('accountAction');if(!button)return;
- try{
-  const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
-  const auth=await response.json();
-  if(response.ok&&auth.authenticated){
-   button.textContent='Account';button.href='/account';button.setAttribute('aria-label','Open your IT Elements account');const logout=$('logoutAction');if(logout)logout.hidden=false;
-  }else{
-   button.textContent='Log in';button.href='/client/login?next=%2Faccount';button.setAttribute('aria-label','Log in to your IT Elements account');const logout=$('logoutAction');if(logout)logout.hidden=true;
-  }
- }catch(_){button.textContent='Log in';button.href='/client/login?next=%2Faccount';const logout=$('logoutAction');if(logout)logout.hidden=true;}
-}
+async function refreshStoreAccountAction(){ /* Header auth labels are managed by nav-store-global.js. */ }
 
 async function loadAccountCart(){
  // Clear in-memory state before checking the current session so a previous
@@ -1929,7 +1935,7 @@ async function load(){
 
 load();renderCart();
 checkReturnedPayment();
-</script><script src="/nav-store-global.js?v=20261116-preserve-original-nav-v1" defer></script>
+</script><script src="/nav-store-global.js?v=20261116-header-auth-corner-v2" defer></script>
 
 
 
