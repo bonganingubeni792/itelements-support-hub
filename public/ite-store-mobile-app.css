@@ -546,3 +546,95 @@
     height:100px!important;min-height:90px!important;
   }
 }
+
+
+/* ================================================================
+   IT ELEMENTS STORE — DESKTOP SHOPPING NAVIGATION
+   This navigation is scoped to the Store page only. It does not
+   recolour or alter the rest of the website or the desktop header.
+   ================================================================ */
+@media screen and (min-width:701px){
+  body.store-page .ite-mobile-bottom-nav{
+    position:fixed!important;
+    left:50%!important;
+    right:auto!important;
+    bottom:18px!important;
+    transform:translateX(-50%)!important;
+    z-index:2500!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:8px!important;
+    width:max-content!important;
+    max-width:calc(100vw - 40px)!important;
+    padding:8px!important;
+    border:1px solid #e7e9ed!important;
+    border-radius:18px!important;
+    background:rgba(255,255,255,.97)!important;
+    box-shadow:0 10px 34px rgba(16,24,40,.16)!important;
+    backdrop-filter:blur(12px)!important;
+    -webkit-backdrop-filter:blur(12px)!important;
+  }
+  body.store-page .ite-mobile-nav-item{
+    display:flex!important;
+    flex:0 0 auto!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:9px!important;
+    min-width:112px!important;
+    min-height:46px!important;
+    padding:0 16px!important;
+    border:1px solid transparent!important;
+    border-radius:12px!important;
+    background:transparent!important;
+    color:#5f6876!important;
+    font:700 13px/1.1 inherit!important;
+    cursor:pointer!important;
+    transition:background .18s ease,color .18s ease,transform .18s ease!important;
+  }
+  body.store-page .ite-mobile-nav-item:hover,
+  body.store-page .ite-mobile-nav-item:focus-visible{
+    color:#e00000!important;
+    background:#fff1f1!important;
+    outline:2px solid #e00000!important;
+    outline-offset:1px!important;
+  }
+  body.store-page .ite-mobile-nav-item.active{
+    color:#e00000!important;
+    background:#fff0f0!important;
+    border-color:#ffe0e0!important;
+  }
+  body.store-page .ite-mobile-nav-item .ite-nav-icon{
+    position:relative!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    font-size:20px!important;
+    line-height:1!important;
+  }
+  body.store-page .ite-mobile-nav-item small{
+    display:inline!important;
+    font-size:13px!important;
+    font-weight:800!important;
+    line-height:1!important;
+  }
+  body.store-page #iteMobileCartCount{
+    position:absolute!important;
+    top:-9px!important;
+    right:-12px!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    min-width:17px!important;
+    height:17px!important;
+    padding:0 4px!important;
+    border-radius:999px!important;
+    background:#e00000!important;
+    color:#fff!important;
+    font-size:10px!important;
+    font-weight:900!important;
+  }
+  body.store-page{padding-bottom:92px!important}
+  body.store-page .whatsapp{bottom:104px!important}
+}
