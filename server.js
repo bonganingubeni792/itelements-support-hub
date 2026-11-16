@@ -854,7 +854,9 @@ function checkUserAuth(req, res, next) {
     }
 
     if (!req.session) req.session = {};
-    if (req.path === '/account' || req.path === '/account/') {
+    if (req.path === '/dashboard' || req.path === '/dashboard/') {
+        req.session.returnTo = '/dashboard';
+    } else if (req.path === '/account' || req.path === '/account/') {
         req.session.returnTo = '/account';
     } else if (
         req.path === '/tools/invoices' ||
@@ -1532,6 +1534,7 @@ app.get('/admin/login', (req, res) => {
 
 app.get('/client/login', (req, res) => {
     if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
+    else if (req.query.next === '/dashboard') req.session.returnTo = '/dashboard';
     else if (req.query.next === '/account') req.session.returnTo = '/account';
     res.sendFile(path.join(viewsPath, 'client-login.html'));
 });
@@ -1546,6 +1549,7 @@ app.get('/reset-password', (req, res) => {
 
 app.get('/register', (req, res) => {
     if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
+    else if (req.query.next === '/dashboard') req.session.returnTo = '/dashboard';
     else if (req.query.next === '/account') req.session.returnTo = '/account';
     res.sendFile(path.join(viewsPath, 'register.html'));
 });
@@ -2265,7 +2269,8 @@ app.post('/client/register', async (req, res) => {
                 ? '/store?resumeCart=1'
             : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
                 ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-                : req.session.returnTo === '/account' ? '/account' : '/store';
+                : req.session.returnTo === '/dashboard' ? '/dashboard'
+            : req.session.returnTo === '/account' ? '/account' : '/store';
 
         delete req.session.returnTo;
 
@@ -2317,7 +2322,8 @@ app.post('/client/login', async (req, res) => {
                     ? '/store?resumeCart=1'
                 : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
                     ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-                    : req.session.returnTo === '/account' ? '/account' : '/store';
+                    : req.session.returnTo === '/dashboard' ? '/dashboard'
+                : req.session.returnTo === '/account' ? '/account' : '/store';
 
             req.session.regenerate((regenerateError) => {
                 if (regenerateError) {
