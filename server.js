@@ -199,18 +199,6 @@ const PasswordReset = mongoose.model('PasswordReset', new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 }, { collection: 'passwordresets' }));
 
-// One-time verification codes for customer email and phone changes.
-const ContactChangeVerification = mongoose.model('ContactChangeVerification', new mongoose.Schema({
-    userEmail: { type: String, required: true, index: true },
-    channel: { type: String, enum: ['email', 'phone'], required: true },
-    target: { type: String, required: true },
-    codeHash: { type: String, required: true },
-    expiresAt: { type: Date, required: true, index: { expires: 0 } },
-    attempts: { type: Number, default: 0 },
-    createdAt: { type: Date, default: Date.now }
-}, { collection: 'contactchangeverifications' }));
-
-
 // Password hashing
 async function hashPassword(password) {
     const salt = crypto.randomBytes(16).toString('hex');
@@ -894,7 +882,7 @@ app.get('/store-admin.html', checkAdminAuth, (req, res) => {
 });
 
 app.get('/dashboard.html', checkUserAuth, (req, res) => {
-    res.sendFile(path.join(viewsPath, 'dashboard.html'));
+    res.redirect(301, '/account');
 });
 
 // Invoice Maker is public. Customer dashboards remain protected.
@@ -1563,12 +1551,12 @@ app.get('/register', (req, res) => {
 });
 
 app.get('/dashboard', checkUserAuth, (req, res) => {
-    res.sendFile(path.join(viewsPath, 'dashboard.html'));
+    res.redirect(301, '/account');
 });
 
 app.get('/account', checkUserAuth, (req, res) => {
     res.set('Cache-Control', 'no-store, private');
-    res.sendFile(path.join(viewsPath, 'account.html'));
+    res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
 
 
@@ -2743,143 +2731,14 @@ app.get('/api/client/account-data', checkUserAuth, async (req, res) => {
     }
 });
 
-
-// Send a verification code before changing a customer's email address or phone number.
-app.post('/api/client/contact-change/request', checkUserAuth, async (req, res) => {
-    try {
-        const channel = String(req.body.channel || '');
-        const targetRaw = String(req.body.value || '').trim();
-        const currentEmail = String(req.session.userEmail || '').toLowerCase();
-        if (!['email', 'phone'].includes(channel) || !targetRaw) {
-            return res.status(400).json({ success: false, message: 'Choose an email address or phone number to verify.' });
-        }
-
-        let target = targetRaw;
-        if (channel === 'email') {
-            target = targetRaw.toLowerCase();
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(target)) {
-                return res.status(400).json({ success: false, message: 'Enter a valid email address.' });
-            }
-            const existing = await UserAccount.findOne({ email: target });
-            if (existing && String(existing.email).toLowerCase() !== currentEmail) return res.status(409).json({ success: false, message: 'That email address is already used by another account.' });
-            if (target === currentEmail) return res.status(400).json({ success: false, message: 'That is already your current email address.' });
-        } else {
-            target = target.replace(/[()\s-]/g, '');
-            if (!/^\+?[0-9]{8,15}$/.test(target)) {
-                return res.status(400).json({ success: false, message: 'Enter a valid phone number, including the country code.' });
-            }
-            if (!target.startsWith('+')) target = '+27' + target.replace(/^0/, '');
-        }
-
-        const code = String(crypto.randomInt(100000, 1000000));
-        const codeHash = crypto.createHash('sha256').update(`${currentEmail}:${channel}:${target}:${code}`).digest('hex');
-        await ContactChangeVerification.deleteMany({ userEmail: currentEmail, channel });
-        await ContactChangeVerification.create({
-            userEmail: currentEmail, channel, target, codeHash,
-            expiresAt: new Date(Date.now() + 10 * 60 * 1000)
-        });
-
-        if (channel === 'email') {
-            const apiKey = process.env.RESEND_API_KEY;
-            const from = process.env.SUPPORT_EMAIL_FROM || process.env.RESET_EMAIL_FROM;
-            if (!apiKey || !from) throw new Error('Email verification is not configured. Please contact IT Elements support.');
-            const response = await fetch('https://api.resend.com/emails', {
-                method: 'POST',
-                headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    from, to: [target], subject: 'Verify your new IT Elements email address',
-                    html: `<div style="font-family:Arial,sans-serif;max-width:520px;margin:auto"><h2>Verify your email address</h2><p>Your IT Elements verification code is:</p><p style="font-size:32px;font-weight:800;letter-spacing:8px">${code}</p><p>This code expires in 10 minutes and can only be used once. If you did not request this change, ignore this email.</p></div>`
-                })
-            });
-            if (!response.ok) throw new Error('The verification email could not be sent. Please try again.');
-        } else {
-            const sid = process.env.TWILIO_ACCOUNT_SID;
-            const token = process.env.TWILIO_AUTH_TOKEN;
-            const from = process.env.TWILIO_PHONE_NUMBER;
-            if (!sid || !token || !from) throw new Error('SMS verification is not configured yet. IT Elements must add its SMS provider settings before phone numbers can be changed.');
-            const body = new URLSearchParams({ To: target, From: from, Body: `Your IT Elements verification code is ${code}. It expires in 10 minutes.` });
-            const response = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${encodeURIComponent(sid)}/Messages.json`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString('base64')}`,
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body
-            });
-            if (!response.ok) throw new Error('The SMS verification code could not be sent. Please check the phone number and try again.');
-        }
-
-        return res.json({ success: true, message: `A verification code has been sent to ${channel === 'email' ? 'your new email address' : 'your phone number'}. It expires in 10 minutes.` });
-    } catch (err) {
-        console.error('Contact verification send failed:', err.message);
-        await ContactChangeVerification.deleteMany({ userEmail: String(req.session.userEmail || '').toLowerCase() });
-        return res.status(503).json({ success: false, message: err.message || 'Could not send your verification code.' });
-    }
-});
-
-app.post('/api/client/contact-change/verify', checkUserAuth, async (req, res) => {
-    try {
-        const channel = String(req.body.channel || '');
-        const targetRaw = String(req.body.value || '').trim();
-        const code = String(req.body.code || '').trim();
-        const currentEmail = String(req.session.userEmail || '').toLowerCase();
-        if (!['email', 'phone'].includes(channel) || !targetRaw || !/^\d{6}$/.test(code)) {
-            return res.status(400).json({ success: false, message: 'Enter the six-digit verification code.' });
-        }
-        let target = channel === 'email' ? targetRaw.toLowerCase() : targetRaw.replace(/[()\s-]/g, '');
-        if (channel === 'phone' && !target.startsWith('+')) target = '+27' + target.replace(/^0/, '');
-        const record = await ContactChangeVerification.findOne({
-            userEmail: currentEmail, channel, target, expiresAt: { $gt: new Date() }
-        }).sort({ createdAt: -1 });
-        if (!record) return res.status(400).json({ success: false, message: 'The code has expired or was not requested. Request a new code.' });
-        if (record.attempts >= 5) {
-            await record.deleteOne();
-            return res.status(429).json({ success: false, message: 'Too many incorrect attempts. Request a new code.' });
-        }
-        const submittedHash = crypto.createHash('sha256').update(`${currentEmail}:${channel}:${target}:${code}`).digest('hex');
-        const expected = Buffer.from(record.codeHash, 'hex');
-        const actual = Buffer.from(submittedHash, 'hex');
-        if (expected.length !== actual.length || !crypto.timingSafeEqual(expected, actual)) {
-            record.attempts += 1;
-            await record.save();
-            return res.status(400).json({ success: false, message: 'That code is incorrect. Please try again.' });
-        }
-
-        if (channel === 'email') {
-            const collision = await UserAccount.findOne({ email: target });
-            if (collision && String(collision.email).toLowerCase() !== currentEmail) {
-                await record.deleteOne();
-                return res.status(409).json({ success: false, message: 'That email address is already used by another account.' });
-            }
-            const updated = await UserAccount.findOneAndUpdate(
-                { email: currentEmail }, { $set: { email: target } },
-                { new: true, projection: { password: 0 } }
-            );
-            if (!updated) return res.status(404).json({ success: false, message: 'Account not found.' });
-            req.session.userEmail = target;
-            await new Promise((resolve, reject) => req.session.save(err => err ? reject(err) : resolve()));
-        } else {
-            const updated = await UserAccount.findOneAndUpdate(
-                { email: currentEmail }, { $set: { phone: target } },
-                { new: true, projection: { password: 0 } }
-            );
-            if (!updated) return res.status(404).json({ success: false, message: 'Account not found.' });
-        }
-        await record.deleteOne();
-        return res.json({ success: true, message: `${channel === 'email' ? 'Email address' : 'Phone number'} verified and updated.` , value: target });
-    } catch (err) {
-        console.error('Contact verification failed:', err.message);
-        return res.status(500).json({ success: false, message: 'Could not verify this change. Please try again.' });
-    }
-});
-
 app.patch('/api/client/account-profile', checkUserAuth, async (req, res) => {
     try {
         const fullName = String(req.body.fullName || '').trim().slice(0, 100);
-        if (!fullName) return res.status(400).json({ success: false, message: 'Please enter your full name.' });
+        const phone = String(req.body.phone || '').trim().slice(0, 30);
+        if (!fullName || !phone) return res.status(400).json({ success: false, message: 'Please enter your name and phone number.' });
         const user = await UserAccount.findOneAndUpdate(
             { email: String(req.session.userEmail || '').toLowerCase() },
-            { $set: { fullName } },
+            { $set: { fullName, phone } },
             { new: true, runValidators: true, projection: { password: 0 } }
         );
         if (!user) return res.status(404).json({ success: false, message: 'Account not found.' });
