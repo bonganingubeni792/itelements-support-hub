@@ -853,7 +853,10 @@ function checkUserAuth(req, res, next) {
         return next();
     }
 
-    if (
+    if (!req.session) req.session = {};
+    if (req.path === '/account' || req.path === '/account/') {
+        req.session.returnTo = '/account';
+    } else if (
         req.path === '/tools/invoices' ||
         req.path === '/invoice-maker.html'
     ) {
