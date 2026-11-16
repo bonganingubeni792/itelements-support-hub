@@ -297,3 +297,154 @@
   body.store-page #catalogue #products.products > .card > .photo{height:112px!important}
   body.store-page #catalogue #products.products > .card .cardbody{padding:7px!important}
 }
+
+/* ================================================================
+   IT ELEMENTS PHONE STORE POLISH — v3
+   Phone-only rules. Desktop/tablet presentation is not modified.
+   1. Remove the bulky Shop by Department panel on phones.
+   2. Let the product catalogue use the full phone width.
+   3. Keep All Products and Sale Products on one horizontal row.
+   4. Force a real two-column product grid (two cards per row).
+   5. Give product photos a consistent compact image stage.
+   6. Keep product names readable and clamp long names neatly.
+   7. Make price and stock information easier to scan.
+   8. Keep Add to Cart and View Product inside each compact card.
+   9. Refine filter controls, spacing, borders and card elevation.
+  10. Protect the fixed bottom navigation and WhatsApp button from overlap.
+   ================================================================ */
+@media screen and (max-width:700px){
+  body.store-page #catalogue .catalogue-layout{
+    display:block!important;width:100%!important;max-width:100%!important;
+    min-width:0!important;margin:0!important;padding:0!important;
+  }
+  body.store-page #catalogue .catalogue-layout > .department-sidebar,
+  body.store-page #catalogue .department-sidebar{
+    display:none!important;visibility:hidden!important;height:0!important;
+    min-height:0!important;max-height:0!important;overflow:hidden!important;
+    margin:0!important;padding:0!important;border:0!important;
+  }
+  body.store-page #catalogue .catalogue-layout > .product-area{
+    display:block!important;width:100%!important;max-width:100%!important;
+    min-width:0!important;margin:0!important;padding:0!important;
+  }
+  body.store-page #catalogue .catalogue-toolbar,
+  body.store-page #catalogue .catalogue-heading{
+    display:block!important;width:100%!important;max-width:100%!important;
+    margin:0 0 10px!important;padding:0!important;
+  }
+  body.store-page #catalogue .toolbar-kicker{display:none!important}
+  body.store-page #catalogue .collection-tabs{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;gap:8px!important;width:100%!important;
+    max-width:100%!important;margin:0 0 12px!important;padding:0!important;
+  }
+  body.store-page #catalogue .collection-tabs .collection-tab{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;min-width:0!important;min-height:46px!important;
+    margin:0!important;padding:8px 5px!important;box-sizing:border-box!important;
+    border:1px solid #dfe3e9!important;border-radius:10px!important;
+    background:#fff!important;color:#303743!important;font-size:clamp(11px,3.2vw,13px)!important;
+    font-weight:850!important;line-height:1.15!important;text-align:center!important;
+    white-space:normal!important;box-shadow:0 2px 7px #10182808!important;
+  }
+  body.store-page #catalogue .collection-tabs .collection-tab.active{
+    background:#e00000!important;border-color:#e00000!important;color:#fff!important;
+    box-shadow:0 4px 10px #e0000025!important;
+  }
+  body.store-page #catalogue #products.products{
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-auto-flow:row!important;grid-auto-columns:auto!important;
+    align-items:stretch!important;justify-items:stretch!important;
+    gap:10px!important;width:100%!important;max-width:100%!important;
+    min-width:0!important;margin:0!important;padding:0!important;
+  }
+  body.store-page #catalogue #products.products > .card{
+    display:flex!important;flex-direction:column!important;align-self:stretch!important;
+    width:100%!important;max-width:none!important;min-width:0!important;
+    min-height:0!important;margin:0!important;padding:0!important;float:none!important;
+    box-sizing:border-box!important;overflow:hidden!important;
+    border:1px solid #e5e8ee!important;border-radius:13px!important;
+    background:#fff!important;box-shadow:0 3px 12px #1720330b!important;
+  }
+  body.store-page #catalogue #products.products > .card > .photo{
+    display:grid!important;place-items:center!important;position:relative!important;
+    width:100%!important;height:clamp(112px,34vw,145px)!important;
+    min-height:0!important;max-height:145px!important;flex:0 0 auto!important;
+    margin:0!important;padding:8px!important;box-sizing:border-box!important;
+    background:linear-gradient(180deg,#fff 0%,#fcfcfd 100%)!important;
+  }
+  body.store-page #catalogue #products.products > .card > .photo img{
+    display:block!important;width:100%!important;height:100%!important;
+    max-width:100%!important;max-height:100%!important;object-fit:contain!important;
+    object-position:center!important;
+  }
+  body.store-page #catalogue #products.products > .card > .cardbody{
+    display:flex!important;flex:1 1 auto!important;flex-direction:column!important;
+    min-width:0!important;padding:8px!important;box-sizing:border-box!important;
+  }
+  body.store-page #catalogue #products.products > .card .category{
+    display:block!important;margin:0 0 4px!important;color:#697383!important;
+    font-size:9px!important;line-height:1.2!important;font-weight:750!important;
+  }
+  body.store-page #catalogue #products.products > .card h3{
+    display:-webkit-box!important;-webkit-box-orient:vertical!important;
+    -webkit-line-clamp:3!important;overflow:hidden!important;min-height:0!important;
+    max-height:4.05em!important;margin:2px 0 6px!important;
+    color:#17191f!important;font-size:clamp(11px,3.1vw,13px)!important;
+    line-height:1.35!important;font-weight:850!important;overflow-wrap:anywhere!important;
+  }
+  body.store-page #catalogue #products.products > .card .desc{display:none!important}
+  body.store-page #catalogue #products.products > .card .card-price-row{
+    display:flex!important;align-items:baseline!important;flex-wrap:wrap!important;
+    gap:4px 6px!important;margin-top:auto!important;
+  }
+  body.store-page #catalogue #products.products > .card .price{
+    color:#17191f!important;font-size:clamp(14px,4vw,17px)!important;
+    line-height:1.2!important;font-weight:950!important;white-space:nowrap!important;
+  }
+  body.store-page #catalogue #products.products > .card .old{
+    color:#89919c!important;font-size:9px!important;white-space:nowrap!important;
+  }
+  body.store-page #catalogue #products.products > .card .stock{
+    display:flex!important;align-items:center!important;gap:5px!important;
+    margin:6px 0 7px!important;color:#687383!important;font-size:9px!important;
+    line-height:1.25!important;
+  }
+  body.store-page #catalogue #products.products > .card .stock-dot{
+    width:8px!important;height:8px!important;min-width:8px!important;flex:0 0 8px!important;
+  }
+  body.store-page #catalogue #products.products > .card .card-actions{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    gap:5px!important;width:100%!important;margin:0!important;padding:4px 0 0!important;
+  }
+  body.store-page #catalogue #products.products > .card .card-actions button{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;min-width:0!important;min-height:35px!important;
+    margin:0!important;padding:6px 4px!important;box-sizing:border-box!important;
+    border-radius:8px!important;font-size:10px!important;font-weight:850!important;
+    line-height:1.15!important;white-space:normal!important;
+  }
+  body.store-page #catalogue #products.products > .card .card-actions .add:not(.secondary){
+    background:#e00000!important;border:1px solid #e00000!important;color:#fff!important;
+  }
+  body.store-page #catalogue #products.products > .card .card-actions .add.secondary{
+    display:flex!important;background:#fff!important;border:1px solid #dfe3e9!important;
+    color:#343b46!important;
+  }
+  body.store-page #catalogue .product-pagination{margin:14px 0 8px!important}
+  body.store-page .shop-filters{
+    margin:9px 0 12px!important;padding:10px!important;border-radius:13px!important;
+    border:1px solid #e7eaf0!important;background:#fff!important;
+    box-shadow:0 4px 14px #10182808!important;
+  }
+  body.store-page .filter-field span{font-size:11px!important;font-weight:800!important;color:#667080!important}
+  body.store-page .filter-field select{min-height:42px!important;font-size:13px!important}
+  body.store-page .whatsapp{right:12px!important;bottom:calc(84px + env(safe-area-inset-bottom))!important;z-index:2400!important}
+  body.store-page .ite-mobile-bottom-nav{z-index:2500!important}
+}
+@media screen and (max-width:390px){
+  body.store-page #catalogue #products.products{gap:7px!important}
+  body.store-page #catalogue #products.products > .card > .photo{height:108px!important}
+  body.store-page #catalogue #products.products > .card > .cardbody{padding:7px!important}
+  body.store-page #catalogue #products.products > .card .card-actions button{font-size:9px!important;min-height:33px!important}
+}
