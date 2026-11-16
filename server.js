@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const cors = require('cors');
 const crypto = require('crypto');
 const dns = require('dns').promises;
@@ -819,11 +820,14 @@ if (process.env.NODE_ENV === 'production') {
 
 // Customer and administrator sessions
 app.use(session({
+    name: 'itelements.sid',
     secret: process.env.SESSION_SECRET || randomUUID(),
     resave: false,
     saveUninitialized: false,
+    rolling: true,
+    ...(dbURI ? { store: MongoStore.create({ mongoUrl: dbURI, collectionName: 'sessions', ttl: 14 * 24 * 60 * 60 }) } : {}),
     cookie: {
-        maxAge: 86400000,
+        maxAge: 14 * 24 * 60 * 60 * 1000,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         httpOnly: true
@@ -1525,6 +1529,7 @@ app.get('/admin/login', (req, res) => {
 
 app.get('/client/login', (req, res) => {
     if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
+    else if (req.query.next === '/account') req.session.returnTo = '/account';
     res.sendFile(path.join(viewsPath, 'client-login.html'));
 });
 
@@ -1538,12 +1543,19 @@ app.get('/reset-password', (req, res) => {
 
 app.get('/register', (req, res) => {
     if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
+    else if (req.query.next === '/account') req.session.returnTo = '/account';
     res.sendFile(path.join(viewsPath, 'register.html'));
 });
 
 app.get('/dashboard', checkUserAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
+
+app.get('/account', checkUserAuth, (req, res) => {
+    res.set('Cache-Control', 'no-store, private');
+    res.sendFile(path.join(viewsPath, 'account.html'));
+});
+
 
 // Invoice Maker must require a signed-in customer.
 app.get('/tools/invoices', checkUserAuth, (req, res) => {
@@ -2250,7 +2262,7 @@ app.post('/client/register', async (req, res) => {
                 ? '/store?resumeCart=1'
             : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
                 ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-                : '/dashboard';
+                : req.session.returnTo === '/account' ? '/account' : '/store';
 
         delete req.session.returnTo;
 
@@ -2302,7 +2314,7 @@ app.post('/client/login', async (req, res) => {
                     ? '/store?resumeCart=1'
                 : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
                     ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-                    : '/store';
+                    : req.session.returnTo === '/account' ? '/account' : '/store';
 
             req.session.regenerate((regenerateError) => {
                 if (regenerateError) {
@@ -2692,6 +2704,45 @@ app.post('/support', async (req, res) => {
     } catch (err) {
         console.error('Support request error:', err.message);
         res.status(500).send('Database sync error.');
+    }
+});
+
+// Customer account centre: only data belonging to the signed-in session is returned.
+app.get('/api/client/account-data', checkUserAuth, async (req, res) => {
+    try {
+        const email = String(req.session.userEmail || '').toLowerCase();
+        const user = await UserAccount.findOne({ email }, { password: 0 }).lean();
+        if (!user) return res.status(404).json({ success: false, message: 'Account not found.' });
+        const [orders, purchases, tickets, documents, cart] = await Promise.all([
+            PayFastPurchase.find({ userEmail: email, purchaseType: 'storeOrder' }).select('paymentId orderDetails amount status fulfilmentStatus paidAt createdAt').sort({ createdAt: -1 }).limit(50).lean(),
+            PayFastPurchase.find({ userEmail: email, purchaseType: { $ne: 'storeOrder' } }).select('paymentId purchaseType planName amount status paidAt createdAt').sort({ createdAt: -1 }).limit(50).lean(),
+            SupportRequest.find({ email }, { remotePassword: 0 }).sort({ date: -1 }).limit(50).lean(),
+            BusinessDocument.find({ ownerEmail: email }).select('kind number totalCents issueDate dueDate createdAt').sort({ createdAt: -1 }).limit(50).lean(),
+            StoreCustomerCart.findOne({ ownerEmail: email }).select('items updatedAt').lean()
+        ]);
+        res.set('Cache-Control', 'no-store, private');
+        res.json({ success: true, user, orders, purchases, tickets, documents, cart });
+    } catch (err) {
+        console.error('Customer account data error:', err.message);
+        res.status(500).json({ success: false, message: 'Could not load your account.' });
+    }
+});
+
+app.patch('/api/client/account-profile', checkUserAuth, async (req, res) => {
+    try {
+        const fullName = String(req.body.fullName || '').trim().slice(0, 100);
+        const phone = String(req.body.phone || '').trim().slice(0, 30);
+        if (!fullName || !phone) return res.status(400).json({ success: false, message: 'Please enter your name and phone number.' });
+        const user = await UserAccount.findOneAndUpdate(
+            { email: String(req.session.userEmail || '').toLowerCase() },
+            { $set: { fullName, phone } },
+            { new: true, runValidators: true, projection: { password: 0 } }
+        );
+        if (!user) return res.status(404).json({ success: false, message: 'Account not found.' });
+        res.json({ success: true, user: { fullName: user.fullName, phone: user.phone, email: user.email } });
+    } catch (err) {
+        console.error('Customer profile update error:', err.message);
+        res.status(500).json({ success: false, message: 'Could not update your profile.' });
     }
 });
 
