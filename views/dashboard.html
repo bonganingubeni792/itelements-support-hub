@@ -2010,7 +2010,7 @@ button:hover,.button:hover{transform:translateY(-1px)}
 })();
 </script>
 
-<script src="/nav-store-global.js?v=20261115-shared-cart-sticky-v7" defer></script><script>
+<script src="/nav-store-global.js?v=20261116-account-route-v9" defer></script><script>
 (async()=>{const $=id=>document.getElementById(id);const money=c=>'R '+(Number(c||0)/100).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});const list=(id,items,render,empty)=>{$(id).innerHTML=items&&items.length?items.map(render).join(''):`<p class="empty">${empty}</p>`};
 try{const r=await fetch('/api/client/account-data',{credentials:'same-origin',cache:'no-store'});if(r.status===401){location.href='/client/login?next=/account';return}const d=await r.json();if(!r.ok||!d.success)throw Error(d.message||'Could not load account');const u=d.user;$('fullName').value=u.fullName||'';$('email').value=u.email||'';$('phone').value=u.phone||'';$('orderCount').textContent=(d.orders||[]).length;$('ticketCount').textContent=(d.tickets||[]).length;$('docCount').textContent=(d.documents||[]).length;$('cartCount').textContent=(d.cart?.items||[]).reduce((n,x)=>n+Number(x.quantity||0),0);
 list('orders',d.orders,(x)=>`<div class="item"><span><b>${x.paymentId||'Order'}</b><br><small>${new Date(x.createdAt).toLocaleDateString('en-ZA')} · ${x.fulfilmentStatus||'Processing'}</small></span><b>${money(x.amount)}</b></div>`,'No store orders yet.');
