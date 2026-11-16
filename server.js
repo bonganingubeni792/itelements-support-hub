@@ -2302,7 +2302,7 @@ app.post('/client/login', async (req, res) => {
                     ? '/store?resumeCart=1'
                 : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
                     ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-                    : '/dashboard';
+                    : '/store';
 
             req.session.regenerate((regenerateError) => {
                 if (regenerateError) {
