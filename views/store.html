@@ -1228,7 +1228,7 @@ button[onclick*="addDetailToChat"] {
 
 <link rel="stylesheet" href="/ite-store-mobile-app.css?v=20261115-mobile-app-v1">
 </head><body class="store-page">
-<header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/account" aria-label="Open your IT Elements account" style="text-decoration:none;margin-right:10px">Account</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
+<header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
 <main class="wrap" id="catalogue"><div class="intro"><div><div class="eyebrow">Browse products</div><h2>Find what you need</h2><div class="muted">Products and prices are managed by IT Elements.</div></div><div class="muted" id="resultCount"></div></div>
@@ -1982,7 +1982,7 @@ checkReturnedPayment();
   }
   if(action==='search'){const input=document.getElementById('search');input?.scrollIntoView({behavior:'smooth',block:'center'});input?.focus({preventScroll:true});}
   if(action==='cart'){openStoreCart();}
-  if(action==='account'){window.location.href='/account';}
+  if(action==='account'){const account=document.getElementById('accountAction');if(account)window.location.href=account.href||'/client/login';}
  });
 })();
 </script>
@@ -2030,3 +2030,72 @@ checkReturnedPayment();
  .checkout-back-button,.checkout-cancel-button{width:100%!important}
 }
 </style>
+
+
+<style id="it-elements-professional-checkout-v3">
+/* Compact, trustworthy retail checkout — keeps the existing cart and PayFast workflow */
+.checkout-modal{position:fixed!important;inset:0!important;z-index:3000!important;display:none;align-items:center!important;justify-content:center!important;padding:22px!important;overflow:auto!important;background:rgba(18,23,33,.48)!important;backdrop-filter:blur(5px)!important}
+.checkout-modal.open{display:flex!important}
+.checkout-backdrop{display:block!important;position:absolute!important;inset:0!important;background:transparent!important;backdrop-filter:none!important}
+.checkout-panel{position:relative!important;z-index:1!important;width:min(1040px,100%)!important;max-width:1040px!important;height:auto!important;min-height:0!important;max-height:min(94dvh,980px)!important;margin:auto!important;padding:30px clamp(22px,3vw,38px) 26px!important;border:1px solid #e6e8ed!important;border-radius:20px!important;overflow-y:auto!important;box-shadow:0 28px 90px rgba(0,0,0,.24)!important;background:#fff!important}
+.checkout-panel>*{max-width:none!important;margin-left:0!important;margin-right:0!important}
+.checkout-panel .checkout-close{position:absolute!important;top:18px!important;right:18px!important;width:38px!important;height:38px!important;border:1px solid #e5e7eb!important;background:#f8f9fb!important;border-radius:50%!important;color:#454b55!important;font-size:23px!important}
+.checkout-eyebrow{display:flex;align-items:center;gap:9px;color:#d00000!important;font-size:10px!important;font-weight:900!important;letter-spacing:1.6px!important}
+.checkout-eyebrow:before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:#16a05a;box-shadow:0 0 0 4px #e8f7ee}
+.checkout-panel h2{max-width:none!important;font-size:clamp(26px,3vw,34px)!important;letter-spacing:-.7px!important;margin:7px 50px 4px 0!important;color:#17191f!important}
+.checkout-intro{max-width:none!important;margin:0 0 18px!important;color:#667085!important;font-size:13px!important}
+#checkoutItemsSummary{width:100%!important;max-width:none!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin:0 0 18px!important;padding:12px!important;border:1px solid #e8eaf0!important;border-radius:14px!important;background:#fafbfc!important}
+.checkout-summary-item{display:grid!important;grid-template-columns:54px minmax(0,1fr) auto!important;align-items:center!important;gap:10px!important;min-width:0!important;padding:9px!important;border:1px solid #eceef2!important;border-radius:11px!important;background:#fff!important}
+.checkout-summary-item>img,.checkout-no-image{width:54px!important;height:48px!important;object-fit:contain!important;border-radius:8px!important;background:#f7f8fa!important}
+.checkout-no-image{display:grid!important;place-items:center!important;font-size:23px!important}
+.checkout-summary-info{display:grid!important;gap:3px!important;min-width:0!important}
+.checkout-summary-info strong{font-size:11px!important;line-height:1.35!important;display:-webkit-box!important;-webkit-line-clamp:2!important;-webkit-box-orient:vertical!important;overflow:hidden!important}
+.checkout-summary-info small{font-size:10px!important;color:#707887!important}
+.checkout-summary-info .cart-remove{justify-self:start!important;width:auto!important;min-height:0!important;margin:2px 0 0!important;padding:2px 0!important;border:0!important;background:transparent!important;color:#b42318!important;font-size:10px!important;font-weight:700!important;text-decoration:underline!important}
+.checkout-summary-line-total{white-space:nowrap!important;font-size:11px!important;color:#20242c!important}
+#productCheckoutForm{width:100%!important;max-width:none!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px 16px!important;align-items:start!important}
+#productCheckoutForm>label{display:grid!important;gap:6px!important;min-width:0!important;font-size:11px!important;font-weight:800!important;color:#353b46!important}
+#productCheckoutForm input,#productCheckoutForm select,#productCheckoutForm textarea{width:100%!important;min-width:0!important;min-height:43px!important;padding:10px 12px!important;font-size:13px!important;border:1px solid #d9dee7!important;border-radius:9px!important;background:#fff!important;box-shadow:none!important}
+#productCheckoutForm input:focus,#productCheckoutForm select:focus,#productCheckoutForm textarea:focus{outline:3px solid rgba(224,0,0,.10)!important;border-color:#e00000!important}
+#productCheckoutForm>label:nth-of-type(4){grid-column:1/-1!important}
+.checkout-address-block{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:11px 16px!important;padding:15px!important;border:1px solid #e7e9ee!important;border-radius:13px!important;background:#fafbfc!important}
+.checkout-section-heading{grid-column:1/-1!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;flex-wrap:wrap!important}
+.checkout-section-heading strong{font-size:14px!important;color:#20242c!important}
+.checkout-section-heading span,.optional-label{font-size:10px!important;color:#77808d!important;font-weight:500!important}
+.checkout-address-block>label,.checkout-address-grid>label{display:grid!important;gap:5px!important;font-size:11px!important}
+.checkout-address-grid{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+.checkout-address-block>label:last-child{grid-column:1/-1!important}
+.checkout-address-block textarea{min-height:58px!important}
+#checkoutDeliveryNote{grid-column:1/-1!important;margin:0!important;padding:10px 12px!important;border-radius:9px!important;background:#f5f7fa!important;color:#596273!important;font-size:10px!important}
+.checkout-total{grid-column:1/-1!important;max-width:none!important;display:flex!important;justify-content:space-between!important;align-items:center!important;margin:0!important;padding:9px 2px!important;border-top:1px solid #edf0f3!important;font-size:12px!important;color:#596273!important}
+.checkout-total strong{font-size:14px!important;color:#20242c!important}
+.checkout-total.grand-total{padding:13px 2px!important;border-top:1px solid #dfe3e9!important;font-weight:900!important;color:#17191f!important}
+.checkout-total.grand-total strong{font-size:22px!important;color:#17191f!important}
+.payfast-submit{grid-column:1/-1!important;width:100%!important;min-height:51px!important;padding:13px 18px!important;border:0!important;border-radius:10px!important;background:#e00000!important;color:#fff!important;font-size:14px!important;font-weight:900!important;box-shadow:0 5px 14px rgba(224,0,0,.16)!important}
+.payfast-submit:hover{background:#c90000!important}
+.checkout-error,.checkout-actions,.payfast-trust{grid-column:1/-1!important}
+.checkout-actions{display:flex!important;justify-content:space-between!important;gap:10px!important;margin-top:0!important}
+.checkout-back-button,.checkout-cancel-button{min-height:38px!important;padding:0 14px!important;border:1px solid #e0e4ea!important;border-radius:9px!important;background:#fff!important;color:#4b5563!important;font-size:11px!important;font-weight:800!important}
+.checkout-cancel-button{color:#b42318!important}
+.payfast-trust{display:flex!important;justify-content:center!important;align-items:center!important;gap:7px!important;margin:0 auto!important;color:#687385!important;font-size:10px!important}
+@media(max-width:720px){
+ .checkout-modal{align-items:flex-end!important;padding:0!important}
+ .checkout-panel{width:100%!important;max-width:none!important;max-height:96dvh!important;padding:24px 15px 18px!important;border-radius:20px 20px 0 0!important}
+ .checkout-panel h2{font-size:26px!important}
+ #checkoutItemsSummary{grid-template-columns:minmax(0,1fr)!important;max-height:180px!important;overflow:auto!important}
+ .checkout-summary-item{grid-template-columns:48px minmax(0,1fr) auto!important}
+ .checkout-summary-item>img,.checkout-no-image{width:48px!important;height:44px!important}
+ #productCheckoutForm{grid-template-columns:minmax(0,1fr)!important;gap:11px!important}
+ #productCheckoutForm>label:nth-of-type(4){grid-column:1!important}
+ .checkout-address-block{grid-template-columns:minmax(0,1fr)!important;padding:12px!important}
+ .checkout-address-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .checkout-address-block>label:last-child{grid-column:1!important}
+ .checkout-actions{display:grid!important;grid-template-columns:1fr 1fr!important}
+ .checkout-back-button,.checkout-cancel-button{width:100%!important}
+}
+@media(max-width:390px){
+ .checkout-address-grid{grid-template-columns:minmax(0,1fr)!important}
+ .checkout-actions{grid-template-columns:1fr!important}
+}
+</style>
+
