@@ -519,7 +519,7 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
   }
 }
 
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-guest-cart-auth-v6"><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"><style>
+</style><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"><style>
 
 /* IT Elements: hide the product-detail Add to Chat action; keep the header Chat access. */
 .product-detail-actions button[onclick*="addDetailToChat"],
@@ -1228,7 +1228,7 @@ button[onclick*="addDetailToChat"] {
 
 <link rel="stylesheet" href="/ite-store-mobile-app.css?v=20261115-mobile-app-v1">
 </head><body class="store-page">
-<header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
+<header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login?next=%2Faccount" style="text-decoration:none;margin-right:10px">Log in</a><a class="cartbtn" id="logoutAction" href="/client/logout" hidden style="text-decoration:none;margin-right:10px">Log out</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements online store</div><h1>Technology that<br><span style="color:#ff3535">works for you.</span></h1><p>Discover dependable computers, upgrades and accessories, backed by friendly IT support from a team that understands technology.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Explore products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need help choosing? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>IT ELEMENTS TECH STORE</span><span>01 / 04</span></div><div class="hero-art-grid"><div class="hero-art-tile">💻<small>COMPUTERS</small></div><div class="hero-art-tile">🎮<small>GAMING</small></div><div class="hero-art-tile">⚙️<small>COMPONENTS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Hardware · Upgrades · Accessories</div></div></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
 <main class="wrap" id="catalogue"><div class="intro"><div><div class="eyebrow">Browse products</div><h2>Find what you need</h2><div class="muted">Products and prices are managed by IT Elements.</div></div><div class="muted" id="resultCount"></div></div>
@@ -1340,11 +1340,11 @@ async function refreshStoreAccountAction(){
   const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
   const auth=await response.json();
   if(response.ok&&auth.authenticated){
-   button.textContent='My Account';button.href='/account';button.setAttribute('aria-label','Open your IT Elements account');
+   button.textContent='Account';button.href='/account';button.setAttribute('aria-label','Open your IT Elements account');const logout=$('logoutAction');if(logout)logout.hidden=false;
   }else{
-   button.textContent='Login';button.href='/client/login';button.setAttribute('aria-label','Log in to your IT Elements account');
+   button.textContent='Log in';button.href='/client/login?next=%2Faccount';button.setAttribute('aria-label','Log in to your IT Elements account');const logout=$('logoutAction');if(logout)logout.hidden=true;
   }
- }catch(_){button.textContent='Login';button.href='/client/login';}
+ }catch(_){button.textContent='Log in';button.href='/client/login?next=%2Faccount';const logout=$('logoutAction');if(logout)logout.hidden=true;}
 }
 
 async function loadAccountCart(){
@@ -1929,7 +1929,7 @@ async function load(){
 
 load();renderCart();
 checkReturnedPayment();
-</script><script src="/nav-store-global.js?v=20261115-guest-cart-auth-v6" defer></script>
+</script><script src="/nav-store-global.js?v=20261116-preserve-original-nav-v1" defer></script>
 
 
 

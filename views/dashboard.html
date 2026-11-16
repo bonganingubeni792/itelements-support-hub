@@ -966,8 +966,7 @@ textarea.form-control,
   .header{margin:0 -14px 18px;width:calc(100% + 28px);padding:9px 14px}
 }
 
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-sticky-overflow-clip-v8">
-<style id="it-elements-full-width-dashboard-redesign">
+</style><style id="it-elements-full-width-dashboard-redesign">
 /* Customer dashboard: full-screen canvas and premium responsive portal finish */
 html,body{width:100%;min-height:100%;overflow-x:hidden}
 body{background:linear-gradient(180deg,#fff 0%,#f7f8fa 100%)}
@@ -2039,7 +2038,7 @@ button:hover,.button:hover{transform:translateY(-1px)}
 })();
 </script>
 
-<script src="/nav-store-global.js?v=20261115-shared-cart-sticky-v7" defer></script><script>
+<script>
 (async()=>{const $=id=>document.getElementById(id);const money=c=>'R '+(Number(c||0)/100).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});const list=(id,items,render,empty)=>{$(id).innerHTML=items&&items.length?items.map(render).join(''):`<p class="empty">${empty}</p>`};
 try{const r=await fetch('/api/client/account-data',{credentials:'same-origin',cache:'no-store'});if(r.status===401){location.href='/client/login?next=/account';return}const d=await r.json();if(!r.ok||!d.success)throw Error(d.message||'Could not load account');const u=d.user;$('fullName').value=u.fullName||'';$('email').value=u.email||'';$('phone').value=u.phone||'';$('orderCount').textContent=(d.orders||[]).length;$('ticketCount').textContent=(d.tickets||[]).length;$('docCount').textContent=(d.documents||[]).length;$('cartCount').textContent=(d.cart?.items||[]).reduce((n,x)=>n+Number(x.quantity||0),0);
 list('orders',d.orders,(x)=>`<div class="item"><span><b>${x.paymentId||'Order'}</b><br><small>${new Date(x.createdAt).toLocaleDateString('en-ZA')} · ${x.fulfilmentStatus||'Processing'}</small></span><b>${money(x.amount)}</b></div>`,'No store orders yet.');
