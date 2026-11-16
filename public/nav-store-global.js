@@ -97,11 +97,12 @@
     if (/^cart(?:\s*\(|$)/i.test(String(node.textContent || '').trim())) node.remove();
   });
   actions.innerHTML = '';
-  var account = makeLink('/client/login', 'Login');
+  var account = makeLink('/account', 'Account');
   account.id = 'accountAction';
   account.className = 'ite-account-action';
   account.setAttribute('aria-label', 'Log in to your IT Elements account');
   actions.appendChild(account);
+  var logoutControl = null;
   var cartControl;
   if (isStore) {
     cartControl = oldCart || document.createElement('button');
@@ -142,8 +143,12 @@
       var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
         authEmailForCart = auth.email || '';
-        account.textContent = 'Logout'; account.href = '/client/logout';
-        account.setAttribute('aria-label', 'Log out of your IT Elements account');
+        account.textContent = 'Account'; account.href = '/account';
+        account.setAttribute('aria-label', 'Open your IT Elements account');
+        logoutControl = makeLink('/client/logout', 'Logout');
+        logoutControl.className = 'ite-logout-action';
+        logoutControl.setAttribute('aria-label', 'Log out of your IT Elements account');
+        actions.insertBefore(logoutControl, cartControl || null);
         if (cartControl) cartControl.hidden = false;
         if (productCart) productCart.hidden = false;
 
@@ -176,13 +181,14 @@
           });
       }
 
-      account.textContent = 'Login'; account.href = '/client/login';
-      account.setAttribute('aria-label', 'Log in to your IT Elements account');
+      account.textContent = 'Account'; account.href = '/account';
+      account.setAttribute('aria-label', 'Open your IT Elements account');
       if (cartControl) cartControl.hidden = true;
       if (productCart) productCart.hidden = true;
     })
     .catch(function () {
-      account.textContent = 'Login'; account.href = '/client/login';
+      account.textContent = 'Account'; account.href = '/account';
+      account.setAttribute('aria-label', 'Open your IT Elements account');
       if (cartControl) cartControl.hidden = true;
       var productCart = document.getElementById('openCartFromProduct');
       if (productCart) productCart.hidden = true;
