@@ -50,7 +50,7 @@
       '<div class="ite-mobile-drawer-head"><strong>Menu</strong><button class="ite-mobile-drawer-close" type="button" aria-label="Close menu">×</button></div>' +
       '<nav class="ite-mobile-drawer-links" aria-label="Website links"></nav></aside>';
     var list = overlay.querySelector('.ite-mobile-drawer-links');
-    [['/','Home'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login','Client Portal']]
+    [['/','Home'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login?next=%2Fdashboard','Client Portal']]
       .forEach(function (item) { list.appendChild(makeLink(item[0], item[1])); });
     document.body.appendChild(overlay);
     function close() { overlay.classList.remove('open'); document.body.classList.remove('ite-drawer-open'); trigger.setAttribute('aria-expanded','false'); }
@@ -80,7 +80,7 @@
     var more = document.createElement('details'); more.className = 'ite-more-menu';
     var summary = document.createElement('summary'); summary.textContent = 'More'; more.appendChild(summary);
     var panel = document.createElement('div'); panel.className = 'ite-more-menu-panel';
-    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/booking','Booking'],['/business-tools','Business Tools'],['/client/login','Client Portal']]
+    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/business-tools','Business Tools'],['/client/login?next=%2Fdashboard','Client Portal']]
       .forEach(function (item) { panel.appendChild(makeLink(item[0], item[1])); });
     more.appendChild(panel); nav.appendChild(more);
   }
