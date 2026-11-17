@@ -1479,33 +1479,56 @@ button[onclick*="addDetailToChat"] {
  <div class="checkout-backdrop" data-close-checkout></div>
  <section class="checkout-panel" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
   <button type="button" class="checkout-close" data-close-checkout aria-label="Cancel checkout">×</button>
-  <div class="checkout-eyebrow">SECURE CHECKOUT</div><h2 id="checkoutTitle">Complete your order</h2>
-  <p class="checkout-intro">Check your products, delivery charge and total before secure payment.</p>
-  <div id="checkoutItemsSummary" class="checkout-items-summary" aria-live="polite"></div><form id="productCheckoutForm">
-   <label>Full name<input name="customerName" autocomplete="name" required maxlength="100" placeholder="Your full name"></label>
-   <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
-   <label>Phone number<input name="phone" type="tel" autocomplete="tel" required placeholder="+27 ..."></label>
-   <label>Delivery method<select name="deliveryMethod" id="deliveryMethod"><option value="delivery">Nationwide delivery</option></select></label>
-   <div class="checkout-address-block" id="deliveryAddressField">
-    <div class="checkout-section-heading"><strong>Delivery address</strong><span>Enter the full address where your order must be delivered.</span></div>
-    <label>Street address / house or building number<input name="addressLine1" autocomplete="address-line1" required maxlength="180" placeholder="e.g. 12 Main Road"></label>
-    <label>Complex, unit or apartment <span class="optional-label">(optional)</span><input name="addressLine2" autocomplete="address-line2" maxlength="180" placeholder="Complex name, unit or apartment number"></label>
-    <div class="checkout-address-grid">
-     <label>Suburb<input name="suburb" autocomplete="address-level3" required maxlength="100" placeholder="Your suburb"></label>
-     <label>City / town<input name="city" autocomplete="address-level2" required maxlength="100" placeholder="Your city or town"></label>
-     <label>Province<select name="province" autocomplete="address-level1" required><option value="">Select province</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></label>
-     <label>Postal code<input name="postalCode" autocomplete="postal-code" inputmode="numeric" required maxlength="10" pattern="[0-9]{4}" placeholder="e.g. 2000" title="Enter a 4-digit South African postal code"></label>
-    </div>
-    <label>Delivery instructions <span class="optional-label">(optional)</span><textarea name="deliveryInstructions" rows="2" maxlength="300" placeholder="Gate code, landmark or instructions for the driver"></textarea></label>
+  <div class="checkout-eyebrow">IT ELEMENTS • SECURE CHECKOUT</div>
+  <h2 id="checkoutTitle">Complete your order</h2>
+  <p class="checkout-intro">Review your items, confirm where to deliver and continue to secure payment.</p>
+  <ol class="checkout-progress" aria-label="Checkout steps">
+   <li class="current"><span>1</span><strong>Delivery details</strong></li>
+   <li><span>2</span><strong>Review order</strong></li>
+   <li><span>3</span><strong>Secure payment</strong></li>
+  </ol>
+  <form id="productCheckoutForm" class="checkout-layout">
+   <div class="checkout-main">
+    <section class="checkout-card">
+     <div class="checkout-card-heading"><span class="checkout-step-number">1</span><div><h3>Your contact details</h3><p>Who should we contact about this order?</p></div></div>
+     <div class="checkout-contact-grid">
+      <label>Full name<input name="customerName" autocomplete="name" required maxlength="100" placeholder="Your full name"></label>
+      <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+      <label>Phone number<input name="phone" type="tel" autocomplete="tel" required placeholder="+27 ..."></label>
+     </div>
+    </section>
+    <section class="checkout-card">
+     <div class="checkout-card-heading"><span class="checkout-step-number">2</span><div><h3>Delivery details</h3><p>Where should we deliver your order?</p></div></div>
+     <label>Delivery method<select name="deliveryMethod" id="deliveryMethod"><option value="delivery">Nationwide delivery</option></select></label>
+     <div class="checkout-address-block" id="deliveryAddressField">
+      <div class="checkout-section-heading"><strong>Delivery address</strong><span>Enter the full address where your order must be delivered.</span></div>
+      <label>Street address / house or building number<input name="addressLine1" autocomplete="address-line1" required maxlength="180" placeholder="e.g. 12 Main Road"></label>
+      <label>Complex, unit or apartment <span class="optional-label">(optional)</span><input name="addressLine2" autocomplete="address-line2" maxlength="180" placeholder="Complex name, unit or apartment number"></label>
+      <div class="checkout-address-grid">
+       <label>Suburb<input name="suburb" autocomplete="address-level3" required maxlength="100" placeholder="Your suburb"></label>
+       <label>City / town<input name="city" autocomplete="address-level2" required maxlength="100" placeholder="Your city or town"></label>
+       <label>Province<select name="province" autocomplete="address-level1" required><option value="">Select province</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></label>
+       <label>Postal code<input name="postalCode" autocomplete="postal-code" inputmode="numeric" required maxlength="10" pattern="[0-9]{4}" placeholder="e.g. 2000" title="Enter a 4-digit South African postal code"></label>
+      </div>
+      <label>Delivery instructions <span class="optional-label">(optional)</span><textarea name="deliveryInstructions" rows="2" maxlength="300" placeholder="Gate code, landmark or instructions for the driver"></textarea></label>
+     </div>
+     <div class="checkout-note" id="checkoutDeliveryNote">Delivery is R80 for orders below R755. Delivery is free for orders of R755 or more.</div>
+    </section>
+    <div class="checkout-actions"><button type="button" class="checkout-back-button" id="checkoutBackToCart">← Back to cart</button><button type="button" class="checkout-cancel-button" data-close-checkout>Cancel checkout</button></div>
    </div>
-   <div class="checkout-note" id="checkoutDeliveryNote">Delivery is R80 for orders below R755. Delivery is free for orders of R755 or more.</div>
-   <div class="checkout-total"><span>Products subtotal</span><strong id="checkoutSubtotal">R 0.00</strong></div>
-   <div class="checkout-total"><span>Delivery</span><strong id="checkoutDeliveryFee">R 0.00</strong></div>
-   <div class="checkout-total grand-total"><span>Order total</span><strong id="checkoutTotal">R 0.00</strong></div>
-   <button type="submit" class="payfast-submit" id="payfastSubmit">Continue to secure payment →</button>
-   <div id="checkoutError" role="alert" class="checkout-error"></div>
-   <div class="checkout-actions"><button type="button" class="checkout-back-button" id="checkoutBackToCart">← Back to cart</button><button type="button" class="checkout-cancel-button" data-close-checkout>Cancel checkout</button></div>
-   <div class="payfast-trust">🔒 Secure payment</div>
+   <aside class="checkout-sidebar">
+    <section class="checkout-card checkout-order-card">
+     <div class="checkout-card-heading"><span class="checkout-step-number">3</span><div><h3>Your order</h3><p>Check quantities and products</p></div></div>
+     <div id="checkoutItemsSummary" class="checkout-items-summary" aria-live="polite"></div>
+     <div class="checkout-total"><span>Products subtotal</span><strong id="checkoutSubtotal">R 0.00</strong></div>
+     <div class="checkout-total"><span>Delivery</span><strong id="checkoutDeliveryFee">R 0.00</strong></div>
+     <div class="checkout-total grand-total"><span>Order total</span><strong id="checkoutTotal">R 0.00</strong></div>
+     <button type="submit" class="payfast-submit" id="payfastSubmit">Continue to secure payment <span>→</span></button>
+     <div id="checkoutError" role="alert" class="checkout-error"></div>
+     <div class="payfast-trust">🔒 Secure payment powered by PayFast</div>
+     <div class="checkout-assurance">Your payment details are handled securely by PayFast.</div>
+    </section>
+   </aside>
   </form>
  </section>
 </div>
@@ -2321,6 +2344,69 @@ checkReturnedPayment();
 @media(max-width:390px){
  .checkout-address-grid{grid-template-columns:minmax(0,1fr)!important}
  .checkout-actions{grid-template-columns:1fr!important}
+}
+
+/* IT ELEMENTS — ADVANCED CHECKOUT */
+.checkout-modal{padding:18px;align-items:center}
+.checkout-panel{width:min(1120px,100%);max-height:min(94vh,1000px);padding:30px;background:#f7f8fb;border:1px solid #e4e8ef;border-radius:20px}
+.checkout-panel h2{font-size:clamp(25px,3vw,34px);letter-spacing:-.7px;color:#111827;margin:5px 0 4px}
+.checkout-intro{font-size:14px;margin-bottom:18px}
+.checkout-progress{list-style:none;display:flex;gap:10px;padding:0;margin:0 0 22px;counter-reset:step}
+.checkout-progress li{flex:1;display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid #e2e6ed;border-radius:11px;background:#fff;color:#778091;font-size:12px}
+.checkout-progress li span,.checkout-step-number{display:grid;place-items:center;width:27px;height:27px;flex:0 0 27px;border-radius:50%;background:#eef1f5;color:#526071;font-weight:900}
+.checkout-progress li.current{border-color:#f2b7b7;background:#fffafa;color:#a90000}
+.checkout-progress li.current span,.checkout-step-number{background:#e00000;color:#fff}
+.checkout-layout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.8fr);gap:18px;align-items:start}
+.checkout-main{display:grid;gap:15px;min-width:0}
+.checkout-sidebar{min-width:0}
+.checkout-card{background:#fff;border:1px solid #e4e8ef;border-radius:15px;padding:19px;box-shadow:0 3px 12px #17203308}
+.checkout-card-heading{display:flex;align-items:center;gap:10px;margin-bottom:17px}
+.checkout-card-heading h3{font-size:16px;margin:0;color:#182230}
+.checkout-card-heading p{font-size:11px;color:#7b8492;margin:3px 0 0}
+.checkout-contact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.checkout-contact-grid label:last-child{grid-column:1/-1}
+#productCheckoutForm.checkout-layout{display:grid}
+#productCheckoutForm label{min-width:0;gap:7px;font-size:12px;color:#293343}
+#productCheckoutForm input,#productCheckoutForm select,#productCheckoutForm textarea{border:1px solid #d8dee8;border-radius:10px;padding:13px 14px;font-size:13px;min-height:46px;transition:border-color .15s,box-shadow .15s}
+#productCheckoutForm input:focus,#productCheckoutForm select:focus,#productCheckoutForm textarea:focus{outline:none;border-color:#d92323;box-shadow:0 0 0 3px #e0000012}
+.checkout-address-block{display:grid;gap:13px;margin-top:14px}
+.checkout-section-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:13px;border-top:1px solid #edf0f4}
+.checkout-section-heading strong{font-size:13px;color:#202a38}
+.checkout-section-heading span{font-size:10px;color:#8490a0;text-align:right}
+.checkout-address-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.checkout-note{background:#f5f7fa;border:1px solid #e7ebf1;border-radius:9px;padding:11px 13px;color:#657184;font-size:11px}
+.checkout-order-card{position:sticky;top:0}
+.checkout-items-summary{display:grid;gap:9px;max-height:330px;overflow:auto;padding-right:3px;margin-bottom:14px}
+.checkout-items-summary>*{min-width:0}
+.checkout-total{border-top:1px solid #edf0f4;padding:13px 0;font-size:13px;color:#596579}
+.checkout-total strong{font-size:14px;color:#202938}
+.checkout-total.grand-total{margin-top:3px;padding:16px 0;border-top:1px solid #dfe4ec;color:#111827;font-weight:900}
+.checkout-total.grand-total strong{font-size:25px;color:#111827}
+.payfast-submit{width:100%;min-height:52px;border-radius:11px;background:#e00000;box-shadow:0 7px 16px #e0000020;font-size:14px;cursor:pointer}
+.payfast-submit:hover{background:#c90000}
+.checkout-error{min-height:0;margin:7px 0 0}
+.payfast-trust{margin-top:12px}
+.checkout-assurance{font-size:10px;color:#87909d;text-align:center;margin-top:7px}
+.checkout-actions{display:flex;justify-content:space-between;gap:10px}
+.checkout-back-button,.checkout-cancel-button{border:1px solid #dce2eb;border-radius:9px;background:#fff;padding:10px 13px;font-size:11px;font-weight:800}
+@media(max-width:800px){
+ .checkout-modal{padding:8px;align-items:flex-start}
+ .checkout-panel{max-height:calc(100dvh - 16px);padding:20px 14px;border-radius:14px}
+ .checkout-layout{grid-template-columns:minmax(0,1fr);gap:13px}
+ .checkout-sidebar{order:-1}
+ .checkout-order-card{position:static}
+ .checkout-items-summary{max-height:210px}
+ .checkout-progress{gap:5px}
+ .checkout-progress li{padding:8px 6px;gap:5px;font-size:10px;justify-content:center}
+ .checkout-progress li span{width:22px;height:22px;flex-basis:22px}
+}
+@media(max-width:480px){
+ .checkout-contact-grid,.checkout-address-grid{grid-template-columns:minmax(0,1fr)}
+ .checkout-contact-grid label:last-child{grid-column:auto}
+ .checkout-section-heading{align-items:flex-start;flex-direction:column;gap:4px}
+ .checkout-section-heading span{text-align:left}
+ .checkout-card{padding:14px}
+ .checkout-progress li strong{font-size:9px}
 }
 </style>
 
