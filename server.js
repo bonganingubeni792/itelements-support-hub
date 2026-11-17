@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
 const cors = require('cors');
 const crypto = require('crypto');
 const dns = require('dns').promises;
@@ -102,7 +101,6 @@ const StoreProduct = mongoose.model('StoreProduct', new mongoose.Schema({
     description: { type: String, default: '', trim: true, maxlength: 2000 },
     price: { type: Number, required: true, min: 0 },
     compareAtPrice: { type: Number, default: 0, min: 0 },
-    productType: { type: String, enum: ['normal', 'sale'], default: 'normal' },
     stock: { type: Number, default: 0, min: 0 },
     imageUrl: { type: String, default: '', trim: true, maxlength: 1000 },
     images: { type: [String], default: [] },
@@ -113,31 +111,18 @@ const StoreProduct = mongoose.model('StoreProduct', new mongoose.Schema({
 }, { collection: 'storeproducts' }));
 
 
-// Private customer carts: one MongoDB document per signed-in account.
-// Cart contents are never fetched by email supplied by the browser; the session
-// identity is the only source of ownership.
-const StoreCustomerCart = mongoose.model('StoreCustomerCart', new mongoose.Schema({
-    ownerEmail: { type: String, required: true, lowercase: true, trim: true, unique: true, index: true },
-    items: [{
-        productId: { type: mongoose.Schema.Types.ObjectId, required: true },
-        quantity: { type: Number, required: true, min: 1, max: 999 }
-    }],
-    updatedAt: { type: Date, default: Date.now }
-}, { collection: 'storecustomercarts' }));
-
 // PayFast purchases
 const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
     paymentId: { type: String, required: true, unique: true },
     userEmail: { type: String, default: '', lowercase: true, trim: true },
     purchaseType: {
         type: String,
-        enum: ['plan', 'quickfix', 'invoicePro', 'storeOrder'],
+        enum: ['plan', 'quickfix', 'invoicePro'],
         required: true
     },
     planId: { type: String, default: '' },
     planName: { type: String, default: '' },
     durationOption: { type: String, default: '' },
-    orderDetails: { type: mongoose.Schema.Types.Mixed, default: null },
     amount: { type: Number, required: true },
     mode: { type: String, enum: ['test', 'live'], default: 'live' },
     status: {
@@ -146,7 +131,6 @@ const PayFastPurchase = mongoose.model('PayFastPurchase', new mongoose.Schema({
         default: 'pending'
     },
     pfPaymentId: { type: String, default: '' },
-    fulfilmentStatus: { type: String, enum: ['new', 'processing', 'ready', 'shipped', 'completed', 'cancelled'], default: 'new' },
     paidAt: { type: Date, default: null },
     expiresAt: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now }
@@ -704,15 +688,6 @@ async function markPayFastPurchasePaid(fields) {
         );
     }
 
-    if (saved.modifiedCount && purchase.purchaseType === 'storeOrder' && Array.isArray(purchase.orderDetails?.items)) {
-        for (const item of purchase.orderDetails.items) {
-            await StoreProduct.updateOne(
-                { _id: item.productId, stock: { $gte: item.quantity } },
-                { $inc: { stock: -item.quantity }, $set: { updatedAt: paidAt } }
-            );
-        }
-    }
-
     if (purchase.purchaseType === 'plan' && saved.modifiedCount) {
         await sendCustomerEmail(
             purchase.userEmail,
@@ -808,7 +783,7 @@ app.post('/webhooks/payfast', async (req, res) => {
 });
 
 // JSON request support
-app.use(express.json({ limit: '60mb' }));
+app.use(express.json({ limit: '8mb' }));
 
 if (process.env.NODE_ENV === 'production' && !process.env.SESSION_SECRET) {
     throw new Error('SESSION_SECRET must be set in production.');
@@ -820,14 +795,11 @@ if (process.env.NODE_ENV === 'production') {
 
 // Customer and administrator sessions
 app.use(session({
-    name: 'itelements.sid',
     secret: process.env.SESSION_SECRET || randomUUID(),
     resave: false,
     saveUninitialized: false,
-    rolling: true,
-    ...(dbURI ? { store: MongoStore.create({ mongoUrl: dbURI, collectionName: 'sessions', ttl: 14 * 24 * 60 * 60 }) } : {}),
     cookie: {
-        maxAge: 14 * 24 * 60 * 60 * 1000,
+        maxAge: 86400000,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         httpOnly: true
@@ -853,12 +825,7 @@ function checkUserAuth(req, res, next) {
         return next();
     }
 
-    if (!req.session) req.session = {};
-    if (req.path === '/dashboard' || req.path === '/dashboard/') {
-        req.session.returnTo = '/dashboard';
-    } else if (req.path === '/account' || req.path === '/account/') {
-        req.session.returnTo = '/account';
-    } else if (
+    if (
         req.path === '/tools/invoices' ||
         req.path === '/invoice-maker.html'
     ) {
@@ -892,23 +859,14 @@ app.get('/invoice-maker.html', (req, res) => {
     res.sendFile(path.join(viewsPath, 'invoice-maker.html'));
 });
 
-// Public static assets (shared CSS/JS) are referenced from the site root.
-app.use(express.static(path.join(__dirname, 'public'), { index: false }));
-
-// Public website pages.
+// Public website files
 app.use(express.static(viewsPath, { index: false }));
 
-// Backwards-compatible asset URL used by product images and logos.
+// Assets are stored directly inside public/, not public/assets/.
 app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 // Main website pages
-// The IT Elements support homepage is the public landing page.
 app.get('/', (req, res) => {
-    res.sendFile(path.join(viewsPath, 'index.html'));
-});
-
-// Keep /home as a backwards-compatible homepage URL.
-app.get('/home', (req, res) => {
     res.sendFile(path.join(viewsPath, 'index.html'));
 });
 
@@ -943,18 +901,6 @@ app.get('/faq', (req, res) => {
 
 app.get('/contact', (req, res) => {
     res.sendFile(path.join(viewsPath, 'contact.html'));
-});
-
-app.get(['/booking', '/booking/'], (req, res) => {
-    res.sendFile(path.join(viewsPath, 'booking.html'));
-});
-
-app.get(['/billing', '/billing/'], checkUserAuth, (req, res) => {
-    res.sendFile(path.join(viewsPath, 'billing.html'));
-});
-
-app.get(['/business-tools', '/business-tools/'], (req, res) => {
-    res.sendFile(path.join(viewsPath, 'business-tools.html'));
 });
 
 // IT Elements Online Store
@@ -1066,7 +1012,6 @@ function cleanStoreProduct(body = {}) {
             category,
             price,
             compareAtPrice,
-            productType: body.productType === 'sale' ? 'sale' : 'normal',
             stock,
             status,
             imageUrl: primaryImage,
@@ -1114,102 +1059,27 @@ app.post('/api/admin/store/upload-image', checkAdminAuth, async (req, res) => {
 });
 
 // PUBLIC: Load active products for the online store
-function getStoreCartOwner(req) {
-    const customerEmail = String(req.session?.userEmail || '').trim().toLowerCase();
-    if (customerEmail) return customerEmail;
-    // Admin sessions do not carry a customer email. Give the single IT Elements
-    // admin account its own stable cart identity instead of silently using guest storage.
-    if (req.session?.isAdmin) return 'admin@itelements.help';
-    return '';
-}
-
-app.get('/api/store/auth-status', (req, res) => {
-    res.set('Cache-Control', 'no-store');
-    const authenticated = !!(req.session && (req.session.isUser || req.session.isAdmin));
-    const cartOwner = authenticated ? getStoreCartOwner(req) : '';
-    res.json({ authenticated, email: req.session?.userEmail || '', cartOwner });
-});
-
-// A customer's saved cart is private to their signed-in account and persists
-// in MongoDB across logout, browser restarts, and other devices.
-app.get('/api/store/cart', async (req, res) => {
-    res.set('Cache-Control', 'no-store, private');
-    const email = getStoreCartOwner(req);
-    if (!req.session || !(req.session.isUser || req.session.isAdmin) || !email) {
-        return res.status(401).json({ success: false, message: 'Please sign in to view your saved cart.' });
-    }
-    try {
-        const saved = await StoreCustomerCart.findOne({ ownerEmail: email }).lean();
-        const items = (saved?.items || []).map(item => ({
-            id: String(item.productId),
-            qty: Math.max(1, Math.floor(Number(item.quantity) || 1))
-        }));
-        return res.json({ success: true, items });
-    } catch (err) {
-        console.error('Store cart load failed:', err.message);
-        return res.status(500).json({ success: false, message: 'Could not load your saved cart.' });
-    }
-});
-
-app.put('/api/store/cart', async (req, res) => {
-    res.set('Cache-Control', 'no-store, private');
-    const email = getStoreCartOwner(req);
-    if (!req.session || !(req.session.isUser || req.session.isAdmin) || !email) {
-        return res.status(401).json({ success: false, message: 'Please sign in to save your cart.' });
-    }
-    try {
-        const incoming = Array.isArray(req.body?.items) ? req.body.items : [];
-        if (incoming.length > 100) {
-            return res.status(400).json({ success: false, message: 'Your cart contains too many different products.' });
-        }
-        const merged = new Map();
-        for (const item of incoming) {
-            const id = String(item?.id || item?.productId || '');
-            const qty = Math.floor(Number(item?.qty ?? item?.quantity));
-            if (!mongoose.isValidObjectId(id) || !Number.isInteger(qty) || qty < 1 || qty > 999) {
-                return res.status(400).json({ success: false, message: 'One of the cart items is invalid.' });
-            }
-            merged.set(id, (merged.get(id) || 0) + qty);
-        }
-        const ids = [...merged.keys()];
-        const products = ids.length
-            ? await StoreProduct.find({ _id: { $in: ids }, status: 'active' }).select('_id stock').lean()
-            : [];
-        const productMap = new Map(products.map(p => [String(p._id), Math.max(0, Number(p.stock) || 0)]));
-        const items = [];
-        for (const [id, qty] of merged) {
-            if (!productMap.has(id)) continue;
-            // Preserve requested quantity in the saved cart; checkout performs
-            // the final stock validation so a temporary stock change is visible.
-            items.push({ productId: id, quantity: qty });
-        }
-        await StoreCustomerCart.findOneAndUpdate(
-            { ownerEmail: email },
-            { $set: { items, updatedAt: new Date() }, $setOnInsert: { ownerEmail: email } },
-            { upsert: true, new: true, runValidators: true }
-        );
-        return res.json({ success: true, saved: items.length });
-    } catch (err) {
-        console.error('Store cart save failed:', err.message);
-        return res.status(500).json({ success: false, message: 'Could not save your cart. Please try again.' });
-    }
-});
-
-
 app.get('/api/store/products', async (req, res) => {
     try {
-        // Product catalogue data changes infrequently. A short browser cache
-        // avoids repeatedly downloading the same catalogue on every visit.
-        res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
+        res.setHeader('Cache-Control', 'no-store');
 
-        const products = await StoreProduct.find({ status: 'active' })
-            .select('name sku category description price compareAtPrice stock imageUrl images status featured createdAt')
-            .sort({ featured: -1, createdAt: -1 })
+        const products = await StoreProduct.find({
+            status: 'active'
+        })
+            .select('-__v')
+            .sort({
+                featured: -1,
+                createdAt: -1
+            })
             .lean();
 
-        return res.json({ success: true, products });
+        return res.json({
+            success: true,
+            products
+        });
     } catch (err) {
         console.error('Public store products error:', err.message);
+
         return res.status(500).json({
             success: false,
             message: 'Could not load store products.',
@@ -1218,67 +1088,7 @@ app.get('/api/store/products', async (req, res) => {
     }
 });
 
-// Load the full image gallery only when a customer opens a product.
-app.get('/api/store/products/:id', async (req, res) => {
-    try {
-        if (!mongoose.isValidObjectId(req.params.id)) {
-            return res.status(400).json({ success: false, message: 'Invalid product.' });
-        }
-
-        const product = await StoreProduct.findOne({
-            _id: req.params.id,
-            status: 'active'
-        }).select('-__v').lean();
-
-        if (!product) {
-            return res.status(404).json({ success: false, message: 'Product not found.' });
-        }
-
-        res.setHeader('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
-        return res.json({ success: true, product });
-    } catch (err) {
-        console.error('Public store product detail error:', err.message);
-        return res.status(500).json({ success: false, message: 'Could not load this product.' });
-    }
-});
-
 // ADMIN: Load all products, including drafts
-// ADMIN: Store orders created through the PayFast product checkout.
-app.get('/api/admin/store/orders', checkAdminAuth, async (req, res) => {
-    try {
-        const orders = await PayFastPurchase.find({ purchaseType: 'storeOrder', status: 'paid' })
-            .select('paymentId userEmail orderDetails amount mode status pfPaymentId paidAt createdAt fulfilmentStatus')
-            .sort({ createdAt: -1 })
-            .limit(500)
-            .lean();
-        return res.json({ success: true, orders });
-    } catch (err) {
-        console.error('Admin store orders error:', err.message);
-        return res.status(500).json({ success: false, message: 'Could not load store orders.' });
-    }
-});
-
-// ADMIN: Update order fulfilment stage (does not alter PayFast payment status).
-app.patch('/api/admin/store/orders/:id/fulfilment', checkAdminAuth, async (req, res) => {
-    const allowed = ['new', 'processing', 'ready', 'shipped', 'completed', 'cancelled'];
-    const fulfilmentStatus = String(req.body.fulfilmentStatus || '');
-    if (!mongoose.isValidObjectId(req.params.id) || !allowed.includes(fulfilmentStatus)) {
-        return res.status(400).json({ success: false, message: 'Invalid order or fulfilment status.' });
-    }
-    try {
-        const order = await PayFastPurchase.findOneAndUpdate(
-            { _id: req.params.id, purchaseType: 'storeOrder', status: 'paid' },
-            { $set: { fulfilmentStatus } },
-            { new: true }
-        ).select('paymentId fulfilmentStatus status');
-        if (!order) return res.status(404).json({ success: false, message: 'Order not found.' });
-        return res.json({ success: true, order });
-    } catch (err) {
-        console.error('Store order update error:', err.message);
-        return res.status(500).json({ success: false, message: 'Could not update this order.' });
-    }
-});
-
 app.get('/api/admin/store/products', checkAdminAuth, async (req, res) => {
     try {
         const products = await StoreProduct.find()
@@ -1326,35 +1136,6 @@ app.post('/api/admin/store/products', checkAdminAuth, async (req, res) => {
             success: false,
             message: 'Could not add this product.'
         });
-    }
-});
-
-// ADMIN: Save stock quantities for multiple products in one request.
-app.patch('/api/admin/store/products/stock', checkAdminAuth, async (req, res) => {
-    const updates = Array.isArray(req.body && req.body.updates) ? req.body.updates : [];
-    if (!updates.length || updates.length > 500) {
-        return res.status(400).json({ success: false, message: 'Submit between 1 and 500 stock updates.' });
-    }
-    const cleaned = [];
-    const seen = new Set();
-    for (const item of updates) {
-        const id = String(item && item.id || '');
-        const stock = Number(item && item.stock);
-        if (!mongoose.isValidObjectId(id) || seen.has(id) || !Number.isInteger(stock) || stock < 0 || stock > 10000000) {
-            return res.status(400).json({ success: false, message: 'One or more product IDs or stock quantities are invalid.' });
-        }
-        seen.add(id);
-        cleaned.push({ id, stock });
-    }
-    try {
-        const results = await Promise.all(cleaned.map(item =>
-            StoreProduct.updateOne({ _id: item.id }, { $set: { stock: item.stock, updatedAt: new Date() } })
-        ));
-        const updated = results.reduce((sum, result) => sum + (result.modifiedCount || result.nModified || 0) + (result.matchedCount === 1 && (result.modifiedCount || result.nModified || 0) === 0 ? 1 : 0), 0);
-        return res.json({ success: true, updated, requested: cleaned.length });
-    } catch (err) {
-        console.error('Bulk stock update error:', err.message);
-        return res.status(500).json({ success: false, message: 'Could not save stock quantities.' });
     }
 });
 
@@ -1534,10 +1315,16 @@ app.get('/admin/login', (req, res) => {
 });
 
 app.get('/client/login', (req, res) => {
-    if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
-    else if (req.query.next === '/dashboard') req.session.returnTo = '/dashboard';
-    else if (req.query.next === '/account') req.session.returnTo = '/account';
-    res.sendFile(path.join(viewsPath, 'client-login.html'));
+    // Keep already-authenticated users out of the login screen.
+    if (req.session && req.session.isAdmin) {
+        return res.redirect('/admin');
+    }
+
+    if (req.session && req.session.isUser) {
+        return res.redirect('/dashboard');
+    }
+
+    return res.sendFile(path.join(viewsPath, 'client-login.html'));
 });
 
 app.get('/client/forgot-password', (req, res) => {
@@ -1549,21 +1336,12 @@ app.get('/reset-password', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-    if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
-    else if (req.query.next === '/dashboard') req.session.returnTo = '/dashboard';
-    else if (req.query.next === '/account') req.session.returnTo = '/account';
     res.sendFile(path.join(viewsPath, 'register.html'));
 });
 
 app.get('/dashboard', checkUserAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
-
-app.get('/account', checkUserAuth, (req, res) => {
-    res.set('Cache-Control', 'no-store, private');
-    res.sendFile(path.join(viewsPath, 'account.html'));
-});
-
 
 // Invoice Maker must require a signed-in customer.
 app.get('/tools/invoices', checkUserAuth, (req, res) => {
@@ -1582,8 +1360,7 @@ async function createPayFastCheckout({
     purchaseType,
     planId = '',
     planName = '',
-    durationOption = '',
-    orderDetails = null
+    durationOption = ''
 }) {
     const config = payfastConfig();
 
@@ -1596,10 +1373,11 @@ async function createPayFastCheckout({
         );
     }
 
-    const configuredBaseUrl = String(process.env.PUBLIC_BASE_URL || '').trim();
-    const publicBaseUrl = (configuredBaseUrl || 'https://www.itelements.co.za').replace(/\/$/, '');
+    const publicBaseUrl = String(
+        process.env.PUBLIC_BASE_URL || ''
+    ).replace(/\/$/, '');
 
-    if (!/^https:\/\//i.test(publicBaseUrl)) {
+    if (!publicBaseUrl.startsWith('https://')) {
         throw Object.assign(
             new Error('Set PUBLIC_BASE_URL to your deployed HTTPS website address.'),
             { statusCode: 503 }
@@ -1608,13 +1386,6 @@ async function createPayFastCheckout({
 
     const paymentId = `ite-${randomUUID()}`;
 
-    if (mongoose.connection.readyState !== 1) {
-        throw Object.assign(
-            new Error('Secure payment is temporarily unavailable because the order database is not connected. Please try again shortly.'),
-            { statusCode: 503 }
-        );
-    }
-
     await PayFastPurchase.create({
         paymentId,
         userEmail: email,
@@ -1622,7 +1393,6 @@ async function createPayFastCheckout({
         planId,
         planName,
         durationOption,
-        orderDetails,
         amount,
         mode: config.mode
     });
@@ -1631,9 +1401,7 @@ async function createPayFastCheckout({
         ? '/dashboard'
         : purchaseType === 'invoicePro'
             ? '/tools/invoices'
-            : purchaseType === 'storeOrder'
-                ? '/store'
-                : '/';
+            : '/';
 
     const fields = {
         merchant_id: config.merchantId,
@@ -1648,16 +1416,12 @@ async function createPayFastCheckout({
             ? `IT Elements ${planName} 30-day support plan`
             : purchaseType === 'invoicePro'
                 ? 'IT Elements Invoice Pro 30-day access'
-                : purchaseType === 'storeOrder'
-                    ? 'IT Elements Online Store Order'
-                    : `IT Elements ${QUICK_FIX_OPTIONS[durationOption]?.label || 'remote support session'}`,
+                : `IT Elements ${QUICK_FIX_OPTIONS[durationOption]?.label || 'remote support session'}`,
         item_description: purchaseType === 'plan'
             ? 'One-time payment for 30 days of support; renew manually.'
             : purchaseType === 'invoicePro'
                 ? 'One-time payment for 30 days of additional invoice and quote creation.'
-                : purchaseType === 'storeOrder'
-                    ? 'IT Elements products purchased through the online store.'
-                    : 'One-time remote support session.'
+                : 'One-time remote support session.'
     };
 
     fields.signature = payfastSignature(
@@ -1706,101 +1470,6 @@ app.post('/api/payment/payfast-quickfix', async (req, res) => {
         return res.status(err.statusCode || 502).json({
             success: false,
             message: err.message || 'Could not start PayFast checkout. Please try again.'
-        });
-    }
-});
-
-// Online store checkout: account required; all prices and stock are verified server-side.
-app.post('/api/payment/payfast-product-checkout', async (req, res) => {
-    try {
-        const email = String((req.session && req.session.userEmail) || req.body.email || '').trim().toLowerCase();
-        const customerName = String(req.body.customerName || '').trim().slice(0, 100);
-        const phone = String(req.body.phone || '').trim().slice(0, 30);
-        const deliveryMethod = 'delivery';
-        const deliveryAddress = String(req.body.deliveryAddress || '').trim().slice(0, 500);
-        const rawItems = Array.isArray(req.body.items) ? req.body.items : [];
-
-        const normalizedPhone = phone.replace(/[\s().-]/g, '');
-        if (customerName.length < 2) {
-            return res.status(400).json({ success: false, message: 'Please enter your full name.' });
-        }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            return res.status(400).json({ success: false, message: 'Please enter a valid email address.' });
-        }
-        if (!/^\+?[0-9]{7,20}$/.test(normalizedPhone)) {
-            return res.status(400).json({ success: false, message: 'Please enter a valid phone number, including your country code.' });
-        }
-        if (deliveryAddress.length < 8) {
-            return res.status(400).json({ success: false, message: 'Please enter your delivery address.' });
-        }
-        if (!rawItems.length || rawItems.length > 30) {
-            return res.status(400).json({ success: false, message: 'Your cart is empty or contains too many items.' });
-        }
-
-        const quantities = new Map();
-        for (const row of rawItems) {
-            const id = String(row.id || row.productId || '');
-            const qty = Math.floor(Number(row.qty ?? row.quantity));
-            if (!mongoose.isValidObjectId(id) || !Number.isInteger(qty) || qty < 1 || qty > 99) {
-                return res.status(400).json({ success: false, message: 'One of the cart items has an invalid quantity.' });
-            }
-            quantities.set(id, (quantities.get(id) || 0) + qty);
-        }
-
-        const ids = [...quantities.keys()];
-        const products = await StoreProduct.find({ _id: { $in: ids }, status: 'active' }).lean();
-        if (products.length !== ids.length) {
-            return res.status(409).json({ success: false, message: 'A product in your cart is no longer available. Please refresh the store.' });
-        }
-
-        let subtotalCents = 0;
-        const orderItems = products.map(product => {
-            const quantity = quantities.get(String(product._id));
-            const stock = Math.max(0, Number(product.stock) || 0);
-            if (stock < quantity) throw Object.assign(new Error(`${product.name} has only ${stock} available.`), { statusCode: 409 });
-            const unitPriceCents = Math.round(Number(product.price) * 100);
-            if (!Number.isSafeInteger(unitPriceCents) || unitPriceCents < 1) throw Object.assign(new Error(`Invalid price for ${product.name}.`), { statusCode: 400 });
-            subtotalCents += unitPriceCents * quantity;
-            return {
-                productId: String(product._id),
-                name: product.name,
-                sku: product.sku || '',
-                imageUrl: String(product.imageUrl || (Array.isArray(product.images) ? product.images.find(Boolean) : '') || ''),
-                quantity,
-                unitPriceCents
-            };
-        });
-
-        if (!Number.isSafeInteger(subtotalCents) || subtotalCents < 1) {
-            return res.status(400).json({ success: false, message: 'The order subtotal is invalid.' });
-        }
-
-        // IT Elements delivery policy: R80 below R755; free at R755 and above.
-        // Collection never incurs a delivery charge.
-        const deliveryFeeCents = deliveryMethod === 'delivery' && subtotalCents < 75500 ? 8000 : 0;
-        const totalCents = subtotalCents + deliveryFeeCents;
-
-        const checkout = await createPayFastCheckout({
-            email,
-            amount: totalCents,
-            purchaseType: 'storeOrder',
-            orderDetails: {
-                customerName,
-                phone: normalizedPhone,
-                deliveryMethod,
-                deliveryAddress: deliveryMethod === 'delivery' ? deliveryAddress : '',
-                subtotalCents,
-                deliveryFeeCents,
-                totalCents,
-                items: orderItems
-            }
-        });
-        return res.json({ success: true, ...checkout });
-    } catch (err) {
-        console.error('[STORE CHECKOUT] Payment preparation failed:', err && err.message ? err.message : err);
-        return res.status(err.statusCode || 502).json({
-            success: false,
-            message: err.message || 'Secure payment could not be prepared. Please contact IT Elements.'
         });
     }
 });
@@ -2266,12 +1935,9 @@ app.post('/client/register', async (req, res) => {
 
         const nextUrl = req.session.returnTo === '/tools/invoices'
             ? '/tools/invoices'
-            : req.session.returnTo === '/store?resumeCart=1'
-                ? '/store?resumeCart=1'
             : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
                 ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-                : req.session.returnTo === '/dashboard' ? '/dashboard'
-            : req.session.returnTo === '/account' ? '/account' : '/store';
+                : '/dashboard';
 
         delete req.session.returnTo;
 
@@ -2293,21 +1959,11 @@ app.post('/client/login', async (req, res) => {
             process.env.ADMIN_PASSWORD &&
             password === process.env.ADMIN_PASSWORD
         ) {
-            req.session.regenerate((regenerateError) => {
-                if (regenerateError) {
-                    console.error('Admin session creation failed:', regenerateError.message);
-                    return res.status(500).send('Unable to start your session. Please try again.');
-                }
-                req.session.isAdmin = true;
-                req.session.save((saveError) => {
-                    if (saveError) {
-                        console.error('Admin session save failed:', saveError.message);
-                        return res.status(500).send('Unable to save your session. Please try again.');
-                    }
-                    return res.redirect('/admin');
-                });
-            });
-            return;
+            req.session.isAdmin = true;
+
+            return res.send(
+                '<script>window.location.href="/admin";</script>'
+            );
         }
 
         const normalizedEmail = String(email).toLowerCase().trim();
@@ -2317,31 +1973,20 @@ app.post('/client/login', async (req, res) => {
         });
 
         if (user && await verifyAndUpgradePassword(user, password)) {
+            req.session.isUser = true;
+            req.session.userEmail = user.email;
+
             const nextUrl = req.session.returnTo === '/tools/invoices'
                 ? '/tools/invoices'
-                : req.session.returnTo === '/store?resumeCart=1'
-                    ? '/store?resumeCart=1'
                 : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
                     ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
-                    : req.session.returnTo === '/dashboard' ? '/dashboard'
-                : req.session.returnTo === '/account' ? '/account' : '/store';
+                    : '/dashboard';
 
-            req.session.regenerate((regenerateError) => {
-                if (regenerateError) {
-                    console.error('Customer session creation failed:', regenerateError.message);
-                    return res.status(500).send('Unable to start your session. Please try again.');
-                }
-                req.session.isUser = true;
-                req.session.userEmail = user.email;
-                req.session.save((saveError) => {
-                    if (saveError) {
-                        console.error('Customer session save failed:', saveError.message);
-                        return res.status(500).send('Unable to save your session. Please try again.');
-                    }
-                    return res.redirect(nextUrl);
-                });
-            });
-            return;
+            delete req.session.returnTo;
+
+            return res.send(
+                `<script>window.location.href=${JSON.stringify(nextUrl)};</script>`
+            );
         }
 
         res.send(
@@ -2519,14 +2164,14 @@ app.post('/api/auth/reset-password', async (req, res) => {
 app.get('/admin/logout', (req, res) => {
     req.session.destroy(() => {
         res.clearCookie('connect.sid');
-        res.redirect('/');
+        res.redirect('/client/login');
     });
 });
 
 app.get('/client/logout', (req, res) => {
     req.session.destroy(() => {
-        res.clearCookie('connect.sid', { path: '/' });
-        res.redirect('/');
+        res.clearCookie('connect.sid');
+        res.redirect('/client/login');
     });
 });
 
@@ -2714,45 +2359,6 @@ app.post('/support', async (req, res) => {
     } catch (err) {
         console.error('Support request error:', err.message);
         res.status(500).send('Database sync error.');
-    }
-});
-
-// Customer account centre: only data belonging to the signed-in session is returned.
-app.get('/api/client/account-data', checkUserAuth, async (req, res) => {
-    try {
-        const email = String(req.session.userEmail || '').toLowerCase();
-        const user = await UserAccount.findOne({ email }, { password: 0 }).lean();
-        if (!user) return res.status(404).json({ success: false, message: 'Account not found.' });
-        const [orders, purchases, tickets, documents, cart] = await Promise.all([
-            PayFastPurchase.find({ userEmail: email, purchaseType: 'storeOrder' }).select('paymentId orderDetails amount status fulfilmentStatus paidAt createdAt').sort({ createdAt: -1 }).limit(50).lean(),
-            PayFastPurchase.find({ userEmail: email, purchaseType: { $ne: 'storeOrder' } }).select('paymentId purchaseType planName amount status paidAt createdAt').sort({ createdAt: -1 }).limit(50).lean(),
-            SupportRequest.find({ email }, { remotePassword: 0 }).sort({ date: -1 }).limit(50).lean(),
-            BusinessDocument.find({ ownerEmail: email }).select('kind number totalCents issueDate dueDate createdAt').sort({ createdAt: -1 }).limit(50).lean(),
-            StoreCustomerCart.findOne({ ownerEmail: email }).select('items updatedAt').lean()
-        ]);
-        res.set('Cache-Control', 'no-store, private');
-        res.json({ success: true, user, orders, purchases, tickets, documents, cart });
-    } catch (err) {
-        console.error('Customer account data error:', err.message);
-        res.status(500).json({ success: false, message: 'Could not load your account.' });
-    }
-});
-
-app.patch('/api/client/account-profile', checkUserAuth, async (req, res) => {
-    try {
-        const fullName = String(req.body.fullName || '').trim().slice(0, 100);
-        const phone = String(req.body.phone || '').trim().slice(0, 30);
-        if (!fullName || !phone) return res.status(400).json({ success: false, message: 'Please enter your name and phone number.' });
-        const user = await UserAccount.findOneAndUpdate(
-            { email: String(req.session.userEmail || '').toLowerCase() },
-            { $set: { fullName, phone } },
-            { new: true, runValidators: true, projection: { password: 0 } }
-        );
-        if (!user) return res.status(404).json({ success: false, message: 'Account not found.' });
-        res.json({ success: true, user: { fullName: user.fullName, phone: user.phone, email: user.email } });
-    } catch (err) {
-        console.error('Customer profile update error:', err.message);
-        res.status(500).json({ success: false, message: 'Could not update your profile.' });
     }
 });
 
