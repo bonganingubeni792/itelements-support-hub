@@ -1119,7 +1119,7 @@ function getStoreCartOwner(req) {
     if (customerEmail) return customerEmail;
     // Admin sessions do not carry a customer email. Give the single IT Elements
     // admin account its own stable cart identity instead of silently using guest storage.
-    if (req.session?.isAdmin) return 'admin@itelements.help';
+    if (req.session?.isAdmin) return 'admin@itelements.co.za';
     return '';
 }
 
@@ -1616,7 +1616,7 @@ async function createPayFastCheckout({
     }
 
     const configuredBaseUrl = String(process.env.PUBLIC_BASE_URL || '').trim();
-    const publicBaseUrl = (configuredBaseUrl || 'https://www.itelements.co.za').replace(/\/$/, '');
+    const publicBaseUrl = 'https://www.itelements.co.za';
 
     if (!/^https:\/\//i.test(publicBaseUrl)) {
         throw Object.assign(
@@ -2422,7 +2422,7 @@ app.post('/api/auth/forgot-password', rateLimitPasswordReset, async (req, res) =
             expiresAt: new Date(Date.now() + 15 * 60 * 1000)
         });
 
-        const baseUrl = process.env.PUBLIC_BASE_URL.replace(/\/$/, '');
+        const baseUrl = 'https://www.itelements.co.za';
 
         const resetUrl =
             `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
