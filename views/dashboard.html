@@ -967,57 +967,326 @@ textarea.form-control,
 }
 
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-sticky-overflow-clip-v8">
-<style id="it-elements-full-width-dashboard-redesign">
-/* Customer dashboard: full-screen canvas and premium responsive portal finish */
-html,body{width:100%;min-height:100%;overflow-x:hidden}
-body{background:linear-gradient(180deg,#fff 0%,#f7f8fa 100%)}
-.page{width:100%!important;max-width:none!important;margin:0!important;padding:0 clamp(16px,3.2vw,58px) 64px!important}
-.header{position:sticky;top:0;z-index:60;width:100%;margin:0 0 30px!important;padding:12px clamp(14px,2.2vw,32px)!important;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border:1px solid #e8e9ed;border-top:0;border-radius:0 0 18px 18px;box-shadow:0 8px 28px rgba(22,28,45,.07)}
-.welcome{font-size:clamp(27px,2.2vw,38px)!important;letter-spacing:-.7px;margin-top:18px!important}
-.welcome-subtitle{font-size:15px!important;color:#667085!important}
-.client-workspaces{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}
-.client-workspace{min-height:190px!important;border-radius:20px!important;padding:24px!important;box-shadow:0 12px 34px rgba(20,25,40,.07)!important;transition:transform .2s ease,box-shadow .2s ease}
-.client-workspace:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(20,25,40,.11)!important}
-.client-workspace-icon{width:62px!important;height:62px!important;border-radius:18px!important;font-size:30px!important;display:grid;place-items:center;background:#fff0f0!important;color:#e00000!important}
-.quick-stats{gap:16px!important;margin:26px 0!important}
-.quick-stat{border-radius:18px!important;padding:22px!important;min-height:116px;box-shadow:0 8px 24px rgba(20,25,40,.055)!important}
-.subscription-summary{border-radius:18px!important;padding:24px!important;box-shadow:0 8px 24px rgba(20,25,40,.055)!important}
-.section-title{margin-top:30px!important;font-size:20px!important}
-.section-note{max-width:none!important}
-.plan-grid,.plans-grid,.support-plans{width:100%!important}
-button,.button,.client-workspace-action{transition:transform .18s ease,box-shadow .18s ease}
-button:hover,.button:hover{transform:translateY(-1px)}
-@media(max-width:760px){
- .page{padding:0 14px 100px!important}
- .header{position:sticky;top:0;display:flex;flex-direction:column;align-items:stretch;gap:10px;margin:0 -14px 20px!important;padding:10px 14px!important;border-radius:0 0 16px 16px}
- .header h1{font-size:18px!important;white-space:normal}
- .header-actions{width:100%;display:flex;overflow-x:auto;flex-wrap:nowrap;gap:8px;padding:3px 0 7px;scrollbar-width:none}
- .header-actions a{flex:0 0 auto}
- .client-workspaces{grid-template-columns:1fr!important}
- .client-workspace{min-height:0!important;padding:18px!important}
- .quick-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
- .quick-stat{padding:13px 10px!important;min-height:92px}
- .subscription-summary{padding:16px!important;gap:14px!important}
-}
-@media(max-width:430px){
- .quick-stats{grid-template-columns:1fr!important}
-}
-</style>
 
+<style id="it-elements-client-portal-clean-layout">
+/* IT Elements customer portal: clean full-width layout, normal image sizing and site navigation */
+html, body {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+body {
+  display: block !important;
+  background: #fff !important;
+  color: #171717 !important;
+}
+body > main.page,
+main.page,
+.page {
+  display: block !important;
+  position: static !important;
+  float: none !important;
+  transform: none !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 28px 60px !important;
+  box-sizing: border-box !important;
+}
 
-<style id="ite-dashboard-shared-header-and-request-cta">
-/* Match the shared IT Elements website header on the signed-in dashboard. */
-main.page{width:100%!important;max-width:none!important;margin:0!important;padding:0 0 56px!important}
-nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:100%!important;max-width:none!important;min-height:82px!important;margin:0 0 26px!important;padding:12px clamp(18px,3.2vw,58px)!important;border:0!important;border-bottom:1px solid #e7e8eb!important;border-radius:0!important;background:#fff!important;box-shadow:0 2px 10px rgba(0,0,0,.045)!important}
-.request-help-cta{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:22px!important;padding:24px!important;border:1px solid #e5e7eb!important;border-left:4px solid #e00000!important;border-radius:13px!important;background:#fff!important;box-shadow:0 7px 22px rgba(16,24,40,.045)!important}
-.request-help-cta-copy{min-width:0;max-width:760px}
-.request-help-cta-kicker{display:block;margin-bottom:6px;color:#e00000;font-size:10px;font-weight:900;letter-spacing:1px}
-.request-help-cta h2{margin:0 0 7px;color:#171717;font-size:21px;line-height:1.25}
-.request-help-cta p{margin:0;color:#62626b;font-size:13px;line-height:1.6}
-.request-help-cta-button{display:inline-flex;flex:0 0 auto;align-items:center;justify-content:center;gap:12px;min-height:46px;padding:12px 19px;border-radius:8px;background:#e00000;color:#fff;text-decoration:none;font-size:13px;font-weight:850;white-space:nowrap;box-shadow:0 6px 16px rgba(224,0,0,.15)}
-.request-help-cta-button:hover{background:#b00000;transform:translateY(-1px)}
-.request-help-cta-button span{font-size:18px;line-height:1}
-@media(max-width:760px){main.page{padding:0 0 45px!important}nav.nav{margin-bottom:18px!important;padding:10px 15px!important}.request-help-cta{align-items:stretch!important;flex-direction:column!important;padding:18px!important}.request-help-cta-button{width:100%}}
+/* Main site navigation */
+header.header {
+  position: relative !important;
+  inset: auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 12px 22px !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 72px !important;
+  margin: 0 0 24px !important;
+  padding: 12px 18px !important;
+  border: 0 !important;
+  border-bottom: 1px solid #e7e7e9 !important;
+  border-radius: 0 0 12px 12px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 18px rgba(16,24,40,.055) !important;
+  box-sizing: border-box !important;
+  z-index: 20 !important;
+}
+header.header h1 {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  font-size: 20px !important;
+}
+header.header h1 img {
+  display: block !important;
+  flex: 0 0 42px !important;
+  width: 42px !important;
+  height: 42px !important;
+  max-width: 42px !important;
+  object-fit: contain !important;
+}
+.header-actions {
+  position: static !important;
+  inset: auto !important;
+  display: flex !important;
+  flex: 1 1 620px !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+  gap: 4px 5px !important;
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.header-actions a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 34px !important;
+  padding: 7px 9px !important;
+  border: 1px solid transparent !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  color: #292929 !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+.header-actions a:hover,
+.header-actions a:focus-visible {
+  background: #fff1f1 !important;
+  border-color: #f4cccc !important;
+  color: #c90000 !important;
+  outline: none !important;
+}
+.header-actions .logout-link { color: #d00000 !important; }
+
+/* Intro and full-width content */
+.welcome {
+  margin: 0 0 6px !important;
+  font-size: clamp(25px, 2.1vw, 34px) !important;
+  line-height: 1.2 !important;
+}
+.welcome-subtitle {
+  margin: 0 0 22px !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+.client-workspaces,
+.quick-stats,
+.plans-wrapper,
+.subscription-summary,
+.ticket-card,
+#account-management {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  box-sizing: border-box !important;
+}
+.client-workspaces {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin: 0 0 22px !important;
+}
+
+/* Cards: strict 3-column grid prevents huge images and vertical text */
+.client-workspace {
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr) 82px !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 126px !important;
+  height: auto !important;
+  padding: 15px 17px !important;
+  overflow: hidden !important;
+  border: 1px solid #e4e7ec !important;
+  border-top: 3px solid #e00000 !important;
+  border-radius: 13px !important;
+  background: #fff !important;
+  box-shadow: 0 4px 15px rgba(16,24,40,.045) !important;
+  text-decoration: none !important;
+}
+.client-workspace.store-workspace { border-top-color: #252525 !important; }
+.client-workspace:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 9px 22px rgba(16,24,40,.085) !important;
+}
+.client-workspace-icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  max-width: 42px !important;
+  margin: 0 !important;
+  border-radius: 11px !important;
+  background: #fff0f0 !important;
+  color: #e00000 !important;
+  font-size: 21px !important;
+}
+.client-workspace-copy {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  overflow: hidden !important;
+  writing-mode: horizontal-tb !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+.client-workspace-kicker {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 0 4px !important;
+  font-size: 8px !important;
+  line-height: 1.35 !important;
+  letter-spacing: .8px !important;
+  white-space: normal !important;
+}
+.client-workspace-copy > strong {
+  display: block !important;
+  width: 100% !important;
+  font-size: 17px !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+.client-workspace-copy > span:nth-of-type(2) {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 5px !important;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+  white-space: normal !important;
+}
+.client-workspace-action {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin-top: 8px !important;
+  padding: 7px 10px !important;
+  border-radius: 7px !important;
+  background: #e00000 !important;
+  color: #fff !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+}
+.client-workspace-art {
+  display: block !important;
+  position: static !important;
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  justify-self: center !important;
+  align-self: center !important;
+  flex: none !important;
+  width: 78px !important;
+  height: 78px !important;
+  min-width: 78px !important;
+  max-width: 78px !important;
+  min-height: 78px !important;
+  max-height: 78px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* Stats, plans and sections fill the same canvas */
+.quick-stats {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  margin: 20px 0 26px !important;
+}
+.quick-stat { min-width: 0 !important; }
+.plans-wrapper {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+.plan-box { min-width: 0 !important; }
+.ticket-card { margin: 0 0 20px !important; }
+.request-choice-grid { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 14px !important; }
+.request-choice { min-width: 0 !important; }
+.software-downloads {
+  margin-top: 18px !important;
+  padding: 17px !important;
+  border: 1px solid #e6e8ed !important;
+  border-radius: 12px !important;
+  background: #fafbfc !important;
+}
+.software-downloads h2 { margin: 0 0 6px !important; font-size: 15px !important; }
+.software-downloads .soft-box { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 10px !important; }
+.software-downloads .soft-item { min-width: 0 !important; padding: 13px !important; }
+
+/* Account section follows the same width as the rest of the portal */
+#account-management { margin: 30px 0 0 !important; }
+#account-management .account-section-hero,
+#account-management .account-hero,
+#account-management .stats,
+#account-management .grid { width: 100% !important; max-width: none !important; }
+
+/* Tablet and phone layouts */
+@media (max-width: 1200px) {
+  header.header { align-items: flex-start !important; }
+  .header-actions { justify-content: flex-start !important; flex-basis: 100% !important; }
+  .plans-wrapper { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+}
+@media (max-width: 760px) {
+  body > main.page, main.page, .page { padding: 0 15px 44px !important; }
+  header.header { flex-direction: column !important; gap: 8px !important; margin-bottom: 18px !important; padding: 10px 14px !important; }
+  .header-actions { flex-wrap: nowrap !important; overflow-x: auto !important; justify-content: flex-start !important; padding-bottom: 5px !important; }
+  .header-actions a { flex: 0 0 auto !important; }
+  .client-workspaces { grid-template-columns: 1fr !important; }
+  .quick-stats { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+  .quick-stat:last-child { grid-column: 1/-1 !important; }
+  .plans-wrapper { grid-template-columns: 1fr !important; }
+  .request-choice-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .client-workspace { grid-template-columns: 38px minmax(0,1fr) 54px !important; gap: 9px !important; padding: 12px !important; }
+  .client-workspace-icon { width: 36px !important; height: 36px !important; min-width: 36px !important; max-width: 36px !important; font-size: 18px !important; }
+  .client-workspace-art { width: 52px !important; height: 52px !important; min-width: 52px !important; max-width: 52px !important; min-height: 52px !important; max-height: 52px !important; }
+  .client-workspace-copy > strong { font-size: 15px !important; }
+  .client-workspace-copy > span:nth-of-type(2) { font-size: 10px !important; }
+  .client-workspace-art { display: none !important; }
+  .quick-stats { grid-template-columns: 1fr 1fr !important; }
+  .quick-stat:last-child { grid-column: 1/-1 !important; }
+  .software-downloads .soft-box { grid-template-columns: 1fr !important; }
+}
 </style>
 
 </head>
@@ -1025,22 +1294,26 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
 <body>
 <main class="page">
 
-<nav class="nav" aria-label="Main navigation">
-  <a class="brand" href="/" aria-label="IT Elements home">
+<header class="header">
+  <h1>
     <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo" width="46" height="46">
-    <span>IT Elements.</span>
-    <span class="brand-support">support</span>
-  </a>
-  <button class="menu-toggle" id="menuToggle" type="button"
-    aria-label="Open navigation menu" aria-expanded="false"
-    aria-controls="mainNavigation">☰</button>
-  <div class="nav-links" id="mainNavigation">
+    <span>IT Elements.<span class="brand-support">support</span></span>
+    <span class="portal-label">Customer Portal</span>
+  </h1>
+
+  <nav class="header-actions" aria-label="Client navigation">
     <a href="/">Home</a>
     <a href="/services">Services</a>
-    <a href="/store">Online Store</a>
+    <a href="/onsite-support">On-site</a>
+    <a href="/pricing">Plans</a>
+    <a href="/faq">FAQ</a>
     <a href="/contact">Contact</a>
-  </div>
-</nav>
+    <a href="/store">Visit Store</a>
+    <a href="#account-management">My Account</a>
+    <a href="#ticket-request">Request Help</a>
+    <a href="/client/logout" class="logout-link">Log out</a>
+  </nav>
+</header>
 
 <div class="notification-widget" id="notification-widget">
   <button class="notification-toggle" id="notification-toggle" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notification-panel">
@@ -1074,7 +1347,8 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
       <span>Submit a support ticket, request remote assistance, arrange an on-site visit and follow your existing requests.</span>
       <span class="client-workspace-action">Go to Online Support <b aria-hidden="true">→</b></span>
     </span>
-  </a>
+  
+    <img class="client-workspace-art" src="/assets/portal-support.webp" alt="Laptop and headset for remote IT support" loading="lazy"></a>
   <a class="client-workspace store-workspace" href="/store">
     <span class="client-workspace-icon" aria-hidden="true">▣</span>
     <span class="client-workspace-copy">
@@ -1083,7 +1357,28 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
       <span>Explore computers, laptops, storage, memory, networking equipment, accessories and available special offers.</span>
       <span class="client-workspace-action">Explore Products <b aria-hidden="true">→</b></span>
     </span>
-  </a>
+  
+    <img class="client-workspace-art" src="/assets/portal-store.webp" alt="Computers and accessories from the IT Elements store" loading="lazy"></a>
+  <a class="client-workspace" href="#store-order-history">
+    <span class="client-workspace-icon" aria-hidden="true">🛍</span>
+    <span class="client-workspace-copy">
+      <span class="client-workspace-kicker">PURCHASE TRACKING</span>
+      <strong>My Store Orders</strong>
+      <span>Check your payment status, order approval, processing, collection or delivery progress.</span>
+      <span class="client-workspace-action">View My Orders <b aria-hidden="true">→</b></span>
+    </span>
+  
+    <img class="client-workspace-art" src="/assets/portal-orders.webp" alt="IT equipment order and delivery" loading="lazy"></a>
+  <a class="client-workspace" href="#invoice-history">
+    <span class="client-workspace-icon" aria-hidden="true">▤</span>
+    <span class="client-workspace-copy">
+      <span class="client-workspace-kicker">ACCOUNT DOCUMENTS</span>
+      <strong>Invoices & Payments</strong>
+      <span>Review saved invoices, quotations and your IT Elements payment history.</span>
+      <span class="client-workspace-action">View Billing <b aria-hidden="true">→</b></span>
+    </span>
+  
+    <img class="client-workspace-art" src="/assets/portal-billing.webp" alt="Invoice and secure payment" loading="lazy"></a>
 </section>
 
 
@@ -1160,15 +1455,175 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
   </article>
 </section>
 
-<section class="ticket-card request-help-cta" id="ticket-request" aria-labelledby="request-help-heading">
-  <div class="request-help-cta-copy">
-    <span class="request-help-cta-kicker">IT ELEMENTS CUSTOMER SUPPORT</span>
-    <h2 id="request-help-heading">Need help with your technology?</h2>
-    <p>Visit our dedicated Request Help page to submit a remote support request or enquire about an on-site visit.</p>
+<section class="ticket-card request-section" id="ticket-request">
+  <h2>Request Help</h2>
+  <p class="request-section-intro">These are two different services. Use the left form for help over the internet, or the right form if you want us to assess an in-person visit.</p>
+  <p id="request-message" class="notice" role="status" aria-live="polite"></p>
+
+  <div class="request-choice-grid">
+
+    <article class="request-choice remote-choice">
+      <div class="request-choice-heading">
+        <span class="request-icon">💻</span>
+        <div>
+          <p class="request-kicker">ONLINE · REMOTE</p>
+          <h3>AnyDesk or TeamViewer support</h3>
+        </div>
+      </div>
+
+      <p class="request-description">For troubleshooting over the internet. Enter your AnyDesk or TeamViewer ID so an engineer can connect after arranging a session.</p>
+
+      <form id="support-ticket-form" action="/support" method="POST" class="dashboard-request-form">
+        <input type="hidden" name="requestType" value="remote">
+        <input type="hidden" name="returnToDashboard" value="1">
+
+        <div class="form-group">
+          <label for="ticket-name">Client name</label>
+          <input id="ticket-name" type="text" name="name" class="form-control" required placeholder="Enter your name">
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-email">Email address</label>
+          <input id="ticket-email" type="email" name="email" class="form-control" autocomplete="email" required placeholder="you@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-phone">Phone number</label>
+          <input id="ticket-phone" type="tel" name="phone" class="form-control" autocomplete="tel" placeholder="Optional contact number">
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-remote-id">AnyDesk / TeamViewer ID</label>
+          <input id="ticket-remote-id" type="text" name="remoteId" class="form-control" autocomplete="off" autocapitalize="off" required placeholder="ID shown in your remote support app">
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-preferred-date">Preferred support date (optional)</label>
+          <input id="ticket-preferred-date" type="date" name="preferredDate" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-preferred-time">Preferred support time (optional)</label>
+          <input id="ticket-preferred-time" type="time" name="preferredTime" class="form-control">
+          <small class="form-help">We’ll contact you to confirm a session time.</small>
+        </div>
+
+        <div class="form-group full-field">
+          <label for="ticket-remote-password">Temporary remote session password (optional)</label>
+          <div class="password-wrap">
+            <input id="ticket-remote-password" type="password" name="remotePassword" class="form-control" autocomplete="new-password" placeholder="Only provide when support asks for it">
+            <button class="password-toggle" type="button" data-password-target="ticket-remote-password" aria-pressed="false">Show</button>
+          </div>
+          <small class="form-help">Share this only when an engineer is ready to connect.</small>
+        </div>
+
+        <div class="form-group full-field">
+          <label for="ticket-issue">Describe the issue</label>
+          <textarea id="ticket-issue" name="issue" class="form-control" required placeholder="Describe the computer problem..."></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn">Send online support ticket</button>
+      </form>
+    </article>
+
+    <article class="request-choice onsite-choice">
+      <div class="request-choice-heading">
+        <span class="request-icon">📍</span>
+        <div>
+          <p class="request-kicker">IN-PERSON · ON-SITE</p>
+          <h3>Request a visit to your location</h3>
+        </div>
+      </div>
+
+      <p class="request-description">For help that may need an in-person visit. This starts as an enquiry; we’ll check your area and contact you to agree availability and any cost before confirming.</p>
+
+      <form id="dashboard-onsite-form" action="/support" method="POST" class="dashboard-request-form onsite-dashboard-form">
+        <input type="hidden" name="requestType" value="onsite">
+        <input type="hidden" name="returnToDashboard" value="1">
+        <input type="hidden" name="remoteId" value="">
+        <input type="hidden" name="remotePassword" value="">
+        <input type="hidden" name="issue" id="onsite-dashboard-issue">
+
+        <div class="form-group">
+          <label for="onsite-dashboard-name">Your name</label>
+          <input id="onsite-dashboard-name" name="name" autocomplete="name" required maxlength="100" placeholder="Enter your name">
+        </div>
+
+        <div class="form-group">
+          <label for="onsite-dashboard-email">Email address</label>
+          <input id="onsite-dashboard-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="onsite-dashboard-phone">Phone number</label>
+          <input id="onsite-dashboard-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" placeholder="Your contact number">
+        </div>
+
+        <div class="form-group">
+          <label for="onsite-dashboard-area">Town or area</label>
+          <input id="onsite-dashboard-area" name="area" autocomplete="address-level2" required maxlength="120" placeholder="e.g. Pretoria East">
+        </div>
+
+        <div class="form-group full-field">
+          <label for="onsite-dashboard-service">What needs attention?</label>
+          <select id="onsite-dashboard-service" name="serviceType" required>
+            <option value="">Choose a service</option>
+            <option>Computer setup or troubleshooting</option>
+            <option>Wi-Fi or small-office network</option>
+            <option>Printer or accessories</option>
+            <option>Hardware assessment</option>
+            <option>Workplace technology</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="onsite-dashboard-date">Preferred date</label>
+          <input id="onsite-dashboard-date" name="preferredDate" type="date">
+        </div>
+
+        <div class="form-group">
+          <label for="onsite-dashboard-time">Preferred time</label>
+          <input id="onsite-dashboard-time" name="preferredTime" type="time">
+        </div>
+
+        <div class="form-group full-field">
+          <label for="onsite-dashboard-details">Describe what you need</label>
+          <textarea id="onsite-dashboard-details" name="details" required maxlength="3000" placeholder="What is happening, and which device or equipment needs attention?"></textarea>
+          <small class="form-help">Do not include account passwords, payment details, or remote-session passwords.</small>
+        </div>
+
+        <button type="submit" class="submit-btn">Send on-site visit request</button>
+      </form>
+    </article>
+
   </div>
-  <a class="request-help-cta-button" href="/support">Request Help <span aria-hidden="true">→</span></a>
+
+  <p class="request-hours">Support hours: Monday to Friday, 08:00–17:00 South African time (SAST). An on-site request is not confirmed until we agree the visit with you.</p>
+<section class="software-downloads">
+  <h2>📥 Required Software Downloads</h2>
+  <p style="font-size:12px;color:#666;margin-top:-5px;">Download remote support software only when asked by your engineer.</p>
+
+  <div class="soft-box">
+    <div class="soft-item">
+      <strong>AnyDesk</strong>
+      <span style="color:#666;font-size:12px;display:block;">Remote support application</span>
+      <a href="https://anydesk.com/en/downloads" target="_blank" rel="noopener noreferrer" class="dl-link">Download AnyDesk</a>
+    </div>
+
+    <div class="soft-item">
+      <strong>TeamViewer</strong>
+      <span style="color:#666;font-size:12px;display:block;">Remote support application</span>
+      <a href="https://www.teamviewer.com/en/download/" target="_blank" rel="noopener noreferrer" class="dl-link">Download TeamViewer</a>
+    </div>
+  </div>
 </section>
+</section>
+
 <div id="onsite-history-rows" hidden aria-hidden="true"></div>
+
+
+
 <section class="ticket-card" id="ticket-history">
   <h2>📋 Your Active Support Tickets</h2>
   <p style="font-size:12px;color:#666;margin-top:-5px;">Ticket history linked to your account.</p>
@@ -1189,6 +1644,25 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
   </table>
 </section>
 
+<section class="ticket-card" id="store-order-history">
+  <h2>🛍️ My Store Orders</h2>
+  <p style="font-size:12px;color:#666;margin-top:-5px;">Track payment, approval and fulfilment progress for orders placed using this account.</p>
+  <div id="customer-order-rows" class="visit-list">
+    <p class="notice">Loading your orders…</p>
+  </div>
+</section>
+
+<section class="ticket-card" id="invoice-history">
+  <h2>🧾 My Invoices & Payments</h2>
+  <p style="font-size:12px;color:#666;margin-top:-5px;">View invoices and quotations saved to your IT Elements account, plus your support-plan and other payment records.</p>
+  <div id="customer-document-rows" class="visit-list">
+    <p class="notice">Loading your documents…</p>
+  </div>
+  <div id="customer-payment-rows" class="visit-list" style="margin-top:12px;"></div>
+</section>
+
+
+
 </main>
 
 <script>
@@ -1196,10 +1670,21 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
     const statusMessage = document.getElementById('checkout-message');
     const ticketRows = document.getElementById('tickets-log-rows');
     const onsiteRows = document.getElementById('onsite-history-rows');
+    const orderRows = document.getElementById('customer-order-rows');
+    const documentRows = document.getElementById('customer-document-rows');
+    const paymentRows = document.getElementById('customer-payment-rows');
     const currentPlan = document.getElementById('current-plan');
     const planStatus = document.getElementById('plan-status');
     const planExpiry = document.getElementById('plan-expiry');
     const welcomeTitle = document.getElementById('welcome-title');
+    const ticketName = document.getElementById('ticket-name');
+    const ticketEmail = document.getElementById('ticket-email');
+    const ticketPhone = document.getElementById('ticket-phone');
+    const onsiteName = document.getElementById('onsite-dashboard-name');
+    const onsiteEmail = document.getElementById('onsite-dashboard-email');
+    const onsitePhone = document.getElementById('onsite-dashboard-phone');
+    const onsiteForm = document.getElementById('dashboard-onsite-form');
+    const requestMessage = document.getElementById('request-message');
     const totalTicketCount = document.getElementById('ticket-total');
     const openTicketCount = document.getElementById('ticket-open-count');
     const resolvedTicketCount = document.getElementById('ticket-resolved-count');
@@ -1207,9 +1692,13 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
     const returnedFromGateway = query.get('payment') === 'returned';
     const payfastPaymentId = query.get('payfastId');
     const selectedPlanId = query.get('plan');
-    if (query.get('request') === 'remote-sent' || query.get('request') === 'onsite-sent') {
-        statusMessage.textContent = 'Your support request was received. You can follow its progress in Your Active Support Tickets below.';
-        statusMessage.className = 'notice success';
+
+    if (query.get('request') === 'remote-sent') {
+        requestMessage.textContent = 'Your online support ticket was sent. Track its status in Your Active Support Tickets below.';
+        requestMessage.className = 'notice success';
+    } else if (query.get('request') === 'onsite-sent') {
+        requestMessage.textContent = 'Your on-site visit request was sent. It will appear below while we review your area and arrange the next steps.';
+        requestMessage.className = 'notice success';
     }
 
     if (query.get('payment') === 'cancelled' || query.get('result') === 'cancelled') {
@@ -1421,6 +1910,23 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
         container.appendChild(details);
     }
 
+    onsiteForm.addEventListener('submit', function () {
+        const form = this;
+
+        const summary = [
+            'ON-SITE SUPPORT ENQUIRY',
+            'Phone: ' + form.phone.value.trim(),
+            'Area: ' + form.area.value.trim(),
+            'Service requested: ' + form.serviceType.value,
+            'Preferred date: ' + (form.preferredDate.value || 'Flexible'),
+            'Preferred time: ' + (form.preferredTime.value || 'Flexible'),
+            '',
+            form.details.value.trim()
+        ].join('\n');
+
+        document.getElementById('onsite-dashboard-issue').value = summary;
+    });
+
     const notificationList = document.getElementById('notification-list');
     const notificationCount = document.getElementById('notification-count');
     const notificationPermissionButton = document.getElementById('notification-permission');
@@ -1603,6 +2109,14 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
         welcomeTitle.textContent =
             `Welcome back${user.fullName ? ', ' + user.fullName.split(/\s+/)[0] : ''}!`;
 
+        ticketName.value = user.fullName || '';
+        ticketEmail.value = user.email || '';
+        ticketPhone.value = user.phone || '';
+
+        onsiteName.value = user.fullName || '';
+        onsiteEmail.value = user.email || '';
+        onsitePhone.value = user.phone || '';
+
         currentPlan.textContent = user.subscriptionTier || 'No active plan';
         planStatus.textContent = user.subscriptionStatus || 'Inactive';
 
@@ -1614,7 +2128,120 @@ nav.nav{position:sticky!important;top:0!important;z-index:10000!important;width:
             : '—';
 
         renderTickets(data.tickets);
+        renderCustomerOrders(data.orders);
+        renderCustomerDocuments(data.documents, data.purchases);
         return data;
+    }
+
+    function moneyFromCents(value) {
+        const amount = Number(value || 0) / 100;
+        return amount.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' });
+    }
+
+    function addDetail(card, label, value) {
+        const item = document.createElement('div');
+        const heading = document.createElement('strong');
+        heading.textContent = label;
+        const detail = document.createElement('span');
+        detail.textContent = value || '—';
+        item.append(heading, detail);
+        card.appendChild(item);
+    }
+
+    function renderCustomerOrders(orders) {
+        orderRows.replaceChildren();
+        const rows = Array.isArray(orders) ? orders : [];
+        if (!rows.length) {
+            const empty = document.createElement('p');
+            empty.className = 'notice';
+            empty.textContent = 'You have not placed any online store orders using this account yet.';
+            orderRows.appendChild(empty);
+            return;
+        }
+
+        for (const order of rows) {
+            const card = document.createElement('article');
+            card.className = 'visit-item';
+            const details = order.orderDetails || {};
+            const items = Array.isArray(details.items) ? details.items : [];
+            const paymentStatus = String(order.status || 'pending').toLowerCase();
+            const fulfilment = String(order.fulfilmentStatus || 'new').toLowerCase();
+            const paymentLabel = paymentStatus === 'paid' ? 'Payment confirmed' :
+                paymentStatus === 'failed' ? 'Payment failed' : 'Awaiting payment';
+            const fulfilmentLabels = {
+                new: 'Awaiting approval',
+                processing: 'Approved · Processing',
+                ready: 'Ready for collection / dispatch',
+                shipped: 'Shipped',
+                completed: 'Completed',
+                cancelled: 'Cancelled'
+            };
+            const itemSummary = items.length
+                ? items.map(item => `${item.name || item.title || 'Product'} × ${Number(item.quantity || 1)}`).join(', ')
+                : 'Order details unavailable';
+
+            addDetail(card, 'Order reference', order.paymentId || '—');
+            addDetail(card, 'Items', itemSummary);
+            addDetail(card, 'Order total', moneyFromCents(order.amount));
+            addDetail(card, 'Payment', paymentLabel);
+            addDetail(card, 'Order progress', fulfilmentLabels[fulfilment] || fulfilment);
+            addDetail(card, 'Order date', order.createdAt ? new Date(order.createdAt).toLocaleString('en-ZA') : '—');
+            if (details.deliveryMethod) {
+                addDetail(card, 'Delivery method', details.deliveryMethod === 'delivery' ? 'Delivery' : 'Collection');
+            }
+            if (details.deliveryAddress) addDetail(card, 'Delivery address', details.deliveryAddress);
+            orderRows.appendChild(card);
+        }
+    }
+
+    function renderCustomerDocuments(documents, purchases) {
+        documentRows.replaceChildren();
+        const rows = Array.isArray(documents) ? documents : [];
+        if (!rows.length) {
+            const empty = document.createElement('p');
+            empty.className = 'notice';
+            empty.textContent = 'No invoices or quotations are saved to your account yet.';
+            documentRows.appendChild(empty);
+        } else {
+            for (const doc of rows) {
+                const card = document.createElement('article');
+                card.className = 'visit-item';
+                addDetail(card, 'Document', `${String(doc.kind || 'document').toUpperCase()} · ${doc.number || 'Unnumbered'}`);
+                addDetail(card, 'Total', moneyFromCents(doc.totalCents));
+                addDetail(card, 'Issue date', doc.issueDate || (doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('en-ZA') : '—'));
+                addDetail(card, 'Due date', doc.dueDate || '—');
+                documentRows.appendChild(card);
+            }
+        }
+
+        paymentRows.replaceChildren();
+        const paymentRowsData = Array.isArray(purchases) ? purchases : [];
+        const heading = document.createElement('h3');
+        heading.textContent = 'Payment history';
+        heading.style.cssText = 'margin:8px 0 4px;font-size:14px;';
+        paymentRows.appendChild(heading);
+
+        if (!paymentRowsData.length) {
+            const empty = document.createElement('p');
+            empty.className = 'notice';
+            empty.textContent = 'No support-plan or additional service payments found.';
+            paymentRows.appendChild(empty);
+            return;
+        }
+
+        for (const purchase of paymentRowsData) {
+            const card = document.createElement('article');
+            card.className = 'visit-item';
+            const label = purchase.purchaseType === 'plan' ? (purchase.planName || 'Support plan') :
+                purchase.purchaseType === 'quickfix' ? 'Quick Fix support session' :
+                purchase.purchaseType === 'invoicePro' ? 'Invoice Pro' : String(purchase.purchaseType || 'Payment');
+            addDetail(card, 'Payment', label);
+            addDetail(card, 'Reference', purchase.paymentId || '—');
+            addDetail(card, 'Amount', moneyFromCents(purchase.amount));
+            addDetail(card, 'Status', String(purchase.status || 'pending').toUpperCase());
+            addDetail(card, 'Date', purchase.createdAt ? new Date(purchase.createdAt).toLocaleString('en-ZA') : '—');
+            paymentRows.appendChild(card);
+        }
     }
 
     function showReturnedPaymentState(data) {
