@@ -2410,14 +2410,14 @@ checkReturnedPayment();
 
 <style id="it-elements-checkout-full-page-south-africa">
 /* Checkout is a dedicated full-screen page, not a popup over the store. */
-#checkoutModal.checkout-modal,
-#checkoutModal.checkout-modal.open{
+#checkoutModal.checkout-modal{
   position:fixed!important;inset:0!important;z-index:99999!important;
-  display:flex!important;align-items:stretch!important;justify-content:stretch!important;
+  display:none!important;align-items:stretch!important;justify-content:stretch!important;
   width:100vw!important;height:100vh!important;height:100dvh!important;
   max-width:none!important;margin:0!important;padding:0!important;
   overflow:hidden!important;background:#fff!important;backdrop-filter:none!important;
 }
+#checkoutModal.checkout-modal.open{display:flex!important}
 #checkoutModal .checkout-backdrop{display:none!important}
 #checkoutModal .checkout-panel{
   position:relative!important;inset:auto!important;display:block!important;
@@ -2465,3 +2465,14 @@ checkReturnedPayment();
   #checkoutModal #checkoutItemsSummary{max-height:280px!important}
 }
 </style>
+<script id="it-elements-checkout-escape-close">
+(function(){
+  document.addEventListener('keydown',function(event){
+    if(event.key!=='Escape')return;
+    const modal=document.getElementById('checkoutModal');
+    if(!modal||!modal.classList.contains('open'))return;
+    const closeButton=modal.querySelector('[data-close-checkout]');
+    if(closeButton)closeButton.click();
+  });
+})();
+</script>
