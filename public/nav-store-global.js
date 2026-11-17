@@ -142,7 +142,7 @@
       var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
         authEmailForCart = auth.email || '';
-        account.textContent = 'Client Portal'; account.href = '/dashboard';
+        account.textContent = 'Log out'; account.href = '/client/logout';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
         if (cartControl) cartControl.hidden = false;
         if (productCart) productCart.hidden = false;
