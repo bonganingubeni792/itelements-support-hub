@@ -519,151 +519,6 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
   }
 }
 
-
-/* IT ELEMENTS CHECKOUT REFINEMENT */
-.checkout-modal{
- display:none!important;position:fixed!important;inset:0!important;z-index:1500!important;
- align-items:center!important;justify-content:center!important;padding:22px!important;
-}
-.checkout-modal.open{display:flex!important}
-.checkout-backdrop{background:rgba(13,18,28,.66)!important;backdrop-filter:blur(7px)!important}
-.checkout-panel{
- width:min(1120px,calc(100vw - 44px))!important;max-width:1120px!important;
- max-height:min(94dvh,980px)!important;overflow:auto!important;
- padding:30px 34px 22px!important;border:1px solid #e7eaf0!important;
- border-radius:22px!important;background:#fff!important;
- box-shadow:0 28px 90px rgba(10,20,40,.28)!important;
-}
-.checkout-close{
- position:absolute!important;top:18px!important;right:18px!important;
- width:40px!important;height:40px!important;border-radius:12px!important;
- border:1px solid #e7eaf0!important;background:#f8f9fb!important;
- color:#344054!important;font-size:24px!important;cursor:pointer!important;
-}
-.checkout-eyebrow{
- display:flex!important;align-items:center!important;gap:9px!important;
- color:#e00000!important;font-size:10px!important;font-weight:900!important;
- letter-spacing:1.7px!important;
-}
-.checkout-eyebrow:before{
- content:"";width:8px;height:8px;border-radius:50%;background:#16a05a;
- box-shadow:0 0 0 4px #e8f7ee;
-}
-.checkout-panel h2{
- margin:8px 52px 5px 0!important;color:#17191f!important;
- font-size:clamp(27px,3vw,36px)!important;line-height:1.12!important;
- letter-spacing:-.8px!important;
-}
-.checkout-intro{margin:0 0 20px!important;color:#667085!important;font-size:14px!important}
-#checkoutItemsSummary{
- width:100%!important;max-width:none!important;margin:0 0 22px!important;padding:13px!important;
- display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;
- border:1px solid #e5e9f0!important;border-radius:16px!important;
- background:linear-gradient(180deg,#fbfcfe,#f7f8fa)!important;
-}
-.checkout-summary-item{
- display:grid!important;grid-template-columns:78px minmax(0,1fr) auto!important;
- align-items:center!important;gap:13px!important;min-width:0!important;
- padding:12px!important;border:1px solid #e7eaf0!important;border-radius:13px!important;
- background:#fff!important;box-shadow:0 2px 8px rgba(16,24,40,.035)!important;
-}
-.checkout-summary-item>img,.checkout-no-image{
- width:78px!important;height:72px!important;object-fit:contain!important;
- border-radius:10px!important;background:#f7f8fa!important;
-}
-.checkout-no-image{display:grid!important;place-items:center!important;font-size:27px!important}
-.checkout-summary-info{display:grid!important;gap:5px!important;min-width:0!important}
-.checkout-product-name{font-size:13px!important;line-height:1.35!important;color:#202633!important;overflow-wrap:anywhere!important}
-.checkout-product-sku{font-size:10px!important;color:#7a8494!important;line-height:1.35!important}
-.checkout-product-actions{display:flex!important;align-items:center!important;gap:12px!important;flex-wrap:wrap!important}
-.checkout-view-product{
- padding:0!important;border:0!important;background:transparent!important;color:#c90000!important;
- font-size:11px!important;font-weight:900!important;text-decoration:underline!important;
- text-underline-offset:3px!important;cursor:pointer!important;
-}
-.checkout-view-product:hover{color:#8f0000!important}
-.checkout-summary-info .cart-remove{
- padding:0!important;border:0!important;background:transparent!important;
- color:#b42318!important;font-size:11px!important;font-weight:800!important;
- text-decoration:underline!important;cursor:pointer!important;
-}
-.checkout-summary-line-total{align-self:center!important;white-space:nowrap!important;font-size:12px!important;font-weight:900!important;color:#202633!important}
-#productCheckoutForm{
- display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
- gap:14px 18px!important;align-items:start!important;
-}
-#productCheckoutForm>label{display:grid!important;gap:7px!important;min-width:0!important;color:#303846!important;font-size:12px!important;font-weight:850!important}
-#productCheckoutForm input,#productCheckoutForm select,#productCheckoutForm textarea{
- width:100%!important;min-width:0!important;min-height:47px!important;padding:12px 14px!important;
- border:1px solid #d9dee8!important;border-radius:10px!important;background:#fff!important;
- color:#202633!important;font:inherit!important;font-size:13px!important;
- transition:border-color .15s,box-shadow .15s!important;
-}
-#productCheckoutForm input:focus,#productCheckoutForm select:focus,#productCheckoutForm textarea:focus{
- outline:none!important;border-color:#e00000!important;box-shadow:0 0 0 3px rgba(224,0,0,.09)!important;
-}
-#productCheckoutForm textarea{min-height:82px!important;resize:vertical!important}
-#productCheckoutForm>label:nth-of-type(4){grid-column:1/-1!important}
-.checkout-address-block{
- grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
- gap:14px 18px!important;padding:19px!important;border:1px solid #e2e7ef!important;
- border-radius:14px!important;background:#fafbfc!important;
-}
-.checkout-section-heading{grid-column:1/-1!important;display:flex!important;justify-content:space-between!important;gap:10px!important;align-items:center!important}
-.checkout-section-heading strong{font-size:14px!important;color:#202633!important}
-.checkout-section-heading span{font-size:10px!important;color:#7a8494!important}
-.checkout-address-block>label{display:grid!important;gap:7px!important;min-width:0!important;font-size:11px!important;font-weight:850!important;color:#394150!important}
-.checkout-address-grid{grid-column:1/-1!important;display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:12px!important}
-.optional-label{font-size:10px!important;font-weight:500!important;color:#8a93a2!important}
-.checkout-note{grid-column:1/-1!important;padding:11px 14px!important;border:1px solid #e8edf5!important;border-radius:10px!important;background:#f7f9fc!important;color:#596579!important;font-size:11px!important;line-height:1.5!important}
-.checkout-total{grid-column:1/-1!important;display:flex!important;justify-content:space-between!important;align-items:center!important;
- padding:13px 2px!important;border-top:1px solid #edf0f4!important;color:#536071!important;font-size:13px!important}
-.checkout-total strong{color:#202633!important;font-size:15px!important;font-weight:900!important}
-.checkout-total.grand-total{padding:15px 2px!important;border-top:1px solid #dfe4ec!important;color:#17191f!important;font-size:15px!important;font-weight:900!important}
-.checkout-total.grand-total strong{font-size:25px!important;color:#17191f!important}
-.payfast-submit{
- grid-column:1/-1!important;width:100%!important;min-height:54px!important;padding:14px 20px!important;
- border:0!important;border-radius:11px!important;background:#e00000!important;color:#fff!important;
- font-size:14px!important;font-weight:900!important;box-shadow:0 7px 18px rgba(224,0,0,.17)!important;cursor:pointer!important;
-}
-.payfast-submit:hover{background:#c90000!important;transform:translateY(-1px)!important}
-.payfast-submit:disabled{opacity:.6!important;cursor:wait!important;transform:none!important}
-.checkout-error,.checkout-actions,.payfast-trust{grid-column:1/-1!important}
-.checkout-actions{display:flex!important;justify-content:space-between!important;gap:12px!important}
-.checkout-back-button,.checkout-cancel-button{
- min-height:40px!important;padding:0 15px!important;border:1px solid #e1e6ee!important;
- border-radius:10px!important;background:#fff!important;color:#475467!important;
- font-size:11px!important;font-weight:850!important;cursor:pointer!important;
-}
-.checkout-cancel-button{color:#b42318!important}
-.payfast-trust{display:flex!important;justify-content:center!important;align-items:center!important;
- color:#7b8492!important;font-size:10px!important;margin-top:1px!important}
-.product-modal{z-index:1700!important}
-@media(max-width:760px){
- .checkout-modal{align-items:flex-end!important;padding:0!important}
- .checkout-panel{width:100%!important;max-width:none!important;max-height:96dvh!important;padding:23px 15px 18px!important;border-radius:20px 20px 0 0!important}
- .checkout-panel h2{font-size:26px!important}
- #checkoutItemsSummary{grid-template-columns:minmax(0,1fr)!important;max-height:220px!important;overflow:auto!important;padding:9px!important}
- .checkout-summary-item{grid-template-columns:62px minmax(0,1fr) auto!important;padding:9px!important;gap:10px!important}
- .checkout-summary-item>img,.checkout-no-image{width:62px!important;height:58px!important}
- .checkout-product-name{font-size:12px!important}
- #productCheckoutForm{grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
- #productCheckoutForm>label:nth-of-type(4){grid-column:1!important}
- .checkout-address-block{grid-template-columns:minmax(0,1fr)!important;padding:13px!important}
- .checkout-address-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
- .checkout-section-heading{align-items:flex-start!important;flex-direction:column!important}
- .checkout-actions{display:grid!important;grid-template-columns:1fr 1fr!important}
- .checkout-back-button,.checkout-cancel-button{width:100%!important}
- .checkout-total.grand-total strong{font-size:22px!important}
-}
-@media(max-width:390px){
- .checkout-address-grid{grid-template-columns:minmax(0,1fr)!important}
- .checkout-actions{grid-template-columns:1fr!important}
- .checkout-summary-item{grid-template-columns:52px minmax(0,1fr)!important}
- .checkout-summary-item>img,.checkout-no-image{width:52px!important;height:50px!important}
- .checkout-summary-line-total{grid-column:2!important;justify-self:start!important}
-}
-
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-guest-cart-auth-v6"><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"><style>
 
 /* IT Elements: hide the product-detail Add to Chat action; keep the header Chat access. */
@@ -1440,7 +1295,7 @@ button[onclick*="addDetailToChat"] {
 <header><a class="brand" href="/" aria-label="IT Elements home"><img src="/assets/itel-support-icon.png?v=3" alt="IT Elements"><span style="color:#171717">IT Elements<span>.</span></span></a><nav><a href="/">Home</a><a href="/services">Services</a><a href="/store">Online Store</a><a href="/contact">Contact</a></nav><a class="cartbtn" id="accountAction" href="/client/login" style="text-decoration:none;margin-right:10px">Login</a><button class="cartbtn" id="openCart">Cart (<span id="cartCount">0</span>)</button></header>
 <section class="hero"><div><div class="eyebrow">IT Elements • Technology & Support since 2007</div><h1>Products to power you.<br><span style="color:#ff3535">Support to keep you going.</span></h1><p>Shop computers, laptops, components and accessories — and get friendly IT support for your home or business.</p><div class="hero-actions"><a class="hero-cta" href="#catalogue">Shop products <span>→</span></a><a class="hero-link" href="https://wa.me/27606181229">Need IT support? Chat to us</a></div></div><div class="hero-art"><div class="hero-art-top"><span>MORE THAN A TECH STORE</span><span>IT ELEMENTS</span></div><div class="hero-art-grid"><div class="hero-art-tile">🛠️<small>REMOTE IT SUPPORT</small></div><div class="hero-art-tile">🏢<small>BUSINESS IT</small></div><div class="hero-art-tile">💻<small>COMPUTER REPAIRS</small></div></div><div style="color:#ffb3b3;font-size:11px;font-weight:750">Shop technology · Get expert help · Stay connected</div></div></section>
 <div class="promo-marquee" role="region" aria-label="IT Elements services"><div class="promo-track"><span>REMOTE IT SUPPORT</span><b>✦</b><span>COMPUTER REPAIRS & UPGRADES</span><b>✦</b><span>BUSINESS IT SUPPORT</span><b>✦</b><span>LAPTOPS & ACCESSORIES</span><b>✦</b><span>WI-FI & NETWORKING HELP</span><b>✦</b><span>REMOTE IT SUPPORT</span><b>✦</b><span>COMPUTER REPAIRS & UPGRADES</span><b>✦</b><span>BUSINESS IT SUPPORT</span><b>✦</b></div></div>
-
+<section class="home-promos" aria-label="Shop and IT support"><a class="home-promo-card shop-promo" href="#catalogue"><span class="promo-kicker">SHOP ONLINE</span><h2>Find your next upgrade.</h2><p>Explore laptops, computers, components and everyday tech accessories.</p><strong>Browse products →</strong></a><a class="home-promo-card support-promo" href="https://wa.me/27606181229"><span class="promo-kicker">IT SUPPORT</span><h2>Technology giving you trouble?</h2><p>Get help with computer problems, software, Wi-Fi, setup and business IT.</p><strong>Get support on WhatsApp →</strong></a></section>
 <section class="store-benefits" aria-label="IT Elements store benefits"><div><span class="benefit-icon">✓</span><span><strong>Helpful local support</strong><small>Advice before and after your purchase</small></span></div><div><span class="benefit-icon">⌕</span><span><strong>Carefully selected tech</strong><small>Products for work, home and gaming</small></span></div><div><span class="benefit-icon">↗</span><span><strong>Easy order enquiries</strong><small>Talk directly to IT Elements</small></span></div></section>
 <main class="wrap" id="catalogue"><div class="intro"><div><div class="eyebrow">Browse products</div><h2>Find what you need</h2><div class="muted">Products and prices are managed by IT Elements.</div></div><div class="muted" id="resultCount"></div></div>
 <section class="shop-filters" aria-label="Search and filter products">
@@ -1972,22 +1827,8 @@ function checkoutMoneySummary(){
   summary.innerHTML=cart.map(item=>{
    const p=products.find(z=>z._id===item.id);if(!p)return '';
    const checkoutImage=p.imageUrl||(Array.isArray(p.images)?p.images.find(Boolean):''); const img=checkoutImage?`<img src="${esc(checkoutImage)}" alt="${esc(p.name)}" loading="lazy">`:'<span class="checkout-no-image">📦</span>';
-   return `<article class="checkout-summary-item">
-    ${img}
-    <div class="checkout-summary-info">
-     <strong class="checkout-product-name">${esc(p.name)}</strong>
-     <small class="checkout-product-sku">${p.sku ? `SKU: ${esc(p.sku)} · ` : ''}Qty: ${item.qty} × ${fmt(Math.round(Number(p.price)*100))}</small>
-     <div class="checkout-product-actions">
-      <button type="button" class="checkout-view-product" data-view-checkout-product="${esc(p._id)}">View product</button>
-      <button type="button" class="cart-remove" onclick="removeCartItem('${p._id}')">Remove</button>
-     </div>
-    </div>
-    <strong class="checkout-summary-line-total">${fmt(Math.round(Number(p.price)*100)*item.qty)}</strong>
-   </article>`;
+   return `<div class="checkout-summary-item">${img}<div class="checkout-summary-info"><strong>${esc(p.name)}</strong><small>Qty: ${item.qty} × ${fmt(Math.round(Number(p.price)*100))}</small><button type="button" class="cart-remove" onclick="removeCartItem('${p._id}')">Remove</button></div><strong class="checkout-summary-line-total">${fmt(Math.round(Number(p.price)*100)*item.qty)}</strong></div>`;
   }).join('');
-  summary.querySelectorAll('[data-view-checkout-product]').forEach(button=>{
-   button.addEventListener('click',()=>window.showProduct(button.dataset.viewCheckoutProduct));
-  });
  }
  if($('checkoutSubtotal'))$('checkoutSubtotal').textContent=fmt(subtotal);
  if($('checkoutDeliveryFee'))$('checkoutDeliveryFee').textContent=fee?fmt(fee):'Free';
