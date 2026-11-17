@@ -77,17 +77,29 @@
       display: inline-flex;
       align-items: center;
       justify-content: flex-start;
+      gap: 12px;
       text-decoration: none;
       flex-shrink: 0;
+      min-width: 0;
     }
 
     .logo img {
       display: block;
-      width: 205px;
-      height: auto;
-      max-height: 68px;
+      width: 50px;
+      height: 50px;
+      max-height: 50px;
       object-fit: contain;
-      object-position: left center;
+      object-position: center;
+      flex: 0 0 50px;
+    }
+
+    .logo-wordmark {
+      color: #171717;
+      font-size: clamp(19px, 2.2vw, 27px);
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: -.7px;
+      white-space: nowrap;
     }
 
     .header-link {
@@ -442,10 +454,14 @@
         padding: 13px 16px;
       }
 
+      .logo { gap: 9px; }
       .logo img {
-        width: 150px;
-        max-height: 52px;
+        width: 43px;
+        height: 43px;
+        max-height: 43px;
+        flex-basis: 43px;
       }
+      .logo-wordmark { font-size: clamp(16px, 4.2vw, 21px); letter-spacing: -.5px; }
 
       .header-link {
         font-size: 11px;
@@ -525,8 +541,12 @@
       }
 
       .logo img {
-        width: 125px;
+        width: 38px;
+        height: 38px;
+        max-height: 38px;
+        flex-basis: 38px;
       }
+      .logo-wordmark { font-size: 15px; }
 
       .header-link {
         font-size: 10px;
@@ -558,10 +578,10 @@
   <header class="site-header">
     <a href="/store" class="logo" aria-label="IT Elements Home">
       <img
-        src="/assets/itel-support-logo-cropped.png"
+        src="/assets/itel-support-icon.png?v=4"
         alt="IT Elements"
-        onerror="this.onerror=null;this.src='/assets/itel-support-logo.png';"
       >
+      <span class="logo-wordmark">itelements.co.za</span>
     </a>
 
     <div class="header-link">
@@ -726,7 +746,7 @@
   <footer class="site-footer">
     <strong>IT Elements</strong> · Professional IT Support
     <br>
-    © <span id="currentYear"></span> IT Elements. All rights reserved.
+    © 2007 IT Elements. All rights reserved.
   </footer>
 
   <script>
