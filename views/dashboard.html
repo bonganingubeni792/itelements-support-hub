@@ -1051,8 +1051,6 @@ header.header h1 img {
 #onsite-history-rows .visit-status{display:inline-flex;padding:5px 10px;border-radius:999px;background:#fff5df;color:#946000;font-size:11px;font-weight:800}
 #onsite-history-rows .visit-status.scheduled,
 #onsite-history-rows .visit-status.finished{background:#e8f7ee;color:#147a42}
-#onsite-history-rows .conversation{grid-column:1/-1;margin-top:9px;padding:10px 12px;border:1px solid #e8ebf0;border-radius:9px;background:#fff}
-#onsite-history-rows .conversation summary{font-size:12px;font-weight:800;color:#b00000;cursor:pointer}
 @media(max-width:760px){.visit-list{grid-template-columns:1fr}.visit-item{grid-template-columns:1fr 1fr}.customer-history-section{padding:15px!important}}
 @media(max-width:480px){.visit-item{grid-template-columns:1fr}.history-card-image{width:46px;height:46px;flex-basis:46px}}
 </style>
@@ -1257,8 +1255,8 @@ body{overflow-x:clip}
   <div class="history-heading">
     <span class="history-heading-icon" aria-hidden="true">🚐</span>
     <div>
-      <h2 id="onsite-history-title">Active On-site Visit Tickets</h2>
-      <p>Track your on-site visit enquiry, confirmation, scheduled date and engineer updates.</p>
+      <h2 id="onsite-history-title">On-site Visit Ticket History</h2>
+      <p>View your submitted on-site requests, requested dates, service details and current status.</p>
     </div>
   </div>
   <div id="onsite-history-rows" class="visit-list">
@@ -1387,7 +1385,6 @@ body{overflow-x:clip}
                     card.appendChild(item);
                 }
 
-                renderConversation(card, request);
                 onsiteRows.appendChild(card);
             }
         }
