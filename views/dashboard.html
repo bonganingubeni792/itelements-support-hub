@@ -1134,6 +1134,54 @@ body{overflow-x:hidden!important}
 }
 </style>
 
+
+<style id="it-elements-true-full-screen">
+/* Force the customer portal to use the entire browser width on desktop. */
+html, body {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: hidden !important;
+}
+main.page, .page {
+  display: block !important;
+  position: relative !important;
+  left: 50% !important;
+  width: 100vw !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 0 0 -50vw !important;
+  padding: 0 clamp(18px, 2.2vw, 42px) 64px !important;
+}
+.header {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 0 24px !important;
+  padding: 10px 0 !important;
+}
+.client-workspaces,
+.quick-stats,
+.plans-wrapper {
+  width: 100% !important;
+  max-width: none !important;
+}
+@media (min-width: 1200px) {
+  .client-workspaces { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .plans-wrapper { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+}
+@media (max-width: 900px) {
+  main.page, .page {
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+}
+@media (max-width: 700px) {
+  .client-workspaces, .plans-wrapper { grid-template-columns: 1fr !important; }
+  .quick-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+</style>
+
 </head>
 
 <body>
