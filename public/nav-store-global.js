@@ -66,8 +66,8 @@
     brand.classList.add('ite-header-brand');
     Array.prototype.forEach.call(brand.querySelectorAll('.brand-support'), function (node) { node.remove(); });
     var text = brand.querySelector('span');
-    if (text) { text.textContent = 'IT Elements.'; }
-    else if (!brand.textContent.trim()) brand.appendChild(document.createTextNode('IT Elements.'));
+    if (text) { text.textContent = 'itelements.co.za'; }
+    else if (!brand.textContent.trim()) brand.appendChild(document.createTextNode('itelements.co.za'));
   }
   var nav = isStore ? header.querySelector('nav') : header.querySelector('.nav-links, .links, nav');
   if (nav) {
@@ -187,4 +187,23 @@
       var productCart = document.getElementById('openCartFromProduct');
       if (productCart) productCart.hidden = true;
     });
+})();
+
+
+/* Site-wide WhatsApp contact button (same destination and label as Home/Store). */
+(function () {
+  function addWhatsAppButton() {
+    if (document.querySelector('.whatsapp')) return;
+    var link = document.createElement('a');
+    link.className = 'whatsapp';
+    link.href = 'https://wa.me/27606181229';
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', 'Chat with IT Elements on WhatsApp');
+    link.textContent = 'WhatsApp Us';
+    link.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:1400;background:#168d4d;color:#fff;border-radius:50px;padding:13px 19px;font-size:13px;font-weight:900;box-shadow:0 5px 20px rgba(0,0,0,.16);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;';
+    document.body.appendChild(link);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addWhatsAppButton);
+  else addWhatsAppButton();
 })();
