@@ -1537,7 +1537,26 @@ app.get('/client/login', (req, res) => {
     if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
     else if (req.query.next === '/dashboard') req.session.returnTo = '/dashboard';
     else if (req.query.next === '/account') req.session.returnTo = '/account';
-    res.sendFile(path.join(viewsPath, 'client-login.html'));
+
+    // If the visitor is already authenticated, send them to their workspace
+    // instead of showing the sign-in page again.
+    if (req.session && req.session.isAdmin) {
+        return res.redirect('/admin');
+    }
+
+    if (req.session && req.session.isUser) {
+        const nextUrl = req.session.returnTo === '/tools/invoices'
+            ? '/tools/invoices'
+            : req.session.returnTo === '/store?resumeCart=1'
+                ? '/store?resumeCart=1'
+                : req.session.returnTo === '/account'
+                    ? '/account'
+                    : '/dashboard';
+        delete req.session.returnTo;
+        return res.redirect(nextUrl);
+    }
+
+    return res.sendFile(path.join(viewsPath, 'client-login.html'));
 });
 
 app.get('/client/forgot-password', (req, res) => {
