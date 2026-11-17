@@ -97,7 +97,7 @@
     if (/^cart(?:\s*\(|$)/i.test(String(node.textContent || '').trim())) node.remove();
   });
   actions.innerHTML = '';
-  var account = makeLink('/client/login', 'Login');
+  var account = makeLink('/client/login?next=%2Fdashboard', 'Login');
   account.id = 'accountAction';
   account.className = 'ite-account-action';
   account.setAttribute('aria-label', 'Log in to your IT Elements account');
@@ -142,7 +142,7 @@
       var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
         authEmailForCart = auth.email || '';
-        account.textContent = 'Logout'; account.href = '/client/logout';
+        account.textContent = 'Client Portal'; account.href = '/dashboard';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
         if (cartControl) cartControl.hidden = false;
         if (productCart) productCart.hidden = false;
@@ -176,13 +176,13 @@
           });
       }
 
-      account.textContent = 'Login'; account.href = '/client/login';
+      account.textContent = 'Login'; account.href = '/client/login?next=%2Fdashboard';
       account.setAttribute('aria-label', 'Log in to your IT Elements account');
       if (cartControl) cartControl.hidden = true;
       if (productCart) productCart.hidden = true;
     })
     .catch(function () {
-      account.textContent = 'Login'; account.href = '/client/login';
+      account.textContent = 'Login'; account.href = '/client/login?next=%2Fdashboard';
       if (cartControl) cartControl.hidden = true;
       var productCart = document.getElementById('openCartFromProduct');
       if (productCart) productCart.hidden = true;
