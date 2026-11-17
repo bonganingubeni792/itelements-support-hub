@@ -1571,8 +1571,7 @@ let cartSaveQueue=Promise.resolve();
 async function refreshStoreAccountAction(){
   const button=$('accountAction');
   if(!button)return;
-  // The Account link is the customer portal, not the store account/home page.
-  // /dashboard performs the normal login check and preserves the intended destination.
+  // Account always opens the customer portal. It must never sign the customer out.
   button.textContent='Client Portal';
   button.href='/dashboard';
   button.setAttribute('aria-label','Open your IT Elements Client Portal');
