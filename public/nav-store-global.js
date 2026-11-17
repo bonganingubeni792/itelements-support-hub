@@ -50,8 +50,12 @@
       '<div class="ite-mobile-drawer-head"><strong>Menu</strong><button class="ite-mobile-drawer-close" type="button" aria-label="Close menu">×</button></div>' +
       '<nav class="ite-mobile-drawer-links" aria-label="Website links"></nav></aside>';
     var list = overlay.querySelector('.ite-mobile-drawer-links');
-    [['/','Home'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login?next=%2Fdashboard','Client Portal']]
-      .forEach(function (item) { list.appendChild(makeLink(item[0], item[1])); });
+    [['/','Home'],['/dashboard','Account'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login','Client Portal']]
+      .forEach(function (item) {
+        var link = makeLink(item[0], item[1]);
+        if (item[1] === 'Client Portal') link.classList.add('ite-client-portal-link');
+        list.appendChild(link);
+      });
     document.body.appendChild(overlay);
     function close() { overlay.classList.remove('open'); document.body.classList.remove('ite-drawer-open'); trigger.setAttribute('aria-expanded','false'); }
     trigger.addEventListener('click', function (e) { e.preventDefault(); var open = !overlay.classList.contains('open'); overlay.classList.toggle('open', open); document.body.classList.toggle('ite-drawer-open', open); trigger.setAttribute('aria-expanded', String(open)); });
@@ -66,22 +70,26 @@
     brand.classList.add('ite-header-brand');
     Array.prototype.forEach.call(brand.querySelectorAll('.brand-support'), function (node) { node.remove(); });
     var text = brand.querySelector('span');
-    if (text) { text.textContent = 'itelements.co.za'; }
-    else if (!brand.textContent.trim()) brand.appendChild(document.createTextNode('itelements.co.za'));
+    if (text) { text.textContent = 'IT Elements.'; }
+    else if (!brand.textContent.trim()) brand.appendChild(document.createTextNode('IT Elements.'));
   }
   var nav = isStore ? header.querySelector('nav') : header.querySelector('.nav-links, .links, nav');
   if (nav) {
     nav.classList.add('ite-header-links');
     nav.innerHTML = '';
-    [['/','Home'],['/services','Services'],['/store','Online Store'],['/contact','Contact']]
+    [['/','Home'],['/dashboard','Account'],['/services','Services'],['/store','Online Store'],['/contact','Contact']]
       .forEach(function (item) { nav.appendChild(makeLink(item[0], item[1])); });
     // Keep the compact approved primary header while making every other page
     // reachable on desktop as well as in the mobile drawer.
     var more = document.createElement('details'); more.className = 'ite-more-menu';
     var summary = document.createElement('summary'); summary.textContent = 'More'; more.appendChild(summary);
     var panel = document.createElement('div'); panel.className = 'ite-more-menu-panel';
-    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/business-tools','Business Tools'],['/client/login?next=%2Fdashboard','Client Portal']]
-      .forEach(function (item) { panel.appendChild(makeLink(item[0], item[1])); });
+    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/booking','Booking'],['/business-tools','Business Tools'],['/client/login','Client Portal']]
+      .forEach(function (item) {
+        var link = makeLink(item[0], item[1]);
+        if (item[1] === 'Client Portal') link.classList.add('ite-client-portal-link');
+        panel.appendChild(link);
+      });
     more.appendChild(panel); nav.appendChild(more);
   }
 
@@ -97,11 +105,21 @@
     if (/^cart(?:\s*\(|$)/i.test(String(node.textContent || '').trim())) node.remove();
   });
   actions.innerHTML = '';
-  var account = makeLink('/client/login?next=%2Fdashboard', 'Login');
+  var account = makeLink('/client/login?next=%2Fstore', 'Log in');
   account.id = 'accountAction';
   account.className = 'ite-account-action';
   account.setAttribute('aria-label', 'Log in to your IT Elements account');
   actions.appendChild(account);
+  var logoutControl = makeLink('/client/logout', 'Log out');
+  logoutControl.id = 'logoutAction';
+  logoutControl.className = 'ite-account-action ite-logout-action';
+  logoutControl.hidden = true;
+  logoutControl.setAttribute('aria-label', 'Log out of your IT Elements account');
+  actions.appendChild(logoutControl);
+  var accountNav = nav ? Array.prototype.find.call(nav.querySelectorAll('a'), function (a) { return a.textContent.trim() === 'Account'; }) : null;
+  var drawerAccount = document.querySelector('#iteMobileDrawer a[href="/dashboard"]');
+  if (accountNav) accountNav.href = '/client/login?next=%2Fstore';
+  if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fstore';
   var cartControl;
   if (isStore) {
     cartControl = oldCart || document.createElement('button');
@@ -112,9 +130,11 @@
     cartControl.hidden = true;
     actions.appendChild(cartControl);
   } else {
-    // The shopping cart remains available inside the store, but never in the
-    // shared site header (including after a customer signs in).
-    cartControl = null;
+    cartControl = makeLink('/store?openCart=1', 'Cart (0)');
+    cartControl.className = 'ite-header-cart';
+    cartControl.setAttribute('aria-label','Open your saved shopping cart');
+    cartControl.hidden = true;
+    actions.appendChild(cartControl);
   }
   window.addEventListener('storage', function (event) {
     if (!event || !event.key || !authEmailForCart) return;
@@ -129,6 +149,25 @@
   });
   var authEmailForCart = '';
 
+  function updatePortalNavigation(authenticated) {
+    Array.prototype.forEach.call(document.querySelectorAll('a,button'), function (node) {
+      var label = String(node.textContent || '').trim().replace(/\\s+/g, ' ');
+      var isPortal = node.classList.contains('ite-client-portal-link') ||
+        /^client portal$/i.test(label) ||
+        (node.matches('a') && /\\/client\\/login(?:[?#]|$)/i.test(node.getAttribute('href') || ''));
+      if (!isPortal) return;
+      if (authenticated) {
+        node.textContent = 'Log out';
+        if (node.matches('a')) node.href = '/client/logout';
+        node.setAttribute('aria-label', 'Log out of your IT Elements account');
+      } else {
+        node.textContent = 'Client Portal';
+        if (node.matches('a')) node.href = '/client/login';
+        node.setAttribute('aria-label', 'Open the IT Elements Client Portal');
+      }
+    });
+  }
+
   var menu = header.querySelector('.menu-toggle, .ite-mobile-menu-trigger');
   if (!menu) { menu = document.createElement('button'); menu.type = 'button'; menu.className = 'ite-mobile-menu-trigger'; menu.textContent = '☰'; header.insertBefore(menu, brand || header.firstChild); }
   menu.classList.add('ite-mobile-menu-trigger');
@@ -140,9 +179,13 @@
       var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
         authEmailForCart = auth.email || '';
-        account.textContent = 'Client Portal'; account.href = '/dashboard';
+        updatePortalNavigation(true);
+        account.textContent = 'Log out'; account.href = '/client/logout';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
-        if (cartControl) cartControl.hidden = true;
+        logoutControl.hidden = true;
+        if (accountNav) { accountNav.href = '/dashboard'; accountNav.setAttribute('aria-label', 'Open your customer dashboard'); }
+        if (drawerAccount) drawerAccount.href = '/dashboard';
+        if (cartControl) cartControl.hidden = false;
         if (productCart) productCart.hidden = false;
 
         // Paint the account's most recent cart immediately. This mirror is written
@@ -174,34 +217,21 @@
           });
       }
 
-      account.textContent = 'Login'; account.href = '/client/login?next=%2Fdashboard';
+      updatePortalNavigation(false);
+      account.textContent = 'Log in'; account.href = '/client/login?next=%2Fstore';
       account.setAttribute('aria-label', 'Log in to your IT Elements account');
+      if (accountNav) { accountNav.href = '/client/login?next=%2Fstore'; accountNav.setAttribute('aria-label', 'Log in to access your customer account'); }
+      if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fstore';
       if (cartControl) cartControl.hidden = true;
       if (productCart) productCart.hidden = true;
     })
     .catch(function () {
-      account.textContent = 'Login'; account.href = '/client/login?next=%2Fdashboard';
+      updatePortalNavigation(false);
+      account.textContent = 'Log in'; account.href = '/client/login?next=%2Fstore';
+      if (accountNav) accountNav.href = '/client/login?next=%2Fstore';
+      if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fstore';
       if (cartControl) cartControl.hidden = true;
       var productCart = document.getElementById('openCartFromProduct');
       if (productCart) productCart.hidden = true;
     });
-})();
-
-
-/* Site-wide WhatsApp contact button (same destination and label as Home/Store). */
-(function () {
-  function addWhatsAppButton() {
-    if (document.querySelector('.whatsapp')) return;
-    var link = document.createElement('a');
-    link.className = 'whatsapp';
-    link.href = 'https://wa.me/27606181229';
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.setAttribute('aria-label', 'Chat with IT Elements on WhatsApp');
-    link.textContent = 'WhatsApp Us';
-    link.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:1400;background:#168d4d;color:#fff;border-radius:50px;padding:13px 19px;font-size:13px;font-weight:900;box-shadow:0 5px 20px rgba(0,0,0,.16);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;';
-    document.body.appendChild(link);
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', addWhatsAppButton);
-  else addWhatsAppButton();
 })();
