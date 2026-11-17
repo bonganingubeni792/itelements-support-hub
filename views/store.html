@@ -1569,16 +1569,13 @@ let storeAccountKey='guest';
 let cartSaveQueue=Promise.resolve();
 
 async function refreshStoreAccountAction(){
- const button=$('accountAction');if(!button)return;
- try{
-  const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
-  const auth=await response.json();
-  if(response.ok&&auth.authenticated){
-   button.textContent='My Account';button.href='/account';button.setAttribute('aria-label','Open your IT Elements account');
-  }else{
-   button.textContent='Login';button.href='/client/login';button.setAttribute('aria-label','Log in to your IT Elements account');
-  }
- }catch(_){button.textContent='Login';button.href='/client/login';}
+  const button=$('accountAction');
+  if(!button)return;
+  // The Account link is the customer portal, not the store account/home page.
+  // /dashboard performs the normal login check and preserves the intended destination.
+  button.textContent='Client Portal';
+  button.href='/dashboard';
+  button.setAttribute('aria-label','Open your IT Elements Client Portal');
 }
 
 async function loadAccountCart(){
