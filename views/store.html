@@ -1514,16 +1514,25 @@ button[onclick*="addDetailToChat"] {
      </div>
      <div class="checkout-note" id="checkoutDeliveryNote">Delivery is R80 for orders below R755. Delivery is free for orders of R755 or more.</div>
     </section>
-    <div class="checkout-actions"><button type="button" class="checkout-back-button" id="checkoutBackToCart">← Back to cart</button><button type="button" class="checkout-cancel-button" data-close-checkout>Cancel checkout</button></div>
+    <div class="checkout-actions"><button type="button" class="checkout-back-button" id="checkoutBackToCart">← Back to cart</button><button type="button" class="checkout-cancel-button" data-close-checkout>Cancel checkout</button><button type="button" class="checkout-primary-action" id="checkoutToReview">Continue to review →</button></div>
    </div>
    <aside class="checkout-sidebar">
     <section class="checkout-card checkout-order-card">
      <div class="checkout-card-heading"><span class="checkout-step-number">3</span><div><h3>Your order</h3><p>Check quantities and products</p></div></div>
+     <div id="checkoutCustomerReview" class="checkout-customer-review" hidden></div>
      <div id="checkoutItemsSummary" class="checkout-items-summary" aria-live="polite"></div>
      <div class="checkout-total"><span>Products subtotal</span><strong id="checkoutSubtotal">R 0.00</strong></div>
      <div class="checkout-total"><span>Delivery</span><strong id="checkoutDeliveryFee">R 0.00</strong></div>
      <div class="checkout-total grand-total"><span>Order total</span><strong id="checkoutTotal">R 0.00</strong></div>
-     <button type="submit" class="payfast-submit" id="payfastSubmit">Continue to secure payment <span>→</span></button>
+     <div class="checkout-stage-actions" id="checkoutReviewActions" hidden>
+      <button type="button" class="checkout-secondary-action" id="checkoutEditDetails">← Edit delivery details</button>
+      <button type="button" class="checkout-primary-action" id="checkoutToPayment">Continue to secure payment →</button>
+     </div>
+     <div class="checkout-stage-actions" id="checkoutPaymentActions" hidden>
+      <button type="button" class="checkout-secondary-action" id="checkoutBackToReview">← Back to review</button>
+      <p class="checkout-confirm-copy">By continuing, you confirm that your products, delivery address and order total are correct.</p>
+     </div>
+     <button type="submit" class="payfast-submit" id="payfastSubmit" hidden>Pay securely with PayFast →</button>
      <div id="checkoutError" role="alert" class="checkout-error"></div>
      <div class="payfast-trust">🔒 Secure payment powered by PayFast</div>
      <div class="checkout-assurance">Your payment details are handled securely by PayFast.</div>
@@ -1571,23 +1580,10 @@ let cartSaveQueue=Promise.resolve();
 async function refreshStoreAccountAction(){
   const button=$('accountAction');
   if(!button)return;
-  try{
-    const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
-    const auth=await response.json();
-    if(response.ok&&auth&&auth.authenticated){
-      button.textContent='Log out';
-      button.href='/client/logout';
-      button.setAttribute('aria-label','Log out of your IT Elements account');
-    }else{
-      button.textContent='Client Portal';
-      button.href='/client/login?next=%2Fdashboard';
-      button.setAttribute('aria-label','Open your IT Elements Client Portal');
-    }
-  }catch(_){
-    button.textContent='Client Portal';
-    button.href='/client/login?next=%2Fdashboard';
-    button.setAttribute('aria-label','Open your IT Elements Client Portal');
-  }
+  // Account always opens the customer portal. It must never sign the customer out.
+  button.textContent='Client Portal';
+  button.href='/dashboard';
+  button.setAttribute('aria-label','Open your IT Elements Client Portal');
 }
 
 async function loadAccountCart(){
@@ -1881,6 +1877,7 @@ window.buyDetailNow=async id=>{
  $('checkoutError').textContent='';
  $('checkoutModal').classList.add('open');
  $('checkoutModal').setAttribute('aria-hidden','false');
+ updateCheckoutStage(1);
 };
 window.askAboutProduct=id=>{
  const p=products.find(x=>x._id===id);if(!p)return;
@@ -2035,10 +2032,96 @@ $('deliveryMethod').addEventListener('change',()=>{
  $('deliveryAddressField').querySelector('[name="addressLine1"]').required=true;
  checkoutMoneySummary();
 });
+
+const checkoutFormElement=$('productCheckoutForm');
+checkoutFormElement.noValidate=true;
+let checkoutStage=1;
+const checkoutStageNodes=[...document.querySelectorAll('.checkout-progress li')];
+function updateCheckoutStage(stage){
+ checkoutStage=Math.max(1,Math.min(3,stage));
+ checkoutStageNodes.forEach((node,index)=>{
+  node.classList.toggle('current',index+1===checkoutStage);
+  node.classList.toggle('completed',index+1<checkoutStage);
+  node.setAttribute('aria-current',index+1===checkoutStage?'step':'false');
+ });
+ const main=$('productCheckoutForm').querySelector('.checkout-main');
+ const sidebar=$('productCheckoutForm').querySelector('.checkout-sidebar');
+ $('productCheckoutForm').setAttribute('data-checkout-stage',String(checkoutStage));
+ main.hidden=checkoutStage!==1;
+ sidebar.hidden=checkoutStage===1;
+ $('checkoutReviewActions').hidden=checkoutStage!==2;
+ $('checkoutPaymentActions').hidden=checkoutStage!==3;
+ $('payfastSubmit').hidden=checkoutStage!==3;
+ const title=$('checkoutTitle');
+ const intro=$('checkoutModal').querySelector('.checkout-intro');
+ if(checkoutStage===1){
+  title.textContent='Delivery details';
+  intro.textContent='Tell us who to contact and where your order should be delivered.';
+ }else if(checkoutStage===2){
+  title.textContent='Review your order';
+  intro.textContent='Check your products, delivery details and final total before payment.';
+  renderCheckoutCustomerReview();
+  checkoutMoneySummary();
+ }else{
+  title.textContent='Secure payment';
+  intro.textContent='Your order is ready. Confirm the details below before continuing to PayFast.';
+  renderCheckoutCustomerReview();
+  checkoutMoneySummary();
+ }
+ const panel=$('checkoutModal').querySelector('.checkout-panel');
+ if(panel)panel.scrollTo({top:0,behavior:'smooth'});
+}
+function renderCheckoutCustomerReview(){
+ const box=$('checkoutCustomerReview');
+ if(!box)return;
+ const data=new FormData($('productCheckoutForm'));
+ const fields=[
+  ['Contact',data.get('customerName')],
+  ['Email',data.get('email')],
+  ['Phone',data.get('phone')],
+  ['Delivery address',[data.get('addressLine1'),data.get('addressLine2'),data.get('suburb'),data.get('city'),data.get('province'),data.get('postalCode')].filter(Boolean).join(', ')]
+ ];
+ box.hidden=false;
+ box.innerHTML='<div class="checkout-review-heading"><strong>Delivery and contact details</strong><button type="button" id="checkoutEditDetailsInline">Edit</button></div>'+
+  fields.map(([label,value])=>`<div class="checkout-review-row"><span>${esc(label)}</span><strong>${esc(String(value||'—'))}</strong></div>`).join('');
+ const edit=$('checkoutEditDetailsInline');
+ if(edit)edit.addEventListener('click',()=>updateCheckoutStage(1));
+}
+function validateCheckoutDetails(){
+ const form=$('productCheckoutForm');
+ const required=[...form.querySelectorAll('.checkout-main [required]')];
+ for(const field of required){
+  if(!field.checkValidity()){
+   field.reportValidity();
+   field.focus({preventScroll:false});
+   return false;
+  }
+ }
+ const summary=checkoutMoneySummary();
+ if(!cart.length||summary.totalCents<=0){
+  $('checkoutError').textContent='Your cart is empty or the order total is invalid. Please return to your cart and check your products.';
+  return false;
+ }
+ $('checkoutError').textContent='';
+ return true;
+}
+$('checkoutToReview').addEventListener('click',()=>{
+ if(validateCheckoutDetails())updateCheckoutStage(2);
+});
+$('checkoutEditDetails').addEventListener('click',()=>updateCheckoutStage(1));
+$('checkoutToPayment').addEventListener('click',()=>updateCheckoutStage(3));
+$('checkoutBackToReview').addEventListener('click',()=>updateCheckoutStage(2));
+
 $('productCheckoutForm').addEventListener('submit',async event=>{
  event.preventDefault();
  const button=$('payfastSubmit'),error=$('checkoutError');
  error.textContent='';
+ if(checkoutStage!==3){
+  if(checkoutStage===1&&validateCheckoutDetails())updateCheckoutStage(2);
+  else if(checkoutStage===2)updateCheckoutStage(3);
+  return;
+ }
+ if(!validateCheckoutDetails())return;
  if(!cart.length){error.textContent='Your cart is empty.';return;}
  const data=new FormData(event.currentTarget);
  const payload={
@@ -2111,7 +2194,7 @@ $('search').oninput=()=>{currentProductPage=1;render();};
 $('priceRange').onchange=()=>{currentProductPage=1;render();};
 $('availability').onchange=()=>{currentProductPage=1;render();};
 $('sort').onchange=()=>{currentProductPage=1;render();};
-$('year').textContent=2007;
+$('year').textContent=new Date().getFullYear();
 $('clearFilters').onclick=()=>{$('search').value='';$('departmentPicker').value='';$('priceRange').value='';$('availability').value='';$('sort').value='featured';currentProductPage=1;render();};
 $('search').addEventListener('keydown',e=>{if(e.key==='/'){e.preventDefault();$('search').focus();}});
 $('productPagination')?.addEventListener('click',event=>{
@@ -2477,6 +2560,144 @@ checkReturnedPayment();
   #checkoutModal #checkoutItemsSummary{max-height:280px!important}
 }
 </style>
+
+<style id="it-elements-functional-checkout-mobile-layout">
+/* Real three-stage checkout: only the active stage is shown. */
+#checkoutModal [hidden]{display:none!important}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"]{
+  grid-template-columns:minmax(0,1fr)!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-main{
+  max-width:900px!important;width:100%!important;margin:0 auto!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="2"],
+#checkoutModal #productCheckoutForm[data-checkout-stage="3"]{
+  grid-template-columns:minmax(0,1fr)!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="2"] .checkout-sidebar,
+#checkoutModal #productCheckoutForm[data-checkout-stage="3"] .checkout-sidebar{
+  width:100%!important;max-width:1050px!important;margin:0 auto!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="2"] .checkout-order-card,
+#checkoutModal #productCheckoutForm[data-checkout-stage="3"] .checkout-order-card{
+  position:static!important;
+}
+#checkoutModal .checkout-progress li.completed{
+  border-color:#b8e2c8!important;background:#f4fbf6!important;color:#147a3e!important;
+}
+#checkoutModal .checkout-progress li.completed span{
+  background:#16894c!important;color:#fff!important;
+}
+#checkoutModal .checkout-stage-actions{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:10px;margin-top:14px;
+}
+#checkoutModal .checkout-primary-action,
+#checkoutModal .checkout-secondary-action{
+  display:flex;align-items:center;justify-content:center;min-height:50px;padding:12px 16px;
+  border-radius:10px;font-size:13px;font-weight:850;cursor:pointer;
+}
+#checkoutModal .checkout-primary-action{
+  border:1px solid #e00000;background:#e00000;color:#fff;box-shadow:0 6px 16px #e0000020;
+}
+#checkoutModal .checkout-primary-action:hover{background:#c90000}
+#checkoutModal .checkout-secondary-action{border:1px solid #dce2eb;background:#fff;color:#283244}
+#checkoutModal .checkout-customer-review{
+  display:grid;gap:0;margin:0 0 15px;padding:14px 15px;border:1px solid #e3e8ef;border-radius:12px;background:#f9fafc;
+}
+#checkoutModal .checkout-review-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:10px;margin-bottom:7px;border-bottom:1px solid #e7ebf1}
+#checkoutModal .checkout-review-heading strong{font-size:13px;color:#1c2634}
+#checkoutModal .checkout-review-heading button{border:0;background:transparent;color:#d00000;font-size:12px;font-weight:850;text-decoration:underline;cursor:pointer}
+#checkoutModal .checkout-review-row{display:grid;grid-template-columns:130px minmax(0,1fr);gap:12px;padding:6px 0;font-size:12px}
+#checkoutModal .checkout-review-row span{color:#778294}
+#checkoutModal .checkout-review-row strong{color:#273244;font-weight:750;overflow-wrap:anywhere}
+#checkoutModal .checkout-confirm-copy{grid-column:1/-1;margin:0;padding:4px 0;color:#687487;font-size:11px;line-height:1.5}
+#checkoutModal #checkoutPaymentActions{grid-template-columns:1fr}
+#checkoutModal #checkoutPaymentActions .checkout-secondary-action{width:100%}
+#checkoutModal #payfastSubmit{margin-top:12px}
+@media(max-width:760px){
+  #checkoutModal .checkout-panel{
+    padding:calc(64px + env(safe-area-inset-top)) 13px calc(22px + env(safe-area-inset-bottom))!important;
+    background:#f5f7fa!important;
+  }
+  #checkoutModal .checkout-panel h2{font-size:25px!important;line-height:1.15!important;margin:4px 52px 5px 0!important}
+  #checkoutModal .checkout-intro{font-size:12px!important;line-height:1.5!important;margin-bottom:15px!important;padding-right:4px}
+  #checkoutModal .checkout-progress{
+    position:sticky!important;top:0!important;z-index:8!important;display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;
+    padding:7px 0 11px!important;margin:0 0 12px!important;background:#f5f7fa!important;
+  }
+  #checkoutModal .checkout-progress li{
+    min-width:0!important;min-height:58px!important;display:flex!important;flex-direction:column!important;
+    justify-content:center!important;align-items:center!important;gap:4px!important;
+    padding:7px 3px!important;border-radius:10px!important;text-align:center!important;
+  }
+  #checkoutModal .checkout-progress li span{width:22px!important;height:22px!important;flex-basis:22px!important;font-size:11px!important}
+  #checkoutModal .checkout-progress li strong{display:block!important;font-size:9px!important;line-height:1.15!important;white-space:normal!important}
+  #checkoutModal #productCheckoutForm{display:block!important;width:100%!important}
+  #checkoutModal .checkout-main{display:grid!important;gap:11px!important}
+  #checkoutModal .checkout-main[hidden],#checkoutModal .checkout-sidebar[hidden]{display:none!important}
+  #checkoutModal .checkout-card{padding:14px!important;border-radius:13px!important}
+  #checkoutModal .checkout-card-heading{gap:9px!important;margin-bottom:13px!important}
+  #checkoutModal .checkout-card-heading h3{font-size:14px!important}
+  #checkoutModal .checkout-card-heading p{font-size:10px!important}
+  #checkoutModal .checkout-contact-grid,
+  #checkoutModal .checkout-address-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:11px!important}
+  #checkoutModal .checkout-contact-grid label:last-child{grid-column:auto!important}
+  #checkoutModal #productCheckoutForm label{font-size:11px!important;gap:6px!important}
+  #checkoutModal #productCheckoutForm input,
+  #checkoutModal #productCheckoutForm select,
+  #checkoutModal #productCheckoutForm textarea{
+    width:100%!important;min-height:48px!important;padding:12px!important;border-radius:9px!important;font-size:14px!important;
+  }
+  #checkoutModal #productCheckoutForm textarea{min-height:82px!important}
+  #checkoutModal .checkout-section-heading{display:block!important}
+  #checkoutModal .checkout-section-heading span{display:block!important;margin-top:4px!important;text-align:left!important}
+  #checkoutModal .checkout-actions{
+    position:sticky!important;bottom:calc(-22px - env(safe-area-inset-bottom))!important;z-index:7!important;
+    display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;
+    margin:12px -13px calc(-22px - env(safe-area-inset-bottom))!important;
+    padding:12px 13px calc(12px + env(safe-area-inset-bottom))!important;
+    background:rgba(255,255,255,.97)!important;border-top:1px solid #e6e9ef!important;
+    box-shadow:0 -6px 18px #1720330c!important;
+  }
+  #checkoutModal .checkout-actions button{min-height:46px!important;font-size:11px!important}
+  #checkoutModal #checkoutToReview{grid-column:1/-1!important;grid-row:1!important}
+  #checkoutModal .checkout-sidebar{display:block!important;margin:0!important}
+  #checkoutModal .checkout-order-card{padding:14px!important}
+  #checkoutModal .checkout-items-summary{max-height:none!important;overflow:visible!important;gap:8px!important}
+  #checkoutModal .checkout-summary-item{
+    display:grid!important;grid-template-columns:64px minmax(0,1fr) auto!important;gap:9px!important;
+    align-items:center!important;padding:9px!important;border:1px solid #e8ebf0!important;border-radius:11px!important;background:#fff!important;
+  }
+  #checkoutModal .checkout-summary-item>img,
+  #checkoutModal .checkout-summary-item>.checkout-no-image{
+    width:60px!important;height:60px!important;object-fit:contain!important;border-radius:8px!important;background:#f7f8fa!important;
+  }
+  #checkoutModal .checkout-product-name{font-size:11px!important;line-height:1.3!important;overflow-wrap:anywhere!important}
+  #checkoutModal .checkout-product-sku{font-size:9px!important;line-height:1.35!important}
+  #checkoutModal .checkout-summary-line-total{font-size:11px!important;white-space:nowrap!important}
+  #checkoutModal .checkout-product-actions{display:flex!important;gap:10px!important;flex-wrap:wrap!important;margin-top:5px!important}
+  #checkoutModal .checkout-product-actions button{font-size:10px!important}
+  #checkoutModal .checkout-total{padding:11px 0!important;font-size:12px!important}
+  #checkoutModal .checkout-total.grand-total strong{font-size:23px!important}
+  #checkoutModal .checkout-stage-actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+  #checkoutModal .checkout-stage-actions[hidden]{display:none!important}
+  #checkoutModal .checkout-stage-actions button{width:100%!important;min-height:48px!important}
+  #checkoutModal #payfastSubmit{position:sticky!important;bottom:calc(8px + env(safe-area-inset-bottom))!important;z-index:7!important;min-height:54px!important;margin-top:12px!important;box-shadow:0 5px 18px #e0000030!important}
+  #checkoutModal .checkout-customer-review{padding:12px!important}
+  #checkoutModal .checkout-review-row{grid-template-columns:88px minmax(0,1fr)!important;gap:8px!important;font-size:11px!important}
+  #checkoutModal .checkout-confirm-copy{font-size:10px!important}
+}
+@media(max-width:380px){
+  #checkoutModal .checkout-panel{padding-left:10px!important;padding-right:10px!important}
+  #checkoutModal .checkout-progress li strong{font-size:8px!important}
+  #checkoutModal .checkout-summary-item{grid-template-columns:54px minmax(0,1fr)!important}
+  #checkoutModal .checkout-summary-item>img,
+  #checkoutModal .checkout-summary-item>.checkout-no-image{width:50px!important;height:50px!important}
+  #checkoutModal .checkout-summary-line-total{grid-column:2!important}
+}
+</style>
+
 <script id="it-elements-checkout-escape-close">
 (function(){
   document.addEventListener('keydown',function(event){
