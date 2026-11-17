@@ -1119,7 +1119,7 @@ function getStoreCartOwner(req) {
     if (customerEmail) return customerEmail;
     // Admin sessions do not carry a customer email. Give the single IT Elements
     // admin account its own stable cart identity instead of silently using guest storage.
-    if (req.session?.isAdmin) return 'admin@itelements.co.za';
+    if (req.session?.isAdmin) return 'admin@itelements.help';
     return '';
 }
 
@@ -1597,6 +1597,7 @@ app.get('/admin', checkAdminAuth, (req, res) => {
 // Create PayFast checkout
 async function createPayFastCheckout({
     email,
+    userEmail = email,
     amount,
     purchaseType,
     planId = '',
@@ -1616,7 +1617,7 @@ async function createPayFastCheckout({
     }
 
     const configuredBaseUrl = String(process.env.PUBLIC_BASE_URL || '').trim();
-    const publicBaseUrl = 'https://www.itelements.co.za';
+    const publicBaseUrl = (configuredBaseUrl || 'https://www.itelements.co.za').replace(/\/$/, '');
 
     if (!/^https:\/\//i.test(publicBaseUrl)) {
         throw Object.assign(
@@ -1636,7 +1637,7 @@ async function createPayFastCheckout({
 
     await PayFastPurchase.create({
         paymentId,
-        userEmail: email,
+        userEmail,
         purchaseType,
         planId,
         planName,
@@ -1732,7 +1733,10 @@ app.post('/api/payment/payfast-quickfix', async (req, res) => {
 // Online store checkout: account required; all prices and stock are verified server-side.
 app.post('/api/payment/payfast-product-checkout', async (req, res) => {
     try {
-        const email = String((req.session && req.session.userEmail) || req.body.email || '').trim().toLowerCase();
+        // PayFast must receive the buyer email entered in checkout. Keep the
+        // signed-in account email separately so the order still appears in that customer's portal.
+        const email = String(req.body.email || '').trim().toLowerCase();
+        const accountEmail = String((req.session && req.session.userEmail) || email).trim().toLowerCase();
         const customerName = String(req.body.customerName || '').trim().slice(0, 100);
         const phone = String(req.body.phone || '').trim().slice(0, 30);
         const deliveryMethod = 'delivery';
@@ -1801,6 +1805,7 @@ app.post('/api/payment/payfast-product-checkout', async (req, res) => {
 
         const checkout = await createPayFastCheckout({
             email,
+            userEmail: accountEmail,
             amount: totalCents,
             purchaseType: 'storeOrder',
             orderDetails: {
@@ -2422,7 +2427,7 @@ app.post('/api/auth/forgot-password', rateLimitPasswordReset, async (req, res) =
             expiresAt: new Date(Date.now() + 15 * 60 * 1000)
         });
 
-        const baseUrl = 'https://www.itelements.co.za';
+        const baseUrl = process.env.PUBLIC_BASE_URL.replace(/\/$/, '');
 
         const resetUrl =
             `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
