@@ -50,7 +50,7 @@
       '<div class="ite-mobile-drawer-head"><strong>Menu</strong><button class="ite-mobile-drawer-close" type="button" aria-label="Close menu">×</button></div>' +
       '<nav class="ite-mobile-drawer-links" aria-label="Website links"></nav></aside>';
     var list = overlay.querySelector('.ite-mobile-drawer-links');
-    [['/','Home'],['/dashboard','Account'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login','Client Portal']]
+    [['/','Home'],['/dashboard','Account'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login?next=%2Fdashboard','Client Portal']]
       .forEach(function (item) { list.appendChild(makeLink(item[0], item[1])); });
     document.body.appendChild(overlay);
     function close() { overlay.classList.remove('open'); document.body.classList.remove('ite-drawer-open'); trigger.setAttribute('aria-expanded','false'); }
@@ -80,7 +80,7 @@
     var more = document.createElement('details'); more.className = 'ite-more-menu';
     var summary = document.createElement('summary'); summary.textContent = 'More'; more.appendChild(summary);
     var panel = document.createElement('div'); panel.className = 'ite-more-menu-panel';
-    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/booking','Booking'],['/business-tools','Business Tools'],['/client/login','Client Portal']]
+    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/booking','Booking'],['/business-tools','Business Tools'],['/client/login?next=%2Fdashboard','Client Portal']]
       .forEach(function (item) { panel.appendChild(makeLink(item[0], item[1])); });
     more.appendChild(panel); nav.appendChild(more);
   }
@@ -97,7 +97,7 @@
     if (/^cart(?:\s*\(|$)/i.test(String(node.textContent || '').trim())) node.remove();
   });
   actions.innerHTML = '';
-  var account = makeLink('/client/login?next=%2Fstore', 'Log in');
+  var account = makeLink('/client/login?next=%2Fdashboard', 'Log in');
   account.id = 'accountAction';
   account.className = 'ite-account-action';
   account.setAttribute('aria-label', 'Log in to your IT Elements account');
@@ -110,8 +110,8 @@
   actions.appendChild(logoutControl);
   var accountNav = nav ? Array.prototype.find.call(nav.querySelectorAll('a'), function (a) { return a.textContent.trim() === 'Account'; }) : null;
   var drawerAccount = document.querySelector('#iteMobileDrawer a[href="/dashboard"]');
-  if (accountNav) accountNav.href = '/client/login?next=%2Fstore';
-  if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fstore';
+  if (accountNav) accountNav.href = '/client/login?next=%2Fdashboard';
+  if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fdashboard';
   var cartControl;
   if (isStore) {
     cartControl = oldCart || document.createElement('button');
@@ -152,7 +152,7 @@
       var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
         authEmailForCart = auth.email || '';
-        account.textContent = 'Log out'; account.href = '/client/logout';
+        account.textContent = 'Client Portal'; account.href = '/dashboard';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
         logoutControl.hidden = true;
         if (accountNav) { accountNav.href = '/dashboard'; accountNav.setAttribute('aria-label', 'Open your customer dashboard'); }
@@ -189,17 +189,17 @@
           });
       }
 
-      account.textContent = 'Log in'; account.href = '/client/login?next=%2Fstore';
+      account.textContent = 'Log in'; account.href = '/client/login?next=%2Fdashboard';
       account.setAttribute('aria-label', 'Log in to your IT Elements account');
-      if (accountNav) { accountNav.href = '/client/login?next=%2Fstore'; accountNav.setAttribute('aria-label', 'Log in to access your customer account'); }
-      if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fstore';
+      if (accountNav) { accountNav.href = '/client/login?next=%2Fdashboard'; accountNav.setAttribute('aria-label', 'Log in to access your customer account'); }
+      if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fdashboard';
       if (cartControl) cartControl.hidden = true;
       if (productCart) productCart.hidden = true;
     })
     .catch(function () {
-      account.textContent = 'Log in'; account.href = '/client/login?next=%2Fstore';
-      if (accountNav) accountNav.href = '/client/login?next=%2Fstore';
-      if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fstore';
+      account.textContent = 'Log in'; account.href = '/client/login?next=%2Fdashboard';
+      if (accountNav) accountNav.href = '/client/login?next=%2Fdashboard';
+      if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fdashboard';
       if (cartControl) cartControl.hidden = true;
       var productCart = document.getElementById('openCartFromProduct');
       if (productCart) productCart.hidden = true;
