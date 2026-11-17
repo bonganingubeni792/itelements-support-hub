@@ -1571,10 +1571,23 @@ let cartSaveQueue=Promise.resolve();
 async function refreshStoreAccountAction(){
   const button=$('accountAction');
   if(!button)return;
-  // Account always opens the customer portal. It must never sign the customer out.
-  button.textContent='Client Portal';
-  button.href='/dashboard';
-  button.setAttribute('aria-label','Open your IT Elements Client Portal');
+  try{
+    const response=await fetch('/api/store/auth-status',{credentials:'same-origin',cache:'no-store'});
+    const auth=await response.json();
+    if(response.ok&&auth&&auth.authenticated){
+      button.textContent='Log out';
+      button.href='/client/logout';
+      button.setAttribute('aria-label','Log out of your IT Elements account');
+    }else{
+      button.textContent='Client Portal';
+      button.href='/client/login?next=%2Fdashboard';
+      button.setAttribute('aria-label','Open your IT Elements Client Portal');
+    }
+  }catch(_){
+    button.textContent='Client Portal';
+    button.href='/client/login?next=%2Fdashboard';
+    button.setAttribute('aria-label','Open your IT Elements Client Portal');
+  }
 }
 
 async function loadAccountCart(){
