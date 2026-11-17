@@ -874,3 +874,11 @@
   body.store-page #catalogue #products.products>.card .card-actions button{min-height:36px!important;font-size:9px!important}
   body.store-page .store-benefits strong{font-size:8px!important}
 }
+
+
+/* IT ELEMENTS — REMOVE THE HEADER CART BUTTON ON ALL STORE SCREEN SIZES.
+   Keep cart access in the product detail toolbar and store bottom navigation. */
+body.store-page header > #openCart,
+body.store-page header > .ite-header-cart{
+  display:none!important;
+}
