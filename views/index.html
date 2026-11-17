@@ -1327,6 +1327,26 @@ footer {
     transition-duration: .01ms !important;
   }
 }
+
+/* HOME PAGE: compact product preview and photo-led service cards */
+.home-products{padding:64px 0;background:#f7f7f8;border-block:1px solid var(--border)}
+.home-section-heading{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:25px}
+.home-section-heading h2{font-size:clamp(26px,3.2vw,38px);line-height:1.18;margin:0 0 8px;color:#171717}
+.home-section-heading p{margin:0;color:var(--muted);font-size:14px}
+.home-product-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.home-product{display:flex;flex-direction:column;min-width:0;padding:12px 12px 17px;background:#fff;border:1px solid var(--border);border-radius:13px;box-shadow:0 5px 20px rgba(0,0,0,.035);transition:transform .2s,border-color .2s}
+.home-product:hover{transform:translateY(-3px);border-color:var(--red)}
+.home-product img{width:100%;height:155px;object-fit:cover;border-radius:9px;background:#f0f0f0;margin-bottom:13px}
+.home-product-tag{font-size:9px;letter-spacing:1.4px;font-weight:900;color:var(--red);margin:0 2px 5px}
+.home-product strong{font-size:17px;color:#171717;margin:0 2px 3px}
+.home-product small{font-size:12px;color:var(--muted);margin:0 2px 12px}
+.home-product b{font-size:12px;color:var(--red);margin: auto 2px 0}
+#home-services .card{padding:14px}
+.service-photo{width:100%;height:145px;object-fit:cover;border-radius:9px;margin-bottom:16px;background:#f0f0f0}
+@media(max-width:850px){.home-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.home-product img{height:125px}}
+@media(max-width:600px){.home-products{padding:45px 0}.home-section-heading{align-items:flex-start;flex-direction:column;gap:14px}.home-product-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.home-product{padding:9px 9px 13px}.home-product img{height:112px}.home-product strong{font-size:14px}.home-product small{font-size:11px}.service-photo{height:112px}}
+@media(max-width:380px){.home-product-grid{grid-template-columns:1fr}.home-product img{height:150px}}
+
 </style>
 <style>
 /* IT ELEMENTS SHARED COMMERCE + ACCOUNT BAR */
@@ -1337,8 +1357,6 @@ footer {
 .ite-utility-right .ite-account-primary{font-weight:800}
 @media(max-width:650px){.ite-utility-bar{padding:7px 12px;font-size:10px}.ite-utility-left{gap:8px}.ite-utility-left .ite-location{display:none}.ite-utility-right{gap:10px}}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-sticky-overflow-clip-v8"><!-- IT Elements unified Store-style responsive header build: 2026-11-15 -->
-
-<link rel="stylesheet" href="/ite-mobile-experience.css?v=20261115-premium-mobile-v1">
 </head>
 
 <body>
@@ -1369,7 +1387,7 @@ footer {
 
   <div class="nav-links" id="mainNavigation">
     <a href="/store">Store</a>
-    <a href="/home" aria-current="page">Home</a>
+    <a href="/" aria-current="page">Home</a>
     <a href="/services">Services</a>
     <a href="/onsite-support">On-site</a>
     <a href="/pricing">Plans</a>
@@ -1390,27 +1408,25 @@ footer {
 
     <div class="hero-content">
 
-      <div class="eyebrow">IT SUPPORT · IT PRODUCTS · SALES</div>
+      <div class="eyebrow">IT ELEMENTS · TECHNOLOGY & SUPPORT SINCE 2007</div>
 
       <h1>
-        IT Problems?<br>
-        <span>We've Got You Covered.</span>
+        Technology for Work.<br>
+        <span>Support When You Need It.</span>
       </h1>
 
       <p class="hero-description">
-        Reliable IT support for individuals, professionals and businesses.
-        From computer troubleshooting to network assistance and business
-        technology solutions, IT Elements helps keep you connected and productive.
+        Shop selected computers, laptops and accessories, and get dependable IT support for your home or business. From remote troubleshooting to repairs, Wi-Fi and business technology, we're here to help.
       </p>
 
       <div class="hero-actions">
         <a href="/store" class="btn">Shop Online Store →</a>
- <a href="/services" class="btn btn-outline">Explore IT Services</a>
+        <a href="#home-services" class="btn btn-outline">Explore Our Services</a>
         <a href="/support" class="btn btn-outline">Get IT Support</a>
       </div>
 
       <div class="hero-note">
-        <span>●</span> IT product sales · Remote support · On-site enquiries · Business IT solutions
+        <span>●</span> Online tech sales · Remote IT support · Computer repairs · Business assistance
       </div>
 
     </div>
@@ -1493,9 +1509,24 @@ footer {
   </div>
 </div>
 
+<!-- SMALL FEATURED PRODUCT PREVIEW: full catalogue remains on /store -->
+<section class="home-products" aria-labelledby="home-products-title">
+  <div class="container">
+    <div class="home-section-heading">
+      <div><span class="eyebrow">SHOP A FEW HIGHLIGHTS</span><h2 id="home-products-title">Technology worth <span class="red">checking out.</span></h2><p>A small preview of the products available in our online store.</p></div>
+      <a class="btn btn-outline" href="/store">View all products →</a>
+    </div>
+    <div class="home-product-grid">
+      <a class="home-product" href="/store"><img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=720&q=80" alt="Laptop computer"><span class="home-product-tag">COMPUTERS</span><strong>Laptops & computers</strong><small>Explore options for work, study and home</small><b>Shop now →</b></a>
+      <a class="home-product" href="/store"><img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&w=720&q=80" alt="Computer monitor and desk setup"><span class="home-product-tag">ACCESSORIES</span><strong>Computer accessories</strong><small>Useful additions for your setup</small><b>Shop now →</b></a>
+      <a class="home-product" href="/store"><img src="https://images.unsplash.com/photo-1587831990711-23ca6441447b?auto=format&fit=crop&w=720&q=80" alt="Desktop gaming computer"><span class="home-product-tag">PC COMPONENTS</span><strong>Components & upgrades</strong><small>Build, improve or refresh your PC</small><b>Shop now →</b></a>
+    </div>
+  </div>
+</section>
+
 <!-- SERVICES -->
 
-<section class="content-section">
+<section class="content-section" id="home-services">
   <div class="container">
 
     <div class="section-heading">
@@ -1507,42 +1538,42 @@ footer {
     <div class="grid">
 
       <article class="card">
-        <div class="icon">💻</div>
+        <img class="service-photo" src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=640&q=80" alt="Technician providing computer support">
         <h3>Remote IT Support</h3>
         <p>Get assistance with software issues, computer errors, configuration and troubleshooting remotely.</p>
         <a class="card-link" href="/services">Explore Remote Support →</a>
       </article>
 
       <article class="card">
-        <div class="icon">🔧</div>
+        <img class="service-photo" src="https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?auto=format&fit=crop&w=640&q=80" alt="Computer repair and hardware work">
         <h3>Computer Repairs</h3>
         <p>Help diagnosing computer problems, slow performance, software faults and setup issues.</p>
         <a class="card-link" href="/services">Explore Computer Services →</a>
       </article>
 
       <article class="card">
-        <div class="icon">🏢</div>
+        <img class="service-photo" src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=640&q=80" alt="Business office technology environment">
         <h3>Business IT Solutions</h3>
         <p>Support for small businesses needing assistance with computers, email, networks and maintenance.</p>
-        <a class="card-link" href="/business-support">Business Support →</a>
+        <a class="card-link" href="/services">Business IT Services →</a>
       </article>
 
       <article class="card">
-        <div class="icon">🛡️</div>
+        <img class="service-photo" src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=640&q=80" alt="Cybersecurity technology">
         <h3>Security Assistance</h3>
         <p>Get help with malware removal, security checks, updates and safer computer configuration.</p>
         <a class="card-link" href="/services">Security Services →</a>
       </article>
 
       <article class="card">
-        <div class="icon">📶</div>
+        <img class="service-photo" src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=640&q=80" alt="Wi-Fi router and network equipment">
         <h3>Wi-Fi & Network Support</h3>
         <p>Assistance with Wi-Fi connectivity, routers, internet problems and basic network troubleshooting.</p>
         <a class="card-link" href="/services">Network Services →</a>
       </article>
 
       <article class="card">
-        <div class="icon">💾</div>
+        <img class="service-photo" src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=640&q=80" alt="Computer hardware and data storage components">
         <h3>Backup & Data Assistance</h3>
         <p>Help setting up backups and organising safer ways to protect important files.</p>
         <a class="card-link" href="/services">Backup Services →</a>
