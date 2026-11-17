@@ -152,11 +152,11 @@
       var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
         authEmailForCart = auth.email || '';
-        account.textContent = 'Client Portal'; account.href = '/dashboard';
+        account.textContent = 'Log out'; account.href = '/client/logout';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
         logoutControl.hidden = true;
-        if (accountNav) { accountNav.href = '/dashboard'; accountNav.setAttribute('aria-label', 'Open your customer dashboard'); }
-        if (drawerAccount) drawerAccount.href = '/dashboard';
+        if (accountNav) { accountNav.textContent = 'Log out'; accountNav.href = '/client/logout'; accountNav.setAttribute('aria-label', 'Log out of your IT Elements account'); }
+        if (drawerAccount) { drawerAccount.textContent = 'Log out'; drawerAccount.href = '/client/logout'; }
         if (cartControl) cartControl.hidden = false;
         if (productCart) productCart.hidden = false;
 
