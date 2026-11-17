@@ -902,11 +902,12 @@ app.use(express.static(viewsPath, { index: false }));
 app.use('/assets', express.static(path.join(__dirname, 'public')));
 
 // Main website pages
-// The Online Store is the public landing page.
+// The IT Elements support homepage is the public landing page.
 app.get('/', (req, res) => {
-    res.sendFile(path.join(viewsPath, 'store.html'));
+    res.sendFile(path.join(viewsPath, 'index.html'));
 });
-// Keep the original Home page available from the navigation.
+
+// Keep /home as a backwards-compatible homepage URL.
 app.get('/home', (req, res) => {
     res.sendFile(path.join(viewsPath, 'index.html'));
 });
