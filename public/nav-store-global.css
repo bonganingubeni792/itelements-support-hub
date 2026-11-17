@@ -269,3 +269,13 @@ body:not(.store-page):not(.store-admin-page) header.site-header{
   z-index:10000!important;
   align-self:flex-start!important;
 }
+
+
+/* IT ELEMENTS — hide the shopping-cart shortcut in every shared page header.
+   Store cart, product detail cart and checkout controls remain available. */
+.ite-header-actions .ite-header-cart,
+.ite-header-actions > #openCart,
+body.store-page > header > #openCart,
+body.store-page > header .ite-header-cart {
+  display:none!important;
+}

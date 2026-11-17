@@ -112,11 +112,9 @@
     cartControl.hidden = true;
     actions.appendChild(cartControl);
   } else {
-    cartControl = makeLink('/store?openCart=1', 'Cart (0)');
-    cartControl.className = 'ite-header-cart';
-    cartControl.setAttribute('aria-label','Open your saved shopping cart');
-    cartControl.hidden = true;
-    actions.appendChild(cartControl);
+    // The shopping cart remains available inside the store, but never in the
+    // shared site header (including after a customer signs in).
+    cartControl = null;
   }
   window.addEventListener('storage', function (event) {
     if (!event || !event.key || !authEmailForCart) return;
@@ -142,9 +140,9 @@
       var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
         authEmailForCart = auth.email || '';
-        account.textContent = 'Log out'; account.href = '/client/logout';
+        account.textContent = 'Client Portal'; account.href = '/dashboard';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
-        if (cartControl) cartControl.hidden = false;
+        if (cartControl) cartControl.hidden = true;
         if (productCart) productCart.hidden = false;
 
         // Paint the account's most recent cart immediately. This mirror is written
