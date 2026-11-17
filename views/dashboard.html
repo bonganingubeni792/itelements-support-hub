@@ -1071,6 +1071,24 @@ button:hover,.button:hover{transform:translateY(-1px)}
       <span class="client-workspace-action">Explore Products <b aria-hidden="true">→</b></span>
     </span>
   </a>
+  <a class="client-workspace" href="#store-order-history">
+    <span class="client-workspace-icon" aria-hidden="true">🛍</span>
+    <span class="client-workspace-copy">
+      <span class="client-workspace-kicker">PURCHASE TRACKING</span>
+      <strong>My Store Orders</strong>
+      <span>Check your payment status, order approval, processing, collection or delivery progress.</span>
+      <span class="client-workspace-action">View My Orders <b aria-hidden="true">→</b></span>
+    </span>
+  </a>
+  <a class="client-workspace" href="#invoice-history">
+    <span class="client-workspace-icon" aria-hidden="true">▤</span>
+    <span class="client-workspace-copy">
+      <span class="client-workspace-kicker">ACCOUNT DOCUMENTS</span>
+      <strong>Invoices & Payments</strong>
+      <span>Review saved invoices, quotations and your IT Elements payment history.</span>
+      <span class="client-workspace-action">View Billing <b aria-hidden="true">→</b></span>
+    </span>
+  </a>
 </section>
 
 
@@ -1322,6 +1340,23 @@ button:hover,.button:hover{transform:translateY(-1px)}
   </table>
 </section>
 
+<section class="ticket-card" id="store-order-history">
+  <h2>🛍️ My Store Orders</h2>
+  <p style="font-size:12px;color:#666;margin-top:-5px;">Track payment, approval and fulfilment progress for orders placed using this account.</p>
+  <div id="customer-order-rows" class="visit-list">
+    <p class="notice">Loading your orders…</p>
+  </div>
+</section>
+
+<section class="ticket-card" id="invoice-history">
+  <h2>🧾 My Invoices & Payments</h2>
+  <p style="font-size:12px;color:#666;margin-top:-5px;">View invoices and quotations saved to your IT Elements account, plus your support-plan and other payment records.</p>
+  <div id="customer-document-rows" class="visit-list">
+    <p class="notice">Loading your documents…</p>
+  </div>
+  <div id="customer-payment-rows" class="visit-list" style="margin-top:12px;"></div>
+</section>
+
 <section class="ticket-card">
   <h2>📥 Required Software Downloads</h2>
   <p style="font-size:12px;color:#666;margin-top:-5px;">Download remote support software only when asked by your engineer.</p>
@@ -1348,6 +1383,9 @@ button:hover,.button:hover{transform:translateY(-1px)}
     const statusMessage = document.getElementById('checkout-message');
     const ticketRows = document.getElementById('tickets-log-rows');
     const onsiteRows = document.getElementById('onsite-history-rows');
+    const orderRows = document.getElementById('customer-order-rows');
+    const documentRows = document.getElementById('customer-document-rows');
+    const paymentRows = document.getElementById('customer-payment-rows');
     const currentPlan = document.getElementById('current-plan');
     const planStatus = document.getElementById('plan-status');
     const planExpiry = document.getElementById('plan-expiry');
@@ -1803,7 +1841,120 @@ button:hover,.button:hover{transform:translateY(-1px)}
             : '—';
 
         renderTickets(data.tickets);
+        renderCustomerOrders(data.orders);
+        renderCustomerDocuments(data.documents, data.purchases);
         return data;
+    }
+
+    function moneyFromCents(value) {
+        const amount = Number(value || 0) / 100;
+        return amount.toLocaleString('en-ZA', { style: 'currency', currency: 'ZAR' });
+    }
+
+    function addDetail(card, label, value) {
+        const item = document.createElement('div');
+        const heading = document.createElement('strong');
+        heading.textContent = label;
+        const detail = document.createElement('span');
+        detail.textContent = value || '—';
+        item.append(heading, detail);
+        card.appendChild(item);
+    }
+
+    function renderCustomerOrders(orders) {
+        orderRows.replaceChildren();
+        const rows = Array.isArray(orders) ? orders : [];
+        if (!rows.length) {
+            const empty = document.createElement('p');
+            empty.className = 'notice';
+            empty.textContent = 'You have not placed any online store orders using this account yet.';
+            orderRows.appendChild(empty);
+            return;
+        }
+
+        for (const order of rows) {
+            const card = document.createElement('article');
+            card.className = 'visit-item';
+            const details = order.orderDetails || {};
+            const items = Array.isArray(details.items) ? details.items : [];
+            const paymentStatus = String(order.status || 'pending').toLowerCase();
+            const fulfilment = String(order.fulfilmentStatus || 'new').toLowerCase();
+            const paymentLabel = paymentStatus === 'paid' ? 'Payment confirmed' :
+                paymentStatus === 'failed' ? 'Payment failed' : 'Awaiting payment';
+            const fulfilmentLabels = {
+                new: 'Awaiting approval',
+                processing: 'Approved · Processing',
+                ready: 'Ready for collection / dispatch',
+                shipped: 'Shipped',
+                completed: 'Completed',
+                cancelled: 'Cancelled'
+            };
+            const itemSummary = items.length
+                ? items.map(item => `${item.name || item.title || 'Product'} × ${Number(item.quantity || 1)}`).join(', ')
+                : 'Order details unavailable';
+
+            addDetail(card, 'Order reference', order.paymentId || '—');
+            addDetail(card, 'Items', itemSummary);
+            addDetail(card, 'Order total', moneyFromCents(order.amount));
+            addDetail(card, 'Payment', paymentLabel);
+            addDetail(card, 'Order progress', fulfilmentLabels[fulfilment] || fulfilment);
+            addDetail(card, 'Order date', order.createdAt ? new Date(order.createdAt).toLocaleString('en-ZA') : '—');
+            if (details.deliveryMethod) {
+                addDetail(card, 'Delivery method', details.deliveryMethod === 'delivery' ? 'Delivery' : 'Collection');
+            }
+            if (details.deliveryAddress) addDetail(card, 'Delivery address', details.deliveryAddress);
+            orderRows.appendChild(card);
+        }
+    }
+
+    function renderCustomerDocuments(documents, purchases) {
+        documentRows.replaceChildren();
+        const rows = Array.isArray(documents) ? documents : [];
+        if (!rows.length) {
+            const empty = document.createElement('p');
+            empty.className = 'notice';
+            empty.textContent = 'No invoices or quotations are saved to your account yet.';
+            documentRows.appendChild(empty);
+        } else {
+            for (const doc of rows) {
+                const card = document.createElement('article');
+                card.className = 'visit-item';
+                addDetail(card, 'Document', `${String(doc.kind || 'document').toUpperCase()} · ${doc.number || 'Unnumbered'}`);
+                addDetail(card, 'Total', moneyFromCents(doc.totalCents));
+                addDetail(card, 'Issue date', doc.issueDate || (doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('en-ZA') : '—'));
+                addDetail(card, 'Due date', doc.dueDate || '—');
+                documentRows.appendChild(card);
+            }
+        }
+
+        paymentRows.replaceChildren();
+        const paymentRowsData = Array.isArray(purchases) ? purchases : [];
+        const heading = document.createElement('h3');
+        heading.textContent = 'Payment history';
+        heading.style.cssText = 'margin:8px 0 4px;font-size:14px;';
+        paymentRows.appendChild(heading);
+
+        if (!paymentRowsData.length) {
+            const empty = document.createElement('p');
+            empty.className = 'notice';
+            empty.textContent = 'No support-plan or additional service payments found.';
+            paymentRows.appendChild(empty);
+            return;
+        }
+
+        for (const purchase of paymentRowsData) {
+            const card = document.createElement('article');
+            card.className = 'visit-item';
+            const label = purchase.purchaseType === 'plan' ? (purchase.planName || 'Support plan') :
+                purchase.purchaseType === 'quickfix' ? 'Quick Fix support session' :
+                purchase.purchaseType === 'invoicePro' ? 'Invoice Pro' : String(purchase.purchaseType || 'Payment');
+            addDetail(card, 'Payment', label);
+            addDetail(card, 'Reference', purchase.paymentId || '—');
+            addDetail(card, 'Amount', moneyFromCents(purchase.amount));
+            addDetail(card, 'Status', String(purchase.status || 'pending').toUpperCase());
+            addDetail(card, 'Date', purchase.createdAt ? new Date(purchase.createdAt).toLocaleString('en-ZA') : '—');
+            paymentRows.appendChild(card);
+        }
     }
 
     function showReturnedPaymentState(data) {
