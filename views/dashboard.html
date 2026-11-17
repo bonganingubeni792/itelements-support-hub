@@ -654,7 +654,7 @@ button,a{-webkit-tap-highlight-color:transparent}
   .header{margin:0 -14px 18px;width:calc(100% + 28px);padding:9px 14px}
 }
 
-</style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-sticky-overflow-clip-v8">
+</style><link rel="stylesheet" href="/nav-store-global.css?v=20261117-hide-header-cart-global-v2">
 
 <style id="it-elements-client-portal-clean-layout">
 /* IT Elements customer portal: clean full-width layout, normal image sizing and site navigation */
@@ -1051,8 +1051,6 @@ header.header h1 img {
 #onsite-history-rows .visit-status{display:inline-flex;padding:5px 10px;border-radius:999px;background:#fff5df;color:#946000;font-size:11px;font-weight:800}
 #onsite-history-rows .visit-status.scheduled,
 #onsite-history-rows .visit-status.finished{background:#e8f7ee;color:#147a42}
-#onsite-history-rows .conversation{grid-column:1/-1;margin-top:9px;padding:10px 12px;border:1px solid #e8ebf0;border-radius:9px;background:#fff}
-#onsite-history-rows .conversation summary{font-size:12px;font-weight:800;color:#b00000;cursor:pointer}
 @media(max-width:760px){.visit-list{grid-template-columns:1fr}.visit-item{grid-template-columns:1fr 1fr}.customer-history-section{padding:15px!important}}
 @media(max-width:480px){.visit-item{grid-template-columns:1fr}.history-card-image{width:46px;height:46px;flex-basis:46px}}
 </style>
@@ -1083,7 +1081,7 @@ body{overflow-x:clip}
 <nav class="nav" aria-label="Main navigation">
   <a class="brand" href="/" aria-label="IT Elements home">
     <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo" width="46" height="46">
-    <span>IT Elements.</span>
+    <span>itelements.co.za</span>
     <span class="brand-support">support</span>
   </a>
 
@@ -1104,26 +1102,6 @@ body{overflow-x:clip}
     <a href="/support" class="nav-cta">Request Help</a>
   </div>
 </nav>
-
-<div class="notification-widget" id="notification-widget">
-  <button class="notification-toggle" id="notification-toggle" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notification-panel">
-    <span aria-hidden="true">🔔</span>
-    <span id="notification-count" class="notification-count">0</span>
-  </button>
-
-  <section class="notification-center" id="notification-panel" aria-label="Client notifications" hidden>
-    <div class="notification-head">
-      <h2>Request updates</h2>
-      <div class="notification-tools">
-        <button class="notification-button" id="notification-permission" type="button">Enable desktop alerts</button>
-        <button class="notification-button" id="notification-close" type="button" aria-label="Close notifications">Close</button>
-      </div>
-    </div>
-    <div class="notification-list" id="notification-list">
-      <div class="notification-empty">Loading notifications…</div>
-    </div>
-  </section>
-</div>
 
 <h2 class="welcome" id="welcome-title">Welcome to your support portal</h2>
 <p class="welcome-subtitle">Manage your plan, submit a support request, and follow your ticket progress here.</p>
@@ -1387,7 +1365,6 @@ body{overflow-x:clip}
                     card.appendChild(item);
                 }
 
-                renderConversation(card, request);
                 onsiteRows.appendChild(card);
             }
         }
@@ -1427,7 +1404,6 @@ body{overflow-x:clip}
                 issueCell.appendChild(appointment);
             }
 
-            renderConversation(issueCell, ticket);
 
             const statusCell = row.insertCell();
             const badge = document.createElement('span');
@@ -1444,258 +1420,7 @@ body{overflow-x:clip}
         }
     }
 
-    function renderConversation(container, ticket) {
-        const wasOpen = Array.from(container.children).some(
-            child => child.classList && child.classList.contains('conversation') && child.open
-        );
 
-        container.querySelectorAll(':scope > .conversation').forEach(existing => existing.remove());
-
-        const details = document.createElement('details');
-        details.className = 'conversation';
-        details.open = wasOpen;
-
-        const summary = document.createElement('summary');
-        summary.textContent = `Conversation (${Array.isArray(ticket.messages) ? ticket.messages.length : 0})`;
-        details.appendChild(summary);
-
-        const thread = document.createElement('div');
-        thread.className = 'conversation-thread';
-
-        for (const message of (Array.isArray(ticket.messages) ? ticket.messages : [])) {
-            const item = document.createElement('article');
-            item.className = 'conversation-message';
-
-            const heading = document.createElement('strong');
-            heading.textContent = message.name || (message.sender === 'admin' ? 'IT Elements Support' : 'Customer');
-
-            const time = document.createElement('time');
-            time.dateTime = message.date || '';
-            time.textContent = message.date ? new Date(message.date).toLocaleString() : '';
-
-            const body = document.createElement('p');
-            body.textContent = message.body || '';
-
-            item.append(heading, time, body);
-            thread.appendChild(item);
-        }
-
-        if (!thread.children.length) {
-            const empty = document.createElement('p');
-            empty.className = 'notice';
-            empty.textContent = 'No replies yet. Send a message to continue this request.';
-            thread.appendChild(empty);
-        }
-
-        const form = document.createElement('form');
-        form.className = 'conversation-form';
-
-        const textarea = document.createElement('textarea');
-        textarea.required = true;
-        textarea.minLength = 2;
-        textarea.maxLength = 2000;
-        textarea.placeholder = 'Write a reply (do not include passwords or payment details)…';
-
-        const error = document.createElement('p');
-        error.className = 'conversation-error';
-        error.setAttribute('role', 'status');
-
-        const button = document.createElement('button');
-        button.type = 'submit';
-        button.textContent = 'Send reply';
-
-        form.append(textarea, error, button);
-
-        form.addEventListener('submit', async event => {
-            event.preventDefault();
-            button.disabled = true;
-            error.textContent = '';
-
-            try {
-                const response = await fetch(`/api/client/tickets/${encodeURIComponent(ticket._id)}/messages`, {
-                    method:'POST',
-                    headers:{'Content-Type':'application/json',Accept:'application/json'},
-                    body:JSON.stringify({message:textarea.value})
-                });
-
-                const result = await response.json();
-
-                if (!response.ok || !result.success) {
-                    throw new Error(result.message || 'Could not send your reply.');
-                }
-
-                ticket.messages = result.messages;
-                renderConversation(container, ticket);
-            } catch (err) {
-                error.textContent = err.message || 'Could not send your reply.';
-                button.disabled = false;
-            }
-        });
-
-        details.append(thread, form);
-        container.appendChild(details);
-    }
-
-
-    const notificationList = document.getElementById('notification-list');
-    const notificationCount = document.getElementById('notification-count');
-    const notificationPermissionButton = document.getElementById('notification-permission');
-    const notificationToggle = document.getElementById('notification-toggle');
-    const notificationPanel = document.getElementById('notification-panel');
-    const notificationWidget = document.getElementById('notification-widget');
-    const notificationClose = document.getElementById('notification-close');
-
-    function closeNotificationPanel() {
-        notificationPanel.hidden = true;
-        notificationToggle.setAttribute('aria-expanded', 'false');
-    }
-
-    notificationToggle.addEventListener('click', () => {
-        const opening = notificationPanel.hidden;
-        notificationPanel.hidden = !opening;
-        notificationToggle.setAttribute('aria-expanded', String(opening));
-        if (opening) loadNotifications();
-    });
-
-    notificationClose.addEventListener('click', closeNotificationPanel);
-
-    document.addEventListener('click', event => {
-        if (!notificationWidget.contains(event.target)) closeNotificationPanel();
-    });
-
-    document.addEventListener('keydown', event => {
-        if (event.key === 'Escape') closeNotificationPanel();
-    });
-
-    let knownNotificationIds = new Set();
-    let firstNotificationLoad = true;
-
-    function formatNotificationDate(value) {
-        const date = new Date(value);
-        return Number.isNaN(date.getTime()) ? '' : date.toLocaleString();
-    }
-
-    async function loadNotifications() {
-        try {
-            const response = await fetch('/api/notifications', {
-                headers:{Accept:'application/json'}
-            });
-
-            if (response.redirected || response.status === 401) {
-                return window.location.assign('/client/login');
-            }
-
-            if (!response.ok) throw new Error('Could not load request updates.');
-
-            const result = await response.json();
-            const items = Array.isArray(result.notifications) ? result.notifications : [];
-            const unreadCount = items.filter(item => !item.read).length;
-
-            notificationCount.textContent = String(unreadCount);
-            notificationToggle.setAttribute(
-                'aria-label',
-                `${unreadCount} unread notification${unreadCount === 1 ? '' : 's'}`
-            );
-
-            notificationList.replaceChildren();
-
-            if (!items.length) {
-                const empty = document.createElement('div');
-                empty.className = 'notification-empty';
-                empty.textContent = 'No updates yet. Ticket replies and status changes will appear here.';
-                notificationList.appendChild(empty);
-            }
-
-            for (const item of items) {
-                if (
-                    !firstNotificationLoad &&
-                    !knownNotificationIds.has(item.id) &&
-                    !item.read &&
-                    'Notification' in window &&
-                    Notification.permission === 'granted'
-                ) {
-                    new Notification(item.title, {
-                        body:`${item.actorName}: ${item.body}`,
-                        tag:item.id
-                    });
-                }
-
-                knownNotificationIds.add(item.id);
-
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.className = `notification-item${item.read ? '' : ' unread'}`;
-                button.dataset.notificationId = item.id;
-                button.dataset.requestType = item.requestType || '';
-
-                const title = document.createElement('strong');
-                title.textContent = item.title;
-
-                const body = document.createElement('span');
-                body.textContent = `${item.actorName}: ${item.body}`;
-
-                const time = document.createElement('time');
-                time.dateTime = item.createdAt;
-                time.textContent = formatNotificationDate(item.createdAt);
-
-                button.append(title, body, time);
-                notificationList.appendChild(button);
-            }
-
-            firstNotificationLoad = false;
-        } catch (error) {
-            notificationList.replaceChildren();
-            const message = document.createElement('div');
-            message.className = 'notification-empty';
-            message.textContent = error.message;
-            notificationList.appendChild(message);
-        }
-    }
-
-    notificationList.addEventListener('click', async event => {
-        const button = event.target.closest('[data-notification-id]');
-        if (!button) return;
-
-        await fetch(`/api/notifications/${encodeURIComponent(button.dataset.notificationId)}/read`, {
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:'{}'
-        });
-
-        await loadNotifications();
-        closeNotificationPanel();
-
-        const target = button.dataset.requestType === 'onsite'
-            ? document.getElementById('onsite-history')
-            : document.getElementById('ticket-history');
-
-        target?.scrollIntoView({behavior:'smooth',block:'start'});
-    });
-
-    notificationPermissionButton.addEventListener('click', async () => {
-        if (!('Notification' in window)) {
-            alert('This browser does not support desktop notifications.');
-            return;
-        }
-
-        const permission = await Notification.requestPermission();
-
-        notificationPermissionButton.textContent =
-            permission === 'granted' ? 'Desktop alerts enabled' : 'Enable desktop alerts';
-
-        alert(
-            permission === 'granted'
-                ? 'Desktop alerts are enabled while this page is open.'
-                : 'Desktop notification permission was not granted.'
-        );
-    });
-
-    if ('Notification' in window && Notification.permission === 'granted') {
-        notificationPermissionButton.textContent = 'Desktop alerts enabled';
-    }
-
-    loadNotifications();
-    setInterval(loadNotifications, 20000);
 
     async function loadProfile() {
         const params = payfastPaymentId
@@ -2021,5 +1746,5 @@ body{overflow-x:clip}
 })();
 </script>
 
-<script src="/nav-store-global.js?v=20261117-client-portal-to-logout-v3" defer></script></body>
+<script src="/nav-store-global.js?v=20261117-hide-header-cart-global-v2" defer></script></body>
 </html>
