@@ -999,6 +999,30 @@ header.header h1 img {
 }
 </style>
 
+
+<style id="dashboard-full-width-laptop-fix">
+/* The shared navigation stylesheet caps public pages at 1,400px.
+   The customer portal should use the full laptop canvas like the Request Help page. */
+@media (min-width: 761px) {
+  body:not(.store-page):not(.store-admin-page) main.page,
+  body:not(.store-page):not(.store-admin-page) .page {
+    width: 100% !important;
+    max-width: none !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding-left: clamp(18px, 2.2vw, 42px) !important;
+    padding-right: clamp(18px, 2.2vw, 42px) !important;
+  }
+  body:not(.store-page):not(.store-admin-page) main.page {
+    padding-top: 0 !important;
+  }
+  body:not(.store-page):not(.store-admin-page) .header {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}
+</style>
+
 </head>
 
 <body>
