@@ -1023,6 +1023,58 @@ header.header h1 img {
 }
 </style>
 
+
+<style id="customer-history-card-design">
+.customer-history-section{padding:22px!important;margin:0 0 22px!important;overflow:visible!important}
+.history-heading{display:flex;align-items:center;gap:13px;margin:0 0 17px}
+.history-heading-icon{display:grid;place-items:center;flex:0 0 42px;width:42px;height:42px;border-radius:12px;background:#fff0f0;font-size:20px}
+.history-heading h2{margin:0 0 4px!important;font-size:18px!important;color:#171717}
+.history-heading p{margin:0;color:#687080;font-size:12px;line-height:1.5}
+.visit-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:12px}
+.visit-item{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px;min-width:0;padding:15px;border:1px solid #e1e5ec;border-radius:12px;background:linear-gradient(180deg,#fff 0%,#fbfcfe 100%);box-shadow:0 4px 14px rgba(20,30,50,.045);box-sizing:border-box}
+.visit-item .detail-cell{display:flex;flex-direction:column;gap:5px;min-width:0;padding:10px 2px;border-bottom:1px solid #edf0f4}
+.visit-item .detail-label{color:#778092;font-size:10px;font-weight:800;letter-spacing:.055em;text-transform:uppercase}
+.visit-item .detail-value{color:#172033;font-size:13px;font-weight:650;line-height:1.45;overflow-wrap:anywhere}
+.history-card-header{grid-column:1/-1;display:flex;align-items:center;gap:12px;min-width:0;padding:0 0 12px;margin:0 0 4px;border-bottom:1px solid #e9edf2}
+.history-card-image{display:block;flex:0 0 52px;width:52px;height:52px;object-fit:contain;border-radius:10px;background:#fff4f4;padding:4px;box-sizing:border-box}
+.history-card-heading{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+.history-card-heading>strong{font-size:14px;color:#171717;line-height:1.3}
+.history-status{display:inline-flex;align-items:center;padding:4px 9px;border-radius:999px;font-size:10px;font-weight:800;line-height:1.2;background:#fff5df;color:#946000}
+.history-status.complete{background:#e8f7ee;color:#147a42}
+.history-status.cancelled{background:#fceaea;color:#b42318}
+.history-status.pending{background:#fff5df;color:#946000}
+.history-data-card .detail-cell:nth-child(2){grid-column:1/-1}
+#onsite-history-rows .visit-item{border-left:3px solid #e00000}
+#onsite-history-rows .visit-item>div:not(.conversation){display:flex;flex-direction:column;gap:5px;min-width:0;padding:10px 2px;border-bottom:1px solid #edf0f4}
+#onsite-history-rows .visit-item>div>strong{color:#778092;font-size:10px;letter-spacing:.05em;text-transform:uppercase}
+#onsite-history-rows .visit-item>div>span{color:#172033;font-size:13px;font-weight:650;line-height:1.45;overflow-wrap:anywhere}
+#onsite-history-rows .visit-status{display:inline-flex;padding:5px 10px;border-radius:999px;background:#fff5df;color:#946000;font-size:11px;font-weight:800}
+#onsite-history-rows .visit-status.scheduled,
+#onsite-history-rows .visit-status.finished{background:#e8f7ee;color:#147a42}
+#onsite-history-rows .conversation{grid-column:1/-1;margin-top:9px;padding:10px 12px;border:1px solid #e8ebf0;border-radius:9px;background:#fff}
+#onsite-history-rows .conversation summary{font-size:12px;font-weight:800;color:#b00000;cursor:pointer}
+@media(max-width:760px){.visit-list{grid-template-columns:1fr}.visit-item{grid-template-columns:1fr 1fr}.customer-history-section{padding:15px!important}}
+@media(max-width:480px){.visit-item{grid-template-columns:1fr}.history-card-image{width:46px;height:46px;flex-basis:46px}}
+</style>
+
+
+<style id="customer-portal-sticky-navigation">
+/* Match the Request Help page: keep the shared site navigation visible while scrolling. */
+.nav{
+  position:sticky !important;
+  position:-webkit-sticky !important;
+  top:0 !important;
+  z-index:5000 !important;
+  width:100% !important;
+  margin-top:0 !important;
+  background:rgba(255,255,255,.98) !important;
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  box-shadow:0 3px 15px rgba(0,0,0,.045) !important;
+}
+body{overflow-x:clip}
+</style>
+
 </head>
 
 <body>
@@ -1201,12 +1253,23 @@ header.header h1 img {
   <a class="request-help-button" href="/support">Request Help <span aria-hidden="true">→</span></a>
 </section>
 
-<div id="onsite-history-rows" hidden aria-hidden="true"></div>
+<section class="ticket-card customer-history-section" id="onsite-history" aria-labelledby="onsite-history-title">
+  <div class="history-heading">
+    <span class="history-heading-icon" aria-hidden="true">🚐</span>
+    <div>
+      <h2 id="onsite-history-title">Active On-site Visit Tickets</h2>
+      <p>Track your on-site visit enquiry, confirmation, scheduled date and engineer updates.</p>
+    </div>
+  </div>
+  <div id="onsite-history-rows" class="visit-list">
+    <p class="notice">Loading your on-site visit requests…</p>
+  </div>
+</section>
 
 
 
-<section class="ticket-card" id="ticket-history">
-  <h2>📋 Your Active Support Tickets</h2>
+<section class="ticket-card customer-history-section" id="ticket-history">
+  <div class="history-heading"><span class="history-heading-icon" aria-hidden="true">🎧</span><div><h2>Active Support Tickets</h2><p>Follow remote support requests and engineer replies.</p></div></div>
   <p style="font-size:12px;color:#666;margin-top:-5px;">Ticket history linked to your account.</p>
   <table class="table-logs">
     <thead>
@@ -1225,17 +1288,15 @@ header.header h1 img {
   </table>
 </section>
 
-<section class="ticket-card" id="store-order-history">
-  <h2>🛍️ My Store Orders</h2>
-  <p style="font-size:12px;color:#666;margin-top:-5px;">Track payment, approval and fulfilment progress for orders placed using this account.</p>
+<section class="ticket-card customer-history-section" id="store-order-history">
+  <div class="history-heading"><span class="history-heading-icon" aria-hidden="true">📦</span><div><h2>My Store Orders</h2><p>Track payment, approval and fulfilment progress for orders placed using this account.</p></div></div>
   <div id="customer-order-rows" class="visit-list">
     <p class="notice">Loading your orders…</p>
   </div>
 </section>
 
-<section class="ticket-card" id="invoice-history">
-  <h2>🧾 My Invoices & Payments</h2>
-  <p style="font-size:12px;color:#666;margin-top:-5px;">View invoices and quotations saved to your IT Elements account, plus your support-plan and other payment records.</p>
+<section class="ticket-card customer-history-section" id="invoice-history">
+  <div class="history-heading"><span class="history-heading-icon" aria-hidden="true">🧾</span><div><h2>My Invoices & Payments</h2><p>View invoices, quotations and your IT Elements payment history.</p></div></div>
   <div id="customer-document-rows" class="visit-list">
     <p class="notice">Loading your documents…</p>
   </div>
@@ -1682,12 +1743,38 @@ header.header h1 img {
 
     function addDetail(card, label, value) {
         const item = document.createElement('div');
+        item.className = 'detail-cell';
         const heading = document.createElement('strong');
+        heading.className = 'detail-label';
         heading.textContent = label;
         const detail = document.createElement('span');
+        detail.className = 'detail-value';
         detail.textContent = value || '—';
         item.append(heading, detail);
         card.appendChild(item);
+    }
+
+    function addHistoryCardHeader(card, imagePath, imageAlt, title, statusText, statusClass) {
+        const header = document.createElement('div');
+        header.className = 'history-card-header';
+        const image = document.createElement('img');
+        image.className = 'history-card-image';
+        image.src = imagePath;
+        image.alt = imageAlt;
+        image.loading = 'lazy';
+        const copy = document.createElement('div');
+        copy.className = 'history-card-heading';
+        const name = document.createElement('strong');
+        name.textContent = title;
+        copy.appendChild(name);
+        if (statusText) {
+            const badge = document.createElement('span');
+            badge.className = 'history-status ' + (statusClass || 'pending');
+            badge.textContent = statusText;
+            copy.appendChild(badge);
+        }
+        header.append(image, copy);
+        card.appendChild(header);
     }
 
     function renderCustomerOrders(orders) {
@@ -1703,7 +1790,7 @@ header.header h1 img {
 
         for (const order of rows) {
             const card = document.createElement('article');
-            card.className = 'visit-item';
+            card.className = 'visit-item history-data-card order-data-card';
             const details = order.orderDetails || {};
             const items = Array.isArray(details.items) ? details.items : [];
             const paymentStatus = String(order.status || 'pending').toLowerCase();
@@ -1721,6 +1808,7 @@ header.header h1 img {
             const itemSummary = items.length
                 ? items.map(item => `${item.name || item.title || 'Product'} × ${Number(item.quantity || 1)}`).join(', ')
                 : 'Order details unavailable';
+            addHistoryCardHeader(card, '/assets/portal-orders.webp', 'Store order illustration', 'Store order', fulfilmentLabels[fulfilment] || fulfilment, fulfilment === 'completed' ? 'complete' : (fulfilment === 'cancelled' ? 'cancelled' : 'pending'));
 
             addDetail(card, 'Order reference', order.paymentId || '—');
             addDetail(card, 'Items', itemSummary);
@@ -1747,7 +1835,8 @@ header.header h1 img {
         } else {
             for (const doc of rows) {
                 const card = document.createElement('article');
-                card.className = 'visit-item';
+                card.className = 'visit-item history-data-card document-data-card';
+                addHistoryCardHeader(card, '/assets/portal-billing.webp', 'Invoice and payment illustration', 'Account document', String(doc.kind || 'document').toUpperCase());
                 addDetail(card, 'Document', `${String(doc.kind || 'document').toUpperCase()} · ${doc.number || 'Unnumbered'}`);
                 addDetail(card, 'Total', moneyFromCents(doc.totalCents));
                 addDetail(card, 'Issue date', doc.issueDate || (doc.createdAt ? new Date(doc.createdAt).toLocaleDateString('en-ZA') : '—'));
@@ -1773,10 +1862,12 @@ header.header h1 img {
 
         for (const purchase of paymentRowsData) {
             const card = document.createElement('article');
-            card.className = 'visit-item';
+            card.className = 'visit-item history-data-card payment-data-card';
             const label = purchase.purchaseType === 'plan' ? (purchase.planName || 'Support plan') :
                 purchase.purchaseType === 'quickfix' ? 'Quick Fix support session' :
                 purchase.purchaseType === 'invoicePro' ? 'Invoice Pro' : String(purchase.purchaseType || 'Payment');
+            const purchaseStatus = String(purchase.status || 'pending').toUpperCase();
+            addHistoryCardHeader(card, '/assets/portal-billing.webp', 'Payment illustration', label, purchaseStatus, purchaseStatus === 'PAID' ? 'complete' : 'pending');
             addDetail(card, 'Payment', label);
             addDetail(card, 'Reference', purchase.paymentId || '—');
             addDetail(card, 'Amount', moneyFromCents(purchase.amount));
