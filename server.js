@@ -883,9 +883,7 @@ app.get('/store-admin.html', checkAdminAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'store-admin.html'));
 });
 
-// Customer portal dashboard (friendly URL plus legacy .html URL).
-app.get(['/dashboard', '/dashboard/', '/dashboard.html'], checkUserAuth, (req, res) => {
-    res.set('Cache-Control', 'no-store, private');
+app.get('/dashboard.html', checkUserAuth, (req, res) => {
     res.sendFile(path.join(viewsPath, 'dashboard.html'));
 });
 
@@ -1535,9 +1533,6 @@ app.get('/admin/login', (req, res) => {
 });
 
 app.get('/client/login', (req, res) => {
-    if (req.session && req.session.isUser) {
-        return res.redirect('/dashboard');
-    }
     if (req.query.next === '/store' || String(req.query.next || '').startsWith('/store?')) req.session.returnTo = '/store?resumeCart=1';
     else if (req.query.next === '/dashboard') req.session.returnTo = '/dashboard';
     else if (req.query.next === '/account') req.session.returnTo = '/account';
@@ -2328,7 +2323,7 @@ app.post('/client/login', async (req, res) => {
                 : req.session.pendingPlanId && SLA_PLANS[req.session.pendingPlanId]
                     ? `/dashboard?plan=${encodeURIComponent(req.session.pendingPlanId)}`
                     : req.session.returnTo === '/dashboard' ? '/dashboard'
-                : req.session.returnTo === '/account' ? '/account' : '/dashboard';
+                : req.session.returnTo === '/account' ? '/account' : '/store';
 
             req.session.regenerate((regenerateError) => {
                 if (regenerateError) {
@@ -2782,24 +2777,10 @@ app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
             );
         }
 
-        const email = String(req.session.userEmail || '').toLowerCase();
-        const [tickets, orders, purchases, documents] = await Promise.all([
-            SupportRequest.find(
-                { email },
-                { remotePassword: 0 }
-            ).sort({ date: -1 }).limit(100).lean(),
-            PayFastPurchase.find({
-                userEmail: email,
-                purchaseType: 'storeOrder'
-            }).select('paymentId orderDetails amount status fulfilmentStatus paidAt createdAt').sort({ createdAt: -1 }).limit(100).lean(),
-            PayFastPurchase.find({
-                userEmail: email,
-                purchaseType: { $ne: 'storeOrder' }
-            }).select('paymentId purchaseType planName amount status paidAt createdAt expiresAt').sort({ createdAt: -1 }).limit(100).lean(),
-            BusinessDocument.find({
-                ownerEmail: email
-            }).select('kind number totalCents issueDate dueDate createdAt').sort({ createdAt: -1 }).limit(100).lean()
-        ]);
+        const tickets = await SupportRequest.find(
+            { email: req.session.userEmail },
+            { remotePassword: 0 }
+        ).sort({ date: -1 });
 
         const checkout = req.query.payfastId
             ? await PayFastPurchase.findOne(
@@ -2811,13 +2792,9 @@ app.get('/api/client/profile-data', checkUserAuth, async (req, res) => {
             )
             : null;
 
-        res.set('Cache-Control', 'no-store, private');
         res.json({
             user,
             tickets,
-            orders,
-            purchases,
-            documents,
             checkout
         });
     } catch (err) {
