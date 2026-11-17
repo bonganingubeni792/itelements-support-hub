@@ -967,80 +967,138 @@ textarea.form-control,
 }
 
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261115-sticky-overflow-clip-v8">
-<style id="it-elements-full-width-dashboard-redesign">
-/* Customer dashboard: full-screen canvas and premium responsive portal finish */
-html,body{width:100%;min-height:100%;overflow-x:hidden}
-body{background:linear-gradient(180deg,#fff 0%,#f7f8fa 100%)}
-.page{width:100%!important;max-width:none!important;margin:0!important;padding:0 clamp(16px,3.2vw,58px) 64px!important}
-.header{position:sticky;top:0;z-index:60;width:100%;margin:0 0 30px!important;padding:12px clamp(14px,2.2vw,32px)!important;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border:1px solid #e8e9ed;border-top:0;border-radius:0 0 18px 18px;box-shadow:0 8px 28px rgba(22,28,45,.07)}
-.welcome{font-size:clamp(27px,2.2vw,38px)!important;letter-spacing:-.7px;margin-top:18px!important}
-.welcome-subtitle{font-size:15px!important;color:#667085!important}
-.client-workspaces{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important}
-.client-workspace{min-height:190px!important;border-radius:20px!important;padding:24px!important;box-shadow:0 12px 34px rgba(20,25,40,.07)!important;transition:transform .2s ease,box-shadow .2s ease}
-.client-workspace:hover{transform:translateY(-3px);box-shadow:0 18px 38px rgba(20,25,40,.11)!important}
-.client-workspace-icon{width:62px!important;height:62px!important;border-radius:18px!important;font-size:30px!important;display:grid;place-items:center;background:#fff0f0!important;color:#e00000!important}
-.quick-stats{gap:16px!important;margin:26px 0!important}
-.quick-stat{border-radius:18px!important;padding:22px!important;min-height:116px;box-shadow:0 8px 24px rgba(20,25,40,.055)!important}
-.subscription-summary{border-radius:18px!important;padding:24px!important;box-shadow:0 8px 24px rgba(20,25,40,.055)!important}
-.section-title{margin-top:30px!important;font-size:20px!important}
-.section-note{max-width:none!important}
-.plan-grid,.plans-grid,.support-plans{width:100%!important}
-button,.button,.client-workspace-action{transition:transform .18s ease,box-shadow .18s ease}
-button:hover,.button:hover{transform:translateY(-1px)}
-@media(max-width:760px){
- .page{padding:0 14px 100px!important}
- .header{position:sticky;top:0;display:flex;flex-direction:column;align-items:stretch;gap:10px;margin:0 -14px 20px!important;padding:10px 14px!important;border-radius:0 0 16px 16px}
- .header h1{font-size:18px!important;white-space:normal}
- .header-actions{width:100%;display:flex;overflow-x:auto;flex-wrap:nowrap;gap:8px;padding:3px 0 7px;scrollbar-width:none}
- .header-actions a{flex:0 0 auto}
- .client-workspaces{grid-template-columns:1fr!important}
- .client-workspace{min-height:0!important;padding:18px!important}
- .quick-stats{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:8px!important}
- .quick-stat{padding:13px 10px!important;min-height:92px}
- .subscription-summary{padding:16px!important;gap:14px!important}
-}
-@media(max-width:430px){
- .quick-stats{grid-template-columns:1fr!important}
-}
-</style>
 
-
-
-<style id="it-elements-viewport-width-final">
+<style id="it-elements-client-portal-clean-layout">
+/* IT Elements customer portal: clean full-width layout, normal image sizing and site navigation */
 html, body {
   width: 100% !important;
-  max-width: none !important;
   min-width: 0 !important;
+  max-width: none !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow-x: hidden !important;
 }
 body {
   display: block !important;
+  background: #fff !important;
+  color: #171717 !important;
 }
 body > main.page,
 main.page,
 .page {
-  box-sizing: border-box !important;
-  position: relative !important;
-  left: auto !important;
-  right: auto !important;
-  transform: none !important;
+  display: block !important;
+  position: static !important;
   float: none !important;
-  width: 100vw !important;
-  max-width: 100vw !important;
+  transform: none !important;
+  width: 100% !important;
   min-width: 0 !important;
-  margin-left: calc(50% - 50vw) !important;
-  margin-right: 0 !important;
-  padding: 0 clamp(18px, 2.2vw, 40px) 60px !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 28px 60px !important;
+  box-sizing: border-box !important;
 }
-.header,
+
+/* Main site navigation */
+header.header {
+  position: relative !important;
+  inset: auto !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 12px 22px !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 72px !important;
+  margin: 0 0 24px !important;
+  padding: 12px 18px !important;
+  border: 0 !important;
+  border-bottom: 1px solid #e7e7e9 !important;
+  border-radius: 0 0 12px 12px !important;
+  background: #fff !important;
+  box-shadow: 0 5px 18px rgba(16,24,40,.055) !important;
+  box-sizing: border-box !important;
+  z-index: 20 !important;
+}
+header.header h1 {
+  display: flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  font-size: 20px !important;
+}
+header.header h1 img {
+  display: block !important;
+  flex: 0 0 42px !important;
+  width: 42px !important;
+  height: 42px !important;
+  max-width: 42px !important;
+  object-fit: contain !important;
+}
+.header-actions {
+  position: static !important;
+  inset: auto !important;
+  display: flex !important;
+  flex: 1 1 620px !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+  gap: 4px 5px !important;
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.header-actions a {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 34px !important;
+  padding: 7px 9px !important;
+  border: 1px solid transparent !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  color: #292929 !important;
+  font-size: 12px !important;
+  font-weight: 750 !important;
+  line-height: 1.2 !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+.header-actions a:hover,
+.header-actions a:focus-visible {
+  background: #fff1f1 !important;
+  border-color: #f4cccc !important;
+  color: #c90000 !important;
+  outline: none !important;
+}
+.header-actions .logout-link { color: #d00000 !important; }
+
+/* Intro and full-width content */
+.welcome {
+  margin: 0 0 6px !important;
+  font-size: clamp(25px, 2.1vw, 34px) !important;
+  line-height: 1.2 !important;
+}
+.welcome-subtitle {
+  margin: 0 0 22px !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
 .client-workspaces,
 .quick-stats,
 .plans-wrapper,
 .subscription-summary,
 .ticket-card,
-.request-choice-grid {
+#account-management {
   width: 100% !important;
   max-width: none !important;
   min-width: 0 !important;
@@ -1049,31 +1107,185 @@ main.page,
 .client-workspaces {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin: 0 0 22px !important;
 }
+
+/* Cards: strict 3-column grid prevents huge images and vertical text */
+.client-workspace {
+  display: grid !important;
+  grid-template-columns: 44px minmax(0, 1fr) 82px !important;
+  align-items: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 126px !important;
+  height: auto !important;
+  padding: 15px 17px !important;
+  overflow: hidden !important;
+  border: 1px solid #e4e7ec !important;
+  border-top: 3px solid #e00000 !important;
+  border-radius: 13px !important;
+  background: #fff !important;
+  box-shadow: 0 4px 15px rgba(16,24,40,.045) !important;
+  text-decoration: none !important;
+}
+.client-workspace.store-workspace { border-top-color: #252525 !important; }
+.client-workspace:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 9px 22px rgba(16,24,40,.085) !important;
+}
+.client-workspace-icon {
+  display: grid !important;
+  place-items: center !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  max-width: 42px !important;
+  margin: 0 !important;
+  border-radius: 11px !important;
+  background: #fff0f0 !important;
+  color: #e00000 !important;
+  font-size: 21px !important;
+}
+.client-workspace-copy {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  overflow: hidden !important;
+  writing-mode: horizontal-tb !important;
+  word-break: normal !important;
+  overflow-wrap: anywhere !important;
+}
+.client-workspace-kicker {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 0 4px !important;
+  font-size: 8px !important;
+  line-height: 1.35 !important;
+  letter-spacing: .8px !important;
+  white-space: normal !important;
+}
+.client-workspace-copy > strong {
+  display: block !important;
+  width: 100% !important;
+  font-size: 17px !important;
+  line-height: 1.25 !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+}
+.client-workspace-copy > span:nth-of-type(2) {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 5px !important;
+  font-size: 11px !important;
+  line-height: 1.45 !important;
+  white-space: normal !important;
+}
+.client-workspace-action {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  margin-top: 8px !important;
+  padding: 7px 10px !important;
+  border-radius: 7px !important;
+  background: #e00000 !important;
+  color: #fff !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  white-space: normal !important;
+}
+.client-workspace-art {
+  display: block !important;
+  position: static !important;
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  justify-self: center !important;
+  align-self: center !important;
+  flex: none !important;
+  width: 78px !important;
+  height: 78px !important;
+  min-width: 78px !important;
+  max-width: 78px !important;
+  min-height: 78px !important;
+  max-height: 78px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  object-fit: contain !important;
+  object-position: center !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
+/* Stats, plans and sections fill the same canvas */
 .quick-stats {
   display: grid !important;
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+  margin: 20px 0 26px !important;
 }
+.quick-stat { min-width: 0 !important; }
 .plans-wrapper {
   display: grid !important;
   grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
 }
-@media (max-width: 1100px) {
-  .plans-wrapper { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-  .header { align-items: flex-start !important; flex-direction: column !important; }
-  .header-actions { width: 100% !important; justify-content: flex-start !important; }
+.plan-box { min-width: 0 !important; }
+.ticket-card { margin: 0 0 20px !important; }
+.request-choice-grid { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 14px !important; }
+.request-choice { min-width: 0 !important; }
+.software-downloads {
+  margin-top: 18px !important;
+  padding: 17px !important;
+  border: 1px solid #e6e8ed !important;
+  border-radius: 12px !important;
+  background: #fafbfc !important;
 }
-@media (max-width: 720px) {
-  body > main.page, main.page, .page {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    margin-left: calc(50% - 50vw) !important;
-    padding: 0 14px 36px !important;
-  }
-  .client-workspaces,
-  .request-choice-grid,
+.software-downloads h2 { margin: 0 0 6px !important; font-size: 15px !important; }
+.software-downloads .soft-box { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 10px !important; }
+.software-downloads .soft-item { min-width: 0 !important; padding: 13px !important; }
+
+/* Account section follows the same width as the rest of the portal */
+#account-management { margin: 30px 0 0 !important; }
+#account-management .account-section-hero,
+#account-management .account-hero,
+#account-management .stats,
+#account-management .grid { width: 100% !important; max-width: none !important; }
+
+/* Tablet and phone layouts */
+@media (max-width: 1200px) {
+  header.header { align-items: flex-start !important; }
+  .header-actions { justify-content: flex-start !important; flex-basis: 100% !important; }
+  .plans-wrapper { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+}
+@media (max-width: 760px) {
+  body > main.page, main.page, .page { padding: 0 15px 44px !important; }
+  header.header { flex-direction: column !important; gap: 8px !important; margin-bottom: 18px !important; padding: 10px 14px !important; }
+  .header-actions { flex-wrap: nowrap !important; overflow-x: auto !important; justify-content: flex-start !important; padding-bottom: 5px !important; }
+  .header-actions a { flex: 0 0 auto !important; }
+  .client-workspaces { grid-template-columns: 1fr !important; }
+  .quick-stats { grid-template-columns: repeat(2,minmax(0,1fr)) !important; }
+  .quick-stat:last-child { grid-column: 1/-1 !important; }
   .plans-wrapper { grid-template-columns: 1fr !important; }
-  .quick-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .request-choice-grid { grid-template-columns: 1fr !important; }
+}
+@media (max-width: 480px) {
+  .client-workspace { grid-template-columns: 38px minmax(0,1fr) 54px !important; gap: 9px !important; padding: 12px !important; }
+  .client-workspace-icon { width: 36px !important; height: 36px !important; min-width: 36px !important; max-width: 36px !important; font-size: 18px !important; }
+  .client-workspace-art { width: 52px !important; height: 52px !important; min-width: 52px !important; max-width: 52px !important; min-height: 52px !important; max-height: 52px !important; }
+  .client-workspace-copy > strong { font-size: 15px !important; }
+  .client-workspace-copy > span:nth-of-type(2) { font-size: 10px !important; }
+  .client-workspace-art { display: none !important; }
+  .quick-stats { grid-template-columns: 1fr 1fr !important; }
+  .quick-stat:last-child { grid-column: 1/-1 !important; }
+  .software-downloads .soft-box { grid-template-columns: 1fr !important; }
 }
 </style>
 
@@ -1090,15 +1302,15 @@ main.page,
   </h1>
 
   <nav class="header-actions" aria-label="Client navigation">
-<a href="/home">Home</a>
+    <a href="/">Home</a>
     <a href="/services">Services</a>
     <a href="/onsite-support">On-site</a>
     <a href="/pricing">Plans</a>
     <a href="/faq">FAQ</a>
     <a href="/contact">Contact</a>
     <a href="/store">Visit Store</a>
-    <a href="/account">My Account</a>
-     <a href="#ticket-request">Request help</a>
+    <a href="#account-management">My Account</a>
+    <a href="#ticket-request">Request Help</a>
     <a href="/client/logout" class="logout-link">Log out</a>
   </nav>
 </header>
@@ -1136,7 +1348,7 @@ main.page,
       <span class="client-workspace-action">Go to Online Support <b aria-hidden="true">→</b></span>
     </span>
   
-    <img class="client-workspace-art" src="/assets/portal-support.webp" alt="Laptop and headset illustration" loading="lazy"></a>
+    <img class="client-workspace-art" src="/assets/portal-support.webp" alt="Laptop and headset for remote IT support" loading="lazy"></a>
   <a class="client-workspace store-workspace" href="/store">
     <span class="client-workspace-icon" aria-hidden="true">▣</span>
     <span class="client-workspace-copy">
@@ -1146,7 +1358,7 @@ main.page,
       <span class="client-workspace-action">Explore Products <b aria-hidden="true">→</b></span>
     </span>
   
-    <img class="client-workspace-art" src="/assets/portal-store.webp" alt="Technology products in a delivery box" loading="lazy"></a>
+    <img class="client-workspace-art" src="/assets/portal-store.webp" alt="Computers and accessories from the IT Elements store" loading="lazy"></a>
   <a class="client-workspace" href="#store-order-history">
     <span class="client-workspace-icon" aria-hidden="true">🛍</span>
     <span class="client-workspace-copy">
@@ -1156,7 +1368,7 @@ main.page,
       <span class="client-workspace-action">View My Orders <b aria-hidden="true">→</b></span>
     </span>
   
-    <img class="client-workspace-art" src="/assets/portal-orders.webp" alt="Order delivery illustration" loading="lazy"></a>
+    <img class="client-workspace-art" src="/assets/portal-orders.webp" alt="IT equipment order and delivery" loading="lazy"></a>
   <a class="client-workspace" href="#invoice-history">
     <span class="client-workspace-icon" aria-hidden="true">▤</span>
     <span class="client-workspace-copy">
@@ -1166,7 +1378,7 @@ main.page,
       <span class="client-workspace-action">View Billing <b aria-hidden="true">→</b></span>
     </span>
   
-    <img class="client-workspace-art" src="/assets/portal-billing.webp" alt="Invoice and payment illustration" loading="lazy"></a>
+    <img class="client-workspace-art" src="/assets/portal-billing.webp" alt="Invoice and secure payment" loading="lazy"></a>
 </section>
 
 
@@ -1244,7 +1456,7 @@ main.page,
 </section>
 
 <section class="ticket-card request-section" id="ticket-request">
-  <h2>Choose the support you need</h2>
+  <h2>Request Help</h2>
   <p class="request-section-intro">These are two different services. Use the left form for help over the internet, or the right form if you want us to assess an in-person visit.</p>
   <p id="request-message" class="notice" role="status" aria-live="polite"></p>
 
@@ -1388,15 +1600,29 @@ main.page,
   </div>
 
   <p class="request-hours">Support hours: Monday to Friday, 08:00–17:00 South African time (SAST). An on-site request is not confirmed until we agree the visit with you.</p>
-</section>
+<section class="software-downloads">
+  <h2>📥 Required Software Downloads</h2>
+  <p style="font-size:12px;color:#666;margin-top:-5px;">Download remote support software only when asked by your engineer.</p>
 
-<section class="ticket-card" id="onsite-history">
-  <h2>📍 Your On-site Visit Requests</h2>
-  <p style="font-size:12px;color:#666;margin-top:-5px;">Enquiries are not confirmed appointments. We’ll contact you to confirm availability, location coverage, and costs.</p>
-  <div id="onsite-history-rows" class="visit-list">
-    <p class="notice">Loading your on-site requests…</p>
+  <div class="soft-box">
+    <div class="soft-item">
+      <strong>AnyDesk</strong>
+      <span style="color:#666;font-size:12px;display:block;">Remote support application</span>
+      <a href="https://anydesk.com/en/downloads" target="_blank" rel="noopener noreferrer" class="dl-link">Download AnyDesk</a>
+    </div>
+
+    <div class="soft-item">
+      <strong>TeamViewer</strong>
+      <span style="color:#666;font-size:12px;display:block;">Remote support application</span>
+      <a href="https://www.teamviewer.com/en/download/" target="_blank" rel="noopener noreferrer" class="dl-link">Download TeamViewer</a>
+    </div>
   </div>
 </section>
+</section>
+
+<div id="onsite-history-rows" hidden aria-hidden="true"></div>
+
+
 
 <section class="ticket-card" id="ticket-history">
   <h2>📋 Your Active Support Tickets</h2>
@@ -1435,24 +1661,7 @@ main.page,
   <div id="customer-payment-rows" class="visit-list" style="margin-top:12px;"></div>
 </section>
 
-<section class="ticket-card">
-  <h2>📥 Required Software Downloads</h2>
-  <p style="font-size:12px;color:#666;margin-top:-5px;">Download remote support software only when asked by your engineer.</p>
 
-  <div class="soft-box">
-    <div class="soft-item">
-      <strong>AnyDesk</strong>
-      <span style="color:#666;font-size:12px;display:block;">Remote support application</span>
-      <a href="https://anydesk.com/en/downloads" target="_blank" rel="noopener noreferrer" class="dl-link">Download AnyDesk</a>
-    </div>
-
-    <div class="soft-item">
-      <strong>TeamViewer</strong>
-      <span style="color:#666;font-size:12px;display:block;">Remote support application</span>
-      <a href="https://www.teamviewer.com/en/download/" target="_blank" rel="noopener noreferrer" class="dl-link">Download TeamViewer</a>
-    </div>
-  </div>
-</section>
 
 </main>
 
