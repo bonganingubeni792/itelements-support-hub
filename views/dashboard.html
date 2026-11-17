@@ -289,318 +289,6 @@ button,a{-webkit-tap-highlight-color:transparent}
   font-weight:800;
 }
 
-/* REQUEST FORMS */
-.request-section-intro{
-  margin:-5px 0 17px;
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.6;
-}
-.request-choice-grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:18px;
-  align-items:start;
-}
-.request-choice{
-  min-width:0;
-  padding:19px;
-  border:1px solid var(--line);
-  border-radius:9px;
-  background:#fff;
-}
-.remote-choice{border-top:3px solid var(--red)}
-.onsite-choice{border-top:3px solid #333}
-.request-choice-heading{
-  display:flex;
-  align-items:center;
-  gap:11px;
-}
-.request-icon{
-  display:grid;
-  place-items:center;
-  width:40px;
-  height:40px;
-  flex:none;
-  border-radius:9px;
-  background:#fff0f0;
-  font-size:20px;
-}
-.request-kicker{
-  margin:0 0 3px;
-  color:var(--red);
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.8px;
-}
-.request-choice h3{
-  margin:0;
-  color:#171717;
-  font-size:17px;
-  line-height:1.3;
-}
-.request-description{
-  min-height:60px;
-  margin:12px 0 17px;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.65;
-}
-.dashboard-request-form{
-  display:grid;
-  grid-template-columns:minmax(0,1fr);
-  gap:0 12px;
-}
-.onsite-dashboard-form{
-  grid-template-columns:repeat(2,minmax(0,1fr));
-}
-.dashboard-request-form .full-field{grid-column:1/-1}
-.form-group{min-width:0;margin-bottom:14px}
-.form-group label{
-  display:block;
-  margin-bottom:6px;
-  color:#333;
-  font-size:11px;
-  font-weight:800;
-  text-transform:uppercase;
-}
-.form-control,
-.dashboard-request-form select,
-.dashboard-request-form textarea{
-  display:block;
-  width:100%;
-  min-width:0;
-  min-height:42px;
-  padding:10px 11px;
-  border:1px solid #d8d8dc;
-  border-radius:6px;
-  background:#fff;
-  color:#171717;
-  font-size:13px;
-  outline:none;
-}
-.form-control:focus,
-.dashboard-request-form select:focus,
-.dashboard-request-form textarea:focus{
-  border-color:var(--red);
-  box-shadow:0 0 0 3px #e0000014;
-}
-textarea.form-control,
-.dashboard-request-form textarea{
-  min-height:95px;
-  height:95px;
-  resize:vertical;
-}
-.password-wrap{position:relative}
-.password-wrap .form-control{padding-right:78px}
-.password-toggle{
-  position:absolute;
-  top:50%;
-  right:7px;
-  transform:translateY(-50%);
-  padding:6px 10px;
-  border:1px solid #ddd;
-  border-radius:5px;
-  background:#f7f7f8;
-  color:#333;
-  font-size:11px;
-  font-weight:700;
-  cursor:pointer;
-}
-.password-toggle:hover{
-  border-color:var(--red);
-  color:var(--red);
-}
-.submit-btn{
-  width:100%;
-  min-height:44px;
-  padding:12px 18px;
-  border:0;
-  border-radius:6px;
-  background:var(--red);
-  color:#fff;
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-  cursor:pointer;
-  transition:background .2s;
-}
-.submit-btn:hover{background:var(--red-dark)}
-.form-help{
-  display:block;
-  margin-top:5px;
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.5;
-}
-.request-hours{
-  margin:15px 0 0;
-  color:var(--muted);
-  font-size:11px;
-  line-height:1.6;
-}
-
-/* TABLES AND TICKETS */
-.table-logs{
-  width:100%;
-  min-width:600px;
-  margin-top:15px;
-  border-collapse:collapse;
-  font-size:13px;
-  text-align:left;
-}
-.table-logs th{
-  padding:12px 10px;
-  background:#f5f5f6;
-  color:#444;
-  font-size:11px;
-  font-weight:800;
-  text-transform:uppercase;
-}
-.table-logs td{
-  padding:12px 10px;
-  border-bottom:1px solid var(--line);
-  color:#333;
-  vertical-align:top;
-  overflow-wrap:anywhere;
-}
-.status-badge{
-  display:inline-block;
-  padding:4px 9px;
-  border:1px solid #ddd;
-  border-radius:20px;
-  background:#f5f5f5;
-  color:#555;
-  font-size:11px;
-  font-weight:700;
-}
-.status-badge.open{background:#fff7df;color:#815900;border-color:#f0d994}
-.status-badge.hold{background:#fff0df;color:#945000;border-color:#edc99e}
-.status-badge.resolved{background:#eaf8ef;color:#176b36;border-color:#b8e2c5}
-.status-badge.confirmed,
-.status-badge.contacted{background:#eaf4ff;color:#145b96;border-color:#c2ddf5}
-
-/* ON-SITE REQUEST HISTORY */
-.visit-list{display:grid;gap:11px}
-.visit-item{
-  display:grid;
-  grid-template-columns:1fr 1fr 1.5fr auto;
-  gap:13px;
-  align-items:start;
-  padding:15px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  background:#fff;
-}
-.visit-item strong{
-  display:block;
-  margin-bottom:4px;
-  color:#555;
-  font-size:10px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.4px;
-}
-.visit-item span{
-  color:#222;
-  font-size:12px;
-  overflow-wrap:anywhere;
-}
-.visit-status{
-  display:inline-flex;
-  width:fit-content;
-  align-items:center;
-  padding:5px 10px;
-  border:1px solid #ead99b;
-  border-radius:20px;
-  background:#fff8df;
-  color:#815900!important;
-  font-size:11px!important;
-  font-weight:800;
-}
-.visit-status.contacted,
-.visit-status.scheduled{
-  border-color:#c2ddf5;
-  background:#eaf4ff;
-  color:#145b96!important;
-}
-.visit-status.paused{
-  border-color:#edc99e;
-  background:#fff0df;
-  color:#945000!important;
-}
-.visit-status.finished{
-  border-color:#b8e2c5;
-  background:#eaf8ef;
-  color:#176b36!important;
-}
-
-/* TICKET CONVERSATIONS */
-.conversation{
-  margin-top:10px;
-  padding:10px;
-  border:1px solid var(--line);
-  border-radius:7px;
-  background:#fafafa;
-}
-.conversation summary{
-  color:var(--red-dark);
-  font-size:12px;
-  font-weight:800;
-  cursor:pointer;
-}
-.conversation-thread{
-  display:grid;
-  gap:8px;
-  max-height:260px;
-  overflow:auto;
-  margin:10px 0;
-}
-.conversation-message{
-  padding:10px;
-  border:1px solid #ededed;
-  border-radius:6px;
-  background:#fff;
-}
-.conversation-message strong{color:#171717;font-size:11px}
-.conversation-message time{
-  margin-left:8px;
-  color:#777;
-  font-size:10px;
-}
-.conversation-message p{
-  margin:5px 0 0;
-  color:#444;
-  font-size:12px;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-.conversation-form{display:grid;gap:8px}
-.conversation-form textarea{
-  width:100%;
-  min-height:66px;
-  padding:10px;
-  resize:vertical;
-  border:1px solid #ddd;
-  border-radius:6px;
-  background:#fff;
-  color:#171717;
-  font-size:12px;
-}
-.conversation-form button{
-  justify-self:start;
-  padding:9px 14px;
-  border:0;
-  border-radius:5px;
-  background:var(--red);
-  color:#fff;
-  font-weight:800;
-  cursor:pointer;
-}
-.conversation-form button:hover{background:var(--red-dark)}
-.conversation-form button:disabled{opacity:.6;cursor:wait}
-.conversation-error{margin:0;color:#c00000;font-size:11px}
-
 /* SOFTWARE DOWNLOADS */
 .soft-box{
   display:flex;
@@ -1289,31 +977,57 @@ header.header h1 img {
 }
 </style>
 
+
+<style id="dashboard-request-help-cta">
+.request-help-cta{
+  display:flex;align-items:center;justify-content:space-between;gap:18px;
+  padding:22px 24px;border:1px solid #e7e7ea;border-left:4px solid #e00000;
+  border-radius:11px;background:#fff;box-shadow:0 5px 18px rgba(20,20,30,.045);
+}
+.request-help-cta h2{margin:0 0 5px;color:#171717;font-size:18px}
+.request-help-cta p{margin:0;color:#62626b;font-size:13px;line-height:1.55}
+.request-help-button{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  flex:0 0 auto;min-height:44px;padding:11px 18px;border-radius:7px;
+  background:#e00000;color:#fff;text-decoration:none;font-size:13px;font-weight:800;
+  box-shadow:0 5px 13px rgba(224,0,0,.15);
+}
+.request-help-button:hover{background:#b00000}
+@media(max-width:650px){
+  .request-help-cta{align-items:stretch;flex-direction:column;padding:17px}
+  .request-help-button{width:100%}
+}
+</style>
+
 </head>
 
 <body>
 <main class="page">
 
-<header class="header">
-  <h1>
+<nav class="nav" aria-label="Main navigation">
+  <a class="brand" href="/" aria-label="IT Elements home">
     <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo" width="46" height="46">
-    <span>IT Elements.<span class="brand-support">support</span></span>
-    <span class="portal-label">Customer Portal</span>
-  </h1>
+    <span>IT Elements.</span>
+    <span class="brand-support">support</span>
+  </a>
 
-  <nav class="header-actions" aria-label="Client navigation">
+  <button class="menu-toggle" id="menuToggle" type="button"
+    aria-label="Open navigation menu" aria-expanded="false"
+    aria-controls="mainLinks">☰</button>
+
+  <div class="links" id="mainLinks">
     <a href="/">Home</a>
     <a href="/services">Services</a>
-    <a href="/onsite-support">On-site</a>
-    <a href="/pricing">Plans</a>
+    <a href="/store">Online Store</a>
+    <a href="/onsite-support">On-site Support</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/about">About</a>
     <a href="/faq">FAQ</a>
     <a href="/contact">Contact</a>
-    <a href="/store">Visit Store</a>
-    <a href="#account-management">My Account</a>
-    <a href="#ticket-request">Request Help</a>
-    <a href="/client/logout" class="logout-link">Log out</a>
-  </nav>
-</header>
+    <a href="/client/login">Client Portal</a>
+    <a href="/support" class="nav-cta">Request Help</a>
+  </div>
+</nav>
 
 <div class="notification-widget" id="notification-widget">
   <button class="notification-toggle" id="notification-toggle" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notification-panel">
@@ -1339,7 +1053,7 @@ header.header h1 img {
 <p class="welcome-subtitle">Manage your plan, submit a support request, and follow your ticket progress here.</p>
 
 <section class="client-workspaces" aria-label="Choose what you want to do">
-  <a class="client-workspace support-workspace" href="#ticket-request">
+  <a class="client-workspace support-workspace" href="/support">
     <span class="client-workspace-icon" aria-hidden="true">⌁</span>
     <span class="client-workspace-copy">
       <span class="client-workspace-kicker">IT ELEMENTS CUSTOMER SERVICES</span>
@@ -1455,169 +1169,12 @@ header.header h1 img {
   </article>
 </section>
 
-<section class="ticket-card request-section" id="ticket-request">
-  <h2>Request Help</h2>
-  <p class="request-section-intro">These are two different services. Use the left form for help over the internet, or the right form if you want us to assess an in-person visit.</p>
-  <p id="request-message" class="notice" role="status" aria-live="polite"></p>
-
-  <div class="request-choice-grid">
-
-    <article class="request-choice remote-choice">
-      <div class="request-choice-heading">
-        <span class="request-icon">💻</span>
-        <div>
-          <p class="request-kicker">ONLINE · REMOTE</p>
-          <h3>AnyDesk or TeamViewer support</h3>
-        </div>
-      </div>
-
-      <p class="request-description">For troubleshooting over the internet. Enter your AnyDesk or TeamViewer ID so an engineer can connect after arranging a session.</p>
-
-      <form id="support-ticket-form" action="/support" method="POST" class="dashboard-request-form">
-        <input type="hidden" name="requestType" value="remote">
-        <input type="hidden" name="returnToDashboard" value="1">
-
-        <div class="form-group">
-          <label for="ticket-name">Client name</label>
-          <input id="ticket-name" type="text" name="name" class="form-control" required placeholder="Enter your name">
-        </div>
-
-        <div class="form-group">
-          <label for="ticket-email">Email address</label>
-          <input id="ticket-email" type="email" name="email" class="form-control" autocomplete="email" required placeholder="you@example.com">
-        </div>
-
-        <div class="form-group">
-          <label for="ticket-phone">Phone number</label>
-          <input id="ticket-phone" type="tel" name="phone" class="form-control" autocomplete="tel" placeholder="Optional contact number">
-        </div>
-
-        <div class="form-group">
-          <label for="ticket-remote-id">AnyDesk / TeamViewer ID</label>
-          <input id="ticket-remote-id" type="text" name="remoteId" class="form-control" autocomplete="off" autocapitalize="off" required placeholder="ID shown in your remote support app">
-        </div>
-
-        <div class="form-group">
-          <label for="ticket-preferred-date">Preferred support date (optional)</label>
-          <input id="ticket-preferred-date" type="date" name="preferredDate" class="form-control">
-        </div>
-
-        <div class="form-group">
-          <label for="ticket-preferred-time">Preferred support time (optional)</label>
-          <input id="ticket-preferred-time" type="time" name="preferredTime" class="form-control">
-          <small class="form-help">We’ll contact you to confirm a session time.</small>
-        </div>
-
-        <div class="form-group full-field">
-          <label for="ticket-remote-password">Temporary remote session password (optional)</label>
-          <div class="password-wrap">
-            <input id="ticket-remote-password" type="password" name="remotePassword" class="form-control" autocomplete="new-password" placeholder="Only provide when support asks for it">
-            <button class="password-toggle" type="button" data-password-target="ticket-remote-password" aria-pressed="false">Show</button>
-          </div>
-          <small class="form-help">Share this only when an engineer is ready to connect.</small>
-        </div>
-
-        <div class="form-group full-field">
-          <label for="ticket-issue">Describe the issue</label>
-          <textarea id="ticket-issue" name="issue" class="form-control" required placeholder="Describe the computer problem..."></textarea>
-        </div>
-
-        <button type="submit" class="submit-btn">Send online support ticket</button>
-      </form>
-    </article>
-
-    <article class="request-choice onsite-choice">
-      <div class="request-choice-heading">
-        <span class="request-icon">📍</span>
-        <div>
-          <p class="request-kicker">IN-PERSON · ON-SITE</p>
-          <h3>Request a visit to your location</h3>
-        </div>
-      </div>
-
-      <p class="request-description">For help that may need an in-person visit. This starts as an enquiry; we’ll check your area and contact you to agree availability and any cost before confirming.</p>
-
-      <form id="dashboard-onsite-form" action="/support" method="POST" class="dashboard-request-form onsite-dashboard-form">
-        <input type="hidden" name="requestType" value="onsite">
-        <input type="hidden" name="returnToDashboard" value="1">
-        <input type="hidden" name="remoteId" value="">
-        <input type="hidden" name="remotePassword" value="">
-        <input type="hidden" name="issue" id="onsite-dashboard-issue">
-
-        <div class="form-group">
-          <label for="onsite-dashboard-name">Your name</label>
-          <input id="onsite-dashboard-name" name="name" autocomplete="name" required maxlength="100" placeholder="Enter your name">
-        </div>
-
-        <div class="form-group">
-          <label for="onsite-dashboard-email">Email address</label>
-          <input id="onsite-dashboard-email" name="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
-        </div>
-
-        <div class="form-group">
-          <label for="onsite-dashboard-phone">Phone number</label>
-          <input id="onsite-dashboard-phone" name="phone" type="tel" autocomplete="tel" required maxlength="30" placeholder="Your contact number">
-        </div>
-
-        <div class="form-group">
-          <label for="onsite-dashboard-area">Town or area</label>
-          <input id="onsite-dashboard-area" name="area" autocomplete="address-level2" required maxlength="120" placeholder="e.g. Pretoria East">
-        </div>
-
-        <div class="form-group full-field">
-          <label for="onsite-dashboard-service">What needs attention?</label>
-          <select id="onsite-dashboard-service" name="serviceType" required>
-            <option value="">Choose a service</option>
-            <option>Computer setup or troubleshooting</option>
-            <option>Wi-Fi or small-office network</option>
-            <option>Printer or accessories</option>
-            <option>Hardware assessment</option>
-            <option>Workplace technology</option>
-            <option>Other</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="onsite-dashboard-date">Preferred date</label>
-          <input id="onsite-dashboard-date" name="preferredDate" type="date">
-        </div>
-
-        <div class="form-group">
-          <label for="onsite-dashboard-time">Preferred time</label>
-          <input id="onsite-dashboard-time" name="preferredTime" type="time">
-        </div>
-
-        <div class="form-group full-field">
-          <label for="onsite-dashboard-details">Describe what you need</label>
-          <textarea id="onsite-dashboard-details" name="details" required maxlength="3000" placeholder="What is happening, and which device or equipment needs attention?"></textarea>
-          <small class="form-help">Do not include account passwords, payment details, or remote-session passwords.</small>
-        </div>
-
-        <button type="submit" class="submit-btn">Send on-site visit request</button>
-      </form>
-    </article>
-
+<section class="ticket-card request-help-cta" aria-labelledby="request-help-title">
+  <div class="request-help-cta-copy">
+    <h2 id="request-help-title">Need IT assistance?</h2>
+    <p>Submit a remote support request or ask IT Elements to assess an on-site visit from our Request Help page.</p>
   </div>
-
-  <p class="request-hours">Support hours: Monday to Friday, 08:00–17:00 South African time (SAST). An on-site request is not confirmed until we agree the visit with you.</p>
-<section class="software-downloads">
-  <h2>📥 Required Software Downloads</h2>
-  <p style="font-size:12px;color:#666;margin-top:-5px;">Download remote support software only when asked by your engineer.</p>
-
-  <div class="soft-box">
-    <div class="soft-item">
-      <strong>AnyDesk</strong>
-      <span style="color:#666;font-size:12px;display:block;">Remote support application</span>
-      <a href="https://anydesk.com/en/downloads" target="_blank" rel="noopener noreferrer" class="dl-link">Download AnyDesk</a>
-    </div>
-
-    <div class="soft-item">
-      <strong>TeamViewer</strong>
-      <span style="color:#666;font-size:12px;display:block;">Remote support application</span>
-      <a href="https://www.teamviewer.com/en/download/" target="_blank" rel="noopener noreferrer" class="dl-link">Download TeamViewer</a>
-    </div>
-  </div>
-</section>
+  <a class="request-help-button" href="/support">Request Help <span aria-hidden="true">→</span></a>
 </section>
 
 <div id="onsite-history-rows" hidden aria-hidden="true"></div>
@@ -1677,14 +1234,6 @@ header.header h1 img {
     const planStatus = document.getElementById('plan-status');
     const planExpiry = document.getElementById('plan-expiry');
     const welcomeTitle = document.getElementById('welcome-title');
-    const ticketName = document.getElementById('ticket-name');
-    const ticketEmail = document.getElementById('ticket-email');
-    const ticketPhone = document.getElementById('ticket-phone');
-    const onsiteName = document.getElementById('onsite-dashboard-name');
-    const onsiteEmail = document.getElementById('onsite-dashboard-email');
-    const onsitePhone = document.getElementById('onsite-dashboard-phone');
-    const onsiteForm = document.getElementById('dashboard-onsite-form');
-    const requestMessage = document.getElementById('request-message');
     const totalTicketCount = document.getElementById('ticket-total');
     const openTicketCount = document.getElementById('ticket-open-count');
     const resolvedTicketCount = document.getElementById('ticket-resolved-count');
@@ -1692,14 +1241,6 @@ header.header h1 img {
     const returnedFromGateway = query.get('payment') === 'returned';
     const payfastPaymentId = query.get('payfastId');
     const selectedPlanId = query.get('plan');
-
-    if (query.get('request') === 'remote-sent') {
-        requestMessage.textContent = 'Your online support ticket was sent. Track its status in Your Active Support Tickets below.';
-        requestMessage.className = 'notice success';
-    } else if (query.get('request') === 'onsite-sent') {
-        requestMessage.textContent = 'Your on-site visit request was sent. It will appear below while we review your area and arrange the next steps.';
-        requestMessage.className = 'notice success';
-    }
 
     if (query.get('payment') === 'cancelled' || query.get('result') === 'cancelled') {
         statusMessage.textContent = 'Checkout was cancelled. Your plan has not changed.';
@@ -1910,22 +1451,6 @@ header.header h1 img {
         container.appendChild(details);
     }
 
-    onsiteForm.addEventListener('submit', function () {
-        const form = this;
-
-        const summary = [
-            'ON-SITE SUPPORT ENQUIRY',
-            'Phone: ' + form.phone.value.trim(),
-            'Area: ' + form.area.value.trim(),
-            'Service requested: ' + form.serviceType.value,
-            'Preferred date: ' + (form.preferredDate.value || 'Flexible'),
-            'Preferred time: ' + (form.preferredTime.value || 'Flexible'),
-            '',
-            form.details.value.trim()
-        ].join('\n');
-
-        document.getElementById('onsite-dashboard-issue').value = summary;
-    });
 
     const notificationList = document.getElementById('notification-list');
     const notificationCount = document.getElementById('notification-count');
@@ -2109,13 +1634,6 @@ header.header h1 img {
         welcomeTitle.textContent =
             `Welcome back${user.fullName ? ', ' + user.fullName.split(/\s+/)[0] : ''}!`;
 
-        ticketName.value = user.fullName || '';
-        ticketEmail.value = user.email || '';
-        ticketPhone.value = user.phone || '';
-
-        onsiteName.value = user.fullName || '';
-        onsiteEmail.value = user.email || '';
-        onsitePhone.value = user.phone || '';
 
         currentPlan.textContent = user.subscriptionTier || 'No active plan';
         planStatus.textContent = user.subscriptionStatus || 'Inactive';
