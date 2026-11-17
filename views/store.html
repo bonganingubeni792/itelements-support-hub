@@ -1499,7 +1499,7 @@ button[onclick*="addDetailToChat"] {
     </section>
     <section class="checkout-card">
      <div class="checkout-card-heading"><span class="checkout-step-number">2</span><div><h3>Delivery details</h3><p>Where should we deliver your order?</p></div></div>
-     <label>Delivery method<select name="deliveryMethod" id="deliveryMethod"><option value="delivery">Nationwide delivery</option></select></label>
+     <label>Delivery method<select name="deliveryMethod" id="deliveryMethod"><option value="delivery">Nationwide delivery — South Africa</option></select></label>
      <div class="checkout-address-block" id="deliveryAddressField">
       <div class="checkout-section-heading"><strong>Delivery address</strong><span>Enter the full address where your order must be delivered.</span></div>
       <label>Street address / house or building number<input name="addressLine1" autocomplete="address-line1" required maxlength="180" placeholder="e.g. 12 Main Road"></label>
@@ -2410,3 +2410,61 @@ checkReturnedPayment();
 }
 </style>
 
+
+<style id="it-elements-checkout-full-page-south-africa">
+/* Checkout is a dedicated full-screen page, not a popup over the store. */
+#checkoutModal.checkout-modal,
+#checkoutModal.checkout-modal.open{
+  position:fixed!important;inset:0!important;z-index:99999!important;
+  display:flex!important;align-items:stretch!important;justify-content:stretch!important;
+  width:100vw!important;height:100vh!important;height:100dvh!important;
+  max-width:none!important;margin:0!important;padding:0!important;
+  overflow:hidden!important;background:#fff!important;backdrop-filter:none!important;
+}
+#checkoutModal .checkout-backdrop{display:none!important}
+#checkoutModal .checkout-panel{
+  position:relative!important;inset:auto!important;display:block!important;
+  width:100%!important;max-width:none!important;height:100%!important;
+  min-height:100%!important;max-height:none!important;margin:0!important;
+  padding:34px clamp(18px,4vw,64px) 42px!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  background:#f7f8fb!important;
+}
+#checkoutModal .checkout-panel>*{
+  width:100%!important;max-width:1280px!important;
+  margin-left:auto!important;margin-right:auto!important;
+}
+#checkoutModal .checkout-panel .checkout-close{
+  position:fixed!important;top:16px!important;right:20px!important;
+  z-index:100001!important;width:44px!important;height:44px!important;
+  border:1px solid #e1e5ec!important;border-radius:50%!important;
+  background:#fff!important;color:#333!important;font-size:25px!important;
+  box-shadow:0 3px 12px #17203312!important;
+}
+#checkoutModal .checkout-panel h2{padding-right:56px!important}
+#checkoutModal .checkout-progress{max-width:1280px!important}
+#checkoutModal #productCheckoutForm{
+  max-width:1280px!important;
+  grid-template-columns:minmax(0,1.45fr) minmax(320px,.8fr)!important;
+  align-items:start!important;gap:20px!important;
+}
+#checkoutModal .checkout-main{min-width:0!important}
+#checkoutModal .checkout-sidebar{min-width:0!important}
+#checkoutModal .checkout-order-card{position:sticky!important;top:10px!important}
+#checkoutModal #checkoutItemsSummary{max-height:440px!important}
+@media(max-width:800px){
+  #checkoutModal.checkout-modal,#checkoutModal.checkout-modal.open{
+    width:100%!important;height:100vh!important;height:100dvh!important;
+  }
+  #checkoutModal .checkout-panel{
+    height:100%!important;max-height:none!important;
+    padding:72px 14px 28px!important;
+  }
+  #checkoutModal #productCheckoutForm{
+    grid-template-columns:minmax(0,1fr)!important;gap:14px!important;
+  }
+  #checkoutModal .checkout-order-card{position:static!important}
+  #checkoutModal #checkoutItemsSummary{max-height:280px!important}
+}
+</style>
