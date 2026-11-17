@@ -1107,6 +1107,33 @@ button:hover,.button:hover{transform:translateY(-1px)}
 }
 </style>
 
+
+<style id="it-elements-dashboard-final-width-fix">
+/* Final override: use the full laptop/desktop canvas */
+html,body{width:100%!important;max-width:100%!important;margin:0!important}
+body{overflow-x:hidden!important}
+.page{
+  display:block!important;
+  width:100%!important;
+  max-width:none!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0 clamp(18px,2.4vw,44px) 64px!important;
+}
+.header{
+  width:100%!important;
+  max-width:none!important;
+  margin:0 0 26px!important;
+}
+@media(min-width:1500px){
+  .page{padding-left:42px!important;padding-right:42px!important}
+}
+@media(max-width:760px){
+  .page{width:100%!important;padding:0 14px 80px!important}
+  .header{width:100%!important;margin:0 0 20px!important}
+}
+</style>
+
 </head>
 
 <body>
