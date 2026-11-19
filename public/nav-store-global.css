@@ -279,3 +279,13 @@ body.store-page > header > #openCart,
 body.store-page > header .ite-header-cart {
   display:none!important;
 }
+
+
+/* FIX: preserve the native hidden state for account controls.
+   The previous display:flex!important rule made the hidden Log out
+   control visible beside the active account button on mobile. */
+body .ite-header-actions [hidden],
+body .ite-header-actions .ite-account-action[hidden],
+body .ite-header-actions .ite-logout-action[hidden] {
+  display: none !important;
+}
