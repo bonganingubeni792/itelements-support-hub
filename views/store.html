@@ -2105,8 +2105,8 @@ function renderCheckoutCustomerReview(){
   ['Delivery address',[data.get('addressLine1'),data.get('addressLine2'),data.get('suburb'),data.get('city'),data.get('province'),data.get('postalCode')].filter(Boolean).join(', ')]
  ];
  box.hidden=false;
- box.innerHTML='<div class="checkout-review-heading"><strong>Delivery and contact details</strong><button type="button" id="checkoutEditDetailsInline">Edit</button></div>'+
-  fields.map(([label,value])=>`<div class="checkout-review-row"><span>${esc(label)}</span><strong>${esc(String(value||'—'))}</strong></div>`).join('');
+ box.innerHTML='<div class="checkout-review-heading"><div><strong>Delivery & contact</strong><small>Where we will contact you and send your order</small></div><button type="button" id="checkoutEditDetailsInline">Edit details</button></div>'+
+  fields.map(([label,value],index)=>`<div class="checkout-review-row ${index===3?'checkout-review-address':''}"><span>${esc(label)}</span><strong>${esc(String(value||'—'))}</strong></div>`).join('');
  const edit=$('checkoutEditDetailsInline');
  if(edit)edit.addEventListener('click',()=>updateCheckoutStage(1));
 }
@@ -2670,6 +2670,59 @@ checkReturnedPayment();
   #checkoutModal #productCheckoutForm[data-checkout-stage="2"] .checkout-stage-actions button{
     width:100%!important;min-width:0!important;
   }
+}
+</style>
+
+
+<style id="it-elements-checkout-contact-card-v5">
+#checkoutModal #checkoutCustomerReview.checkout-customer-review{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:12px!important;padding:20px!important;margin:0 0 20px!important;
+ border:1px solid #e1e7ef!important;border-top:3px solid #e00000!important;
+ border-radius:15px!important;background:#fff!important;color:#243044!important;
+ box-shadow:0 5px 18px rgba(23,35,54,.045)!important;
+}
+#checkoutModal #checkoutCustomerReview .checkout-review-heading{
+ grid-column:1/-1!important;display:flex!important;align-items:center!important;
+ justify-content:space-between!important;gap:16px!important;margin:0 0 4px!important;
+ padding:0 0 14px!important;border-bottom:1px solid #edf0f4!important;
+}
+#checkoutModal #checkoutCustomerReview .checkout-review-heading>div{display:grid!important;gap:4px!important}
+#checkoutModal #checkoutCustomerReview .checkout-review-heading strong{
+ color:#172235!important;font-size:16px!important;font-weight:850!important;
+}
+#checkoutModal #checkoutCustomerReview .checkout-review-heading small{
+ color:#788497!important;font-size:12px!important;font-weight:500!important;
+}
+#checkoutModal #checkoutCustomerReview #checkoutEditDetailsInline{
+ flex:0 0 auto!important;min-height:36px!important;padding:7px 13px!important;
+ border:1px solid #e00000!important;border-radius:9px!important;background:#fff!important;
+ color:#d00000!important;font-size:12px!important;font-weight:800!important;cursor:pointer!important;
+}
+#checkoutModal #checkoutCustomerReview .checkout-review-row{
+ min-width:0!important;display:flex!important;flex-direction:column!important;
+ align-items:flex-start!important;justify-content:center!important;gap:6px!important;
+ padding:13px 14px!important;border:1px solid #e9edf3!important;border-radius:11px!important;
+ background:#f8fafc!important;
+}
+#checkoutModal #checkoutCustomerReview .checkout-review-row>span{
+ color:#778397!important;font-size:11px!important;font-weight:750!important;
+ text-transform:uppercase!important;letter-spacing:.055em!important;
+}
+#checkoutModal #checkoutCustomerReview .checkout-review-row>strong{
+ color:#1b2738!important;font-size:13px!important;font-weight:750!important;
+ line-height:1.5!important;overflow-wrap:anywhere!important;
+}
+#checkoutModal #checkoutCustomerReview .checkout-review-address{
+ grid-column:1/-1!important;background:#fff8f8!important;border-color:#f4dada!important;
+}
+@media(max-width:800px){
+ #checkoutModal #checkoutCustomerReview.checkout-customer-review{
+  grid-template-columns:1fr!important;padding:14px!important;gap:9px!important;
+ }
+ #checkoutModal #checkoutCustomerReview .checkout-review-heading{align-items:flex-start!important}
+ #checkoutModal #checkoutCustomerReview .checkout-review-row{padding:11px 12px!important}
+ #checkoutModal #checkoutCustomerReview .checkout-review-address{grid-column:auto!important}
 }
 </style>
 
