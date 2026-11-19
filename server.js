@@ -99,7 +99,7 @@ const StoreProduct = mongoose.model('StoreProduct', new mongoose.Schema({
     name: { type: String, required: true, trim: true, maxlength: 120 },
     sku: { type: String, default: '', trim: true, maxlength: 60 },
     category: { type: String, required: true, trim: true, maxlength: 60 },
-    description: { type: String, default: '', trim: true, maxlength: 2000 },
+    description: { type: String, default: '', trim: true, maxlength: 10000 },
     price: { type: Number, required: true, min: 0 },
     compareAtPrice: { type: Number, default: 0, min: 0 },
     productType: { type: String, enum: ['normal', 'sale'], default: 'normal' },
@@ -1071,7 +1071,7 @@ function cleanStoreProduct(body = {}) {
         };
     }
 
-    if (sku.length > 60 || description.length > 2000) {
+    if (sku.length > 60 || description.length > 10000) {
         return {
             error: 'The SKU or description is too long.'
         };
