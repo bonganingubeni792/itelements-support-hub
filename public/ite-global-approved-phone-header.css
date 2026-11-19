@@ -1,0 +1,169 @@
+/* IT Elements — approved Online Store phone header applied site-wide.
+   Mobile-only: desktop and laptop layouts remain unchanged. */
+@media screen and (max-width:760px){
+  body.store-page > header,
+  body:not(.store-admin-page) nav.nav,
+  body:not(.store-admin-page) nav.navbar,
+  body:not(.store-admin-page) nav.site-nav,
+  body:not(.store-admin-page) nav.main-nav,
+  body:not(.store-admin-page) header.site-header{
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    flex-wrap:nowrap!important;
+    gap:8px!important;
+    width:100%!important;
+    min-height:76px!important;
+    height:auto!important;
+    margin:0!important;
+    padding:9px 12px!important;
+    overflow:visible!important;
+    box-sizing:border-box!important;
+  }
+
+  body.store-page > header .ite-header-brand,
+  body:not(.store-page):not(.store-admin-page) .ite-header-brand,
+  body:not(.store-page):not(.store-admin-page) .brand,
+  body:not(.store-page):not(.store-admin-page) .nav-brand{
+    order:0!important;
+    display:flex!important;
+    flex:1 1 auto!important;
+    align-items:center!important;
+    min-width:0!important;
+    max-width:none!important;
+    gap:5px!important;
+    margin:0!important;
+    padding:0!important;
+    white-space:nowrap!important;
+    overflow:visible!important;
+    font-size:clamp(14px,4.2vw,19px)!important;
+    font-weight:900!important;
+    letter-spacing:-.035em!important;
+    line-height:1!important;
+  }
+  body.store-page > header .ite-header-brand img,
+  body:not(.store-page):not(.store-admin-page) .ite-header-brand img,
+  body:not(.store-page):not(.store-admin-page) .brand img,
+  body:not(.store-page):not(.store-admin-page) .nav-brand img{
+    display:block!important;
+    flex:0 0 39px!important;
+    width:39px!important;
+    height:39px!important;
+    object-fit:contain!important;
+  }
+  body.store-page > header .ite-header-brand span,
+  body:not(.store-page):not(.store-admin-page) .ite-header-brand span{
+    display:inline!important;
+    min-width:0!important;
+    overflow:hidden!important;
+    text-overflow:clip!important;
+    white-space:nowrap!important;
+    color:#171717!important;
+    font-size:inherit!important;
+    font-weight:900!important;
+    letter-spacing:-.035em!important;
+  }
+
+  body.store-page > header .ite-header-actions,
+  body:not(.store-page):not(.store-admin-page) .ite-header-actions{
+    order:1!important;
+    display:flex!important;
+    flex:0 0 auto!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    gap:6px!important;
+    min-width:0!important;
+    margin:0!important;
+  }
+  body.store-page > header .ite-account-action,
+  body.store-page > header #accountAction,
+  body:not(.store-page):not(.store-admin-page) .ite-header-actions .ite-account-action,
+  body:not(.store-page):not(.store-admin-page) .ite-header-actions #accountAction,
+  body:not(.store-page):not(.store-admin-page) .ite-header-actions #logoutAction{
+    display:inline-flex!important;
+    order:0!important;
+    flex:0 0 auto!important;
+    align-items:center!important;
+    justify-content:center!important;
+    min-width:76px!important;
+    width:auto!important;
+    min-height:43px!important;
+    height:43px!important;
+    margin:0!important;
+    padding:0 13px!important;
+    border:1px solid #e00000!important;
+    border-radius:10px!important;
+    background:#e00000!important;
+    color:#fff!important;
+    font-size:13px!important;
+    font-weight:900!important;
+    line-height:1!important;
+    text-decoration:none!important;
+    white-space:nowrap!important;
+    box-shadow:0 4px 12px rgba(224,0,0,.18)!important;
+  }
+  body.store-page > header .ite-mobile-menu-trigger,
+  body:not(.store-page):not(.store-admin-page) .ite-mobile-menu-trigger,
+  body:not(.store-page):not(.store-admin-page) .menu-toggle{
+    order:2!important;
+    display:inline-flex!important;
+    flex:0 0 43px!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:43px!important;
+    min-width:43px!important;
+    height:43px!important;
+    min-height:43px!important;
+    margin:0 0 0 2px!important;
+    padding:0!important;
+    border:1px solid #e2e4e8!important;
+    border-radius:10px!important;
+    background:#fff!important;
+    color:#171717!important;
+    font-size:23px!important;
+    line-height:1!important;
+  }
+  body.store-page > header .ite-header-cart,
+  body.store-page > header #openCart,
+  body:not(.store-page):not(.store-admin-page) .ite-header-actions .ite-header-cart,
+  body:not(.store-page):not(.store-admin-page) .ite-header-actions #openCart{
+    display:none!important;
+  }
+  body.store-page > header .ite-header-links,
+  body:not(.store-page):not(.store-admin-page) .ite-header-links{
+    display:none!important;
+  }
+}
+@media screen and (max-width:390px){
+  body.store-page > header,
+  body:not(.store-page):not(.store-admin-page) nav.nav,
+  body:not(.store-page):not(.store-admin-page) nav.navbar,
+  body:not(.store-page):not(.store-admin-page) nav.site-nav,
+  body:not(.store-page):not(.store-admin-page) nav.main-nav,
+  body:not(.store-page):not(.store-admin-page) header.site-header{
+    gap:6px!important;padding-left:9px!important;padding-right:9px!important;
+  }
+  body.store-page > header .ite-header-brand,
+  body:not(.store-page):not(.store-admin-page) .ite-header-brand,
+  body:not(.store-page):not(.store-admin-page) .brand,
+  body:not(.store-page):not(.store-admin-page) .nav-brand{font-size:13px!important}
+  body.store-page > header .ite-header-brand img,
+  body:not(.store-page):not(.store-admin-page) .ite-header-brand img,
+  body:not(.store-page):not(.store-admin-page) .brand img,
+  body:not(.store-page):not(.store-admin-page) .nav-brand img{
+    width:35px!important;height:35px!important;flex-basis:35px!important;
+  }
+  body.store-page > header .ite-account-action,
+  body.store-page > header #accountAction,
+  body:not(.store-page):not(.store-admin-page) .ite-header-actions .ite-account-action,
+  body:not(.store-page):not(.store-admin-page) .ite-header-actions #accountAction,
+  body:not(.store-page):not(.store-admin-page) .ite-header-actions #logoutAction{
+    min-width:67px!important;min-height:40px!important;height:40px!important;padding:0 9px!important;font-size:11px!important;
+  }
+  body.store-page > header .ite-mobile-menu-trigger,
+  body:not(.store-page):not(.store-admin-page) .ite-mobile-menu-trigger,
+  body:not(.store-page):not(.store-admin-page) .menu-toggle{
+    width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;flex-basis:40px!important;
+  }
+}
