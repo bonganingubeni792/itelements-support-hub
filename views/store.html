@@ -2726,4 +2726,59 @@ checkReturnedPayment();
 }
 </style>
 
+
+<style id="it-elements-checkout-delivery-full-width-v6">
+/* Delivery step: use the same centred width as the three-step progress bar. */
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"]{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ width:100%!important;max-width:1180px!important;
+ margin:0 auto!important;justify-items:stretch!important;gap:18px!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-main{
+ display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+ width:100%!important;max-width:none!important;min-width:0!important;
+ gap:18px!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-main>.checkout-card{
+ width:100%!important;max-width:none!important;min-width:0!important;
+ box-sizing:border-box!important;padding:26px 30px!important;
+ border-radius:18px!important;background:#fff!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-contact-grid{
+ display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;
+ gap:18px!important;width:100%!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-address-grid{
+ grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-card-heading{
+ margin-bottom:20px!important;padding-bottom:16px!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-card-heading h3{
+ font-size:21px!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] label{
+ min-width:0!important;
+}
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] input,
+#checkoutModal #productCheckoutForm[data-checkout-stage="1"] select{
+ min-height:52px!important;font-size:14px!important;
+}
+@media(max-width:800px){
+ #checkoutModal #productCheckoutForm[data-checkout-stage="1"]{
+  width:100%!important;max-width:none!important;gap:12px!important;
+ }
+ #checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-main{
+  gap:12px!important;
+ }
+ #checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-main>.checkout-card{
+  padding:18px!important;border-radius:15px!important;
+ }
+ #checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-contact-grid,
+ #checkoutModal #productCheckoutForm[data-checkout-stage="1"] .checkout-address-grid{
+  grid-template-columns:minmax(0,1fr)!important;gap:13px!important;
+ }
+}
+</style>
+
 </body></html>
