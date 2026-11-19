@@ -516,6 +516,7 @@ body{overflow-x:hidden}
 <section class="panel" id="editor"><div class="panelhead"><div><h2 id="formTitle">Add new product</h2><p class="sub">Product details, image, pricing and availability</p></div><span class="eyebrow">PRODUCT EDITOR</span></div>
 <form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="10000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="productImageFile">Choose image from your computer</label><input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="hint">JPG, PNG, WebP or AVIF · maximum 5 MB. The uploaded image is attached to this product.</p></div><div class="field"><label for="imageUrl">Or use an image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint" id="imageUploadStatus" aria-live="polite">You can upload a picture or paste an existing image URL.</p></div></div>
 <div class="two"><div class="field"><label for="sku">SKU / Product code</label><input id="sku" maxlength="60" placeholder="ITE-SSD-001"></div><div class="field"><label for="category">Category *</label><input id="category" list="categoryOptions" maxlength="80" required placeholder="Choose or type a category"><datalist id="categoryOptions"></datalist></div></div>
+<div class="two"><div class="field"><label for="productType">Store destination</label><select id="productType"><option value="normal">All Products</option><option value="sale">Sale Products</option></select><p class="hint">Choose which public store section this product belongs to.</p></div><div></div></div>
 <div class="two"><div class="field"><label for="price">Selling price (ZAR) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="1299.00"></div><div class="field"><label for="compareAtPrice">Previous price (ZAR)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="1499.00"></div></div>
 <div class="two"><div class="field"><label for="stock">Stock quantity (units left)</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="stockAvailability">Stock availability</label><select id="stockAvailability"><option value="in">In stock</option><option value="out">Out of stock</option></select></div></div>
 <div class="two branch-stock-fields"><div class="field"><label for="branchCpt">CPT branch quantity</label><input id="branchCpt" type="number" min="0" step="1" value="0"></div><div class="field"><label for="branchJhb">JHB branch quantity</label><input id="branchJhb" type="number" min="0" step="1" value="0"></div><div class="field"><label for="branchDbn">DBN branch quantity</label><input id="branchDbn" type="number" min="0" step="1" value="0"></div></div><div class="two"><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div><div class="field"><label>Stock rule</label><small style="color:#777">In stock requires at least 1 unit. Out of stock sets quantity to 0.</small></div></div>
@@ -539,6 +540,8 @@ body{overflow-x:hidden}
     <div class="import-card">
       <div class="tool-icon">⇧</div><h3>Import products</h3>
       <p>Upload a <b>.CSV</b> file or an <b>.XLSX / .XLS</b> Excel spreadsheet. Each valid row will be added as a product. Large CSV/Excel catalogues up to 50 MB are supported.</p>
+      <label for="importDestination" style="display:block;font-size:12px;font-weight:700;color:#333;margin:12px 0 6px">Put all imported products in:</label>
+      <select id="importDestination" class="input" style="width:100%;max-width:260px;margin-bottom:12px"><option value="normal" selected>All Products</option><option value="sale">Sale Products</option></select>
       <label class="file-drop" for="productImportFile"><strong>Choose product file</strong><span>CSV or Excel · up to 50 MB</span><input id="productImportFile" type="file" accept=".csv,.xlsx,.xls,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"></label>
       <div class="import-actions"><button class="btn" type="button" id="downloadTemplate">Download CSV template</button><button class="btn" type="button" id="exportProducts">Export catalogue CSV</button><button class="btn softred" type="button" id="deleteAllProducts">Delete all products</button></div>
       <div id="importStatus" class="import-status" aria-live="polite">Choose a file to preview the rows before importing.</div>
@@ -653,7 +656,7 @@ const $=id=>document.getElementById(id);let products=[];let adminPage=1;const AD
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function notice(t,type=''){ $('message').innerHTML=t?`<div class="notice ${type}">${escapeHtml(t)}</div>`:''; }
 async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});if(r.redirected||r.status===401||r.status===403){location.href='/client/login';throw Error('Administrator sign-in required.');}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.message||'Request failed.');return d;}
-function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('stockAvailability').value='out';$('formTitle').textContent='Add new product';$('saveBtn').textContent='Save product';$('imagePreview').textContent='Choose an image or paste a URL';$('imageUploadStatus').textContent='You can upload a picture or paste an existing image URL.';notice('');}
+function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('stockAvailability').value='out';$('productType').value='normal';$('formTitle').textContent='Add new product';$('saveBtn').textContent='Save product';$('imagePreview').textContent='Choose an image or paste a URL';$('imageUploadStatus').textContent='You can upload a picture or paste an existing image URL.';notice('');}
 async function uploadProductImage(file){
  if(!file)return '';
  if(!['image/jpeg','image/png','image/webp','image/avif'].includes(file.type))throw Error('Choose a JPG, PNG, WebP or AVIF image.');
@@ -662,7 +665,7 @@ async function uploadProductImage(file){
  const result=await api('/api/admin/store/upload-image',{method:'POST',body:JSON.stringify({imageData:dataUrl})});
  return result.imageUrl;
 }
-function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('branchCpt').value=p.branchStock?.cpt??0;$('branchJhb').value=p.branchStock?.jhb??0;$('branchDbn').value=p.branchStock?.dbn??0;$('stockAvailability').value=Number(p.stock)>0?'in':'out';$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
+function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('productType').value=p.productType==='sale'?'sale':'normal';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('branchCpt').value=p.branchStock?.cpt??0;$('branchJhb').value=p.branchStock?.jhb??0;$('branchDbn').value=p.branchStock?.dbn??0;$('stockAvailability').value=Number(p.stock)>0?'in':'out';$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
 ['branchCpt','branchJhb','branchDbn'].forEach(id=>$(id)?.addEventListener('input',()=>{
  const total=['branchCpt','branchJhb','branchDbn'].reduce((sum,key)=>sum+Math.max(0,Math.floor(Number($(key).value)||0)),0);
  $('stock').value=total;
@@ -904,7 +907,7 @@ $('productForm').addEventListener('submit',async e=>{e.preventDefault();const id
   if($('productImageFile').files[0]){ $('imageUploadStatus').textContent='Uploading image…';$('imageUrl').value=await uploadProductImage($('productImageFile').files[0]); }
   if($('stockAvailability').value==='in'&&Number($('stock').value)<1)$('stock').value=1;
   if($('stockAvailability').value==='out')$('stock').value=0;
-  const body={name:$('name').value,description:$('description').value,imageUrl:$('imageUrl').value,sku:$('sku').value,category:$('category').value,price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,branchStock:{cpt:$('branchCpt').value,jhb:$('branchJhb').value,dbn:$('branchDbn').value},status:$('status').value,featured:$('featured').checked};
+  const body={name:$('name').value,description:$('description').value,imageUrl:$('imageUrl').value,sku:$('sku').value,category:$('category').value,productType:$('productType').value==='sale'?'sale':'normal',price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,branchStock:{cpt:$('branchCpt').value,jhb:$('branchJhb').value,dbn:$('branchDbn').value},status:$('status').value,featured:$('featured').checked};
   await api(id?'/api/admin/store/products/'+id:'/api/admin/store/products',{method:id?'PUT':'POST',body:JSON.stringify(body)});notice(id?'Product updated successfully.':'Product saved successfully.','ok');reset();await load();
  }catch(err){notice(err.message,'error');}finally{save.disabled=false;}
 });
@@ -1091,6 +1094,7 @@ function keyMap(row){
  return {
   name,sku,
   category:autoCategory,
+  productType:['sale','saleproduct','saleproducts','specialoffer','specialoffers'].includes(String(get('producttype','product type','destination','store section')).trim().toLowerCase().replace(/[\s_-]/g,''))?'sale':'normal',
   categoryRaw,
   description:description||shortDescription,
   shortDescription,
@@ -1228,6 +1232,8 @@ async function readImportFile(file){
   if(!records.length)throw Error('No product rows were found in the first worksheet.');
   if(records.length>10000)throw Error(`This file contains ${records.length.toLocaleString()} product rows. The maximum per import is 10,000 rows; split the supplier file into smaller parts.`);
   importRows=records.map(keyMap);
+  const defaultDestination=$('importDestination')?.value==='sale'?'sale':'normal';
+  importRows.forEach(product=>{product.productType=defaultDestination;});
   const firstRecord=records[0]||{};
   const normalizedHeaders=Object.keys(firstRecord).map(h=>String(h).toLowerCase().replace(/[^a-z0-9]/g,''));
   const isSyntech=normalizedHeaders.includes('featuredimage')||normalizedHeaders.includes('additionalimages')||normalizedHeaders.includes('allimage');
@@ -1245,6 +1251,11 @@ async function readImportFile(file){
  }catch(err){importRows=[];$('importPreviewWrap').hidden=true;setImportStatus(err.message||'Could not read this file.','error');}
 }
 $('productImportFile').addEventListener('change',e=>readImportFile(e.target.files[0]));
+$('importDestination').addEventListener('change',()=>{
+ const destination=$('importDestination').value==='sale'?'sale':'normal';
+ importRows.forEach(product=>{product.productType=destination;});
+ renderImportPreviewPage();
+});
 $('cancelImport').onclick=()=>{$('productImportFile').value='';importRows=[];$('importPreviewWrap').hidden=true;setImportStatus('Import cancelled.');};
 
 $('importPreviewRows').addEventListener('change',e=>{
