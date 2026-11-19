@@ -501,7 +501,8 @@ body{overflow-x:hidden}
 <form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="2000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="productImageFile">Choose image from your computer</label><input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="hint">JPG, PNG, WebP or AVIF · maximum 5 MB. The uploaded image is attached to this product.</p></div><div class="field"><label for="imageUrl">Or use an image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint" id="imageUploadStatus" aria-live="polite">You can upload a picture or paste an existing image URL.</p></div></div>
 <div class="two"><div class="field"><label for="sku">SKU / Product code</label><input id="sku" maxlength="60" placeholder="ITE-SSD-001"></div><div class="field"><label for="category">Category *</label><input id="category" list="categoryOptions" maxlength="80" required placeholder="Choose or type a category"><datalist id="categoryOptions"></datalist></div></div>
 <div class="two"><div class="field"><label for="price">Selling price (ZAR) *</label><input id="price" type="number" min="0" step="0.01" required placeholder="1299.00"></div><div class="field"><label for="compareAtPrice">Previous price (ZAR)</label><input id="compareAtPrice" type="number" min="0" step="0.01" placeholder="1499.00"></div></div>
-<div class="two"><div class="field"><label for="stock">Stock quantity (units left)</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="stockAvailability">Stock availability</label><select id="stockAvailability"><option value="in">In stock</option><option value="out">Out of stock</option></select></div></div><div class="two"><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div><div class="field"><label>Stock rule</label><small style="color:#777">In stock requires at least 1 unit. Out of stock sets quantity to 0.</small></div></div>
+<div class="two"><div class="field"><label for="stock">Stock quantity (units left)</label><input id="stock" type="number" min="0" step="1" value="0"></div><div class="field"><label for="stockAvailability">Stock availability</label><select id="stockAvailability"><option value="in">In stock</option><option value="out">Out of stock</option></select></div></div>
+<div class="two branch-stock-fields"><div class="field"><label for="branchCpt">CPT branch quantity</label><input id="branchCpt" type="number" min="0" step="1" value="0"></div><div class="field"><label for="branchJhb">JHB branch quantity</label><input id="branchJhb" type="number" min="0" step="1" value="0"></div><div class="field"><label for="branchDbn">DBN branch quantity</label><input id="branchDbn" type="number" min="0" step="1" value="0"></div></div><div class="two"><div class="field"><label for="status">Product visibility</label><select id="status"><option value="draft">Draft — hidden from customers</option><option value="active">Active — publish in store</option></select></div><div class="field"><label>Stock rule</label><small style="color:#777">In stock requires at least 1 unit. Out of stock sets quantity to 0.</small></div></div>
 <label class="check"><input type="checkbox" id="featured"> Feature this product in the public store</label><div class="formactions"><button class="btn primary" id="saveBtn" type="submit">Save product</button><button class="btn" type="button" id="resetBtn">Clear form</button></div><div id="message" aria-live="polite"></div></form></section>
 
 <section class="panel" id="orders">
@@ -535,7 +536,7 @@ body{overflow-x:hidden}
   </div>
   <div id="importPreviewWrap" hidden>
     <div class="preview-heading"><strong id="importPreviewTitle">Import preview</strong><span id="importPreviewCount"></span></div>
-    <div class="import-table-wrap"><table class="import-table"><thead><tr><th>Image</th><th>Product</th><th>Choose department</th><th>Price</th><th>Stock</th><th>Status</th></tr></thead><tbody id="importPreviewRows"></tbody></table></div>
+    <div class="import-table-wrap"><table class="import-table"><thead><tr><th>Image</th><th>Product</th><th>Choose department</th><th>Price</th><th>Total</th><th>CPT</th><th>JHB</th><th>DBN</th><th>Status</th></tr></thead><tbody id="importPreviewRows"></tbody></table></div>
     <div class="import-actions" style="align-items:center;justify-content:space-between">
       <button class="btn" type="button" id="importPrevPage">Previous 50</button>
       <span id="importPageLabel" style="font-size:11px;color:#777">Preview page 1</span>
@@ -637,7 +638,12 @@ async function uploadProductImage(file){
  const result=await api('/api/admin/store/upload-image',{method:'POST',body:JSON.stringify({imageData:dataUrl})});
  return result.imageUrl;
 }
-function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('stockAvailability').value=Number(p.stock)>0?'in':'out';$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
+function edit(p){$('productId').value=p._id;$('name').value=p.name||'';$('description').value=p.description||'';$('imageUrl').value=p.imageUrl||'';$('productImageFile').value='';$('imageUploadStatus').textContent=p.imageUrl?'Current product image loaded.':'No image uploaded yet.';$('sku').value=p.sku||'';$('category').value=p.category||'';$('price').value=p.price??'';$('compareAtPrice').value=p.compareAtPrice||'';$('stock').value=p.stock??0;$('branchCpt').value=p.branchStock?.cpt??0;$('branchJhb').value=p.branchStock?.jhb??0;$('branchDbn').value=p.branchStock?.dbn??0;$('stockAvailability').value=Number(p.stock)>0?'in':'out';$('status').value=p.status||'draft';$('featured').checked=!!p.featured;$('formTitle').textContent='Edit product';$('saveBtn').textContent='Update product';preview();notice('');$('editor').scrollIntoView({behavior:'smooth'});}
+['branchCpt','branchJhb','branchDbn'].forEach(id=>$(id)?.addEventListener('input',()=>{
+ const total=['branchCpt','branchJhb','branchDbn'].reduce((sum,key)=>sum+Math.max(0,Math.floor(Number($(key).value)||0)),0);
+ $('stock').value=total;
+ $('stockAvailability').value=total>0?'in':'out';
+}));
 $('stockAvailability').addEventListener('change',()=>{
  if($('stockAvailability').value==='out')$('stock').value=0;
  else if(Number($('stock').value)<1)$('stock').value=1;
@@ -874,7 +880,7 @@ $('productForm').addEventListener('submit',async e=>{e.preventDefault();const id
   if($('productImageFile').files[0]){ $('imageUploadStatus').textContent='Uploading image…';$('imageUrl').value=await uploadProductImage($('productImageFile').files[0]); }
   if($('stockAvailability').value==='in'&&Number($('stock').value)<1)$('stock').value=1;
   if($('stockAvailability').value==='out')$('stock').value=0;
-  const body={name:$('name').value,description:$('description').value,imageUrl:$('imageUrl').value,sku:$('sku').value,category:$('category').value,price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,status:$('status').value,featured:$('featured').checked};
+  const body={name:$('name').value,description:$('description').value,imageUrl:$('imageUrl').value,sku:$('sku').value,category:$('category').value,price:$('price').value,compareAtPrice:$('compareAtPrice').value,stock:$('stock').value,branchStock:{cpt:$('branchCpt').value,jhb:$('branchJhb').value,dbn:$('branchDbn').value},status:$('status').value,featured:$('featured').checked};
   await api(id?'/api/admin/store/products/'+id:'/api/admin/store/products',{method:id?'PUT':'POST',body:JSON.stringify(body)});notice(id?'Product updated successfully.':'Product saved successfully.','ok');reset();await load();
  }catch(err){notice(err.message,'error');}finally{save.disabled=false;}
 });
@@ -982,9 +988,17 @@ function keyMap(row){
 
  // Syntech stock is split by branch. Sum the three stock columns if no
  // explicit total-stock column exists.
- const branchValues=['cpt','jhb','db'].map(k=>get(k));
- const hasBranchStock=branchValues.some(v=>String(v).trim()!=='');
- const branchStock=branchValues.reduce((sum,v)=>sum+numeric(v),0);
+ const branchStock={
+  cpt:Math.max(0,Math.floor(numeric(get('cpt','cape town','cape town stock','ct')))),
+  jhb:Math.max(0,Math.floor(numeric(get('jhb','johannesburg','johannesburg stock')))),
+  dbn:Math.max(0,Math.floor(numeric(get('dbn','db','durban','durban stock'))))
+ };
+ const hasBranchStock=['cpt','jhb','dbn'].some(k=>['cpt','jhb','dbn'].includes(k) && (
+  k==='cpt'?String(get('cpt','cape town','cape town stock','ct')).trim()!=='':
+  k==='jhb'?String(get('jhb','johannesburg','johannesburg stock')).trim()!=='':
+  String(get('dbn','db','durban','durban stock')).trim()!==''
+ ));
+ const branchTotal=branchStock.cpt+branchStock.jhb+branchStock.dbn;
  const explicitStock=get('stock','quantity','inventory','qty');
  const price=numeric(get('price','sellingprice','regularprice'));
  const compareAtPrice=numeric(get('rec','rrp','recommended retail price','recommendedretailprice','compareAtPrice','compare at price','oldprice','previousprice'));
@@ -1007,7 +1021,9 @@ function keyMap(row){
   images,
   price,
   compareAtPrice,
-  stock:explicitStock!==''?Math.max(0,Math.floor(numeric(explicitStock))):(hasBranchStock?Math.max(0,Math.floor(branchStock)):0),
+  stock:hasBranchStock?branchTotal:(explicitStock!==''?Math.max(0,Math.floor(numeric(explicitStock))):0),
+  branchStock,
+  hasBranchStock,
   status:['active','published','live'].includes(String(get('status','visibility')).trim().toLowerCase())?'active':'draft',
   featured:truth(get('featured','highlight','featured product'))
  };
@@ -1065,6 +1081,9 @@ function renderImportPreviewPage(){
    </select><small class="import-category-hint">${p.category?'Auto-detected: '+escapeHtml(p.category):'Not recognised — please choose a department'}</small></td>
    <td>${Number.isFinite(p.price)?money(p.price):'Invalid'}</td>
    <td>${Number.isInteger(p.stock)?p.stock:'Invalid'}</td>
+   <td>${p.hasBranchStock?Number(p.branchStock?.cpt||0):'—'}</td>
+   <td>${p.hasBranchStock?Number(p.branchStock?.jhb||0):'—'}</td>
+   <td>${p.hasBranchStock?Number(p.branchStock?.dbn||0):'—'}</td>
    <td>${escapeHtml(p.status||'draft')}</td>
   </tr>`;
  }).join('');
