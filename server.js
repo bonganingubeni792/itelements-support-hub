@@ -104,6 +104,11 @@ const StoreProduct = mongoose.model('StoreProduct', new mongoose.Schema({
     compareAtPrice: { type: Number, default: 0, min: 0 },
     productType: { type: String, enum: ['normal', 'sale'], default: 'normal' },
     stock: { type: Number, default: 0, min: 0 },
+    branchStock: {
+        cpt: { type: Number, default: 0, min: 0 },
+        jhb: { type: Number, default: 0, min: 0 },
+        dbn: { type: Number, default: 0, min: 0 }
+    },
     imageUrl: { type: String, default: '', trim: true, maxlength: 1000 },
     images: { type: [String], default: [] },
     status: { type: String, enum: ['active', 'draft'], default: 'active' },
@@ -1006,6 +1011,19 @@ function cleanStoreProduct(body = {}) {
         : Number(body.compareAtPrice);
 
     const stock = Number(body.stock);
+    const incomingBranches = body.branchStock && typeof body.branchStock === 'object' ? body.branchStock : {};
+    const branchStock = {
+        cpt: Math.max(0, Math.floor(Number(incomingBranches.cpt ?? body.cpt ?? 0) || 0)),
+        jhb: Math.max(0, Math.floor(Number(incomingBranches.jhb ?? body.jhb ?? 0) || 0)),
+        dbn: Math.max(0, Math.floor(Number(incomingBranches.dbn ?? body.dbn ?? body.db ?? 0) || 0))
+    };
+    const hasBranchStock = ['cpt','jhb','dbn'].some(key =>
+        incomingBranches[key] !== undefined || body[key] !== undefined ||
+        (key === 'dbn' && body.db !== undefined)
+    );
+    const effectiveStock = hasBranchStock
+        ? branchStock.cpt + branchStock.jhb + branchStock.dbn
+        : stock;
 
     const status = ['active', 'draft'].includes(body.status)
         ? body.status
@@ -1044,9 +1062,9 @@ function cleanStoreProduct(body = {}) {
     }
 
     if (
-        !Number.isInteger(stock) ||
-        stock < 0 ||
-        stock > 10000000
+        !Number.isInteger(effectiveStock) ||
+        effectiveStock < 0 ||
+        effectiveStock > 10000000
     ) {
         return {
             error: 'Stock must be a whole number of zero or more.'
@@ -1067,7 +1085,8 @@ function cleanStoreProduct(body = {}) {
             price,
             compareAtPrice,
             productType: body.productType === 'sale' ? 'sale' : 'normal',
-            stock,
+            stock: effectiveStock,
+            branchStock,
             status,
             imageUrl: primaryImage,
             images: validImages,
@@ -1203,7 +1222,7 @@ app.get('/api/store/products', async (req, res) => {
         res.setHeader('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
 
         const products = await StoreProduct.find({ status: 'active' })
-            .select('name sku category description price compareAtPrice stock imageUrl images status featured createdAt')
+            .select('name sku category description price compareAtPrice stock branchStock imageUrl images status featured createdAt')
             .sort({ featured: -1, createdAt: -1 })
             .lean();
 
