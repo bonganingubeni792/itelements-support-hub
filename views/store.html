@@ -2026,7 +2026,21 @@ function checkoutMoneySummary(){
    </article>`;
   }).join('');
   summary.querySelectorAll('[data-view-checkout-product]').forEach(button=>{
-   button.addEventListener('click',()=>window.showProduct(button.dataset.viewCheckoutProduct));
+   button.addEventListener('click',async event=>{
+    event.preventDefault();
+    event.stopPropagation();
+    const productId=button.dataset.viewCheckoutProduct;
+    if(!productId)return;
+    button.disabled=true;
+    try{
+     await window.showProduct(productId);
+    }catch(error){
+     console.error('Could not open checkout product details:',error);
+     alert(error.message||'Product details could not be opened. Please try again.');
+    }finally{
+     button.disabled=false;
+    }
+   });
   });
  }
  if($('checkoutSubtotal'))$('checkoutSubtotal').textContent=fmt(subtotal);
@@ -2779,6 +2793,16 @@ checkReturnedPayment();
   grid-template-columns:minmax(0,1fr)!important;gap:13px!important;
  }
 }
+</style>
+
+
+<style id="it-elements-checkout-product-detail-layer">
+/* Product details must appear above the checkout overlay when opened from its order summary. */
+#productModal.product-modal{z-index:1700!important}
+#productModal .product-modal-panel{z-index:1!important}
+#checkoutModal.checkout-modal{z-index:1500!important}
+.checkout-view-product{position:relative;z-index:2;cursor:pointer!important}
+.checkout-view-product:disabled{opacity:.6;cursor:wait!important}
 </style>
 
 </body></html>
