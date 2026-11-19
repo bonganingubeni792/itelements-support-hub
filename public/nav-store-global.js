@@ -116,11 +116,9 @@
     cartControl.hidden = true;
     actions.appendChild(cartControl);
   } else {
-    cartControl = makeLink('/store?openCart=1', 'Cart (0)');
-    cartControl.className = 'ite-header-cart';
-    cartControl.setAttribute('aria-label','Open your saved shopping cart');
-    cartControl.hidden = true;
-    actions.appendChild(cartControl);
+    // Keep the approved Store header's compact public-page appearance:
+    // cart remains available inside the Store, not beside the brand on other pages.
+    cartControl = null;
   }
   window.addEventListener('storage', function (event) {
     if (!event || !event.key || !authEmailForCart) return;
