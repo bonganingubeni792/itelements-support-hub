@@ -50,7 +50,7 @@
       '<div class="ite-mobile-drawer-head"><strong>Menu</strong><button class="ite-mobile-drawer-close" type="button" aria-label="Close menu">×</button></div>' +
       '<nav class="ite-mobile-drawer-links" aria-label="Website links"></nav></aside>';
     var list = overlay.querySelector('.ite-mobile-drawer-links');
-    [['/','Home'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login?next=%2Fdashboard','Client Portal']]
+    [['/','Home'],['/dashboard','Account'],['/services','Services'],['/store','Online Store'],['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/contact','Contact'],['/client/login?next=%2Fdashboard','Client Portal']]
       .forEach(function (item) { list.appendChild(makeLink(item[0], item[1])); });
     document.body.appendChild(overlay);
     function close() { overlay.classList.remove('open'); document.body.classList.remove('ite-drawer-open'); trigger.setAttribute('aria-expanded','false'); }
@@ -73,14 +73,14 @@
   if (nav) {
     nav.classList.add('ite-header-links');
     nav.innerHTML = '';
-    [['/','Home'],['/services','Services'],['/store','Online Store'],['/contact','Contact']]
+    [['/','Home'],['/dashboard','Account'],['/services','Services'],['/store','Online Store'],['/contact','Contact']]
       .forEach(function (item) { nav.appendChild(makeLink(item[0], item[1])); });
     // Keep the compact approved primary header while making every other page
     // reachable on desktop as well as in the mobile drawer.
     var more = document.createElement('details'); more.className = 'ite-more-menu';
     var summary = document.createElement('summary'); summary.textContent = 'More'; more.appendChild(summary);
     var panel = document.createElement('div'); panel.className = 'ite-more-menu-panel';
-    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/business-tools','Business Tools'],['/client/login?next=%2Fdashboard','Client Portal']]
+    [['/onsite-support','On-site'],['/pricing','Plans'],['/business-support','Business Support'],['/reviews','Reviews'],['/about','About'],['/faq','FAQ'],['/support','Request Help'],['/booking','Booking'],['/business-tools','Business Tools'],['/client/login?next=%2Fdashboard','Client Portal']]
       .forEach(function (item) { panel.appendChild(makeLink(item[0], item[1])); });
     more.appendChild(panel); nav.appendChild(more);
   }
@@ -97,11 +97,21 @@
     if (/^cart(?:\s*\(|$)/i.test(String(node.textContent || '').trim())) node.remove();
   });
   actions.innerHTML = '';
-  var account = makeLink('/client/login?next=%2Fdashboard', 'Login');
+  var account = makeLink('/client/login?next=%2Fdashboard', 'Log in');
   account.id = 'accountAction';
   account.className = 'ite-account-action';
   account.setAttribute('aria-label', 'Log in to your IT Elements account');
   actions.appendChild(account);
+  var logoutControl = makeLink('/client/logout', 'Log out');
+  logoutControl.id = 'logoutAction';
+  logoutControl.className = 'ite-account-action ite-logout-action';
+  logoutControl.hidden = true;
+  logoutControl.setAttribute('aria-label', 'Log out of your IT Elements account');
+  actions.appendChild(logoutControl);
+  var accountNav = nav ? Array.prototype.find.call(nav.querySelectorAll('a'), function (a) { return a.textContent.trim() === 'Account'; }) : null;
+  var drawerAccount = document.querySelector('#iteMobileDrawer a[href="/dashboard"]');
+  if (accountNav) accountNav.href = '/client/login?next=%2Fdashboard';
+  if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fdashboard';
   var cartControl;
   if (isStore) {
     cartControl = oldCart || document.createElement('button');
@@ -112,9 +122,11 @@
     cartControl.hidden = true;
     actions.appendChild(cartControl);
   } else {
-    // The shopping cart remains available inside the store, but never in the
-    // shared site header (including after a customer signs in).
-    cartControl = null;
+    cartControl = makeLink('/store?openCart=1', 'Cart (0)');
+    cartControl.className = 'ite-header-cart';
+    cartControl.setAttribute('aria-label','Open your saved shopping cart');
+    cartControl.hidden = true;
+    actions.appendChild(cartControl);
   }
   window.addEventListener('storage', function (event) {
     if (!event || !event.key || !authEmailForCart) return;
@@ -140,9 +152,12 @@
       var productCart = document.getElementById('openCartFromProduct');
       if (auth && auth.authenticated) {
         authEmailForCart = auth.email || '';
-        account.textContent = 'Client Portal'; account.href = '/dashboard';
+        account.textContent = 'Log out'; account.href = '/client/logout';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
-        if (cartControl) cartControl.hidden = true;
+        logoutControl.hidden = true;
+        if (accountNav) { accountNav.textContent = 'Log out'; accountNav.href = '/client/logout'; accountNav.setAttribute('aria-label', 'Log out of your IT Elements account'); }
+        if (drawerAccount) { drawerAccount.textContent = 'Log out'; drawerAccount.href = '/client/logout'; }
+        if (cartControl) cartControl.hidden = false;
         if (productCart) productCart.hidden = false;
 
         // Paint the account's most recent cart immediately. This mirror is written
@@ -174,13 +189,17 @@
           });
       }
 
-      account.textContent = 'Login'; account.href = '/client/login?next=%2Fdashboard';
+      account.textContent = 'Log in'; account.href = '/client/login?next=%2Fdashboard';
       account.setAttribute('aria-label', 'Log in to your IT Elements account');
+      if (accountNav) { accountNav.href = '/client/login?next=%2Fdashboard'; accountNav.setAttribute('aria-label', 'Log in to access your customer account'); }
+      if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fdashboard';
       if (cartControl) cartControl.hidden = true;
       if (productCart) productCart.hidden = true;
     })
     .catch(function () {
-      account.textContent = 'Login'; account.href = '/client/login?next=%2Fdashboard';
+      account.textContent = 'Log in'; account.href = '/client/login?next=%2Fdashboard';
+      if (accountNav) accountNav.href = '/client/login?next=%2Fdashboard';
+      if (drawerAccount) drawerAccount.href = '/client/login?next=%2Fdashboard';
       if (cartControl) cartControl.hidden = true;
       var productCart = document.getElementById('openCartFromProduct');
       if (productCart) productCart.hidden = true;
