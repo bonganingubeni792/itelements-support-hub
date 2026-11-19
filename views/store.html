@@ -1938,6 +1938,10 @@ window.orderProduct=id=>{
  window.open('https://wa.me/27606181229?text='+encodeURIComponent(message),'_blank','noopener');
 };
 document.querySelectorAll('[data-close-product]').forEach(x=>x.addEventListener('click',closeProduct));
+document.addEventListener('click',event=>{
+ const closeTarget=event.target.closest('#productModal [data-close-product]');
+ if(closeTarget)closeProduct();
+});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeProduct();});
 
 function renderCart(){
@@ -2033,6 +2037,15 @@ function checkoutMoneySummary(){
     if(!productId)return;
     button.disabled=true;
     try{
+     // The full-screen checkout uses z-index:99999. Move the product modal
+     // to body so it is not clipped by checkout's scrolling panel, then layer it above checkout.
+     const productModal=$('productModal');
+     if(productModal){
+      if(productModal.parentElement!==document.body)document.body.appendChild(productModal);
+      productModal.style.setProperty('z-index','100100','important');
+      const panel=productModal.querySelector('.product-modal-panel');
+      if(panel)panel.style.setProperty('z-index','1','important');
+     }
      await window.showProduct(productId);
     }catch(error){
      console.error('Could not open checkout product details:',error);
@@ -2798,11 +2811,70 @@ checkReturnedPayment();
 
 <style id="it-elements-checkout-product-detail-layer">
 /* Product details must appear above the checkout overlay when opened from its order summary. */
-#productModal.product-modal{z-index:1700!important}
+#productModal.product-modal{z-index:100100!important}
 #productModal .product-modal-panel{z-index:1!important}
-#checkoutModal.checkout-modal{z-index:1500!important}
+#checkoutModal.checkout-modal{z-index:99999!important}
 .checkout-view-product{position:relative;z-index:2;cursor:pointer!important}
 .checkout-view-product:disabled{opacity:.6;cursor:wait!important}
+</style>
+
+
+<style id="it-elements-mobile-checkout-actions-visible-v1">
+/* Keep the checkout action buttons reachable above the phone's bottom browser/store bars. */
+@media(max-width:800px){
+  #checkoutModal.checkout-modal,
+  #checkoutModal.checkout-modal.open{
+    position:fixed!important;inset:0!important;
+    height:100vh!important;height:100dvh!important;
+    max-height:100dvh!important;overflow:hidden!important;
+    align-items:stretch!important;
+  }
+  #checkoutModal .checkout-panel{
+    display:flex!important;flex-direction:column!important;
+    width:100%!important;height:100%!important;max-height:100%!important;
+    overflow-y:auto!important;overscroll-behavior:contain!important;
+    padding:64px 14px calc(190px + env(safe-area-inset-bottom))!important;
+    box-sizing:border-box!important;
+  }
+  #checkoutModal #productCheckoutForm{
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    gap:14px!important;min-width:0!important;
+  }
+  #checkoutModal .checkout-actions{
+    position:sticky!important;bottom:0!important;z-index:100002!important;
+    display:grid!important;grid-template-columns:1fr!important;
+    gap:9px!important;width:100%!important;
+    margin:18px 0 0!important;padding:14px 0 calc(16px + env(safe-area-inset-bottom))!important;
+    background:linear-gradient(to bottom,rgba(245,247,251,.94),#f5f7fb 22%)!important;
+    border-top:1px solid #e2e7ef!important;
+  }
+  #checkoutModal .checkout-actions button{
+    display:flex!important;align-items:center!important;justify-content:center!important;
+    width:100%!important;min-width:0!important;min-height:52px!important;
+    margin:0!important;font-size:15px!important;
+  }
+  #checkoutModal .checkout-actions #checkoutToReview{
+    order:-1!important;min-height:58px!important;
+    background:#e00000!important;color:#fff!important;
+    border:1px solid #e00000!important;box-shadow:0 7px 18px rgba(224,0,0,.18)!important;
+  }
+  #checkoutModal .checkout-actions #checkoutBackToCart{order:0!important}
+  #checkoutModal .checkout-actions .checkout-cancel-button{order:1!important}
+  #checkoutModal .checkout-stage-actions{
+    position:sticky!important;bottom:0!important;z-index:100002!important;
+    display:grid!important;grid-template-columns:1fr!important;gap:9px!important;
+    margin:18px 0 0!important;padding:14px 0 calc(16px + env(safe-area-inset-bottom))!important;
+    background:#f5f7fb!important;border-top:1px solid #e2e7ef!important;
+  }
+  #checkoutModal .checkout-stage-actions button{
+    width:100%!important;min-width:0!important;min-height:54px!important;
+  }
+  #checkoutModal .checkout-stage-actions #checkoutToPayment{
+    order:-1!important;min-height:58px!important;
+    background:#e00000!important;color:#fff!important;
+  }
+  #checkoutModal .checkout-close{z-index:100003!important}
+}
 </style>
 
 </body></html>
