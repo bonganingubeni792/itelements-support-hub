@@ -146,7 +146,7 @@
         authEmailForCart = auth.email || '';
         account.textContent = 'Log out'; account.href = '/client/logout';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
-        if (accountNav) { accountNav.textContent = 'Log out'; accountNav.href = '/client/logout'; accountNav.setAttribute('aria-label', 'Log out of your IT Elements account'); }
+        if (accountNav) { accountNav.textContent = 'Account'; accountNav.href = '/dashboard'; accountNav.setAttribute('aria-label', 'Open your customer account'); }
         if (drawerAccount) { drawerAccount.textContent = 'Log out'; drawerAccount.href = '/client/logout'; }
         if (cartControl) cartControl.hidden = false;
         if (productCart) productCart.hidden = false;
