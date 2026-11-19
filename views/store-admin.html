@@ -1043,18 +1043,24 @@ function keyMap(row){
  const allImages=splitImageValues(get('all image','all images','allimage','allimages','images','image gallery'));
  const images=[...new Set([...featuredImages,...additionalImages,...allImages])].slice(0,20);
 
- // Syntech stock is split by branch. Sum the three stock columns if no
- // explicit total-stock column exists.
- const branchStock={
-  cpt:Math.max(0,Math.floor(numeric(get('cpt','cptstock','cpt stock','cape town','cape town stock','ct')))),
-  jhb:Math.max(0,Math.floor(numeric(get('jhb','jhbstock','jhb stock','johannesburg','johannesburg stock')))),
-  dbn:Math.max(0,Math.floor(numeric(get('dbn','dbnstock','dbn stock','db','durban','durban stock'))))
+ // Automatically map supplier branch columns to IT Elements branch stock.
+ // Supports cptstock / cpt stock / CPT, jhbstock / jhb stock / JHB,
+ // and dbnstock / dbn stock / DBN, plus common city-name headings.
+ const readBranchQty=(...aliases)=>{
+  const raw=get(...aliases);
+  if(String(raw).trim()==='')return {present:false,quantity:0};
+  const parsed=numeric(raw);
+  return {present:true,quantity:Math.max(0,Math.floor(parsed))};
  };
- const hasBranchStock=['cpt','jhb','dbn'].some(k=>['cpt','jhb','dbn'].includes(k) && (
-  k==='cpt'?String(get('cpt','cptstock','cpt stock','cape town','cape town stock','ct')).trim()!=='':
-  k==='jhb'?String(get('jhb','jhbstock','jhb stock','johannesburg','johannesburg stock')).trim()!=='':
-  String(get('dbn','dbnstock','dbn stock','db','durban','durban stock')).trim()!==''
- ));
+ const cptQty=readBranchQty('cptstock','cpt stock','cpt','cape town stock','cape town','ct stock','ct');
+ const jhbQty=readBranchQty('jhbstock','jhb stock','jhb','johannesburg stock','johannesburg');
+ const dbnQty=readBranchQty('dbnstock','dbn stock','dbn','db stock','db','durban stock','durban');
+ const branchStock={
+  cpt:cptQty.quantity,
+  jhb:jhbQty.quantity,
+  dbn:dbnQty.quantity
+ };
+ const hasBranchStock=cptQty.present||jhbQty.present||dbnQty.present;
  const branchTotal=branchStock.cpt+branchStock.jhb+branchStock.dbn;
  const explicitStock=get('stock','quantity','inventory','qty');
  const price=numeric(get('price','sellingprice','regularprice'));
