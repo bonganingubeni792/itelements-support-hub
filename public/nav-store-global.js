@@ -102,12 +102,6 @@
   account.className = 'ite-account-action';
   account.setAttribute('aria-label', 'Log in to your IT Elements account');
   actions.appendChild(account);
-  var logoutControl = makeLink('/client/logout', 'Log out');
-  logoutControl.id = 'logoutAction';
-  logoutControl.className = 'ite-account-action ite-logout-action';
-  logoutControl.hidden = true;
-  logoutControl.setAttribute('aria-label', 'Log out of your IT Elements account');
-  actions.appendChild(logoutControl);
   var accountNav = nav ? Array.prototype.find.call(nav.querySelectorAll('a'), function (a) { return a.textContent.trim() === 'Account'; }) : null;
   var drawerAccount = document.querySelector('#iteMobileDrawer a[href="/dashboard"]');
   if (accountNav) accountNav.href = '/client/login?next=%2Fdashboard';
@@ -154,7 +148,6 @@
         authEmailForCart = auth.email || '';
         account.textContent = 'Log out'; account.href = '/client/logout';
         account.setAttribute('aria-label', 'Log out of your IT Elements account');
-        logoutControl.hidden = true;
         if (accountNav) { accountNav.textContent = 'Log out'; accountNav.href = '/client/logout'; accountNav.setAttribute('aria-label', 'Log out of your IT Elements account'); }
         if (drawerAccount) { drawerAccount.textContent = 'Log out'; drawerAccount.href = '/client/logout'; }
         if (cartControl) cartControl.hidden = false;
