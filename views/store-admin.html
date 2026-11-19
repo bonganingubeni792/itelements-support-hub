@@ -926,6 +926,36 @@ function csvParse(text){
  }
  row.push(cell);if(row.some(v=>String(v).trim()!==''))rows.push(row);
  if(!rows.length)return [];
+ const normalizeHeader=value=>String(value||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+ const knownHeaders=new Set(['sku','productcode','code','name','product','productname','title','price','sellingprice','rec','rrp','cpt','cptstock','jhb','jhbstock','dbn','dbnstock','description','featuredimage','additionalimages','allimages','categories']);
+ const first=rows[0]||[];
+ const headerHits=first.filter(value=>knownHeaders.has(normalizeHeader(value))).length;
+ const looksLikeHeader=headerHits>=2;
+ if(!looksLikeHeader && first.length>=20 && /^https?:\/\//i.test(String(first[11]||''))){
+  // Syntech's semicolon-delimited export is headerless. Its fixed column order:
+  // 0 SKU, 1 product name, 2 price, 3 RRP, 7-9 CPT/JHB/DBN,
+  // 11 product URL, 12 description, 13 short description,
+  // 18 featured image, 19 additional images, 20 all images,
+  // 21 category text, 22 category path, 23 currency.
+  return rows.filter(values=>values.length>=20).map(values=>({
+   sku:values[0]||'',
+   name:values[1]||'',
+   price:values[2]||'',
+   rec:values[3]||'',
+   cpt:values[7]||'',
+   jhb:values[8]||'',
+   dbn:values[9]||'',
+   url:values[11]||'',
+   description:values[12]||'',
+   shortdesc:values[13]||'',
+   'featured image':values[18]||'',
+   'additional images':values[19]||'',
+   'all image':values[20]||'',
+   categories:values[21]||'',
+   categoriesalt:values[22]||'',
+   currency:values[23]||''
+  }));
+ }
  const headers=rows.shift().map(h=>String(h||'').replace(/^\uFEFF/,'').trim());
  return rows.map(values=>Object.fromEntries(headers.map((h,i)=>[h,values[i]??''])));
 }
