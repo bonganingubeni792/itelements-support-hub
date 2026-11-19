@@ -185,6 +185,17 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 
 .bulk-stock-qty{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;color:#707782}
 .bulk-stock-qty input{width:76px;padding:8px;border:1px solid #dfe2e7;border-radius:8px;font-size:11px}
+
+/* Admin Store Manager: remove WhatsApp support panels and floating bubbles. */
+.ite-store-sidebar .whatsapp-help,
+.ite-store-sidebar a[href*="wa.me"],
+body:has(.ite-store-sidebar) .whatsapp-float,
+body:has(.ite-store-sidebar) .whatsapp-button,
+body:has(.ite-store-sidebar) .whatsapp-widget,
+body:has(.ite-store-sidebar) [class*="whatsapp"],
+body:has(.ite-store-sidebar) [id*="whatsapp"] {
+  display:none !important;
+}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261119-store-header-match-v5">
 <style id="ite-store-manager-layout-final">
 /* Store workspace: keep the same two-workspace switch shown in the reference */
@@ -471,11 +482,6 @@ body{overflow-x:hidden}
     <a href="/admin#reviews-section"><span class="nav-icon">★</span><span>Reviews</span></a>
     <a href="/admin#settings-section"><span class="nav-icon">⚙</span><span>Settings</span></a>
   </nav>
-  <div class="help-box whatsapp-help">
-    <div class="wa-icon" aria-hidden="true">◉</div>
-    <div class="wa-copy"><strong>WhatsApp Support</strong><p>Message IT Elements directly for assistance.</p></div>
-    <a href="https://wa.me/27606181229?text=Hello%20IT%20Elements%2C%20I%20need%20support." target="_blank" rel="noopener">Chat on WhatsApp</a>
-  </div>
   <div class="sidebar-foot">© 2007 IT Elements<br>Admin Console v2.0</div>
 </aside>
 <main><header class="topbar"><div class="crumb">Administration / <strong>Store Management</strong></div><div class="topright"><a href="/store" target="_blank">Open public store ↗</a><a href="/client/logout" class="logout">Log out</a></div></header>
@@ -552,7 +558,15 @@ body{overflow-x:hidden}
       <span id="importPageLabel" style="font-size:11px;color:#777">Preview page 1</span>
       <button class="btn" type="button" id="importNextPage">Next 50</button>
     </div>
-    <div class="import-actions"><button class="btn primary" type="button" id="runImport">Import selected products</button><button class="btn" type="button" id="cancelImport">Cancel</button></div>
+    <div class="import-actions" style="align-items:center;gap:12px;flex-wrap:wrap">
+      <label for="importPublishMode" style="font-size:12px;font-weight:700;color:#333">After upload, set products to:</label>
+      <select id="importPublishMode" class="input" style="min-width:150px;max-width:220px">
+        <option value="draft" selected>Draft (not visible)</option>
+        <option value="active">Publish (visible in store)</option>
+      </select>
+      <button class="btn primary" type="button" id="runImport">Import selected products</button>
+      <button class="btn" type="button" id="cancelImport">Cancel</button>
+    </div>
   </div>
 </section>
 <section class="panel category-panel" id="categories">
@@ -1267,8 +1281,10 @@ $('importPreviewRows').addEventListener('change',async e=>{
 $('runImport').onclick=async()=>{
  const selected=importRows.filter((p,i)=>!validateImportRow(p,i)&&p.include!==false);
  if(!selected.length){setImportStatus('Select at least one valid product to import.','error');return;}
+ const publishMode=$('importPublishMode')?.value==='active'?'active':'draft';
+ selected.forEach(product=>{product.status=publishMode;});
  $('runImport').disabled=true;
- setImportStatus(`Importing ${selected.length} selected products with their selected images…`);
+ setImportStatus(`Importing ${selected.length} selected products as ${publishMode==='active'?'published':'draft'} with their selected images…`);
  try{
   let totalCreated=0,totalSkipped=0;
   const batchSize=100;
@@ -1282,7 +1298,7 @@ $('runImport').onclick=async()=>{
    totalSkipped+=Number(result.skipped)||0;
   }
   await load();
-  setImportStatus(`Import complete: ${totalCreated.toLocaleString()} products added${totalSkipped?`, ${totalSkipped} skipped`:''}.`,totalSkipped?'error':'success');
+  setImportStatus(`Import complete: ${totalCreated.toLocaleString()} products added as ${publishMode==='active'?'published':'draft'}${totalSkipped?`, ${totalSkipped} skipped`:''}.`,totalSkipped?'error':'success');
   $('productImportFile').value='';importRows=[];$('importPreviewWrap').hidden=true;
  }catch(e){setImportStatus((e.message||'Bulk import failed.')+' If earlier batches completed, those products may already be saved; check the catalogue before retrying.','error');$('runImport').disabled=false;}
 };
