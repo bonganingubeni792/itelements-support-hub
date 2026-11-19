@@ -1486,33 +1486,65 @@ button[onclick*="addDetailToChat"] {
  <div class="checkout-backdrop" data-close-checkout></div>
  <section class="checkout-panel" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
   <button type="button" class="checkout-close" data-close-checkout aria-label="Cancel checkout">×</button>
-  <div class="checkout-eyebrow">SECURE CHECKOUT</div><h2 id="checkoutTitle">Complete your order</h2>
-  <p class="checkout-intro">Check your products, delivery charge and total before secure payment.</p>
-  <div id="checkoutItemsSummary" class="checkout-items-summary" aria-live="polite"></div><form id="productCheckoutForm">
-   <label>Full name<input name="customerName" autocomplete="name" required maxlength="100" placeholder="Your full name"></label>
-   <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
-   <label>Phone number<input name="phone" type="tel" autocomplete="tel" required placeholder="+27 ..."></label>
-   <label>Delivery method<select name="deliveryMethod" id="deliveryMethod"><option value="delivery">Nationwide delivery</option></select></label>
-   <div class="checkout-address-block" id="deliveryAddressField">
-    <div class="checkout-section-heading"><strong>Delivery address</strong><span>Enter the full address where your order must be delivered.</span></div>
-    <label>Street address / house or building number<input name="addressLine1" autocomplete="address-line1" required maxlength="180" placeholder="e.g. 12 Main Road"></label>
-    <label>Complex, unit or apartment <span class="optional-label">(optional)</span><input name="addressLine2" autocomplete="address-line2" maxlength="180" placeholder="Complex name, unit or apartment number"></label>
-    <div class="checkout-address-grid">
-     <label>Suburb<input name="suburb" autocomplete="address-level3" required maxlength="100" placeholder="Your suburb"></label>
-     <label>City / town<input name="city" autocomplete="address-level2" required maxlength="100" placeholder="Your city or town"></label>
-     <label>Province<select name="province" autocomplete="address-level1" required><option value="">Select province</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></label>
-     <label>Postal code<input name="postalCode" autocomplete="postal-code" inputmode="numeric" required maxlength="10" pattern="[0-9]{4}" placeholder="e.g. 2000" title="Enter a 4-digit South African postal code"></label>
-    </div>
-    <label>Delivery instructions <span class="optional-label">(optional)</span><textarea name="deliveryInstructions" rows="2" maxlength="300" placeholder="Gate code, landmark or instructions for the driver"></textarea></label>
+  <div class="checkout-eyebrow">IT ELEMENTS • SECURE CHECKOUT</div>
+  <h2 id="checkoutTitle">Complete your order</h2>
+  <p class="checkout-intro">Review your items, confirm where to deliver and continue to secure payment.</p>
+  <ol class="checkout-progress" aria-label="Checkout steps">
+   <li class="current"><span>1</span><strong>Delivery details</strong></li>
+   <li><span>2</span><strong>Review order</strong></li>
+   <li><span>3</span><strong>Secure payment</strong></li>
+  </ol>
+  <form id="productCheckoutForm" class="checkout-layout">
+   <div class="checkout-main">
+    <section class="checkout-card">
+     <div class="checkout-card-heading"><span class="checkout-step-number">1</span><div><h3>Your contact details</h3><p>Who should we contact about this order?</p></div></div>
+     <div class="checkout-contact-grid">
+      <label>Full name<input name="customerName" autocomplete="name" required maxlength="100" placeholder="Your full name"></label>
+      <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+      <label>Phone number<input name="phone" type="tel" autocomplete="tel" required placeholder="+27 ..."></label>
+     </div>
+    </section>
+    <section class="checkout-card">
+     <div class="checkout-card-heading"><span class="checkout-step-number">2</span><div><h3>Delivery details</h3><p>Where should we deliver your order?</p></div></div>
+     <label>Delivery method<select name="deliveryMethod" id="deliveryMethod"><option value="delivery">Nationwide delivery — South Africa</option></select></label>
+     <div class="checkout-address-block" id="deliveryAddressField">
+      <div class="checkout-section-heading"><strong>Delivery address</strong><span>Enter the full address where your order must be delivered.</span></div>
+      <label>Street address / house or building number<input name="addressLine1" autocomplete="address-line1" required maxlength="180" placeholder="e.g. 12 Main Road"></label>
+      <label>Complex, unit or apartment <span class="optional-label">(optional)</span><input name="addressLine2" autocomplete="address-line2" maxlength="180" placeholder="Complex name, unit or apartment number"></label>
+      <div class="checkout-address-grid">
+       <label>Suburb<input name="suburb" autocomplete="address-level3" required maxlength="100" placeholder="Your suburb"></label>
+       <label>City / town<input name="city" autocomplete="address-level2" required maxlength="100" placeholder="Your city or town"></label>
+       <label>Province<select name="province" autocomplete="address-level1" required><option value="">Select province</option><option>Eastern Cape</option><option>Free State</option><option>Gauteng</option><option>KwaZulu-Natal</option><option>Limpopo</option><option>Mpumalanga</option><option>Northern Cape</option><option>North West</option><option>Western Cape</option></select></label>
+       <label>Postal code<input name="postalCode" autocomplete="postal-code" inputmode="numeric" required maxlength="10" pattern="[0-9]{4}" placeholder="e.g. 2000" title="Enter a 4-digit South African postal code"></label>
+      </div>
+      <label>Delivery instructions <span class="optional-label">(optional)</span><textarea name="deliveryInstructions" rows="2" maxlength="300" placeholder="Gate code, landmark or instructions for the driver"></textarea></label>
+     </div>
+     <div class="checkout-note" id="checkoutDeliveryNote">Delivery is R80 for orders below R755. Delivery is free for orders of R755 or more.</div>
+    </section>
+    <div class="checkout-actions"><button type="button" class="checkout-back-button" id="checkoutBackToCart">← Back to cart</button><button type="button" class="checkout-cancel-button" data-close-checkout>Cancel checkout</button><button type="button" class="checkout-primary-action" id="checkoutToReview">Continue to review →</button></div>
    </div>
-   <div class="checkout-note" id="checkoutDeliveryNote">Delivery is R80 for orders below R755. Delivery is free for orders of R755 or more.</div>
-   <div class="checkout-total"><span>Products subtotal</span><strong id="checkoutSubtotal">R 0.00</strong></div>
-   <div class="checkout-total"><span>Delivery</span><strong id="checkoutDeliveryFee">R 0.00</strong></div>
-   <div class="checkout-total grand-total"><span>Order total</span><strong id="checkoutTotal">R 0.00</strong></div>
-   <button type="submit" class="payfast-submit" id="payfastSubmit">Continue to secure payment →</button>
-   <div id="checkoutError" role="alert" class="checkout-error"></div>
-   <div class="checkout-actions"><button type="button" class="checkout-back-button" id="checkoutBackToCart">← Back to cart</button><button type="button" class="checkout-cancel-button" data-close-checkout>Cancel checkout</button></div>
-   <div class="payfast-trust">🔒 Secure payment</div>
+   <aside class="checkout-sidebar">
+    <section class="checkout-card checkout-order-card">
+     <div class="checkout-card-heading"><span class="checkout-step-number">3</span><div><h3>Your order</h3><p>Check quantities and products</p></div></div>
+     <div id="checkoutCustomerReview" class="checkout-customer-review" hidden></div>
+     <div id="checkoutItemsSummary" class="checkout-items-summary" aria-live="polite"></div>
+     <div class="checkout-total"><span>Products subtotal</span><strong id="checkoutSubtotal">R 0.00</strong></div>
+     <div class="checkout-total"><span>Delivery</span><strong id="checkoutDeliveryFee">R 0.00</strong></div>
+     <div class="checkout-total grand-total"><span>Order total</span><strong id="checkoutTotal">R 0.00</strong></div>
+     <div class="checkout-stage-actions" id="checkoutReviewActions" hidden>
+      <button type="button" class="checkout-secondary-action" id="checkoutEditDetails">← Edit delivery details</button>
+      <button type="button" class="checkout-primary-action" id="checkoutToPayment">Continue to secure payment →</button>
+     </div>
+     <div class="checkout-stage-actions" id="checkoutPaymentActions" hidden>
+      <button type="button" class="checkout-secondary-action" id="checkoutBackToReview">← Back to review</button>
+      <p class="checkout-confirm-copy">By continuing, you confirm that your products, delivery address and order total are correct.</p>
+     </div>
+     <button type="submit" class="payfast-submit" id="payfastSubmit" hidden>Pay securely with PayFast →</button>
+     <div id="checkoutError" role="alert" class="checkout-error"></div>
+     <div class="payfast-trust">🔒 Secure payment powered by PayFast</div>
+     <div class="checkout-assurance">Your payment details are handled securely by PayFast.</div>
+    </section>
+   </aside>
   </form>
  </section>
 </div>
@@ -1856,6 +1888,7 @@ window.buyDetailNow=async id=>{
  $('checkoutError').textContent='';
  $('checkoutModal').classList.add('open');
  $('checkoutModal').setAttribute('aria-hidden','false');
+ updateCheckoutStage(1);
 };
 window.askAboutProduct=id=>{
  const p=products.find(x=>x._id===id);if(!p)return;
@@ -2010,10 +2043,96 @@ $('deliveryMethod').addEventListener('change',()=>{
  $('deliveryAddressField').querySelector('[name="addressLine1"]').required=true;
  checkoutMoneySummary();
 });
+
+const checkoutFormElement=$('productCheckoutForm');
+checkoutFormElement.noValidate=true;
+let checkoutStage=1;
+const checkoutStageNodes=[...document.querySelectorAll('.checkout-progress li')];
+function updateCheckoutStage(stage){
+ checkoutStage=Math.max(1,Math.min(3,stage));
+ checkoutStageNodes.forEach((node,index)=>{
+  node.classList.toggle('current',index+1===checkoutStage);
+  node.classList.toggle('completed',index+1<checkoutStage);
+  node.setAttribute('aria-current',index+1===checkoutStage?'step':'false');
+ });
+ const main=$('productCheckoutForm').querySelector('.checkout-main');
+ const sidebar=$('productCheckoutForm').querySelector('.checkout-sidebar');
+ $('productCheckoutForm').setAttribute('data-checkout-stage',String(checkoutStage));
+ main.hidden=checkoutStage!==1;
+ sidebar.hidden=checkoutStage===1;
+ $('checkoutReviewActions').hidden=checkoutStage!==2;
+ $('checkoutPaymentActions').hidden=checkoutStage!==3;
+ $('payfastSubmit').hidden=checkoutStage!==3;
+ const title=$('checkoutTitle');
+ const intro=$('checkoutModal').querySelector('.checkout-intro');
+ if(checkoutStage===1){
+  title.textContent='Delivery details';
+  intro.textContent='Tell us who to contact and where your order should be delivered.';
+ }else if(checkoutStage===2){
+  title.textContent='Review your order';
+  intro.textContent='Check your products, delivery details and final total before payment.';
+  renderCheckoutCustomerReview();
+  checkoutMoneySummary();
+ }else{
+  title.textContent='Secure payment';
+  intro.textContent='Your order is ready. Confirm the details below before continuing to PayFast.';
+  renderCheckoutCustomerReview();
+  checkoutMoneySummary();
+ }
+ const panel=$('checkoutModal').querySelector('.checkout-panel');
+ if(panel)panel.scrollTo({top:0,behavior:'smooth'});
+}
+function renderCheckoutCustomerReview(){
+ const box=$('checkoutCustomerReview');
+ if(!box)return;
+ const data=new FormData($('productCheckoutForm'));
+ const fields=[
+  ['Contact',data.get('customerName')],
+  ['Email',data.get('email')],
+  ['Phone',data.get('phone')],
+  ['Delivery address',[data.get('addressLine1'),data.get('addressLine2'),data.get('suburb'),data.get('city'),data.get('province'),data.get('postalCode')].filter(Boolean).join(', ')]
+ ];
+ box.hidden=false;
+ box.innerHTML='<div class="checkout-review-heading"><strong>Delivery and contact details</strong><button type="button" id="checkoutEditDetailsInline">Edit</button></div>'+
+  fields.map(([label,value])=>`<div class="checkout-review-row"><span>${esc(label)}</span><strong>${esc(String(value||'—'))}</strong></div>`).join('');
+ const edit=$('checkoutEditDetailsInline');
+ if(edit)edit.addEventListener('click',()=>updateCheckoutStage(1));
+}
+function validateCheckoutDetails(){
+ const form=$('productCheckoutForm');
+ const required=[...form.querySelectorAll('.checkout-main [required]')];
+ for(const field of required){
+  if(!field.checkValidity()){
+   field.reportValidity();
+   field.focus({preventScroll:false});
+   return false;
+  }
+ }
+ const summary=checkoutMoneySummary();
+ if(!cart.length||summary.totalCents<=0){
+  $('checkoutError').textContent='Your cart is empty or the order total is invalid. Please return to your cart and check your products.';
+  return false;
+ }
+ $('checkoutError').textContent='';
+ return true;
+}
+$('checkoutToReview').addEventListener('click',()=>{
+ if(validateCheckoutDetails())updateCheckoutStage(2);
+});
+$('checkoutEditDetails').addEventListener('click',()=>updateCheckoutStage(1));
+$('checkoutToPayment').addEventListener('click',()=>updateCheckoutStage(3));
+$('checkoutBackToReview').addEventListener('click',()=>updateCheckoutStage(2));
+
 $('productCheckoutForm').addEventListener('submit',async event=>{
  event.preventDefault();
  const button=$('payfastSubmit'),error=$('checkoutError');
  error.textContent='';
+ if(checkoutStage!==3){
+  if(checkoutStage===1&&validateCheckoutDetails())updateCheckoutStage(2);
+  else if(checkoutStage===2)updateCheckoutStage(3);
+  return;
+ }
+ if(!validateCheckoutDetails())return;
  if(!cart.length){error.textContent='Your cart is empty.';return;}
  const data=new FormData(event.currentTarget);
  const payload={
@@ -2219,6 +2338,63 @@ checkReturnedPayment();
 })();
 </script>
 
+<style id="it-elements-checkout-full-page-south-africa">
+/* Checkout is a dedicated full-screen page, not a popup over the store. */
+#checkoutModal.checkout-modal{
+  position:fixed!important;inset:0!important;z-index:99999!important;
+  display:none!important;align-items:stretch!important;justify-content:stretch!important;
+  width:100vw!important;height:100vh!important;height:100dvh!important;
+  max-width:none!important;margin:0!important;padding:0!important;
+  overflow:hidden!important;background:#fff!important;backdrop-filter:none!important;
+}
+#checkoutModal.checkout-modal.open{display:flex!important}
+#checkoutModal .checkout-backdrop{display:none!important}
+#checkoutModal .checkout-panel{
+  position:relative!important;inset:auto!important;display:block!important;
+  width:100%!important;max-width:none!important;height:100%!important;
+  min-height:100%!important;max-height:none!important;margin:0!important;
+  padding:34px clamp(18px,4vw,64px) 42px!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  border:0!important;border-radius:0!important;box-shadow:none!important;
+  background:#f7f8fb!important;
+}
+#checkoutModal .checkout-panel>*{
+  width:100%!important;max-width:1280px!important;
+  margin-left:auto!important;margin-right:auto!important;
+}
+#checkoutModal .checkout-panel .checkout-close{
+  position:fixed!important;top:16px!important;right:20px!important;
+  z-index:100001!important;width:44px!important;height:44px!important;
+  border:1px solid #e1e5ec!important;border-radius:50%!important;
+  background:#fff!important;color:#333!important;font-size:25px!important;
+  box-shadow:0 3px 12px #17203312!important;
+}
+#checkoutModal .checkout-panel h2{padding-right:56px!important}
+#checkoutModal .checkout-progress{max-width:1280px!important}
+#checkoutModal #productCheckoutForm{
+  max-width:1280px!important;
+  grid-template-columns:minmax(0,1.45fr) minmax(320px,.8fr)!important;
+  align-items:start!important;gap:20px!important;
+}
+#checkoutModal .checkout-main{min-width:0!important}
+#checkoutModal .checkout-sidebar{min-width:0!important}
+#checkoutModal .checkout-order-card{position:sticky!important;top:10px!important}
+#checkoutModal #checkoutItemsSummary{max-height:440px!important}
+@media(max-width:800px){
+  #checkoutModal.checkout-modal,#checkoutModal.checkout-modal.open{
+    width:100%!important;height:100vh!important;height:100dvh!important;
+  }
+  #checkoutModal .checkout-panel{
+    height:100%!important;max-height:none!important;
+    padding:72px 14px 28px!important;
+  }
+  #checkoutModal #productCheckoutForm{
+    grid-template-columns:minmax(0,1fr)!important;gap:14px!important;
+  }
+  #checkoutModal .checkout-order-card{position:static!important}
+  #checkoutModal #checkoutItemsSummary{max-height:280px!important}
+}
+</style>
 </body></html>
 
 <style id="it-elements-full-page-checkout-v2">
