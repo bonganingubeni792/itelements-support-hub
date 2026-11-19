@@ -138,6 +138,16 @@ main{min-width:0}.topbar{height:72px;background:#fff;border-bottom:1px solid var
 
 .import-table .image-cell{width:112px;min-width:112px}
 .import-image-preview{display:block;width:62px;height:48px;object-fit:contain;border:1px solid #e6e7eb;border-radius:6px;background:#fff;margin-bottom:5px}
+
+.import-image-gallery{display:flex;gap:4px;flex-wrap:wrap;align-items:flex-start}
+.import-thumb-wrap{position:relative;width:62px;height:62px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #e6e7eb;border-radius:6px;background:#f7f8fa;overflow:hidden}
+.import-thumb-wrap .import-image-preview{width:60px;height:43px;object-fit:contain;border:0;border-radius:0;background:#fff;margin:0}
+.import-thumb-state{display:block;width:100%;padding:2px 1px;text-align:center;font-size:8px;line-height:1.1;font-weight:800;color:#8a6500;background:#fff8df}
+.import-thumb-wrap[data-state="loaded"] .import-thumb-state{color:#087b39;background:#eaf8ef}
+.import-thumb-wrap[data-state="failed"] .import-thumb-state{color:#b00000;background:#fff0f0}
+.import-thumb-wrap[data-state="failed"] .import-image-preview{display:none}
+.import-image-summary{display:block;margin-top:4px;font-size:9px;color:#68707c;font-weight:700}
+
 .import-image-url{width:150px;max-width:150px;padding:6px;border:1px solid #dfe1e5;border-radius:5px;font-size:10px}
 .import-row-check{display:block;margin-top:5px;font-size:9px;color:#9a5b00}
 #deleteAllProducts{border-color:#e4baba;color:#b00000;background:#fff5f5}
@@ -1074,6 +1084,25 @@ function refreshImportValidation(){
  });
 }
 
+window.setImportImageState=function(img,state){
+ const wrap=img&&img.closest?img.closest('.import-thumb-wrap'):null;
+ if(!wrap)return;
+ wrap.dataset.state=state;
+ const label=wrap.querySelector('.import-thumb-state');
+ if(label)label.textContent=state==='loaded'?'Loaded':state==='failed'?'Unavailable':'Loading…';
+ const row=wrap.closest('tr');
+ if(row){
+  const summary=row.querySelector('.import-image-summary');
+  if(summary){
+   const thumbs=Array.from(row.querySelectorAll('.import-thumb-wrap'));
+   const loaded=thumbs.filter(x=>x.dataset.state==='loaded').length;
+   const failed=thumbs.filter(x=>x.dataset.state==='failed').length;
+   const pending=thumbs.filter(x=>x.dataset.state==='loading').length;
+   summary.textContent=`Preview images: ${loaded} loaded · ${pending} loading · ${failed} unavailable`;
+   summary.style.color=failed?'#b00000':pending?'#8a6500':'#087b39';
+  }
+ }
+};
 function renderImportPreviewPage(){
  const body=$('importPreviewRows');
  if(!body)return;
@@ -1084,9 +1113,9 @@ function renderImportPreviewPage(){
  body.innerHTML=pageRows.map((p,offset)=>{
   const i=start+offset;
   const urls=(p.images||[]);
-  const thumbnails=urls.slice(0,3).map((url,n)=>`<img class="import-image-preview" loading="lazy" decoding="async" src="${escapeHtml(url)}" alt="Product image ${n+1}" onerror="this.style.opacity='.18';this.alt='Image unavailable'">`).join('');
+  const thumbnails=urls.slice(0,3).map((url,n)=>`<span class="import-thumb-wrap" data-state="loading"><img class="import-image-preview" loading="eager" decoding="async" src="${escapeHtml(url)}" alt="Product image ${n+1}" onload="window.setImportImageState(this,'loaded')" onerror="window.setImportImageState(this,'failed')"><small class="import-thumb-state">Loading…</small></span>`).join('');
   return `<tr data-import-row="${i}">
-   <td class="image-cell"><div class="import-image-gallery">${thumbnails||'<span class="no-import-image">No image found</span>'}</div>
+   <td class="image-cell"><div class="import-image-gallery">${thumbnails||'<span class="no-import-image">No image found</span>'}</div><small class="import-image-summary" data-image-summary="${i}">${urls.length?`Checking ${Math.min(urls.length,3)} preview image(s)…`:''}</small>
    <textarea class="import-image-url" data-image-row="${i}" rows="2" placeholder="Image URLs">${escapeHtml(urls.join('\n'))}</textarea>
    <small class="import-image-count">${urls.length} image(s) detected · up to 20</small>
    <label style="display:block;margin-top:5px;font-size:9px;color:#666">Or upload main image <input type="file" data-image-file-row="${i}" accept="image/jpeg,image/png,image/webp,image/avif" style="display:block;max-width:145px;font-size:9px"></label>
