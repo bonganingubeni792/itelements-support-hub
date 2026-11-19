@@ -196,37 +196,6 @@ body:has(.ite-store-sidebar) [class*="whatsapp"],
 body:has(.ite-store-sidebar) [id*="whatsapp"] {
   display:none !important;
 }
-
-
-/* Premium bulk catalogue controls */
-.bulk-toolbar-pro{display:block!important;padding:0!important;margin:16px 0 18px!important;border:0!important;border-bottom:0!important}
-.bulk-selection-row{display:flex;align-items:center;gap:13px;flex-wrap:wrap;padding:13px 15px;background:#fff;border:1px solid #e6e8ed;border-radius:12px;margin-bottom:12px}
-.bulk-selection-row .bulk-select-all{font-size:12px;color:#303640}
-.selected-count{display:inline-flex;align-items:center;justify-content:center;min-width:82px;padding:6px 10px;border-radius:20px;background:#fff0f0;color:#b00000;font-size:10px;font-weight:900}
-.bulk-selection-hint{margin-left:auto;color:#8a909a;font-size:10px}
-.bulk-action-grid{display:grid;grid-template-columns:1.1fr 1.45fr .75fr;gap:11px;align-items:stretch}
-.bulk-action-card{min-width:0;padding:15px;border:1px solid #e5e7ec;border-radius:13px;background:linear-gradient(180deg,#fff 0%,#fbfcfd 100%);box-shadow:0 4px 15px rgba(20,25,35,.035)}
-.bulk-card-heading{display:flex;align-items:center;gap:10px;margin-bottom:13px}
-.bulk-card-heading>div{display:grid;gap:3px;min-width:0}
-.bulk-card-heading strong{font-size:12px;font-weight:900;color:#252a32}
-.bulk-card-heading small{font-size:9px;color:#8a909a;line-height:1.4}
-.bulk-card-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:10px;background:#fff0f0;color:#c90000;font-size:19px;font-weight:900}
-.bulk-card-icon.stock-icon{background:#eef4ff;color:#3569b2}
-.bulk-card-icon.danger-icon{background:#fff0f0;color:#b00000}
-.bulk-card-buttons{display:flex;flex-wrap:wrap;gap:7px}
-.bulk-card-buttons .btn{min-height:35px;padding:8px 10px;font-size:10px;line-height:1.25}
-.bulk-card-buttons .btn.primary{background:#e00000;border-color:#e00000;color:#fff}
-.bulk-card-buttons .btn.softred{background:#fff5f5;border-color:#f0caca;color:#b00000}
-.bulk-card-buttons .btn:disabled{opacity:.55;cursor:wait;transform:none}
-.bulk-stock-setting{display:flex;align-items:center;gap:9px;margin:-2px 0 11px;color:#68707c;font-size:10px;font-weight:800}
-.bulk-stock-setting input{width:78px;padding:8px 9px;border:1px solid #dfe2e7;border-radius:8px;background:#fff;font-weight:800}
-.bulk-danger-card{background:linear-gradient(180deg,#fff 0%,#fffafa 100%)}
-.bulk-action-status{margin-top:11px;padding:10px 13px;border:1px solid #e7e9ed;border-radius:9px;background:#f7f8fa;color:#68707c;font-size:11px;font-weight:650}
-.bulk-action-status.success{background:#effaf3;border-color:#cdebd7;color:#167342}
-.bulk-action-status.error{background:#fff2f2;border-color:#f1cccc;color:#a60000}
-.bulk-action-status.busy{background:#fff9e9;border-color:#f0e0b4;color:#805d00}
-@media(max-width:1180px){.bulk-action-grid{grid-template-columns:1fr 1fr}.bulk-danger-card{grid-column:1/-1}}
-@media(max-width:720px){.bulk-action-grid{grid-template-columns:1fr}.bulk-danger-card{grid-column:auto}.bulk-selection-hint{width:100%;margin-left:0}.bulk-card-buttons .btn{flex:1 1 145px}.bulk-card-heading small{font-size:9px}}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261119-store-header-match-v5">
 <style id="ite-store-manager-layout-final">
 /* Store workspace: keep the same two-workspace switch shown in the reference */
@@ -496,7 +465,35 @@ body{overflow-x:hidden}
 
 
 <link rel="stylesheet" href="/ite-mobile-experience.css?v=20261115-premium-mobile-v1">
-</head><body><div class="app">
+<style id="ite-bulk-controls-premium">
+/* Premium bulk controls with clear click targets and visible action feedback. */
+.bulk-management{display:grid;gap:14px;margin:15px 0 18px}
+.bulk-selection-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 15px;border:1px solid #e1e5eb;border-radius:12px;background:#fff}
+.bulk-selection-hint{font-size:10px;color:#89919d}
+.bulk-selected-count{padding:5px 10px;border-radius:20px;background:#fff0f0;color:#c00000;font-size:10px;font-weight:900}
+.bulk-action-grid{display:grid;grid-template-columns:1fr 1.35fr .7fr;gap:12px;align-items:stretch}
+.bulk-action-card{min-width:0;min-height:158px;padding:15px;border:1px solid #e1e5eb;border-radius:14px;background:linear-gradient(145deg,#fff 0%,#fcfcfd 100%);box-shadow:0 5px 18px rgba(20,25,35,.035)}
+.bulk-card-heading{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.bulk-card-icon{display:grid;place-items:center;flex:none;width:35px;height:35px;border-radius:10px;background:#fff0f0;color:#d00000;font-size:19px;font-weight:900}
+.stock-card .bulk-card-icon{background:#eef4ff;color:#2867bd}
+.bulk-card-heading strong{display:block;color:#222832;font-size:12px;font-weight:900}
+.bulk-card-heading small{display:block;margin-top:3px;color:#89919d;font-size:9px;line-height:1.4}
+.bulk-card-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.bulk-card-actions .btn{min-height:36px;padding:9px 11px;font-size:10px;line-height:1.25;white-space:normal}
+.bulk-stock-qty{display:flex;align-items:center;gap:9px;margin:0 0 10px;color:#69717d;font-size:10px;font-weight:800}
+.bulk-stock-qty input{width:78px;padding:8px 9px;border:1px solid #dfe3e9;border-radius:8px;background:#fff;color:#242a33;font-weight:800}
+.remove-card{background:linear-gradient(145deg,#fff 0%,#fffafa 100%)}
+.remove-card .bulk-card-icon{background:#fff0f0}
+.remove-card .bulk-card-actions .btn{border-color:#ffcaca;background:#fff7f7;color:#b00000}
+.bulk-card-actions .btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(20,25,35,.08)}
+.bulk-card-actions .btn:focus-visible,.bulk-selection-bar input:focus-visible{outline:3px solid rgba(224,0,0,.22);outline-offset:2px}
+.bulk-card-actions .btn:disabled{opacity:.55;cursor:wait;transform:none;box-shadow:none}
+.bulk-action-status{min-height:38px;padding:10px 13px;border:1px solid #e1e5eb;border-radius:9px;background:#f7f8fa;color:#596270;font-size:10px;line-height:1.5}
+.bulk-action-status.success{border-color:#ccebd7;background:#f0fbf4;color:#167442}
+.bulk-action-status.error{border-color:#f2caca;background:#fff5f5;color:#b00000}
+@media(max-width:1100px){.bulk-action-grid{grid-template-columns:1fr 1fr}.remove-card{grid-column:1/-1;min-height:0}}
+@media(max-width:700px){.bulk-action-grid{grid-template-columns:1fr}.remove-card{grid-column:auto}.bulk-selection-bar{align-items:flex-start}.bulk-selection-hint{width:100%}.bulk-card-actions .btn{flex:1 1 145px}}
+</style></head><body><div class="app">
 <aside class="sidebar ite-store-sidebar" aria-label="IT Elements administration navigation">
   <div class="brand">
     <img src="/assets/itel-support-icon.png?v=3" alt="IT Elements logo">
@@ -528,26 +525,26 @@ body{overflow-x:hidden}
 <label>Sort by<select id="sortFilter"><option value="featured">Featured first</option><option value="newest">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="name">Product name</option></select></label>
 <button class="btn" type="button" id="clearAdminFilters">Clear filters</button></div>
 <div class="catalogue-pager"><span id="adminResultCount">Showing 0 products</span><div><button class="btn" id="adminPrev" type="button">Previous</button><span id="adminPageLabel">Page 1 of 1</span><button class="btn" id="adminNext" type="button">Next 50</button></div></div>
-<div class="bulk-toolbar bulk-toolbar-pro">
-  <div class="bulk-selection-row">
+<section class="bulk-management" aria-label="Bulk product actions">
+  <div class="bulk-selection-bar">
     <label class="bulk-select-all"><input type="checkbox" id="selectAllProducts"> Select all products shown</label>
-    <span id="selectedCount" class="selected-count">0 selected</span>
+    <span id="selectedCount" class="bulk-selected-count">0 selected</span>
     <span class="bulk-selection-hint">Choose products below, then apply an action.</span>
   </div>
   <div class="bulk-action-grid">
-    <section class="bulk-action-card">
+    <section class="bulk-action-card publishing-card">
       <div class="bulk-card-heading"><span class="bulk-card-icon">↗</span><div><strong>Publishing controls</strong><small>Manage product visibility in your store</small></div></div>
-      <div class="bulk-card-buttons">
+      <div class="bulk-card-actions">
         <button class="btn primary" type="button" id="publishSelected">Publish selected</button>
         <button class="btn" type="button" id="draftSelected">Set selected to draft</button>
         <button class="btn" type="button" id="publishAll">Publish all products</button>
         <button class="btn" type="button" id="draftAll">Set all to draft</button>
       </div>
     </section>
-    <section class="bulk-action-card">
-      <div class="bulk-card-heading"><span class="bulk-card-icon stock-icon">▦</span><div><strong>Stock management</strong><small>Update quantities in bulk or save individual edits</small></div></div>
-      <div class="bulk-stock-setting"><label for="bulkStockQty">Units per product</label><input id="bulkStockQty" type="number" min="1" max="10000000" step="1" value="1"></div>
-      <div class="bulk-card-buttons">
+    <section class="bulk-action-card stock-card">
+      <div class="bulk-card-heading"><span class="bulk-card-icon">▦</span><div><strong>Stock management</strong><small>Update quantities in bulk or save individual edits</small></div></div>
+      <label class="bulk-stock-qty">Units per product <input id="bulkStockQty" type="number" min="1" max="10000000" step="1" value="1"></label>
+      <div class="bulk-card-actions">
         <button class="btn primary" type="button" id="savePageStock">Save stock changes on this page</button>
         <button class="btn" type="button" id="stockAllIn">Set all in stock</button>
         <button class="btn" type="button" id="stockSelectedIn">Set selected in stock</button>
@@ -555,15 +552,15 @@ body{overflow-x:hidden}
         <button class="btn softred" type="button" id="stockSelectedOut">Set selected out of stock</button>
       </div>
     </section>
-    <section class="bulk-action-card bulk-danger-card">
-      <div class="bulk-card-heading"><span class="bulk-card-icon danger-icon">!</span><div><strong>Remove products</strong><small>Permanent action — deleted products cannot be restored</small></div></div>
-      <div class="bulk-card-buttons">
+    <section class="bulk-action-card remove-card">
+      <div class="bulk-card-heading"><span class="bulk-card-icon">!</span><div><strong>Remove products</strong><small>Permanent action — deleted products cannot be restored</small></div></div>
+      <div class="bulk-card-actions">
         <button class="btn softred" type="button" id="deleteSelected">Delete selected products</button>
       </div>
     </section>
   </div>
   <div id="bulkActionStatus" class="bulk-action-status" role="status" aria-live="polite">Ready. Select products to enable selected-product actions.</div>
-</div><div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
+</section><div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
 
 <section class="panel" id="editor"><div class="panelhead"><div><h2 id="formTitle">Add new product</h2><p class="sub">Product details, image, pricing and availability</p></div><span class="eyebrow">PRODUCT EDITOR</span></div>
 <form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="10000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="productImageFile">Choose image from your computer</label><input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="hint">JPG, PNG, WebP or AVIF · maximum 5 MB. The uploaded image is attached to this product.</p></div><div class="field"><label for="imageUrl">Or use an image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint" id="imageUploadStatus" aria-live="polite">You can upload a picture or paste an existing image URL.</p></div></div>
@@ -706,7 +703,11 @@ body{overflow-x:hidden}
 <script>
 const $=id=>document.getElementById(id);let products=[];let adminPage=1;const ADMIN_PAGE_SIZE=50;const money=n=>'R '+Number(n||0).toLocaleString('en-ZA',{minimumFractionDigits:2,maximumFractionDigits:2});
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function notice(t,type=''){ $('message').innerHTML=t?`<div class="notice ${type}">${escapeHtml(t)}</div>`:''; }
+function notice(t,type=''){
+ $('message').innerHTML=t?`<div class="notice ${type}">${escapeHtml(t)}</div>`:'';
+ const status=$('bulkActionStatus');
+ if(status&&t){status.textContent=t;status.classList.toggle('success',type==='ok');status.classList.toggle('error',type==='error');}
+}
 async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});if(r.redirected||r.status===401||r.status===403){location.href='/client/login';throw Error('Administrator sign-in required.');}const d=await r.json().catch(()=>({}));if(!r.ok)throw Error(d.message||'Request failed.');return d;}
 function reset(){ $('productForm').reset();$('productId').value='';$('stock').value=0;$('stockAvailability').value='out';$('productType').value='normal';$('formTitle').textContent='Add new product';$('saveBtn').textContent='Save product';$('imagePreview').textContent='Choose an image or paste a URL';$('imageUploadStatus').textContent='You can upload a picture or paste an existing image URL.';notice('');}
 async function uploadProductImage(file){
@@ -834,28 +835,18 @@ $('productList').addEventListener('click',async e=>{
 });
 
 
-async function bulkStatus(message,type=''){
- const box=$('bulkActionStatus');
- if(!box)return;
- box.textContent=message;
- box.className='bulk-action-status'+(type?' '+type:'');
-}
-function setBulkButtonsBusy(busy,label='Working…'){
- const ids=['publishSelected','draftSelected','deleteSelected','publishAll','draftAll','savePageStock','stockAllIn','stockAllOut','stockSelectedIn','stockSelectedOut'];
- ids.forEach(id=>{const button=$(id);if(button){button.disabled=busy;if(busy&&id===label)button.dataset.originalText=button.textContent;if(!busy&&button.dataset.originalText){button.textContent=button.dataset.originalText;delete button.dataset.originalText;}}});
-}
 async function setBulkStock(ids,qty,label){
  ids=[...new Set(ids)].filter(id=>products.some(p=>p._id===id));
- if(!ids.length){bulkStatus('There are no products to update. Select products first.','error');return;}
+ if(!ids.length){notice('There are no products to update.','error');return;}
  if(!confirm(`Set ${ids.length} product(s) to ${qty>0?qty+' unit(s) in stock':'out of stock'}?`))return;
  const buttons=['stockAllIn','stockAllOut','stockSelectedIn','stockSelectedOut','savePageStock'].map(id=>$(id)).filter(Boolean);
  buttons.forEach(b=>b.disabled=true);
- bulkStatus(`Updating ${label}…`,'busy');
+ notice(`Updating ${label}…`);
  try{
   const result=await api('/api/admin/store/products/stock',{method:'PATCH',body:JSON.stringify({updates:ids.map(id=>({id,stock:qty}))})});
   await load();
-  bulkStatus(`${result.updated ?? ids.length} product(s) updated. ${qty>0?'Stock set to '+qty+'.':'All set to out of stock.'}`,'success');
- }catch(e){bulkStatus(e.message||'Could not save stock quantities.','error');}
+  notice(`${result.updated ?? ids.length} product(s) updated. ${qty>0?'Stock set to '+qty+'.':'All set to out of stock.'}`,'ok');
+ }catch(e){notice(e.message||'Could not save stock quantities.','error');}
  finally{buttons.forEach(b=>b.disabled=false);}
 }
 $('savePageStock').addEventListener('click',async()=>{
@@ -868,34 +859,40 @@ $('savePageStock').addEventListener('click',async()=>{
   const qty=Math.floor(Number(input.value));
   const stock=mode.value==='out'?0:qty;
   if(!Number.isInteger(stock)||stock<0||stock>10000000||(mode.value==='in'&&stock<1)){
-   bulkStatus(`Enter a valid quantity for ${products.find(p=>p._id===id)?.name||'a product'}. In-stock products need at least 1 unit.`,'error');
+   notice(`Enter a valid quantity for ${products.find(p=>p._id===id)?.name||'a product'}. In-stock products need at least 1 unit.`,'error');
    input.focus();return;
   }
   updates.push({id,stock});
  }
- if(!updates.length){bulkStatus('No products are shown on this page.','error');return;}
+ if(!updates.length){notice('No products are shown on this page.','error');return;}
  if(!confirm(`Save stock quantities for all ${updates.length} products shown on this page?`))return;
  const btn=$('savePageStock');btn.disabled=true;btn.textContent='Saving…';
  try{
   const result=await api('/api/admin/store/products/stock',{method:'PATCH',body:JSON.stringify({updates})});
-  await load();bulkStatus(`Saved stock for ${result.updated ?? updates.length} products on this page.`,'success');
+  await load();notice(`Saved stock for ${result.updated ?? updates.length} products on this page.`,'ok');
  }catch(e){notice(e.message||'Could not save the stock changes.','error');}
  finally{btn.disabled=false;btn.textContent='Save all 50 stock changes';}
 });
 $('stockAllIn').addEventListener('click',()=>{
  const qty=Math.floor(Number($('bulkStockQty').value));
- if(!Number.isInteger(qty)||qty<1||qty>10000000){bulkStatus('Enter a valid quantity of at least 1.','error');return;}
+ if(!Number.isInteger(qty)||qty<1||qty>10000000){notice('Enter a valid quantity of at least 1.','error');return;}
  setBulkStock(products.map(p=>p._id),qty,'all products');
 });
 $('stockAllOut').addEventListener('click',()=>setBulkStock(products.map(p=>p._id),0,'all products'));
 $('stockSelectedIn').addEventListener('click',()=>{
  const qty=Math.floor(Number($('bulkStockQty').value));
- if(!Number.isInteger(qty)||qty<1||qty>10000000){bulkStatus('Enter a valid quantity of at least 1.','error');return;}
+ if(!Number.isInteger(qty)||qty<1||qty>10000000){notice('Enter a valid quantity of at least 1.','error');return;}
  setBulkStock(selectedProductIds(),qty,'selected products');
 });
 $('stockSelectedOut').addEventListener('click',()=>setBulkStock(selectedProductIds(),0,'selected products'));
 function selectedProductIds(){return [...document.querySelectorAll('.product-check:checked')].map(x=>x.value);}
-function updateSelectedCount(){$('selectedCount').textContent=`${selectedProductIds().length} selected`;}
+function updateSelectedCount(){
+ const count=selectedProductIds().length;
+ $('selectedCount').textContent=`${count} selected`;
+ ['publishSelected','draftSelected','deleteSelected','stockSelectedIn','stockSelectedOut'].forEach(id=>{
+  const button=$(id);if(button){button.disabled=count===0;button.setAttribute('aria-disabled',String(count===0));}
+ });
+}
 document.addEventListener('change',e=>{if(e.target.matches('.product-check'))updateSelectedCount();});
 ['search','filter','priceFilter','sortFilter'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',()=>{adminPage=1;render();}));
 $('clearAdminFilters').onclick=()=>{$('search').value='';$('filter').value='all';$('priceFilter').value='all';$('sortFilter').value='featured';adminPage=1;render();};
@@ -904,23 +901,11 @@ $('adminNext').onclick=()=>{adminPage++;render();};
 
 $('selectAllProducts').addEventListener('change',e=>{document.querySelectorAll('.product-check').forEach(x=>x.checked=e.target.checked);updateSelectedCount();});
 async function bulkAction(action,ids){
- ids=[...new Set(ids)].filter(Boolean);
- if(!ids.length){bulkStatus(action==='publish'||action==='draft'?'No products are available for this action.':'Select at least one product first.','error');return;}
+ if(!ids.length){notice('Select at least one product first.','error');return;}
  const label={publish:'publish',draft:'set to draft',delete:'permanently delete'}[action];
- const confirmText=action==='delete'
-  ?`Permanently delete ${ids.length} selected product(s)? This cannot be undone.`
-  :`Are you sure you want to ${label} ${ids.length} product(s)?`;
- if(!confirm(confirmText))return;
- const buttons=['publishSelected','draftSelected','deleteSelected','publishAll','draftAll'];
- buttons.forEach(id=>$(id).disabled=true);
- bulkStatus(`${action==='delete'?'Deleting':action==='publish'?'Publishing':'Updating'} ${ids.length} product(s)…`,'busy');
- try{
-  const d=await api('/api/admin/store/products/bulk-action',{method:'POST',body:JSON.stringify({action,ids})});
-  const count=action==='delete'?(d.deleted||0):(d.updated||0);
-  bulkStatus(`${count} product(s) ${action==='publish'?'published':action==='draft'?'moved to draft':'permanently deleted'}.`,'success');
-  await load();
- }catch(e){bulkStatus(e.message||'The bulk action could not be completed.','error');}
- finally{buttons.forEach(id=>$(id).disabled=false);}
+ if(!confirm(`Are you sure you want to ${label} ${ids.length} selected product(s)?`))return;
+ try{const d=await api('/api/admin/store/products/bulk-action',{method:'POST',body:JSON.stringify({action,ids})});notice(`${d.updated||d.deleted||0} product(s) ${action==='publish'?'published':action==='draft'?'moved to draft':'deleted'}.`,'ok');await load();}
+ catch(e){notice(e.message,'error');}
 }
 $('publishSelected').onclick=()=>bulkAction('publish',selectedProductIds());
 $('draftSelected').onclick=()=>bulkAction('draft',selectedProductIds());
