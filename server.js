@@ -844,6 +844,15 @@ function checkAdminAuth(req, res, next) {
         return next();
     }
 
+    // Admin APIs must return JSON instead of redirecting fetch() to an HTML login page.
+    // This lets the Store Manager display the real authentication error beside its controls.
+    if (req.path.startsWith('/api/')) {
+        return res.status(401).json({
+            success: false,
+            message: 'Your administrator session has expired. Please sign in again.'
+        });
+    }
+
     return res.redirect('/client/login');
 }
 
