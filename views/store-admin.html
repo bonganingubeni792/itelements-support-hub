@@ -889,13 +889,30 @@ const IMPORT_CATEGORIES = ["Computers & Laptops", "Gaming PCs", "Gaming Laptops"
 let importRows=[];let importPage=0;const IMPORT_PAGE_SIZE=50;
 function setImportStatus(message,type=''){const el=$('importStatus');el.textContent=message;el.className='import-status '+type;}
 function csvParse(text){
- const rows=[];let row=[],cell='',quoted=false;
- for(let i=0;i<text.length;i++){const ch=text[i],next=text[i+1];
-  if(ch==='"'&&quoted&&next==='"'){cell+='"';i++;}
+ const source=String(text||'').replace(/^\uFEFF/,'');
+ // Supplier exports may use semicolons, commas or tabs. Detect the delimiter
+ // from the header while respecting quoted text.
+ const firstLine=(source.split(/\r?\n/,1)[0]||'');
+ let quoted=false,counts={',':0,';':0,'\t':0};
+ for(let i=0;i<firstLine.length;i++){
+  const ch=firstLine[i],next=firstLine[i+1];
+  if(ch==='"'&&quoted&&next==='"'){i++;}
   else if(ch==='"'){quoted=!quoted;}
-  else if(ch===','&&!quoted){row.push(cell);cell='';}
-  else if((ch==='\n'||ch==='\r')&&!quoted){if(ch==='\r'&&next==='\n')i++;row.push(cell);if(row.some(v=>String(v).trim()!==''))rows.push(row);row=[];cell='';}
-  else cell+=ch;
+  else if(!quoted&&Object.prototype.hasOwnProperty.call(counts,ch)){counts[ch]++;}
+ }
+ const delimiter=Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];
+ const rows=[];let row=[],cell='',inQuotes=false;
+ for(let i=0;i<source.length;i++){
+  const ch=source[i],next=source[i+1];
+  if(ch==='"'&&inQuotes&&next==='"'){cell+='"';i++;}
+  else if(ch==='"'){inQuotes=!inQuotes;}
+  else if(ch===delimiter&&!inQuotes){row.push(cell);cell='';}
+  else if((ch==='\n'||ch==='\r')&&!inQuotes){
+   if(ch==='\r'&&next==='\n')i++;
+   row.push(cell);
+   if(row.some(v=>String(v).trim()!==''))rows.push(row);
+   row=[];cell='';
+  }else cell+=ch;
  }
  row.push(cell);if(row.some(v=>String(v).trim()!==''))rows.push(row);
  if(!rows.length)return [];
@@ -974,14 +991,14 @@ function keyMap(row){
 
  const name=String(get('name','product','productname','title')).trim();
  const sku=String(get('sku','productcode','code')).trim();
- const supplierCategory=String(get('categories','category','product category','type','department')).trim();
+ const supplierCategory=String(get('categories','categoriesalt','category','product category','type','department')).trim();
  const categoryList=splitList(supplierCategory);
  const rawCategory=categoryList[0]||'';
  const allowedCategories=['Computers & Laptops', 'Gaming PCs', 'Gaming Laptops', 'Refurbished Computers', 'Gaming Components', 'Graphics Cards', 'Processors (CPU)', 'Motherboards', 'RAM & Memory', 'SSD & NVMe Storage', 'Hard Drives (HDD)', 'External Storage', 'PC Cases', 'Power Supplies (PSU)', 'CPU Cooling & Fans', 'Monitors & Displays', 'Gaming Monitors', 'Keyboards', 'Gaming Keyboards', 'Mice & Gaming Mice', 'Headsets & Audio', 'Controllers & Gamepads', 'Webcams & Streaming', 'Networking & Wi-Fi', 'Routers & Mesh Wi-Fi', 'Network Switches', 'Cables & Adapters', 'Docks & Hubs', 'Printers & Scanners', 'Printer Ink & Toner', 'Software & Security', 'Operating Systems', 'Office Accessories', 'UPS & Power Protection', 'Special Offers', 'Other Accessories'];
  const matchedSupplierCategory=allowedCategories.find(c=>c.toLowerCase()===rawCategory.toLowerCase())||'';
  const description=String(get('description','details','specifications')).trim();
  const shortDescription=String(get('shortdesc','short description','shortdescription')).trim();
- const featuredImages=splitImageValues(get('featured image','featuredimage','main image','image','imageurl','image url','product image'));
+ const featuredImages=splitImageValues(get('featured image','featuredimage','featured image url','main image','image','imageurl','image url','product image','url'));
  const additionalImages=splitImageValues(get('additional images','additionalimages','extra images','gallery images','other images'));
  const allImages=splitImageValues(get('all image','all images','allimage','allimages','images','image gallery'));
  const images=[...new Set([...featuredImages,...additionalImages,...allImages])].slice(0,20);
@@ -989,14 +1006,14 @@ function keyMap(row){
  // Syntech stock is split by branch. Sum the three stock columns if no
  // explicit total-stock column exists.
  const branchStock={
-  cpt:Math.max(0,Math.floor(numeric(get('cpt','cape town','cape town stock','ct')))),
-  jhb:Math.max(0,Math.floor(numeric(get('jhb','johannesburg','johannesburg stock')))),
-  dbn:Math.max(0,Math.floor(numeric(get('dbn','db','durban','durban stock'))))
+  cpt:Math.max(0,Math.floor(numeric(get('cpt','cptstock','cpt stock','cape town','cape town stock','ct')))),
+  jhb:Math.max(0,Math.floor(numeric(get('jhb','jhbstock','jhb stock','johannesburg','johannesburg stock')))),
+  dbn:Math.max(0,Math.floor(numeric(get('dbn','dbnstock','dbn stock','db','durban','durban stock'))))
  };
  const hasBranchStock=['cpt','jhb','dbn'].some(k=>['cpt','jhb','dbn'].includes(k) && (
-  k==='cpt'?String(get('cpt','cape town','cape town stock','ct')).trim()!=='':
-  k==='jhb'?String(get('jhb','johannesburg','johannesburg stock')).trim()!=='':
-  String(get('dbn','db','durban','durban stock')).trim()!==''
+  k==='cpt'?String(get('cpt','cptstock','cpt stock','cape town','cape town stock','ct')).trim()!=='':
+  k==='jhb'?String(get('jhb','jhbstock','jhb stock','johannesburg','johannesburg stock')).trim()!=='':
+  String(get('dbn','dbnstock','dbn stock','db','durban','durban stock')).trim()!==''
  ));
  const branchTotal=branchStock.cpt+branchStock.jhb+branchStock.dbn;
  const explicitStock=get('stock','quantity','inventory','qty');
