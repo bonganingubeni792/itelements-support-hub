@@ -2877,4 +2877,76 @@ checkReturnedPayment();
 }
 </style>
 
+
+<style id="it-elements-mobile-checkout-actions-bottom-fix-v2">
+/* Phone checkout: action bar is anchored to the bottom edge, never between form fields. */
+@media(max-width:800px){
+  #checkoutModal .checkout-panel{
+    padding-bottom:190px!important;
+    overflow-y:auto!important;
+  }
+  #checkoutModal .checkout-actions{
+    position:fixed!important;
+    left:12px!important;right:12px!important;bottom:12px!important;
+    z-index:100002!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    grid-template-areas:"continue continue" "back cancel"!important;
+    gap:8px!important;
+    width:auto!important;
+    margin:0!important;
+    padding:12px!important;
+    box-sizing:border-box!important;
+    border:1px solid #e1e7ef!important;
+    border-radius:16px!important;
+    background:rgba(255,255,255,.98)!important;
+    box-shadow:0 8px 30px rgba(20,32,50,.16)!important;
+    backdrop-filter:blur(12px)!important;
+  }
+  #checkoutModal .checkout-actions #checkoutToReview{
+    grid-area:continue!important;order:0!important;
+    min-height:58px!important;width:100%!important;
+    border-radius:12px!important;background:#e00000!important;
+    color:#fff!important;border:1px solid #e00000!important;
+    font-size:16px!important;font-weight:850!important;
+  }
+  #checkoutModal .checkout-actions #checkoutBackToCart{
+    grid-area:back!important;order:0!important;
+    min-height:44px!important;width:100%!important;
+    font-size:13px!important;
+  }
+  #checkoutModal .checkout-actions .checkout-cancel-button{
+    grid-area:cancel!important;order:0!important;
+    min-height:44px!important;width:100%!important;
+    font-size:13px!important;
+  }
+  #checkoutModal .checkout-stage-actions{
+    position:fixed!important;
+    left:12px!important;right:12px!important;bottom:12px!important;
+    z-index:100002!important;
+    display:grid!important;grid-template-columns:1fr 1fr!important;
+    gap:8px!important;width:auto!important;margin:0!important;
+    padding:12px!important;box-sizing:border-box!important;
+    border:1px solid #e1e7ef!important;border-radius:16px!important;
+    background:rgba(255,255,255,.98)!important;
+    box-shadow:0 8px 30px rgba(20,32,50,.16)!important;
+    backdrop-filter:blur(12px)!important;
+  }
+  #checkoutModal .checkout-stage-actions button{
+    width:100%!important;min-width:0!important;min-height:48px!important;
+    margin:0!important;font-size:13px!important;
+  }
+  #checkoutModal .checkout-stage-actions #checkoutToPayment{
+    grid-column:1/-1!important;order:-1!important;
+    min-height:58px!important;background:#e00000!important;
+    color:#fff!important;border:1px solid #e00000!important;
+    font-size:16px!important;font-weight:850!important;
+  }
+  #checkoutModal .checkout-stage-actions #checkoutEditDetails,
+  #checkoutModal .checkout-stage-actions #checkoutBackToReview{
+    grid-column:1/-1!important;
+  }
+}
+</style>
+
 </body></html>
