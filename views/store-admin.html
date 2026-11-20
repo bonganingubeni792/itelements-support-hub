@@ -1342,7 +1342,100 @@ document.querySelectorAll('.department-card').forEach(btn=>btn.addEventListener(
 }));
 
 $('newBtn').onclick=reset;$('resetBtn').onclick=reset;$('search').oninput=render;$('filter').onchange=render;$('refreshBtn').onclick=load;$('imageUrl').addEventListener('input',preview);load();loadOrders();
-</script><script src="/nav-store-global.js?v=20261119-desktop-account-label-v6" defer></script></body></html>
+</script>
+<script id="ite-bulk-click-controller">
+(function(){
+  'use strict';
+  const actionIds = new Set([
+    'publishSelected','draftSelected','deleteSelected','publishAll','draftAll'
+  ]);
+  function status(message, kind){
+    const box=document.getElementById('bulkActionStatus')||document.getElementById('message');
+    if(!box)return;
+    box.textContent=message;
+    box.classList.remove('success','error','ok');
+    if(kind==='success')box.classList.add('success','ok');
+    if(kind==='error')box.classList.add('error');
+  }
+  function getSelected(){
+    return Array.from(document.querySelectorAll('.product-check:checked'))
+      .map(el=>String(el.value||'')).filter(Boolean);
+  }
+  function getAll(){
+    try {
+      if(typeof products!=='undefined' && Array.isArray(products))
+        return products.map(p=>String(p._id||'')).filter(Boolean);
+    } catch(_){}
+    return Array.from(document.querySelectorAll('.product-check'))
+      .map(el=>String(el.value||'')).filter(Boolean);
+  }
+  async function perform(button){
+    const id=button.id;
+    const action=id.startsWith('publish')?'publish':id.startsWith('draft')?'draft':'delete';
+    const all=id==='publishAll'||id==='draftAll';
+    const ids=all?getAll():getSelected();
+    if(!ids.length){
+      status(all?'No products were found to update.':'Select at least one product first.','error');
+      return;
+    }
+    const verb=action==='publish'?'publish':action==='draft'?'move to draft':'permanently delete';
+    if(!window.confirm('Are you sure you want to '+verb+' '+ids.length+' product(s)?'))return;
+
+    const original=button.textContent;
+    const group=Array.from(document.querySelectorAll(
+      '#publishSelected,#draftSelected,#deleteSelected,#publishAll,#draftAll'
+    ));
+    group.forEach(b=>{b.disabled=true;b.setAttribute('aria-busy','true');});
+    button.textContent='Working…';
+    status('Please wait. Updating '+ids.length+' product(s)…','');
+    try{
+      const response=await fetch('/api/admin/store/products/bulk-action',{
+        method:'POST',
+        credentials:'same-origin',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action,ids})
+      });
+      if(response.redirected||response.status===401||response.status===403){
+        window.location.href='/client/login';
+        return;
+      }
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(data.message||'The server could not complete this action.');
+      const count=action==='delete'?(data.deleted||0):(data.updated||0);
+      status(count+' product(s) '+(action==='publish'?'published':action==='draft'?'moved to draft':'deleted')+'.','success');
+      // Reload the catalogue without depending on the original button callback.
+      try{
+        if(typeof load==='function')await load();
+        else window.location.reload();
+      }catch(_){window.location.reload();}
+    }catch(error){
+      status(error.message||'The action failed. Please try again.','error');
+    }finally{
+      group.forEach(b=>{b.disabled=false;b.removeAttribute('aria-busy');});
+      button.textContent=original;
+    }
+  }
+  document.addEventListener('click',function(event){
+    const button=event.target.closest('button');
+    if(!button||!actionIds.has(button.id))return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    perform(button);
+  },true);
+  // Keep selected count and selected-action availability in sync.
+  document.addEventListener('change',function(event){
+    if(!event.target.matches('.product-check,#selectAllProducts'))return;
+    const count=getSelected().length;
+    const counter=document.getElementById('selectedCount');
+    if(counter)counter.textContent=count+' selected';
+    ['publishSelected','draftSelected','deleteSelected'].forEach(id=>{
+      const button=document.getElementById(id);
+      if(button)button.disabled=count===0;
+    });
+  });
+})();
+</script>
+<script src="/nav-store-global.js?v=20261119-desktop-account-label-v6" defer></script></body></html>
 
 <style>
 .import-table .image-cell{min-width:190px;width:190px;vertical-align:top}
