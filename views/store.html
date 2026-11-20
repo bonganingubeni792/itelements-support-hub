@@ -1694,12 +1694,12 @@ function render(){
  if(pager){
   if(totalPages>1){
    const buttons=[];
-   buttons.push(`<button type="button" data-page="${currentProductPage-1}" ${currentProductPage===1?'disabled':''} aria-label="Previous 50 products">Previous 50</button>`);
+   buttons.push(`<button type="button" data-page="${currentProductPage-1}" onclick="window.goToProductPage(event, ${currentProductPage-1})" ${currentProductPage===1?'disabled':''} aria-label="Previous 50 products">Previous 50</button>`);
    let first=Math.max(1,currentProductPage-2),last=Math.min(totalPages,currentProductPage+2);
-   if(first>1){buttons.push('<button type="button" data-page="1">1</button>');if(first>2)buttons.push('<span class="pagination-ellipsis">…</span>');}
-   for(let n=first;n<=last;n++)buttons.push(`<button type="button" data-page="${n}" class="${n===currentProductPage?'active':''}" aria-current="${n===currentProductPage?'page':'false'}">${n}</button>`);
-   if(last<totalPages){if(last<totalPages-1)buttons.push('<span class="pagination-ellipsis">…</span>');buttons.push(`<button type="button" data-page="${totalPages}">${totalPages}</button>`);}
-   buttons.push(`<button type="button" data-page="${currentProductPage+1}" ${currentProductPage===totalPages?'disabled':''} aria-label="Next 50 products">Next 50</button>`);
+   if(first>1){buttons.push('<button type="button" data-page="1" onclick="window.goToProductPage(event, 1)">1</button>');if(first>2)buttons.push('<span class="pagination-ellipsis">…</span>');}
+   for(let n=first;n<=last;n++)buttons.push(`<button type="button" data-page="${n}" onclick="window.goToProductPage(event, ${n})" class="${n===currentProductPage?'active':''}" aria-current="${n===currentProductPage?'page':'false'}">${n}</button>`);
+   if(last<totalPages){if(last<totalPages-1)buttons.push('<span class="pagination-ellipsis">…</span>');buttons.push(`<button type="button" data-page="${totalPages}" onclick="window.goToProductPage(event, ${totalPages})">${totalPages}</button>`);}
+   buttons.push(`<button type="button" data-page="${currentProductPage+1}" onclick="window.goToProductPage(event, ${currentProductPage+1})" ${currentProductPage===totalPages?'disabled':''} aria-label="Next 50 products">Next 50</button>`);
    pager.innerHTML=`<span class="pagination-summary">Showing ${startIndex+1}–${Math.min(startIndex+PRODUCTS_PER_PAGE,total)} of ${total} products · Page ${currentProductPage} of ${totalPages}</span><div class="pagination-buttons">${buttons.join('')}</div>`;
   }else pager.innerHTML=total?'<span class="pagination-summary">Showing all products on one page</span>':'';
  }
@@ -2247,14 +2247,35 @@ $('sort').onchange=()=>{currentProductPage=1;render();};
 $('year').textContent=new Date().getFullYear();
 $('clearFilters').onclick=()=>{$('search').value='';$('departmentPicker').value='';$('priceRange').value='';$('availability').value='';$('sort').value='featured';currentProductPage=1;render();};
 $('search').addEventListener('keydown',e=>{if(e.key==='/'){e.preventDefault();$('search').focus();}});
-$('productPagination')?.addEventListener('click',event=>{
- const button=event.target.closest('button[data-page]');
- if(!button||button.disabled)return;
- const next=Number(button.dataset.page);
- if(!Number.isInteger(next)||next<1)return;
+window.goToProductPage=function(event,page){
+ if(event){event.preventDefault();event.stopPropagation();}
+ const next=Number(page);
+ const q=$('search').value.trim().toLowerCase(),cat=$('departmentPicker').value,price=$('priceRange').value,avail=$('availability').value;
+ const total=products.filter(p=>{
+  const hay=[p.name,p.description,p.category,p.sku,p.brand,p.model,p.specifications].join(' ').toLowerCase();
+  if(q&&!hay.includes(q))return false;
+  if(activeCollection==='sale'&&!(p.productType==='sale'||Number(p.compareAtPrice||0)>Number(p.price||0)))return false;
+  if(cat&&String(p.category||'').toLowerCase()!==cat.toLowerCase())return false;
+  const n=Number(p.price||0);
+  if(price==='0-500'&&n>=500)return false;
+  if(price==='500-1500'&&(n<500||n>1500))return false;
+  if(price==='1500-5000'&&(n<1500||n>5000))return false;
+  if(price==='5000-10000'&&(n<5000||n>10000))return false;
+  if(price==='10000+'&&n<10000)return false;
+  if(avail==='in'&&Number(p.stock)<=0)return false;
+  if(avail==='out'&&Number(p.stock)>0)return false;
+  return true;
+ }).length;
+ const totalPages=Math.max(1,Math.ceil(total/PRODUCTS_PER_PAGE));
+ if(!Number.isInteger(next)||next<1||next>totalPages)return;
  currentProductPage=next;
  render();
  document.getElementById('products')?.scrollIntoView({behavior:'smooth',block:'start'});
+};
+$('productPagination')?.addEventListener('click',event=>{
+ const button=event.target.closest('button[data-page]');
+ if(!button||button.disabled)return;
+ window.goToProductPage(event,button.dataset.page);
 });
 async function load(){
  let catalogueResponse;
