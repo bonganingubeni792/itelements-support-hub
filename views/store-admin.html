@@ -196,6 +196,21 @@ body:has(.ite-store-sidebar) [class*="whatsapp"],
 body:has(.ite-store-sidebar) [id*="whatsapp"] {
   display:none !important;
 }
+
+.category-organiser{margin:16px 0 18px;padding:16px;border:1px solid #e5e7eb;border-radius:14px;background:linear-gradient(180deg,#fff,#fbfcfe)}
+.category-organiser-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.category-organiser-head strong{display:block;font-size:13px;font-weight:900;color:#20242b}
+.category-organiser-head small{display:block;margin-top:5px;color:#7c8490;font-size:11px}
+.category-review-status{margin-top:12px;padding:10px 12px;border-radius:9px;background:#f5f7fa;color:#566071;font-size:11px}
+.category-review-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.category-review-item{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:center;padding:10px;border:1px solid #e6e9ee;border-radius:11px;background:#fff;min-width:0}
+.category-review-item img{width:76px;height:76px;object-fit:contain;border:1px solid #edf0f3;border-radius:8px;background:#fff}
+.category-review-item .no-image{width:76px;height:76px;display:grid;place-items:center;border:1px dashed #d5dae2;border-radius:8px;color:#9299a4;font-size:10px}
+.category-review-item strong{display:block;font-size:11px;line-height:1.4;color:#20242b}
+.category-review-item small{display:block;margin:4px 0 7px;color:#858c98;font-size:10px}
+.category-review-item select{width:100%;min-width:0;padding:8px;border:1px solid #dce1e8;border-radius:8px;background:#fff;font-size:11px}
+.category-review-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;font-size:11px;color:#606a78}
+@media(max-width:760px){.category-review-list{grid-template-columns:1fr}.category-review-item{grid-template-columns:64px minmax(0,1fr)}.category-review-item img,.category-review-item .no-image{width:64px;height:64px}}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261119-store-header-match-v5">
 <style id="ite-store-manager-layout-final">
 /* Store workspace: keep the same two-workspace switch shown in the reference */
@@ -511,7 +526,19 @@ body{overflow-x:hidden}
   <button class="btn softred" type="button" id="stockAllOut">Set ALL OUT OF STOCK</button>
   <button class="btn" type="button" id="stockSelectedIn">Set selected IN STOCK</button>
   <button class="btn softred" type="button" id="stockSelectedOut">Set selected OUT OF STOCK</button>
-</div><div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
+</div><div class="category-organiser">
+ <div class="category-organiser-head">
+  <div><strong>Smart product department organiser</strong><small>Review each product photo and its suggested department. Change any suggestion before saving.</small></div>
+  <button class="btn" type="button" id="scanCategories">Scan product categories</button>
+ </div>
+ <div id="categoryReviewStatus" class="category-review-status">Scan your catalogue to find products that may be in the wrong department.</div>
+ <div id="categoryReviewList" class="category-review-list" hidden></div>
+ <div class="category-review-actions" id="categoryReviewActions" hidden>
+  <span id="categoryReviewCount"></span>
+  <button class="btn primary" type="button" id="applyCategories">Save department changes</button>
+ </div>
+</div>
+<div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
 
 <section class="panel" id="editor"><div class="panelhead"><div><h2 id="formTitle">Add new product</h2><p class="sub">Product details, image, pricing and availability</p></div><span class="eyebrow">PRODUCT EDITOR</span></div>
 <form id="productForm"><input type="hidden" id="productId"><div class="formlayout"><div><div class="field"><label for="name">Product name *</label><input id="name" maxlength="120" required placeholder="e.g. Kingston 1TB NVMe SSD"></div><div class="field"><label for="description">Product description</label><textarea id="description" maxlength="10000" placeholder="Add product details, specifications, compatibility and what's included..."></textarea></div></div><div><div class="field"><label>Product image preview</label><div class="imagebox" id="imagePreview">Paste an image URL below</div></div><div class="field"><label for="productImageFile">Choose image from your computer</label><input id="productImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/avif"><p class="hint">JPG, PNG, WebP or AVIF · maximum 5 MB. The uploaded image is attached to this product.</p></div><div class="field"><label for="imageUrl">Or use an image URL</label><input id="imageUrl" type="url" placeholder="https://..."></div><p class="hint" id="imageUploadStatus" aria-live="polite">You can upload a picture or paste an existing image URL.</p></div></div>
@@ -912,7 +939,7 @@ $('productForm').addEventListener('submit',async e=>{e.preventDefault();const id
  }catch(err){notice(err.message,'error');}finally{save.disabled=false;}
 });
 
-const IMPORT_CATEGORIES = ["Computers & Laptops", "Gaming PCs", "Gaming Laptops", "Gaming Components", "Graphics Cards", "Processors (CPU)", "Motherboards", "RAM & Memory", "SSD & NVMe Storage", "Hard Drives (HDD)", "External Storage", "PC Cases", "Power Supplies (PSU)", "CPU Cooling & Fans", "Monitors & Displays", "Gaming Monitors", "Keyboards", "Gaming Keyboards", "Mice & Gaming Mice", "Headsets & Audio", "Controllers & Gamepads", "Webcams & Streaming", "Networking & Wi-Fi", "Routers & Mesh Wi-Fi", "Network Switches", "Cables & Adapters", "Docks & Hubs", "Printers & Scanners", "Printer Ink & Toner", "Software & Security", "Operating Systems", "Office Accessories", "UPS & Power Protection", "Refurbished Computers", "Special Offers", "Other Accessories"];
+const IMPORT_CATEGORIES = ["Computers & Laptops", "Laptops", "Desktop PCs", "Gaming PCs", "Gaming Laptops", "Gaming Components", "Graphics Cards", "Processors (CPU)", "Motherboards", "RAM & Memory", "SSD & NVMe Storage", "Hard Drives (HDD)", "External Storage", "PC Cases", "Power Supplies (PSU)", "CPU Cooling & Fans", "Monitors & Displays", "Gaming Monitors", "Keyboards", "Gaming Keyboards", "Mice & Gaming Mice", "Headsets & Audio", "Controllers & Gamepads", "Webcams & Streaming", "Networking & Wi-Fi", "Routers & Mesh Wi-Fi", "Network Switches", "Cables & Adapters", "Docks & Hubs", "Printers & Scanners", "Printer Ink & Toner", "Software & Security", "Operating Systems", "Office Accessories", "UPS & Power Protection", "Refurbished Computers", "Special Offers", "Other Accessories"];
 let importRows=[];let importPage=0;const IMPORT_PAGE_SIZE=50;
 function setImportStatus(message,type=''){const el=$('importStatus');el.textContent=message;el.className='import-status '+type;}
 function csvParse(text){
@@ -976,6 +1003,55 @@ function csvParse(text){
  const headers=rows.shift().map(h=>String(h||'').replace(/^\uFEFF/,'').trim());
  return rows.map(values=>Object.fromEntries(headers.map((h,i)=>[h,values[i]??''])));
 }
+
+let categoryReviewRows=[];
+const CATEGORY_REVIEW_OPTIONS=["Laptops","Desktop PCs","Gaming Laptops","Gaming PCs","Computers & Laptops","Motherboards","Graphics Cards","Processors (CPU)","RAM & Memory","SSD & NVMe Storage","Hard Drives (HDD)","External Storage","PC Cases","Power Supplies (PSU)","CPU Cooling & Fans","Monitors & Displays","Gaming Monitors","Keyboards","Gaming Keyboards","Mice & Gaming Mice","Headsets & Audio","Controllers & Gamepads","Webcams & Streaming","Networking & Wi-Fi","Routers & Mesh Wi-Fi","Network Switches","Cables & Adapters","Docks & Hubs","Printers & Scanners","Printer Ink & Toner","Software & Security","Operating Systems","Office Accessories","UPS & Power Protection","Refurbished Computers","Special Offers","Other Accessories"];
+function renderCategoryReview(){
+ const list=$('categoryReviewList'),actions=$('categoryReviewActions');
+ if(!list)return;
+ list.innerHTML=categoryReviewRows.map((row,index)=>{
+  const options=[...new Set([row.suggested,...CATEGORY_REVIEW_OPTIONS,row.current].filter(Boolean))];
+  const image=row.image?`<img src="${escapeHtml(row.image)}" alt="${escapeHtml(row.name)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;no-image&quot;>Image unavailable</div>'">`:'<div class="no-image">No image</div>';
+  return `<article class="category-review-item" data-category-review="${index}">${image}<div><strong>${escapeHtml(row.name)}</strong><small>Current: ${escapeHtml(row.current||'Uncategorised')} · Suggested: ${escapeHtml(row.suggested||'Needs manual review')}</small><select data-review-category="${index}" aria-label="Department for ${escapeHtml(row.name)}">${options.map(option=>`<option value="${escapeHtml(option)}" ${option===row.selected?'selected':''}>${escapeHtml(option)}</option>`).join('')}</select></div></article>`;
+ }).join('');
+ list.hidden=!categoryReviewRows.length;
+ actions.hidden=!categoryReviewRows.length;
+ $('categoryReviewCount').textContent=`${categoryReviewRows.length} products ready for review`;
+}
+$('scanCategories')?.addEventListener('click',()=>{
+ categoryReviewRows=(products||[]).map(product=>{
+  const suggested=inferStoreDepartment({name:product.name,sku:product.sku,categoryRaw:product.category,description:product.description,shortDescription:product.shortDescription,imageUrl:product.imageUrl,images:product.images});
+  return {id:product._id,name:product.name||'Unnamed product',image:product.imageUrl||product.images?.[0]||'',current:product.category||'',suggested,selected:suggested||product.category||'Other Accessories'};
+ }).filter(row=>row.suggested&&row.suggested!==row.current);
+ renderCategoryReview();
+ $('categoryReviewStatus').textContent=categoryReviewRows.length
+  ? `${categoryReviewRows.length} products have a suggested department different from their current category. Check the photos and adjust any dropdown before saving.`
+  : 'No likely category mismatches found. Products without clear names or image clues may need manual category selection.';
+});
+$('categoryReviewList')?.addEventListener('change',event=>{
+ const select=event.target.closest('[data-review-category]');
+ if(!select)return;
+ const row=categoryReviewRows[Number(select.dataset.reviewCategory)];
+ if(row)row.selected=select.value;
+});
+$('applyCategories')?.addEventListener('click',async()=>{
+ const button=$('applyCategories');if(!categoryReviewRows.length)return;
+ button.disabled=true;let saved=0;let failed=0;
+ try{
+  for(const row of categoryReviewRows){
+   const product=products.find(item=>String(item._id)===String(row.id));
+   if(!product||!row.selected||row.selected===row.current)continue;
+   try{
+    await api('/api/admin/store/products/'+encodeURIComponent(row.id),{method:'PUT',body:JSON.stringify({...product,category:row.selected})});
+    saved++;
+   }catch(error){failed++;console.error('Could not update product category',row.id,error);}
+  }
+  $('categoryReviewStatus').textContent=`Saved ${saved} department changes${failed?` · ${failed} failed — please refresh and retry those products`:''}.`;
+  categoryReviewRows=[];
+  renderCategoryReview();
+  await load();
+ }finally{button.disabled=false;}
+});
 function splitImageValues(value){
  const text=String(value||'').trim();
  if(!text)return [];
@@ -984,13 +1060,18 @@ function splitImageValues(value){
 }
 
 function inferStoreDepartment(product){
- const text=[product.name,product.sku,product.categoryRaw,product.description,product.shortDescription]
+ const imageHints=[product.imageUrl,...(Array.isArray(product.images)?product.images:[])].filter(Boolean)
+  .map(value=>{try{return decodeURIComponent(String(value).split('?')[0].split('/').pop().replace(/[-_]+/g,' '));}catch(_){return String(value);}})
+  .join(' ');
+ const text=[product.name,product.sku,product.categoryRaw,product.description,product.shortDescription,imageHints]
   .filter(Boolean).join(' ').toLowerCase();
  const has=(...terms)=>terms.some(term=>text.includes(term));
  // Specific components/accessories must be checked before the generic laptop rule.
  const rules=[
   ['Gaming Laptops',()=>has('gaming laptop','gaming notebook','rog laptop','tuf gaming laptop','legion laptop','predator laptop','nitro laptop','omen laptop')],
   ['Gaming PCs',()=>has('gaming pc','gaming desktop','gaming tower','gaming computer')],
+  ['Laptops',()=>has('laptop','notebook computer','notebook pc','chromebook')&&!has('laptop bag','laptop stand','laptop charger','notebook charger','notebook bag')],
+  ['Desktop PCs',()=>has('desktop pc','desktop computer','all-in-one pc','aio pc','mini pc','workstation','tower pc','small form factor pc')],
   ['RAM & Memory',()=>/\bram\b/.test(text)||has('memory module','notebook memory','laptop memory','ddr2','ddr3','ddr4','ddr5','sodimm','so-dimm','udimm','dimm')],
   ['SSD & NVMe Storage',()=>has('nvme','ssd','solid state drive','m.2 drive')],
   ['Hard Drives (HDD)',()=>has('hard drive',' hdd',' sata drive','desktop drive','2.5-inch drive','3.5-inch drive')],
@@ -1051,7 +1132,7 @@ function keyMap(row){
  const supplierCategory=String(get('categories','categoriesalt','category','product category','type','department')).trim();
  const categoryList=splitList(supplierCategory);
  const rawCategory=categoryList[0]||'';
- const allowedCategories=['Computers & Laptops', 'Gaming PCs', 'Gaming Laptops', 'Refurbished Computers', 'Gaming Components', 'Graphics Cards', 'Processors (CPU)', 'Motherboards', 'RAM & Memory', 'SSD & NVMe Storage', 'Hard Drives (HDD)', 'External Storage', 'PC Cases', 'Power Supplies (PSU)', 'CPU Cooling & Fans', 'Monitors & Displays', 'Gaming Monitors', 'Keyboards', 'Gaming Keyboards', 'Mice & Gaming Mice', 'Headsets & Audio', 'Controllers & Gamepads', 'Webcams & Streaming', 'Networking & Wi-Fi', 'Routers & Mesh Wi-Fi', 'Network Switches', 'Cables & Adapters', 'Docks & Hubs', 'Printers & Scanners', 'Printer Ink & Toner', 'Software & Security', 'Operating Systems', 'Office Accessories', 'UPS & Power Protection', 'Special Offers', 'Other Accessories'];
+ const allowedCategories=['Computers & Laptops', 'Laptops', 'Desktop PCs', 'Gaming PCs', 'Gaming Laptops', 'Refurbished Computers', 'Gaming Components', 'Graphics Cards', 'Processors (CPU)', 'Motherboards', 'RAM & Memory', 'SSD & NVMe Storage', 'Hard Drives (HDD)', 'External Storage', 'PC Cases', 'Power Supplies (PSU)', 'CPU Cooling & Fans', 'Monitors & Displays', 'Gaming Monitors', 'Keyboards', 'Gaming Keyboards', 'Mice & Gaming Mice', 'Headsets & Audio', 'Controllers & Gamepads', 'Webcams & Streaming', 'Networking & Wi-Fi', 'Routers & Mesh Wi-Fi', 'Network Switches', 'Cables & Adapters', 'Docks & Hubs', 'Printers & Scanners', 'Printer Ink & Toner', 'Software & Security', 'Operating Systems', 'Office Accessories', 'UPS & Power Protection', 'Special Offers', 'Other Accessories'];
  const matchedSupplierCategory=allowedCategories.find(c=>c.toLowerCase()===rawCategory.toLowerCase())||'';
  const description=String(get('description','details','specifications')).trim();
  const shortDescription=String(get('shortdesc','short description','shortdescription')).trim();
