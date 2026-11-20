@@ -197,20 +197,21 @@ body:has(.ite-store-sidebar) [id*="whatsapp"] {
   display:none !important;
 }
 
-.category-organiser{margin:16px 0 18px;padding:16px;border:1px solid #e5e7eb;border-radius:14px;background:linear-gradient(180deg,#fff,#fbfcfe)}
-.category-organiser-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-.category-organiser-head strong{display:block;font-size:13px;font-weight:900;color:#20242b}
-.category-organiser-head small{display:block;margin-top:5px;color:#7c8490;font-size:11px}
-.category-review-status{margin-top:12px;padding:10px 12px;border-radius:9px;background:#f5f7fa;color:#566071;font-size:11px}
-.category-review-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
-.category-review-item{display:grid;grid-template-columns:76px minmax(0,1fr);gap:12px;align-items:center;padding:10px;border:1px solid #e6e9ee;border-radius:11px;background:#fff;min-width:0}
-.category-review-item img{width:76px;height:76px;object-fit:contain;border:1px solid #edf0f3;border-radius:8px;background:#fff}
-.category-review-item .no-image{width:76px;height:76px;display:grid;place-items:center;border:1px dashed #d5dae2;border-radius:8px;color:#9299a4;font-size:10px}
-.category-review-item strong{display:block;font-size:11px;line-height:1.4;color:#20242b}
-.category-review-item small{display:block;margin:4px 0 7px;color:#858c98;font-size:10px}
-.category-review-item select{width:100%;min-width:0;padding:8px;border:1px solid #dce1e8;border-radius:8px;background:#fff;font-size:11px}
-.category-review-actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;font-size:11px;color:#606a78}
-@media(max-width:760px){.category-review-list{grid-template-columns:1fr}.category-review-item{grid-template-columns:64px minmax(0,1fr)}.category-review-item img,.category-review-item .no-image{width:64px;height:64px}}
+.department-audit{margin:16px 0 18px;padding:16px;border:1px solid #e4e8ee;border-radius:14px;background:#fff}
+.department-audit-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.department-audit-head strong{display:block;font-size:14px;font-weight:900;color:#1d2430}
+.department-audit-head small{display:block;max-width:760px;margin-top:5px;color:#707988;font-size:11px;line-height:1.5}
+.department-audit-status{margin-top:12px;padding:10px 12px;border-radius:9px;background:#f5f7fa;color:#4d5969;font-size:11px}
+.department-audit-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:12px}
+.department-audit-card{display:grid;grid-template-columns:100px minmax(0,1fr);gap:12px;align-items:center;padding:10px;border:1px solid #e5e8ed;border-radius:11px;background:#fff;min-width:0}
+.department-audit-card>img,.department-no-image{width:100px;height:100px;object-fit:contain;border:1px solid #edf0f3;border-radius:8px;background:#fff}
+.department-no-image{display:grid;place-items:center;color:#9299a4;font-size:10px}
+.department-audit-info{min-width:0}
+.department-audit-info strong{display:block;color:#202632;font-size:12px;line-height:1.4}
+.department-audit-info small{display:block;margin-top:4px;color:#78818e;font-size:10px}
+.department-audit-info select{width:100%;margin-top:8px;padding:8px;border:1px solid #d9dfe7;border-radius:8px;background:#fff;font-size:11px}
+.department-audit-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;color:#596575;font-size:11px}
+@media(max-width:760px){.department-audit-grid{grid-template-columns:1fr}.department-audit-card{grid-template-columns:76px minmax(0,1fr)}.department-audit-card>img,.department-no-image{width:76px;height:76px}}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261119-store-header-match-v5">
 <style id="ite-store-manager-layout-final">
 /* Store workspace: keep the same two-workspace switch shown in the reference */
@@ -526,17 +527,15 @@ body{overflow-x:hidden}
   <button class="btn softred" type="button" id="stockAllOut">Set ALL OUT OF STOCK</button>
   <button class="btn" type="button" id="stockSelectedIn">Set selected IN STOCK</button>
   <button class="btn softred" type="button" id="stockSelectedOut">Set selected OUT OF STOCK</button>
-</div><div class="category-organiser">
- <div class="category-organiser-head">
-  <div><strong>Smart product department organiser</strong><small>Review each product photo and its suggested department. Change any suggestion before saving.</small></div>
-  <button class="btn" type="button" id="scanCategories">Scan product categories</button>
+</div>
+<div class="department-audit">
+ <div class="department-audit-head">
+  <div><strong>Smart Department Review</strong><small>Review product photos and move products into the correct store department. Suggestions use product names, descriptions and image filenames.</small></div>
+  <button class="btn" type="button" id="scanDepartments">Scan products</button>
  </div>
- <div id="categoryReviewStatus" class="category-review-status">Scan your catalogue to find products that may be in the wrong department.</div>
- <div id="categoryReviewList" class="category-review-list" hidden></div>
- <div class="category-review-actions" id="categoryReviewActions" hidden>
-  <span id="categoryReviewCount"></span>
-  <button class="btn primary" type="button" id="applyCategories">Save department changes</button>
- </div>
+ <div class="department-audit-status" id="departmentAuditStatus">Scan your catalogue to find products that may be in the wrong department.</div>
+ <div class="department-audit-grid" id="departmentAuditGrid" hidden></div>
+ <div class="department-audit-foot" id="departmentAuditFoot" hidden><span id="departmentAuditCount"></span><button class="btn primary" type="button" id="saveDepartmentChanges">Save department changes</button></div>
 </div>
 <div id="productList" class="catalogue"><div class="empty">Loading your products...</div></div></section></div>
 
@@ -731,7 +730,7 @@ function render(){
  const pages=Math.max(1,Math.ceil(shown.length/ADMIN_PAGE_SIZE));adminPage=Math.min(adminPage,pages);
  const pageItems=shown.slice((adminPage-1)*ADMIN_PAGE_SIZE,adminPage*ADMIN_PAGE_SIZE);
  $('totalCount').textContent=products.length;$('activeCount').textContent=products.filter(p=>p.status==='active').length;$('draftCount').textContent=products.filter(p=>p.status==='draft').length;$('lowCount').textContent=products.filter(p=>Number(p.stock)<=5).length;
- const cats=[...new Set(products.map(p=>p.category).filter(Boolean))].sort();
+ const cats=[...new Set([...IMPORT_CATEGORIES,...products.map(p=>p.category).filter(Boolean)])].sort((a,b)=>a.localeCompare(b));
  $('categoryOptions').innerHTML=cats.map(c=>`<option value="${escapeHtml(c)}"></option>`).join('');
  $('adminResultCount').textContent=shown.length?`Showing ${(adminPage-1)*ADMIN_PAGE_SIZE+1}–${Math.min(adminPage*ADMIN_PAGE_SIZE,shown.length)} of ${shown.length} products`:'No products found';
  $('adminPageLabel').textContent=`Page ${adminPage} of ${pages}`;$('adminPrev').disabled=adminPage<=1;$('adminNext').disabled=adminPage>=pages;
@@ -939,6 +938,71 @@ $('productForm').addEventListener('submit',async e=>{e.preventDefault();const id
  }catch(err){notice(err.message,'error');}finally{save.disabled=false;}
 });
 
+
+const DEPARTMENT_AUDIT_OPTIONS=[...IMPORT_CATEGORIES,"Laptops","Desktop PCs"];
+let departmentAuditRows=[];
+function renderDepartmentAudit(){
+ const grid=$('departmentAuditGrid'),foot=$('departmentAuditFoot');
+ if(!grid)return;
+ grid.innerHTML=departmentAuditRows.map((row,index)=>{
+  const image=row.image
+   ?`<img src="${escapeHtml(row.image)}" alt="${escapeHtml(row.name)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;department-no-image&quot;>Image unavailable</div>'">`
+   :'<div class="department-no-image">No image</div>';
+  const options=[...new Set([row.suggested,...DEPARTMENT_AUDIT_OPTIONS,row.current].filter(Boolean))];
+  return `<article class="department-audit-card">${image}<div class="department-audit-info"><strong>${escapeHtml(row.name)}</strong><small>Current: ${escapeHtml(row.current||'Uncategorised')}</small><small>Suggested: ${escapeHtml(row.suggested||'Needs manual review')}</small><select data-department-index="${index}" aria-label="Choose department for ${escapeHtml(row.name)}">${options.map(option=>`<option value="${escapeHtml(option)}" ${option===row.selected?'selected':''}>${escapeHtml(option)}</option>`).join('')}</select></div></article>`;
+ }).join('');
+ grid.hidden=!departmentAuditRows.length;
+ foot.hidden=!departmentAuditRows.length;
+ $('departmentAuditCount').textContent=`${departmentAuditRows.length} products need review`;
+}
+$('scanDepartments')?.addEventListener('click',()=>{
+ departmentAuditRows=(products||[]).map(product=>{
+  const suggested=inferStoreDepartment({
+   name:product.name,sku:product.sku,description:product.description,
+   shortDescription:product.shortDescription,imageUrl:product.imageUrl,images:product.images
+  });
+  return {
+   id:String(product._id),name:product.name||'Unnamed product',
+   image:product.imageUrl||(Array.isArray(product.images)?product.images[0]:'')||'',
+   current:product.category||'',suggested,
+   selected:suggested||product.category||'Other Accessories'
+  };
+ }).filter(row=>row.suggested&&row.suggested!==row.current);
+ renderDepartmentAudit();
+ $('departmentAuditStatus').textContent=departmentAuditRows.length
+  ?`${departmentAuditRows.length} likely department mismatch(es) found. Check each product photo and choose the right department before saving.`
+  :'No clear mismatches were detected. Products with unclear titles still need manual checking in Edit Product.';
+});
+$('departmentAuditGrid')?.addEventListener('change',event=>{
+ const select=event.target.closest('[data-department-index]');
+ if(!select)return;
+ const row=departmentAuditRows[Number(select.dataset.departmentIndex)];
+ if(row)row.selected=select.value;
+});
+$('saveDepartmentChanges')?.addEventListener('click',async()=>{
+ const button=$('saveDepartmentChanges');
+ if(!departmentAuditRows.length)return;
+ button.disabled=true;
+ let saved=0,failed=0;
+ try{
+  for(const row of departmentAuditRows){
+   if(!row.selected||row.selected===row.current)continue;
+   const product=products.find(item=>String(item._id)===row.id);
+   if(!product){failed++;continue;}
+   try{
+    await api('/api/admin/store/products/'+encodeURIComponent(row.id),{
+     method:'PUT',body:JSON.stringify({...product,category:row.selected})
+    });
+    saved++;
+   }catch(error){failed++;console.error('Department update failed for',row.name,error);}
+  }
+  $('departmentAuditStatus').textContent=`Saved ${saved} department change(s).${failed?` ${failed} failed; check the admin login and retry.`:''}`;
+  departmentAuditRows=[];
+  renderDepartmentAudit();
+  await load();
+ }finally{button.disabled=false;}
+});
+
 const IMPORT_CATEGORIES = ["Computers & Laptops", "Laptops", "Desktop PCs", "Gaming PCs", "Gaming Laptops", "Gaming Components", "Graphics Cards", "Processors (CPU)", "Motherboards", "RAM & Memory", "SSD & NVMe Storage", "Hard Drives (HDD)", "External Storage", "PC Cases", "Power Supplies (PSU)", "CPU Cooling & Fans", "Monitors & Displays", "Gaming Monitors", "Keyboards", "Gaming Keyboards", "Mice & Gaming Mice", "Headsets & Audio", "Controllers & Gamepads", "Webcams & Streaming", "Networking & Wi-Fi", "Routers & Mesh Wi-Fi", "Network Switches", "Cables & Adapters", "Docks & Hubs", "Printers & Scanners", "Printer Ink & Toner", "Software & Security", "Operating Systems", "Office Accessories", "UPS & Power Protection", "Refurbished Computers", "Special Offers", "Other Accessories"];
 let importRows=[];let importPage=0;const IMPORT_PAGE_SIZE=50;
 function setImportStatus(message,type=''){const el=$('importStatus');el.textContent=message;el.className='import-status '+type;}
@@ -1003,55 +1067,6 @@ function csvParse(text){
  const headers=rows.shift().map(h=>String(h||'').replace(/^\uFEFF/,'').trim());
  return rows.map(values=>Object.fromEntries(headers.map((h,i)=>[h,values[i]??''])));
 }
-
-let categoryReviewRows=[];
-const CATEGORY_REVIEW_OPTIONS=["Laptops","Desktop PCs","Gaming Laptops","Gaming PCs","Computers & Laptops","Motherboards","Graphics Cards","Processors (CPU)","RAM & Memory","SSD & NVMe Storage","Hard Drives (HDD)","External Storage","PC Cases","Power Supplies (PSU)","CPU Cooling & Fans","Monitors & Displays","Gaming Monitors","Keyboards","Gaming Keyboards","Mice & Gaming Mice","Headsets & Audio","Controllers & Gamepads","Webcams & Streaming","Networking & Wi-Fi","Routers & Mesh Wi-Fi","Network Switches","Cables & Adapters","Docks & Hubs","Printers & Scanners","Printer Ink & Toner","Software & Security","Operating Systems","Office Accessories","UPS & Power Protection","Refurbished Computers","Special Offers","Other Accessories"];
-function renderCategoryReview(){
- const list=$('categoryReviewList'),actions=$('categoryReviewActions');
- if(!list)return;
- list.innerHTML=categoryReviewRows.map((row,index)=>{
-  const options=[...new Set([row.suggested,...CATEGORY_REVIEW_OPTIONS,row.current].filter(Boolean))];
-  const image=row.image?`<img src="${escapeHtml(row.image)}" alt="${escapeHtml(row.name)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;no-image&quot;>Image unavailable</div>'">`:'<div class="no-image">No image</div>';
-  return `<article class="category-review-item" data-category-review="${index}">${image}<div><strong>${escapeHtml(row.name)}</strong><small>Current: ${escapeHtml(row.current||'Uncategorised')} · Suggested: ${escapeHtml(row.suggested||'Needs manual review')}</small><select data-review-category="${index}" aria-label="Department for ${escapeHtml(row.name)}">${options.map(option=>`<option value="${escapeHtml(option)}" ${option===row.selected?'selected':''}>${escapeHtml(option)}</option>`).join('')}</select></div></article>`;
- }).join('');
- list.hidden=!categoryReviewRows.length;
- actions.hidden=!categoryReviewRows.length;
- $('categoryReviewCount').textContent=`${categoryReviewRows.length} products ready for review`;
-}
-$('scanCategories')?.addEventListener('click',()=>{
- categoryReviewRows=(products||[]).map(product=>{
-  const suggested=inferStoreDepartment({name:product.name,sku:product.sku,categoryRaw:product.category,description:product.description,shortDescription:product.shortDescription,imageUrl:product.imageUrl,images:product.images});
-  return {id:product._id,name:product.name||'Unnamed product',image:product.imageUrl||product.images?.[0]||'',current:product.category||'',suggested,selected:suggested||product.category||'Other Accessories'};
- }).filter(row=>row.suggested&&row.suggested!==row.current);
- renderCategoryReview();
- $('categoryReviewStatus').textContent=categoryReviewRows.length
-  ? `${categoryReviewRows.length} products have a suggested department different from their current category. Check the photos and adjust any dropdown before saving.`
-  : 'No likely category mismatches found. Products without clear names or image clues may need manual category selection.';
-});
-$('categoryReviewList')?.addEventListener('change',event=>{
- const select=event.target.closest('[data-review-category]');
- if(!select)return;
- const row=categoryReviewRows[Number(select.dataset.reviewCategory)];
- if(row)row.selected=select.value;
-});
-$('applyCategories')?.addEventListener('click',async()=>{
- const button=$('applyCategories');if(!categoryReviewRows.length)return;
- button.disabled=true;let saved=0;let failed=0;
- try{
-  for(const row of categoryReviewRows){
-   const product=products.find(item=>String(item._id)===String(row.id));
-   if(!product||!row.selected||row.selected===row.current)continue;
-   try{
-    await api('/api/admin/store/products/'+encodeURIComponent(row.id),{method:'PUT',body:JSON.stringify({...product,category:row.selected})});
-    saved++;
-   }catch(error){failed++;console.error('Could not update product category',row.id,error);}
-  }
-  $('categoryReviewStatus').textContent=`Saved ${saved} department changes${failed?` · ${failed} failed — please refresh and retry those products`:''}.`;
-  categoryReviewRows=[];
-  renderCategoryReview();
-  await load();
- }finally{button.disabled=false;}
-});
 function splitImageValues(value){
  const text=String(value||'').trim();
  if(!text)return [];
@@ -1060,44 +1075,46 @@ function splitImageValues(value){
 }
 
 function inferStoreDepartment(product){
- const imageHints=[product.imageUrl,...(Array.isArray(product.images)?product.images:[])].filter(Boolean)
-  .map(value=>{try{return decodeURIComponent(String(value).split('?')[0].split('/').pop().replace(/[-_]+/g,' '));}catch(_){return String(value);}})
-  .join(' ');
- const text=[product.name,product.sku,product.categoryRaw,product.description,product.shortDescription,imageHints]
+ const imageHints=[product.imageUrl,...(Array.isArray(product.images)?product.images:[])]
+  .filter(Boolean).map(value=>{
+   try{return decodeURIComponent(String(value).split('?')[0].split('/').pop().replace(/[-_]+/g,' '));}
+   catch(_){return String(value);}
+  }).join(' ');
+ // IMPORTANT: do not classify from categoryRaw. Supplier category paths can be wrong.
+ const text=[product.name,product.sku,product.description,product.shortDescription,imageHints]
   .filter(Boolean).join(' ').toLowerCase();
  const has=(...terms)=>terms.some(term=>text.includes(term));
- // Specific components/accessories must be checked before the generic laptop rule.
  const rules=[
+  // Power equipment before generic PC/gaming labels.
+  ['UPS & Power Protection',()=>has('ups','uninterruptible power','power station','portable power station','power generator','solar generator','power bank','inverter','surge protector','backup battery','extra battery','expansion battery')],
   ['Gaming Laptops',()=>has('gaming laptop','gaming notebook','rog laptop','tuf gaming laptop','legion laptop','predator laptop','nitro laptop','omen laptop')],
-  ['Gaming PCs',()=>has('gaming pc','gaming desktop','gaming tower','gaming computer')],
   ['Laptops',()=>has('laptop','notebook computer','notebook pc','chromebook')&&!has('laptop bag','laptop stand','laptop charger','notebook charger','notebook bag')],
+  ['Gaming PCs',()=>has('gaming pc','gaming desktop','gaming tower','gaming computer')],
   ['Desktop PCs',()=>has('desktop pc','desktop computer','all-in-one pc','aio pc','mini pc','workstation','tower pc','small form factor pc')],
-  ['RAM & Memory',()=>/\bram\b/.test(text)||has('memory module','notebook memory','laptop memory','ddr2','ddr3','ddr4','ddr5','sodimm','so-dimm','udimm','dimm')],
-  ['SSD & NVMe Storage',()=>has('nvme','ssd','solid state drive','m.2 drive')],
-  ['Hard Drives (HDD)',()=>has('hard drive',' hdd',' sata drive','desktop drive','2.5-inch drive','3.5-inch drive')],
-  ['External Storage',()=>has('external drive','portable drive','usb flash','flash drive','memory stick')],
   ['Graphics Cards',()=>has('graphics card','geforce','nvidia rtx','radeon rx','gpu','video card')],
   ['Processors (CPU)',()=>has('processor','cpu','ryzen 3','ryzen 5','ryzen 7','ryzen 9','intel core','core i3','core i5','core i7','core i9','xeon')],
   ['Motherboards',()=>has('motherboard','mainboard','system board')],
+  ['RAM & Memory',()=>/\bram\b/.test(text)||has('memory module','notebook memory','laptop memory','ddr2','ddr3','ddr4','ddr5','sodimm','so-dimm','udimm','dimm')],
+  ['SSD & NVMe Storage',()=>has('nvme','ssd','solid state drive','m.2 drive')],
+  ['Hard Drives (HDD)',()=>has('hard drive',' hdd',' sata drive','desktop drive','2.5-inch drive','3.5-inch drive')],
+  ['External Storage',()=>has('external drive','portable drive','usb flash','flash drive','memory stick','sd card','micro sd')],
+  ['PC Cases',()=>has('pc case','computer case','chassis')],
+  ['Power Supplies (PSU)',()=>has('power supply','psu','atx power supply','sfx power supply')],
+  ['CPU Cooling & Fans',()=>has('cpu cooler','cooling fan','case fan','liquid cooler','aio cooler','heatsink','heat sink')],
   ['Controllers & Gamepads',()=>has('controller','gamepad','game pad','joystick')],
   ['Gaming Keyboards',()=>has('gaming keyboard','mechanical gaming keyboard','rgb mechanical keyboard')],
   ['Keyboards',()=>has('keyboard')],
   ['Mice & Gaming Mice',()=>has('mouse','mice')],
-  ['Headsets & Audio',()=>has('headset','headphone','speaker','microphone','soundbar')],
+  ['Headsets & Audio',()=>has('headset','headphone','speaker','microphone','soundbar','earbud')],
   ['Monitors & Displays',()=>has('monitor','display','screen')],
   ['Printers & Scanners',()=>has('printer','scanner','multifunction')],
   ['Networking & Wi-Fi',()=>has('router','mesh wi-fi','mesh wifi','access point','network switch','wi-fi adapter','wifi adapter')],
-  ['PC Cases',()=>has('pc case','computer case','chassis')],
-  ['CPU Cooling & Fans',()=>has('cpu cooler','cooling fan','case fan','liquid cooler','aio cooler')],
-  ['Power Supplies (PSU)',()=>has('power supply','psu','power adapter','ac adapter','laptop charger','notebook charger','charger adapter','desktop adapter')],
   ['Cables & Adapters',()=>has('cable','converter','travel adapter','plug adapter')],
   ['Docks & Hubs',()=>has('dock','usb hub','type-c hub')],
-  ['UPS & Power Protection',()=>has('ups','surge protector','power protection')],
   ['Software & Security',()=>has('antivirus','security software','software licence','software license')],
   ['Operating Systems',()=>has('windows 11','windows 10','operating system')],
   ['Refurbished Computers',()=>has('refurbished','renewed','reconditioned','pre-owned','used laptop','used desktop')],
-  ['Office Accessories',()=>has('laptop stand','notebook stand','vesa mount','mounting bracket','laptop bag','notebook bag')],
-  ['Computers & Laptops',()=>has('laptop','notebook computer','notebook pc','desktop pc','desktop computer','all-in-one pc','aio pc','mini pc','workstation')]
+  ['Office Accessories',()=>has('laptop stand','notebook stand','vesa mount','mounting bracket','laptop bag','notebook bag')]
  ];
  for(const [department,test] of rules){if(test())return department;}
  return '';
@@ -1132,7 +1149,7 @@ function keyMap(row){
  const supplierCategory=String(get('categories','categoriesalt','category','product category','type','department')).trim();
  const categoryList=splitList(supplierCategory);
  const rawCategory=categoryList[0]||'';
- const allowedCategories=['Computers & Laptops', 'Laptops', 'Desktop PCs', 'Gaming PCs', 'Gaming Laptops', 'Refurbished Computers', 'Gaming Components', 'Graphics Cards', 'Processors (CPU)', 'Motherboards', 'RAM & Memory', 'SSD & NVMe Storage', 'Hard Drives (HDD)', 'External Storage', 'PC Cases', 'Power Supplies (PSU)', 'CPU Cooling & Fans', 'Monitors & Displays', 'Gaming Monitors', 'Keyboards', 'Gaming Keyboards', 'Mice & Gaming Mice', 'Headsets & Audio', 'Controllers & Gamepads', 'Webcams & Streaming', 'Networking & Wi-Fi', 'Routers & Mesh Wi-Fi', 'Network Switches', 'Cables & Adapters', 'Docks & Hubs', 'Printers & Scanners', 'Printer Ink & Toner', 'Software & Security', 'Operating Systems', 'Office Accessories', 'UPS & Power Protection', 'Special Offers', 'Other Accessories'];
+ const allowedCategories=['Computers & Laptops', 'Gaming PCs', 'Gaming Laptops', 'Refurbished Computers', 'Gaming Components', 'Graphics Cards', 'Processors (CPU)', 'Motherboards', 'RAM & Memory', 'SSD & NVMe Storage', 'Hard Drives (HDD)', 'External Storage', 'PC Cases', 'Power Supplies (PSU)', 'CPU Cooling & Fans', 'Monitors & Displays', 'Gaming Monitors', 'Keyboards', 'Gaming Keyboards', 'Mice & Gaming Mice', 'Headsets & Audio', 'Controllers & Gamepads', 'Webcams & Streaming', 'Networking & Wi-Fi', 'Routers & Mesh Wi-Fi', 'Network Switches', 'Cables & Adapters', 'Docks & Hubs', 'Printers & Scanners', 'Printer Ink & Toner', 'Software & Security', 'Operating Systems', 'Office Accessories', 'UPS & Power Protection', 'Special Offers', 'Other Accessories'];
  const matchedSupplierCategory=allowedCategories.find(c=>c.toLowerCase()===rawCategory.toLowerCase())||'';
  const description=String(get('description','details','specifications')).trim();
  const shortDescription=String(get('shortdesc','short description','shortdescription')).trim();
