@@ -671,9 +671,9 @@ nav{flex:1;justify-content:center;align-items:center;gap:clamp(12px,2vw,28px);wh
 .branch-stock-public .branch-out{color:#e00000}
 @media(max-width:520px){.branch-stock-public{gap:5px;font-size:10px}}
 
-#productPagination{position:relative!important;z-index:40!important;pointer-events:auto!important}
-#productPagination .pagination-buttons{position:relative!important;z-index:41!important;pointer-events:auto!important}
-#productPagination .pagination-buttons button{position:relative!important;z-index:42!important;pointer-events:auto!important;touch-action:manipulation}
+#productPagination{position:relative!important;z-index:200!important;pointer-events:auto!important}
+#productPagination .pagination-buttons{position:relative!important;z-index:201!important;pointer-events:auto!important}
+#productPagination .pagination-buttons button{position:relative!important;z-index:202!important;pointer-events:auto!important;touch-action:manipulation;cursor:pointer!important}
 </style><link rel="stylesheet" href="/nav-store-global.css?v=20261119-store-header-match-v5"><link rel="stylesheet" href="/responsive.css?v=20261115-layout-v5"><link rel="stylesheet" href="/ite-store-mobile.css?v=20261115-mobile-v3"><style>
 
 /* IT Elements: hide the product-detail Add to Chat action; keep the header Chat access. */
@@ -1698,12 +1698,12 @@ function render(){
  if(pager){
   if(totalPages>1){
    const buttons=[];
-   buttons.push(`<button type="button" data-page="${currentProductPage-1}" ${currentProductPage===1?'disabled':''} aria-label="Previous 50 products">Previous 50</button>`);
+   buttons.push(`<button type="button" data-page="${currentProductPage-1}" onclick="window.goToProductPage(${currentProductPage-1})" ${currentProductPage===1?'disabled':''} aria-label="Previous 50 products">Previous 50</button>`);
    let first=Math.max(1,currentProductPage-2),last=Math.min(totalPages,currentProductPage+2);
-   if(first>1){buttons.push('<button type="button" data-page="1">1</button>');if(first>2)buttons.push('<span class="pagination-ellipsis">…</span>');}
-   for(let n=first;n<=last;n++)buttons.push(`<button type="button" data-page="${n}" class="${n===currentProductPage?'active':''}" aria-current="${n===currentProductPage?'page':'false'}">${n}</button>`);
-   if(last<totalPages){if(last<totalPages-1)buttons.push('<span class="pagination-ellipsis">…</span>');buttons.push(`<button type="button" data-page="${totalPages}">${totalPages}</button>`);}
-   buttons.push(`<button type="button" data-page="${currentProductPage+1}" ${currentProductPage===totalPages?'disabled':''} aria-label="Next 50 products">Next 50</button>`);
+   if(first>1){buttons.push('<button type="button" data-page="1" onclick="window.goToProductPage(1)">1</button>');if(first>2)buttons.push('<span class="pagination-ellipsis">…</span>');}
+   for(let n=first;n<=last;n++)buttons.push(`<button type="button" data-page="${n}" onclick="window.goToProductPage(${n})" class="${n===currentProductPage?'active':''}" aria-current="${n===currentProductPage?'page':'false'}">${n}</button>`);
+   if(last<totalPages){if(last<totalPages-1)buttons.push('<span class="pagination-ellipsis">…</span>');buttons.push(`<button type="button" data-page="${totalPages}" onclick="window.goToProductPage(${totalPages})">${totalPages}</button>`);}
+   buttons.push(`<button type="button" data-page="${currentProductPage+1}" onclick="window.goToProductPage(${currentProductPage+1})" ${currentProductPage===totalPages?'disabled':''} aria-label="Next 50 products">Next 50</button>`);
    pager.innerHTML=`<span class="pagination-summary">Showing ${startIndex+1}–${Math.min(startIndex+PRODUCTS_PER_PAGE,total)} of ${total} products · Page ${currentProductPage} of ${totalPages}</span><div class="pagination-buttons">${buttons.join('')}</div>`;
   }else pager.innerHTML=total?'<span class="pagination-summary">Showing all products on one page</span>':'';
  }
@@ -2251,22 +2251,45 @@ $('sort').onchange=()=>{currentProductPage=1;render();};
 $('year').textContent=new Date().getFullYear();
 $('clearFilters').onclick=()=>{$('search').value='';$('departmentPicker').value='';$('priceRange').value='';$('availability').value='';$('sort').value='featured';currentProductPage=1;render();};
 $('search').addEventListener('keydown',e=>{if(e.key==='/'){e.preventDefault();$('search').focus();}});
-function goToProductPage(page){
+window.goToProductPage=function(page){
  const next=Number(page);
  if(!Number.isInteger(next)||next<1)return;
+ const q=$('search').value.trim().toLowerCase();
+ const cat=$('departmentPicker').value;
+ const price=$('priceRange').value;
+ const avail=$('availability').value;
+ const matching=products.filter(p=>{
+  const hay=[p.name,p.description,p.category,p.sku,p.brand,p.model,p.specifications].join(' ').toLowerCase();
+  if(q&&!hay.includes(q))return false;
+  if(activeCollection==='sale'&&!(p.productType==='sale'||Number(p.compareAtPrice||0)>Number(p.price||0)))return false;
+  if(cat&&String(p.category||'').toLowerCase()!==cat.toLowerCase())return false;
+  const n=Number(p.price||0);
+  if(price==='0-500'&&n>=500)return false;
+  if(price==='500-1500'&&(n<500||n>1500))return false;
+  if(price==='1500-5000'&&(n<1500||n>5000))return false;
+  if(price==='5000-10000'&&(n<5000||n>10000))return false;
+  if(price==='10000+'&&n<=10000)return false;
+  if(avail==='in'&&Number(p.stock||0)<=0)return false;
+  if(avail==='out'&&Number(p.stock||0)>0)return false;
+  return true;
+ });
+ const maxPage=Math.max(1,Math.ceil(matching.length/PRODUCTS_PER_PAGE));
+ if(next>maxPage)return;
  currentProductPage=next;
  render();
  const grid=document.getElementById('products');
  if(grid)grid.scrollIntoView({behavior:'smooth',block:'start'});
-}
+};
+
+// Capture the click before other store scripts can cancel or swallow it.
 document.addEventListener('click',function(event){
- const button=event.target&&event.target.closest
-  ?event.target.closest('#productPagination button[data-page]')
-  :null;
- if(!button||button.disabled)return;
+ const button=event.target && event.target.closest
+  ? event.target.closest('#productPagination button[data-page]')
+  : null;
+ if(!button || button.disabled)return;
  event.preventDefault();
- event.stopPropagation();
- goToProductPage(button.getAttribute('data-page'));
+ event.stopImmediatePropagation();
+ window.goToProductPage(button.getAttribute('data-page'));
 },true);
 async function load(){
  let catalogueResponse;
